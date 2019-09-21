@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -12,9 +13,10 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace.Internal
-  ( Pixel
+  ( Pixel(..)
   , ColorSpace(..)
   , AlphaSpace(..)
+  , XYZ
   , module Graphics.ColorSpace.Elevator
   , showsP
   , shows3
@@ -72,13 +74,10 @@ class ( Functor (Pixel cs)
   toComponents :: Pixel cs e -> Components cs e
   -- | Convert from an elemnt representation back to a Pixel.
   fromComponents :: Components cs e -> Pixel cs e
-  -- | Retrieve Pixel's component value
-  getPxC :: Pixel cs e -> cs -> e
-  -- | Set Pixel's component value
-  setPxC :: Pixel cs e -> cs -> e -> Pixel cs e
-  -- | Map a channel aware function over all Pixel's components.
-  mapPxC :: (cs -> e -> e) -> Pixel cs e -> Pixel cs e
 
+  toPixelXYZ :: Pixel cs e -> Pixel XYZ Double
+
+  fromPixelXYZ :: Pixel XYZ Double -> Pixel cs e
 
 
 -- | A color space that supports transparency.
@@ -328,3 +327,56 @@ poke5 p c0 c1 c2 c3 c4 = do
   poke (castPtr p) c0
   poke4 (p `plusPtr` sizeOf (undefined :: e)) c1 c2 c3 c4
 {-# INLINE poke5 #-}
+
+
+
+-----------
+--- XYZ ---
+-----------
+
+-- | The original color space @CIE 1931 XYZ@ color space
+data XYZ
+
+data instance Pixel XYZ e = PixelXYZ !e !e !e deriving (Eq, Ord, Bounded)
+
+instance Show e => Show (Pixel XYZ e) where
+  showsPrec _ (PixelXYZ x y z) = showsP "XYZ" (shows3 x y z)
+
+instance Elevator e => ColorSpace XYZ e where
+  type Components XYZ e = (e, e, e)
+  toComponents (PixelXYZ x y z) = (x, y, z)
+  {-# INLINE toComponents #-}
+  fromComponents (x, y, z) = PixelXYZ x y z
+  {-# INLINE fromComponents #-}
+  toPixelXYZ (PixelXYZ x y z) = PixelXYZ (eToDouble x) (eToDouble y) (eToDouble z)
+  {-# INLINE toPixelXYZ #-}
+  fromPixelXYZ (PixelXYZ x y z) = PixelXYZ (eFromDouble x) (eFromDouble y) (eFromDouble z)
+  {-# INLINE fromPixelXYZ #-}
+
+instance Functor (Pixel XYZ) where
+  fmap f (PixelXYZ x y z) = PixelXYZ (f x) (f y) (f z)
+  {-# INLINE fmap #-}
+
+instance Applicative (Pixel XYZ) where
+  pure e = PixelXYZ e e e
+  {-# INLINE pure #-}
+  (PixelXYZ fx fy fz) <*> (PixelXYZ x y z) = PixelXYZ (fx x) (fy y) (fz z)
+  {-# INLINE (<*>) #-}
+
+instance Foldable (Pixel XYZ) where
+  foldr f acc (PixelXYZ x y z) = foldr3 f acc x y z
+  {-# INLINE foldr #-}
+
+instance Traversable (Pixel XYZ) where
+  traverse f (PixelXYZ x y z) = traverse3 PixelXYZ f x y z
+  {-# INLINE traverse #-}
+
+instance Storable e => Storable (Pixel XYZ e) where
+  sizeOf = sizeOfN 3
+  {-# INLINE sizeOf #-}
+  alignment = alignmentN 3
+  {-# INLINE alignment #-}
+  peek = peek3 PixelXYZ
+  {-# INLINE peek #-}
+  poke p (PixelXYZ x y z) = poke3 p x y z
+  {-# INLINE poke #-}

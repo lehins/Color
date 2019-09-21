@@ -20,7 +20,7 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace
-  -- * Pixels
+  ( -- * Pixels
   -- ** Family of Pixels
   -- | Pixel is a type family for all available color spaces. Below is the
   -- listed of all class instances, that pixels are installed in, as well as all
@@ -35,7 +35,7 @@ module Graphics.ColorSpace
   -- >>> (PixelRGB 255 0 0 :: Pixel RGB Word8) == (toWord8 <$> (PixelRGB 1 0 0 :: Pixel RGB Double))
   -- True
   --
-  ( Pixel(..)
+   Pixel(..)
   , ColorSpace(..)
   , AlphaSpace(..)
   -- ** Luma (gray scale)
@@ -266,12 +266,6 @@ instance Elevator e => ToYA YCbCrA e where
 
 -- ToRGB
 
-
-
--- | Conversion to `RGB` color space.
-class ColorSpace cs e => ToRGB cs e where
-  -- | Convert to an `RGB` pixel.
-  toPixelRGB :: Pixel cs e -> Pixel RGB Double
 
 
 instance Elevator e => ToRGB Y e where
