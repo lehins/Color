@@ -29,6 +29,7 @@ module Graphics.ColorSpace.Algebra
   ) where
 
 import Text.Printf
+import Graphics.ColorSpace.Internal
 
 -- | A 3D vector with @x@, @y@ and @z@ components in double floating point precision.
 data V3 =
@@ -251,29 +252,12 @@ instance Floating M3x3 where
   acosh   = mapM3x3 acosh
   {-# INLINE acosh #-}
 
-data Primary = Primary
-  { xPrimary :: {-# UNPACK #-}!Double
-  , yPrimary :: {-# UNPACK #-}!Double
-  } deriving (Eq, Show)
 
 -- | Compute @z = 1 - x - y@ of a `Primary`.
 zPrimary :: Primary -> Double
 zPrimary p = 1 - xPrimary p - yPrimary p
 {-# INLINE zPrimary #-}
 
-
-
-data WhitePoint = WhitePoint
-  { xWhitePoint :: {-# UNPACK #-}!Double
-  , yWhitePoint :: {-# UNPACK #-}!Double
-  } deriving (Eq, Show)
-
-data Chromaticity = Chromaticity
-  { chromaRed   :: {-# UNPACK #-}!Primary
-  , chromaGreen :: {-# UNPACK #-}!Primary
-  , chromaBlue  :: {-# UNPACK #-}!Primary
-  , chromaWhite :: {-# UNPACK #-}!WhitePoint
-  } deriving (Eq, Show)
 
 -- | Compute @XYZ@ tristimulus of a white point, where @Y = 1@
 --

@@ -16,31 +16,40 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Graphics.ColorSpace
+  exposed-modules:     Graphics.ColorModel
+                     -- , Graphics.ColorModel.Binary
+                     -- , Graphics.ColorModel.Complex
+                     -- , Graphics.ColorModel.CMYK
+                     , Graphics.ColorModel.RGB
+                     -- , Graphics.ColorModel.HSI
+                     -- , Graphics.ColorModel.HSL
+                     -- , Graphics.ColorModel.HSV
+                     -- , Graphics.ColorModel.YCbCr
+                     -- , Graphics.ColorSpace
+                     , Graphics.ColorSpace.Algebra
+                     -- , Graphics.ColorSpace.RGB
+                     , Graphics.ColorSpace.RGB.S
+                     -- , Graphics.ColorSpace.RGB.SC
+                     -- , Graphics.ColorSpace.RGB.Adobe1998
+                     -- , Graphics.ColorSpace.RGB.AdobeWideGamut
+                     -- , Graphics.ColorSpace.RGB.ProPhoto
                      -- , Graphics.ColorSpace.Common
-
+                     -- , Graphics.ColorSpace.Y
                      -- , Graphics.ColorSpace.Binary
                      -- , Graphics.ColorSpace.Complex
-                     -- , Graphics.ColorSpace.Y
 
-                     -- , Graphics.ColorSpace.SRGB
-                     -- , Graphics.ColorSpace.SCRGB
-                     -- , Graphics.ColorSpace.AdobeRGB
-                     -- , Graphics.ColorSpace.AdobeWideGamutRGB
-                     -- , Graphics.ColorSpace.ProPhotoRGB
                      -- , Graphics.ColorSpace.LMS
                      -- , Graphics.ColorSpace.DCI_P3
                      -- , Graphics.ColorSpace.CIE1931.RGB
-                     -- , Graphics.ColorSpace.CIE1931.XYZ
+                     , Graphics.ColorSpace.CIE1931.XYZ
                      -- , Graphics.ColorSpace.CIE1976.LUV
                      -- , Graphics.ColorSpace.CIE1976.LAB.LCH
                      -- , Graphics.ColorSpace.CIE1976.LAB
                      -- , Graphics.ColorSpace.CIE1976.LAB.HLC
                      -- , Graphics.ColorSpace.Standard.RAL -- https://en.wikipedia.org/wiki/List_of_RAL_colors
 
-                     -- , Graphics.ColorSpace.PrimaryChromaticities -- eg. ITU-R BT.709
+                     -- , Graphics.ColorSpace.Chromaticities -- eg. ITU-R BT.709
                      -- , Graphics.ColorSpace.SRGB
-                     , Graphics.ColorSpace.RGB
                      -- , Graphics.ColorSpace.CMYK
                      -- , Graphics.ColorSpace.HSI
                      -- , Graphics.ColorSpace.HSL
@@ -59,7 +68,9 @@ library
                      -- , Graphics.ColorSpace.YCbCr
                      -- , Graphics.ColorSpace.RGB
 
-  other-modules:       Graphics.ColorSpace.Elevator
+  other-modules:       Graphics.ColorModel.Internal
+                     , Graphics.ColorModel.Elevator
+                     , Graphics.ColorModel.Helpers
                      , Graphics.ColorSpace.Internal
   build-depends:       base            >= 4.8 && < 5
                      , deepseq
