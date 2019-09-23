@@ -1,4 +1,7 @@
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 -- |
 -- Module      : Graphics.ColorSpace.Algebra
 -- Copyright   : (c) Alexey Kuleshevich 2019
@@ -9,6 +12,8 @@
 --
 module Graphics.ColorSpace.Algebra
   ( V3(..)
+  , toV3
+  , fromV3
   , showV3
   , printV3
   , M3x3(..)
@@ -18,6 +23,10 @@ module Graphics.ColorSpace.Algebra
   , invertM3x3
   , multM3x3byV3
   , transposeM3x3
+  , NPM(..)
+  , INPM(..)
+  , npmCompute
+  , inpmCompute
   , Primary(..)
   , zPrimary
   , primaryXZ
@@ -30,6 +39,10 @@ module Graphics.ColorSpace.Algebra
 
 import Text.Printf
 import Graphics.ColorSpace.Internal
+import Graphics.ColorModel.Elevator
+import Data.Coerce
+
+import Debug.Trace
 
 -- | A 3D vector with @x@, @y@ and @z@ components in double floating point precision.
 data V3 =
@@ -40,6 +53,18 @@ data V3 =
 
 instance Show V3 where
   show (V3 x y z) = printf "[% .7f,% .7f,% .7f]" x y z
+
+toV3 :: Elevator e => e -> e -> e -> V3
+toV3 v0 v1 v2 = V3 (toDouble v0) (toDouble v1) (toDouble v2)
+{-# INLINE[1] toV3 #-}
+
+{-# RULES
+"toV3 :: Double -> Double -> Double -> V3" toV3 = V3
+  #-}
+
+fromV3 :: Elevator e => (e -> e -> e -> a) -> V3 -> a
+fromV3 mk (V3 v0 v1 v2) = mk (fromDouble v0) (fromDouble v1) (fromDouble v2)
+
 
 -- | A 3x3 Matrix
 data M3x3 =
@@ -263,7 +288,7 @@ zPrimary p = 1 - xPrimary p - yPrimary p
 --
 -- @since 0.1.0
 whitePointXYZ ::
-     WhitePoint
+     WhitePoint i
      -- ^ White point that specifies @x@ and @y@
   -> V3
 whitePointXYZ = whitePointXZ 1
@@ -275,7 +300,7 @@ whitePointXYZ = whitePointXZ 1
 -- @since 0.1.0
 whitePointXZ :: Double
               -- ^ @Y@ value, which is usually set to @1@
-              -> WhitePoint
+              -> WhitePoint i
               -- ^ White point that specifies @x@ and @y@
               -> V3
 whitePointXZ vY (WhitePoint x y) = V3 (vYy * x) vY (vYy * (1 - x - y))
@@ -305,3 +330,26 @@ primaryXZ ::
 primaryXZ vY (Primary x y) = V3 (vYy * x) vY (vYy * (1 - x - y))
   where !vYy = vY / y
 {-# INLINE primaryXZ #-}
+
+
+
+newtype NPM cs (i :: k) = NPM
+  { unNPM :: M3x3
+  } deriving (Eq, Show)
+
+newtype INPM cs (i :: k) = INPM
+  { unINPM :: M3x3
+  } deriving (Eq, Show)
+
+
+npmCompute :: forall cs i . Illuminant i => Chromaticity i -> NPM cs i
+npmCompute (Chromaticity r g b) = trace "shit" $ NPM (primaries' * M3x3 coeff coeff coeff)
+  where
+    -- transposed matrix with xyz primaries
+    primaries' = M3x3 (V3 (xPrimary r) (xPrimary g) (xPrimary b))
+                      (V3 (yPrimary r) (yPrimary g) (yPrimary b))
+                      (V3 (zPrimary r) (zPrimary g) (zPrimary b))
+    coeff = invertM3x3 primaries' `multM3x3byV3` whitePointXYZ (whitePoint :: WhitePoint i)
+
+inpmCompute :: forall cs i . Illuminant i => Chromaticity i -> INPM cs i
+inpmCompute = coerce . invertM3x3 . coerce . npmCompute

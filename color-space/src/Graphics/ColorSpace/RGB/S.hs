@@ -1,12 +1,14 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
-{-# LANGUAGE BangPatterns #-}
-{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NegativeLiterals #-}
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -25,10 +27,8 @@ module Graphics.ColorSpace.RGB.S
   --, RGBA
   , Pixel
   , Illuminant(..)
-  , NPM(..)
-  , INPM(..)
-  , npm
-  , inpm
+  -- , npm
+  -- , inpm
   , npmStandard
   , inpmStandard
   ) where
@@ -39,14 +39,22 @@ import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Helpers
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.Algebra
+import Graphics.ColorSpace.CIE1931.Illuminants
 import Prelude hiding (map)
+import Data.Typeable
+import Data.Coerce
 
+
+
+-- | The most common @sRGB@ color space with the default `D65` illuminant
+type RGB = SRGB 'D65
 
 
 -- | The most common @sRGB@ color space
-data RGB
+data SRGB (i :: k)
 
-newtype instance Pixel RGB e = PixelSRGB (Pixel CM.RGB e)
+
+newtype instance Pixel (SRGB i) e = PixelSRGB (Pixel CM.RGB e)
   deriving (Eq, Functor, Applicative, Foldable, Traversable, Storable)
 
 pattern PixelRGB :: e -> e -> e -> Pixel RGB e
@@ -58,69 +66,102 @@ pattern PixelRGB r g b = PixelSRGB (CM.PixelRGB r g b)
 --   -- | Convert to an `RGB` pixel.
 --   toPixelRGB :: Pixel cs e -> Pixel RGB Double
 
-
-instance Show e => Show (Pixel RGB e) where
-  showsPrec _ (PixelRGB r g b) = showsP "LinearsRGB" (shows3 r g b)
+instance Show e => Show (Pixel (SRGB i) e) where
+  showsPrec _ (PixelSRGB (CM.PixelRGB r g b)) =
+    showsP "sRGB:" -- ++ show i
+    (shows3 r g b)
 
 -- | sRGB defined in 'Graphics.ColorSpace.RGB.S'
-instance Elevator e => ColorModel RGB e where
-  type Components RGB e = (e, e, e)
-  toComponents (PixelRGB r g b) = (r, g, b)
+instance (Typeable i, Typeable k, Elevator e) => ColorModel (SRGB (i :: k)) e where
+  type Components (SRGB i) e = (e, e, e)
+  toComponents = toComponents . coerce
   {-# INLINE toComponents #-}
-  fromComponents (r, g, b) = PixelRGB r g b
+  fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
 
 instance Elevator e => ColorSpace RGB e where
-
   toPixelXYZ (PixelRGB r g b) =
-    m3x3'
-      PixelXYZ
-      (V3 0.4124 0.3576 0.1805)
-      (V3 0.2126 0.7152 0.0722)
-      (V3 0.0193 0.1192 0.9505)
-      (toV3 r g b)
+    fromV3 PixelXYZ (multM3x3byV3 (unNPM npmD65) (toV3 r g b))
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ (PixelXYZ x y z) =
-    m3x3'
-      PixelRGB
-      (V3  3.2406 -1.5372 -0.4986)
-      (V3 -0.9689  1.8758  0.0415)
-      (V3  0.0557 -0.2040  1.0570)
-      (V3 x y z)
+    fromV3 PixelRGB (multM3x3byV3 (unINPM inpmD65) (toV3 x y z))
   {-# INLINE fromPixelXYZ #-}
 
-
-newtype NPM (i :: Illuminant) cs =
-  NPM M3x3
-  deriving (Eq, Show)
-
-newtype INPM (i :: Illuminant) cs =
-  INPM M3x3
-  deriving (Eq, Show)
-
-data Illuminant
-  = D50
-  | D65
+inpmApply :: (Elevator e1, Elevator e2) => (e1 -> e1 -> e1 -> a) -> INPM cs i -> Pixel XYZ e2 -> a
+inpmApply f inpm' (PixelXYZ x y z) = fromV3 f (multM3x3byV3 (unINPM inpm') (toV3 x y z))
 
 
-sRGBchromaticity =
-  Chromaticity
-    (Primary 0.64 0.33)
-    (Primary 0.30 0.60)
-    (Primary 0.15 0.06)
-    --d65
+class Illuminant i => ComputeRGB cs i | cs -> i where
+  chromaticity :: Pixel cs e -> Chromaticity i
+  chroma :: Proxy cs -> Chromaticity i
+  mkRGB :: Pixel CM.RGB e -> Pixel cs e
+  unRGB :: Pixel cs e -> Pixel CM.RGB e
+
+  --rgbFromV3 :: V3 -> Pixel cs e
+
+instance Illuminant i => ComputeRGB (SRGB i) i where
+  chromaticity _ = Chromaticity (Primary 0.64 0.33)
+                                (Primary 0.30 0.60)
+                                (Primary 0.15 0.06)
+  chroma _ = Chromaticity (Primary 0.64 0.33)
+                          (Primary 0.30 0.60)
+                          (Primary 0.15 0.06)
+  mkRGB = coerce
+  unRGB = coerce
+
+-- toPixelComputedXYZ' ::
+--      forall cs i e.
+--      ( Coercible  (Pixel cs e) (Pixel CM.RGB e)
+--      , Chroma cs i
+--      , Components cs e ~ (e, e, e)
+--      , ColorSpace cs e
+--      )
+--   => Pixel cs e
+--   -> Pixel XYZ Double
+-- toPixelComputedXYZ' px = fromV3 PixelXYZ (multM3x3byV3 (unNPM npm') (toV3 r g b))
+--   where
+--     npm' = npmCompute (chroma (Proxy :: Proxy cs)) :: NPM cs i
+--     (CM.PixelRGB r g b) = coerce px
 
 
--- | Normalized primary matrix for conversion of linear sRGB to XYZ
-npm :: NPM 'D65 RGB
-npm = NPM $ M3x3 (V3 0.41239079926595923 0.3575843393838781 0.1804807884018344)
-                 (V3 0.21263900587151022 0.7151686787677562 0.0721923153607337)
-                 (V3 0.01933081871559182 0.1191947797946260 0.9505321522496610)
+rgb2xyz ::
+     forall cs i e. (ComputeRGB cs i, ColorModel cs e)
+  => Pixel cs e
+  -> Pixel XYZ Double
+rgb2xyz px = fromV3 PixelXYZ (multM3x3byV3 (unNPM npm') (toV3 r g b))
+  where
+    !npm' = npmCompute (chromaticity px) :: NPM cs i
+    CM.PixelRGB r g b = unRGB px
 
-inpm :: INPM 'D65 RGB
-inpm = INPM $ M3x3 (V3  3.2409699419045235 -1.5373831775700944 -0.4986107602930038)
-                   (V3 -0.9692436362808795  1.87596750150772    0.0415550574071757)
-                   (V3  0.0556300796969936 -0.20397695888897646 1.0569715142428782)
+fromPixelComputedXYZ ::
+     forall cs i e. (ComputeRGB cs i, ColorModel cs e)
+  => Pixel XYZ Double
+  -> Pixel cs e
+fromPixelComputedXYZ (PixelXYZ x y z) = px
+  where
+    !px = mkRGB $ fromV3 CM.PixelRGB (multM3x3byV3 (unINPM inpm') (toV3 x y z))
+    !inpm' = inpmCompute (chromaticity px) :: INPM cs i
+
+npmSRGB :: forall i . Illuminant i => NPM (SRGB i) i
+npmSRGB = npmCompute (chroma (Proxy :: Proxy (SRGB i)))
+
+
+-- memoized
+npmSRGB' :: NPM (SRGB D65) D65
+npmSRGB' = npmCompute (chroma (Proxy :: Proxy (SRGB D65)))
+
+
+
+-- | Normalized primary matrix for sRGB with D65 white point.
+npmD65 :: NPM (SRGB 'D65) 'D65
+npmD65 = NPM $ M3x3 (V3 0.41239079926595923 0.3575843393838781 0.1804807884018344)
+                    (V3 0.21263900587151022 0.7151686787677562 0.0721923153607337)
+                    (V3 0.01933081871559182 0.1191947797946260 0.9505321522496610)
+
+inpmD65 :: INPM RGB 'D65
+inpmD65 = INPM $ M3x3 (V3  3.2409699419045235 -1.5373831775700944 -0.4986107602930038)
+                      (V3 -0.9692436362808795  1.87596750150772    0.0415550574071757)
+                      (V3  0.0556300796969936 -0.20397695888897646 1.0569715142428782)
 
 
 npmStandard :: M3x3
@@ -144,15 +185,13 @@ inpmStandard = M3x3 (V3  3.2406 -1.5372 -0.4986)
                     (V3  0.0557 -0.2040  1.0570)
 
 
-toV3 :: Elevator e => e -> e -> e -> V3
-toV3 v0 v1 v2 = V3 (toDouble v0) (toDouble v1) (toDouble v2)
 
-m3x3' :: Elevator e => (e -> e -> e -> b) -> V3 -> V3 -> V3 -> V3 -> b
-m3x3' f (V3 m00 m01 m02) (V3 m10 m11 m12) (V3 m20 m21 m22) (V3 v0 v1 v2) =
-  f (fromDouble (m00 * v0 + m01 * v0 + m02 * v0))
-    (fromDouble (m10 * v1 + m11 * v1 + m12 * v1))
-    (fromDouble (m20 * v2 + m21 * v2 + m22 * v2))
-{-# INLINE m3x3' #-}
+-- m3x3' :: Elevator e => (e -> e -> e -> b) -> V3 -> V3 -> V3 -> V3 -> b
+-- m3x3' f (V3 m00 m01 m02) (V3 m10 m11 m12) (V3 m20 m21 m22) (V3 v0 v1 v2) =
+--   f (fromDouble (m00 * v0 + m01 * v0 + m02 * v0))
+--     (fromDouble (m10 * v1 + m11 * v1 + m12 * v1))
+--     (fromDouble (m20 * v2 + m21 * v2 + m22 * v2))
+-- {-# INLINE m3x3' #-}
 
 
 -- instance Functor (Pixel RGB) where

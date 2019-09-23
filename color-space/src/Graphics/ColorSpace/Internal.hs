@@ -1,8 +1,12 @@
-{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.ColorSpace.Internal
@@ -17,6 +21,7 @@ module Graphics.ColorSpace.Internal
   , ColorSpace(..)
   , Primary(..)
   , WhitePoint(..)
+  , Illuminant(..)
   , Chromaticity(..)
   --, AlphaSpace(..)
   , XYZ
@@ -36,18 +41,22 @@ data Primary = Primary
   , yPrimary :: {-# UNPACK #-}!Double
   } deriving (Eq, Show)
 
-data WhitePoint = WhitePoint
+data WhitePoint i = WhitePoint
   { xWhitePoint :: {-# UNPACK #-}!Double
   , yWhitePoint :: {-# UNPACK #-}!Double
   } deriving (Eq, Show)
 
-data Chromaticity = Chromaticity
-  { chromaRed   :: {-# UNPACK #-}!Primary
-  , chromaGreen :: {-# UNPACK #-}!Primary
-  , chromaBlue  :: {-# UNPACK #-}!Primary
-  , chromaWhite :: {-# UNPACK #-}!WhitePoint
-  } deriving (Eq, Show)
+data Chromaticity i where
+  Chromaticity :: Illuminant i =>
+    { chromaRed   :: {-# UNPACK #-}!Primary
+    , chromaGreen :: {-# UNPACK #-}!Primary
+    , chromaBlue  :: {-# UNPACK #-}!Primary
+    } -> Chromaticity i
+deriving instance Eq (Chromaticity i)
+deriving instance Show (Chromaticity i)
 
+class Illuminant (i :: k) where
+  whitePoint :: WhitePoint i
 
 -----------
 --- XYZ ---
