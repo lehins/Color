@@ -342,7 +342,7 @@ newtype INPM cs (i :: k) = INPM
   } deriving (Eq, Show)
 
 
-npmCompute :: forall cs i . Illuminant i => Chromaticity i -> NPM cs i
+npmCompute :: forall cs i . Illuminant i => Chromaticity cs i -> NPM cs i
 npmCompute (Chromaticity r g b) = trace "shit" $ NPM (primaries' * M3x3 coeff coeff coeff)
   where
     -- transposed matrix with xyz primaries
@@ -351,5 +351,5 @@ npmCompute (Chromaticity r g b) = trace "shit" $ NPM (primaries' * M3x3 coeff co
                       (V3 (zPrimary r) (zPrimary g) (zPrimary b))
     coeff = invertM3x3 primaries' `multM3x3byV3` whitePointXYZ (whitePoint :: WhitePoint i)
 
-inpmCompute :: forall cs i . Illuminant i => Chromaticity i -> INPM cs i
+inpmCompute :: forall cs i . Illuminant i => Chromaticity cs i -> INPM cs i
 inpmCompute = coerce . invertM3x3 . coerce . npmCompute

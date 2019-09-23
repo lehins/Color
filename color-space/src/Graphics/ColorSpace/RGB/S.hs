@@ -80,76 +80,62 @@ instance (Typeable i, Typeable k, Elevator e) => ColorModel (SRGB (i :: k)) e wh
   {-# INLINE fromComponents #-}
 
 instance Elevator e => ColorSpace RGB e where
-  toPixelXYZ (PixelRGB r g b) =
-    fromV3 PixelXYZ (multM3x3byV3 (unNPM npmD65) (toV3 r g b))
+  toPixelXYZ = npmApply npmD65 . coerce
   {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ (PixelXYZ x y z) =
-    fromV3 PixelRGB (multM3x3byV3 (unINPM inpmD65) (toV3 x y z))
+  fromPixelXYZ = coerce . inpmApply inpmD65
   {-# INLINE fromPixelXYZ #-}
 
-inpmApply :: (Elevator e1, Elevator e2) => (e1 -> e1 -> e1 -> a) -> INPM cs i -> Pixel XYZ e2 -> a
-inpmApply f inpm' (PixelXYZ x y z) = fromV3 f (multM3x3byV3 (unINPM inpm') (toV3 x y z))
+npmApply :: (Elevator e1, Elevator e2) => NPM cs i -> Pixel CM.RGB e2 -> Pixel XYZ e1
+npmApply npm' (CM.PixelRGB r g b) = fromV3 PixelXYZ (multM3x3byV3 (unNPM npm') (toV3 r g b))
+{-# INLINE npmApply #-}
+
+inpmApply :: (Elevator e1, Elevator e2) => INPM cs i -> Pixel XYZ e2 -> Pixel CM.RGB e1
+inpmApply inpm' (PixelXYZ x y z) = fromV3 CM.PixelRGB (multM3x3byV3 (unINPM inpm') (toV3 x y z))
+{-# INLINE inpmApply #-}
 
 
-class Illuminant i => ComputeRGB cs i | cs -> i where
-  chromaticity :: Pixel cs e -> Chromaticity i
-  chroma :: Proxy cs -> Chromaticity i
-  mkRGB :: Pixel CM.RGB e -> Pixel cs e
-  unRGB :: Pixel cs e -> Pixel CM.RGB e
+class Illuminant i => RedGreenBlue cs i | cs -> i where
+  chromaticity :: Chromaticity cs i
+
+  mkPixelRGB :: Pixel CM.RGB e -> Pixel cs e
+
+  unPixelRGB :: Pixel cs e -> Pixel CM.RGB e
+
+  npm :: NPM cs i
+  npm = npmCompute chromaticity
+
+  inpm :: INPM cs i
+  inpm = inpmCompute chromaticity
+
+extractWhitePoint :: Illuminant i => proxy i -> WhitePoint i
+extractWhitePoint _ = whitePoint
+{-# INLINE extractWhitePoint #-}
+
 
   --rgbFromV3 :: V3 -> Pixel cs e
 
-instance Illuminant i => ComputeRGB (SRGB i) i where
-  chromaticity _ = Chromaticity (Primary 0.64 0.33)
-                                (Primary 0.30 0.60)
-                                (Primary 0.15 0.06)
-  chroma _ = Chromaticity (Primary 0.64 0.33)
-                          (Primary 0.30 0.60)
-                          (Primary 0.15 0.06)
-  mkRGB = coerce
-  unRGB = coerce
-
--- toPixelComputedXYZ' ::
---      forall cs i e.
---      ( Coercible  (Pixel cs e) (Pixel CM.RGB e)
---      , Chroma cs i
---      , Components cs e ~ (e, e, e)
---      , ColorSpace cs e
---      )
---   => Pixel cs e
---   -> Pixel XYZ Double
--- toPixelComputedXYZ' px = fromV3 PixelXYZ (multM3x3byV3 (unNPM npm') (toV3 r g b))
---   where
---     npm' = npmCompute (chroma (Proxy :: Proxy cs)) :: NPM cs i
---     (CM.PixelRGB r g b) = coerce px
+instance Illuminant i => RedGreenBlue (SRGB i) i where
+  chromaticity = Chromaticity (Primary 0.64 0.33)
+                              (Primary 0.30 0.60)
+                              (Primary 0.15 0.06)
+  mkPixelRGB = coerce
+  unPixelRGB = coerce
 
 
-rgb2xyz ::
-     forall cs i e. (ComputeRGB cs i, ColorModel cs e)
+fromRGBtoXYZ ::
+     forall cs i e. (RedGreenBlue cs i, ColorModel cs e)
   => Pixel cs e
   -> Pixel XYZ Double
-rgb2xyz px = fromV3 PixelXYZ (multM3x3byV3 (unNPM npm') (toV3 r g b))
-  where
-    !npm' = npmCompute (chromaticity px) :: NPM cs i
-    CM.PixelRGB r g b = unRGB px
+fromRGBtoXYZ = npmApply (npm :: NPM cs i) . unPixelRGB
 
-fromPixelComputedXYZ ::
-     forall cs i e. (ComputeRGB cs i, ColorModel cs e)
+fromXYZtoRGB ::
+     forall cs i e. (RedGreenBlue cs i, ColorModel cs e)
   => Pixel XYZ Double
   -> Pixel cs e
-fromPixelComputedXYZ (PixelXYZ x y z) = px
-  where
-    !px = mkRGB $ fromV3 CM.PixelRGB (multM3x3byV3 (unINPM inpm') (toV3 x y z))
-    !inpm' = inpmCompute (chromaticity px) :: INPM cs i
+fromXYZtoRGB = mkPixelRGB . inpmApply (inpm :: INPM cs i)
 
-npmSRGB :: forall i . Illuminant i => NPM (SRGB i) i
-npmSRGB = npmCompute (chroma (Proxy :: Proxy (SRGB i)))
-
-
--- memoized
-npmSRGB' :: NPM (SRGB D65) D65
-npmSRGB' = npmCompute (chroma (Proxy :: Proxy (SRGB D65)))
-
+convert :: (ColorSpace cs1 e1, ColorSpace cs2 e2) => Pixel cs1 e1 -> Pixel cs2 e2
+convert = fromPixelXYZ . toPixelXYZ
 
 
 -- | Normalized primary matrix for sRGB with D65 white point.

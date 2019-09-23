@@ -46,14 +46,14 @@ data WhitePoint i = WhitePoint
   , yWhitePoint :: {-# UNPACK #-}!Double
   } deriving (Eq, Show)
 
-data Chromaticity i where
+data Chromaticity cs i where
   Chromaticity :: Illuminant i =>
     { chromaRed   :: {-# UNPACK #-}!Primary
     , chromaGreen :: {-# UNPACK #-}!Primary
     , chromaBlue  :: {-# UNPACK #-}!Primary
-    } -> Chromaticity i
-deriving instance Eq (Chromaticity i)
-deriving instance Show (Chromaticity i)
+    } -> Chromaticity cs i
+deriving instance Eq (Chromaticity cs i)
+deriving instance Show (Chromaticity cs i)
 
 class Illuminant (i :: k) where
   whitePoint :: WhitePoint i
