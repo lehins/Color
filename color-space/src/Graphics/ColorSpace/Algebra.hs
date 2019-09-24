@@ -23,10 +23,6 @@ module Graphics.ColorSpace.Algebra
   , invertM3x3
   , multM3x3byV3
   , transposeM3x3
-  , NPM(..)
-  , INPM(..)
-  , npmCompute
-  , inpmCompute
   , Primary(..)
   , zPrimary
   , primaryXZ
@@ -40,9 +36,6 @@ module Graphics.ColorSpace.Algebra
 import Text.Printf
 import Graphics.ColorSpace.Internal
 import Graphics.ColorModel.Elevator
-import Data.Coerce
-
-import Debug.Trace
 
 -- | A 3D vector with @x@, @y@ and @z@ components in double floating point precision.
 data V3 =
@@ -75,7 +68,7 @@ data M3x3 =
 
 instance Show M3x3 where
   showsPrec _ (M3x3 v0 v1 v2) =
-    ("[ " ++) . shows v0 . ("\n, " ++) . shows v1 . ("\n, " ++) . shows v2 . (++ " ]")
+    ("[ " ++) . shows v0 . ("\n, " ++) . shows v1 . ("\n, " ++) . shows v2 . (" ]" ++)
 
 showV3 :: V3 -> String
 showV3 (V3 x y z) = concat ["[ ", show x, ", ", show y, ", ", show z, " ]"]
@@ -332,24 +325,3 @@ primaryXZ vY (Primary x y) = V3 (vYy * x) vY (vYy * (1 - x - y))
 {-# INLINE primaryXZ #-}
 
 
-
-newtype NPM cs (i :: k) = NPM
-  { unNPM :: M3x3
-  } deriving (Eq, Show)
-
-newtype INPM cs (i :: k) = INPM
-  { unINPM :: M3x3
-  } deriving (Eq, Show)
-
-
-npmCompute :: forall cs i . Illuminant i => Chromaticity cs i -> NPM cs i
-npmCompute (Chromaticity r g b) = trace "shit" $ NPM (primaries' * M3x3 coeff coeff coeff)
-  where
-    -- transposed matrix with xyz primaries
-    primaries' = M3x3 (V3 (xPrimary r) (xPrimary g) (xPrimary b))
-                      (V3 (yPrimary r) (yPrimary g) (yPrimary b))
-                      (V3 (zPrimary r) (zPrimary g) (zPrimary b))
-    coeff = invertM3x3 primaries' `multM3x3byV3` whitePointXYZ (whitePoint :: WhitePoint i)
-
-inpmCompute :: forall cs i . Illuminant i => Chromaticity cs i -> INPM cs i
-inpmCompute = coerce . invertM3x3 . coerce . npmCompute

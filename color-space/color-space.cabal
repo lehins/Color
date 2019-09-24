@@ -21,7 +21,7 @@ library
                      -- , Graphics.ColorModel.Complex
                      -- , Graphics.ColorModel.CMYK
                      , Graphics.ColorModel.RGB
-                     -- , Graphics.ColorModel.HSI
+                     , Graphics.ColorModel.HSI
                      -- , Graphics.ColorModel.HSL
                      -- , Graphics.ColorModel.HSV
                      -- , Graphics.ColorModel.YCbCr

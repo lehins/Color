@@ -3,13 +3,11 @@
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
@@ -24,25 +22,25 @@ module Graphics.ColorSpace.RGB.S
   ( pattern PixelRGB
   --, ToRGB(..)
   , RGB
+  , SRGB
   --, RGBA
-  , Pixel
-  , Illuminant(..)
   -- , npm
   -- , inpm
   , npmStandard
   , inpmStandard
   ) where
 
+import Data.Coerce
+import Data.Typeable
 import Foreign.Storable
-import qualified Graphics.ColorModel.RGB as CM
-import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Helpers
-import Graphics.ColorSpace.Internal
+import Graphics.ColorModel.Internal
+import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.CIE1931.Illuminants
+import Graphics.ColorSpace.Internal
+import Graphics.ColorSpace.RGB.Internal
 import Prelude hiding (map)
-import Data.Typeable
-import Data.Coerce
 
 
 
@@ -80,39 +78,16 @@ instance (Typeable i, Typeable k, Elevator e) => ColorModel (SRGB (i :: k)) e wh
   {-# INLINE fromComponents #-}
 
 instance Elevator e => ColorSpace RGB e where
-  toPixelXYZ = npmApply npmD65 . coerce
+  toPixelXYZ = npmApply npmStandard . coerce
   {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = coerce . inpmApply inpmD65
+  fromPixelXYZ = coerce . inpmApply inpmStandard
   {-# INLINE fromPixelXYZ #-}
 
-npmApply :: (Elevator e1, Elevator e2) => NPM cs i -> Pixel CM.RGB e2 -> Pixel XYZ e1
-npmApply npm' (CM.PixelRGB r g b) = fromV3 PixelXYZ (multM3x3byV3 (unNPM npm') (toV3 r g b))
-{-# INLINE npmApply #-}
-
-inpmApply :: (Elevator e1, Elevator e2) => INPM cs i -> Pixel XYZ e2 -> Pixel CM.RGB e1
-inpmApply inpm' (PixelXYZ x y z) = fromV3 CM.PixelRGB (multM3x3byV3 (unINPM inpm') (toV3 x y z))
-{-# INLINE inpmApply #-}
-
-
-class Illuminant i => RedGreenBlue cs i | cs -> i where
-  chromaticity :: Chromaticity cs i
-
-  mkPixelRGB :: Pixel CM.RGB e -> Pixel cs e
-
-  unPixelRGB :: Pixel cs e -> Pixel CM.RGB e
-
-  npm :: NPM cs i
-  npm = npmCompute chromaticity
-
-  inpm :: INPM cs i
-  inpm = inpmCompute chromaticity
 
 extractWhitePoint :: Illuminant i => proxy i -> WhitePoint i
 extractWhitePoint _ = whitePoint
 {-# INLINE extractWhitePoint #-}
 
-
-  --rgbFromV3 :: V3 -> Pixel cs e
 
 instance Illuminant i => RedGreenBlue (SRGB i) i where
   chromaticity = Chromaticity (Primary 0.64 0.33)
@@ -122,41 +97,38 @@ instance Illuminant i => RedGreenBlue (SRGB i) i where
   unPixelRGB = coerce
 
 
-fromRGBtoXYZ ::
-     forall cs i e. (RedGreenBlue cs i, ColorModel cs e)
-  => Pixel cs e
-  -> Pixel XYZ Double
-fromRGBtoXYZ = npmApply (npm :: NPM cs i) . unPixelRGB
-
-fromXYZtoRGB ::
-     forall cs i e. (RedGreenBlue cs i, ColorModel cs e)
-  => Pixel XYZ Double
-  -> Pixel cs e
-fromXYZtoRGB = mkPixelRGB . inpmApply (inpm :: INPM cs i)
 
 convert :: (ColorSpace cs1 e1, ColorSpace cs2 e2) => Pixel cs1 e1 -> Pixel cs2 e2
 convert = fromPixelXYZ . toPixelXYZ
 
 
--- | Normalized primary matrix for sRGB with D65 white point.
-npmD65 :: NPM (SRGB 'D65) 'D65
-npmD65 = NPM $ M3x3 (V3 0.41239079926595923 0.3575843393838781 0.1804807884018344)
-                    (V3 0.21263900587151022 0.7151686787677562 0.0721923153607337)
-                    (V3 0.01933081871559182 0.1191947797946260 0.9505321522496610)
+-- | Normalized primary matrix, which is used for conversion of linear sRGB with `D65`
+-- whitepoint to XYZ, as specified in @IEC 61966-2-1:1999@ standard
+--
+-- >>> import Graphics.ColorSpace.RGB.S as SRGB
+-- >>> SRGB.npmStandard
+-- [ [ 0.4124000, 0.3576000, 0.1805000]
+-- , [ 0.2126000, 0.7152000, 0.0722000]
+-- , [ 0.0193000, 0.1192000, 0.9505000] ]
+--
+-- If you prefer to use a matrix with values that wheren't rounded, like it is above, you
+-- can use the computed `npm` instead (below rounding is done only during conversion to
+-- string):
+--
+-- >>> :set -XDataKinds
+-- >>> npm :: NPM SRGB.RGB 'D65
+-- [ [ 0.4123908, 0.3575843, 0.1804808]
+-- , [ 0.2126390, 0.7151687, 0.0721923]
+-- , [ 0.0193308, 0.1191948, 0.9505322] ]
+--
+-- @since 0.1.0
+npmStandard :: NPM RGB 'D65
+npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
+                         (V3 0.2126 0.7152 0.0722)
+                         (V3 0.0193 0.1192 0.9505)
 
-inpmD65 :: INPM RGB 'D65
-inpmD65 = INPM $ M3x3 (V3  3.2409699419045235 -1.5373831775700944 -0.4986107602930038)
-                      (V3 -0.9692436362808795  1.87596750150772    0.0415550574071757)
-                      (V3  0.0556300796969936 -0.20397695888897646 1.0569715142428782)
-
-
-npmStandard :: M3x3
-npmStandard = M3x3 (V3 0.4124 0.3576 0.1805)
-                   (V3 0.2126 0.7152 0.0722)
-                   (V3 0.0193 0.1192 0.9505)
-
--- | Normalized primary matrix for conversion of XYZ to linear sRGB, as specified in @IEC
--- 61966-2-1:1999@ standard
+-- | Inverse of normalized primary matrix, which is used for conversion of XYZ to linear
+-- sRGB, as specified in @IEC 61966-2-1:1999@ standard
 --
 -- >>> import Graphics.ColorSpace.RGB.S as SRGB
 -- >>> SRGB.inpmStandard
@@ -165,10 +137,10 @@ npmStandard = M3x3 (V3 0.4124 0.3576 0.1805)
 -- , [ 0.0557000,-0.2040000, 1.0570000] ]
 --
 -- @since 0.1.0
-inpmStandard :: M3x3
-inpmStandard = M3x3 (V3  3.2406 -1.5372 -0.4986)
-                    (V3 -0.9689  1.8758  0.0415)
-                    (V3  0.0557 -0.2040  1.0570)
+inpmStandard :: INPM RGB 'D65
+inpmStandard = INPM $ M3x3 (V3  3.2406 -1.5372 -0.4986)
+                           (V3 -0.9689  1.8758  0.0415)
+                           (V3  0.0557 -0.2040  1.0570)
 
 
 

@@ -23,7 +23,6 @@ module Graphics.ColorModel.RGB
 import Foreign.Storable
 import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Helpers
-import Prelude hiding (map)
 
 
 -- | The most common @RGB@ color model
