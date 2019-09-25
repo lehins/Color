@@ -21,6 +21,7 @@ module Graphics.ColorSpace.Internal
   , ColorSpace(..)
   , Primary(..)
   , WhitePoint(..)
+  , pixelWhitePoint
   , Illuminant(..)
   , Chromaticity(..)
   --, AlphaSpace(..)
@@ -57,6 +58,18 @@ deriving instance Show (Chromaticity cs i)
 
 class Illuminant (i :: k) where
   whitePoint :: WhitePoint i
+
+-- | Get the white point of any pixel with color space that specifies one. itself isn't
+-- actually evaluated, its type carries enough information for getting the white point.
+--
+-- >>> import Graphics.ColorSpace.RGB.S as SRGB
+-- >>> pixelWhitePoint (PixelRGB 0.1 0.2 0.3 :: Pixel RGB Double)
+-- WhitePoint {xWhitePoint = 0.3127, yWhitePoint = 0.329}
+--
+-- @since 0.1.0
+pixelWhitePoint :: Illuminant i => Pixel (cs i) e -> WhitePoint i
+pixelWhitePoint _ = whitePoint
+{-# INLINE pixelWhitePoint #-}
 
 -----------
 --- XYZ ---

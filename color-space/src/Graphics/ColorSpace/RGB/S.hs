@@ -20,14 +20,19 @@
 --
 module Graphics.ColorSpace.RGB.S
   ( pattern PixelRGB
+  , pattern PixelSRGB
   --, ToRGB(..)
   , RGB
   , SRGB
+  , computePixelXYZ
+  , computePixelRGB
   --, RGBA
   -- , npm
   -- , inpm
   , npmStandard
   , inpmStandard
+  , forwardGamma
+  , inverseGamma
   ) where
 
 import Data.Coerce
@@ -39,8 +44,7 @@ import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.CIE1931.Illuminants
 import Graphics.ColorSpace.Internal
-import Graphics.ColorSpace.RGB.Internal
-import Prelude hiding (map)
+import Graphics.ColorSpace.RGB.Linear
 
 
 
@@ -52,20 +56,25 @@ type RGB = SRGB 'D65
 data SRGB (i :: k)
 
 
-newtype instance Pixel (SRGB i) e = PixelSRGB (Pixel CM.RGB e)
+newtype instance Pixel (SRGB i) e = SRGB (Pixel CM.RGB e)
   deriving (Eq, Functor, Applicative, Foldable, Traversable, Storable)
 
 pattern PixelRGB :: e -> e -> e -> Pixel RGB e
-pattern PixelRGB r g b = PixelSRGB (CM.PixelRGB r g b)
+pattern PixelRGB r g b = SRGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGB #-}
+
+pattern PixelSRGB :: e -> e -> e -> Pixel (SRGB i) e
+pattern PixelSRGB r g b = SRGB (CM.PixelRGB r g b)
+{-# COMPLETE PixelSRGB #-}
 
 -- -- | Conversion to `RGB` color space.
 -- class ColorSpace cs e => ToRGB cs e where
 --   -- | Convert to an `RGB` pixel.
 --   toPixelRGB :: Pixel cs e -> Pixel RGB Double
 
+-- TODO: round to 7 decimal places for floating point
 instance Show e => Show (Pixel (SRGB i) e) where
-  showsPrec _ (PixelSRGB (CM.PixelRGB r g b)) =
+  showsPrec _ (PixelSRGB r g b) =
     showsP "sRGB:" -- ++ show i
     (shows3 r g b)
 
@@ -77,26 +86,89 @@ instance (Typeable i, Typeable k, Elevator e) => ColorModel (SRGB (i :: k)) e wh
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
 
+
+-- TODO: add tex formula
+forwardGamma :: Elevator e => Double -> e
+forwardGamma u
+  | u <= 0.0031308 = fromDouble (12.92 * u)
+  | otherwise = fromDouble (1.055 * (u ** (1 / 2.4)) - 0.055)
+{-# INLINE forwardGamma #-}
+
+-- TODO: add tex formula
+inverseGamma :: Elevator e => e -> Double
+inverseGamma eu
+  | u <= 0.04045 = u / 12.92
+  | otherwise = ((u + 0.055) / 1.055) ** 2.4
+  where !u = toDouble eu
+{-# INLINE inverseGamma #-}
+
+
+-- | sRGB with `D65` illuminant
 instance Elevator e => ColorSpace RGB e where
-  toPixelXYZ = npmApply npmStandard . coerce
+  toPixelXYZ = npmApply npmStandard . fmap inverseGamma . coerce
   {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = coerce . inpmApply inpmStandard
+  fromPixelXYZ = coerce . fmap forwardGamma . inpmApply inpmStandard
   {-# INLINE fromPixelXYZ #-}
 
+-- -- | sRGB with `D65` illuminant
+-- instance Elevator e => ComputedColorSpace RGB e where
+--   toPixelXYZ = npmApply npmStandard . fmap inverseGamma . coerce
+--   {-# INLINE toPixelXYZ #-}
+--   fromPixelXYZ = coerce . fmap forwardGamma . inpmApply inpmStandard
+--   {-# INLINE fromPixelXYZ #-}
 
-extractWhitePoint :: Illuminant i => proxy i -> WhitePoint i
-extractWhitePoint _ = whitePoint
-{-# INLINE extractWhitePoint #-}
 
 
-instance Illuminant i => RedGreenBlue (SRGB i) i where
+
+-- | Linear sRGB conversion without gamma correction
+instance Illuminant i => LinearRGB SRGB i where
   chromaticity = Chromaticity (Primary 0.64 0.33)
                               (Primary 0.30 0.60)
                               (Primary 0.15 0.06)
   mkPixelRGB = coerce
   unPixelRGB = coerce
 
+-- | Convert a pixel in sRGB color space into XYZ color space pixel, while using a
+-- computed `NPM` matrix (vs a `npmStandard` matrix with rounded values), as well as
+-- applying gamma correction. Source illuminant shall be supplied at a type level.
+--
+-- >>> import Graphics.ColorSpace.RGB.S
+-- >>> import Data.Word
+-- >>> :set -XDataKinds
+-- >>> computePixelXYZ (PixelSRGB 128 255 0 :: Pixel (SRGB 'D50) Word8)
+-- <XYZ:(0.45359299655898744|0.75173107956617|0.12119759448334924)>
+-- >>> computePixelXYZ (PixelSRGB 128 255 0 :: Pixel (SRGB 'D65) Word8)
+-- <XYZ:(0.44660322355579873|0.7610690409189028|0.1233675399901848)>
+--
+-- @since 0.1.0
+computePixelXYZ ::
+     forall i e. (LinearRGB SRGB i, Elevator e)
+  => Pixel (SRGB i) e
+  -> Pixel XYZ Double
+computePixelXYZ = npmApply (npm :: NPM SRGB i) . fmap inverseGamma . unPixelRGB
+{-# INLINE computePixelXYZ #-}
 
+-- | Convert a pixel in XYZ color space into sRGB color space pixel, while using a
+-- computed `INPM` matrix (vs a `inpmStandard` matrix with rounded values), as well as
+-- applying reverse gamma correction. Reslting illuminant shall be supplied at a type
+-- level.
+--
+-- >>> import Graphics.ColorSpace.RGB.S
+-- >>> import Data.Word
+-- >>> :set -XDataKinds
+-- >>> px = PixelSRGB 128 255 0 :: Pixel (SRGB 'D65) Word8
+-- >>> computePixelXYZ px
+-- <XYZ:(0.44660322355579873|0.7610690409189028|0.1233675399901848)>
+-- >>> computePixelRGB (computePixelXYZ px) :: Pixel (SRGB 'D65) Word8
+-- <sRGB::(128|255|0)>
+--
+-- @since 0.1.0
+computePixelRGB ::
+     forall i e. (LinearRGB SRGB i, Elevator e)
+  => Pixel XYZ Double
+  -> Pixel (SRGB i) e
+computePixelRGB = mkPixelRGB . fmap forwardGamma . inpmApply (inpm :: INPM SRGB i)
+{-# INLINE computePixelRGB #-}
 
 convert :: (ColorSpace cs1 e1, ColorSpace cs2 e2) => Pixel cs1 e1 -> Pixel cs2 e2
 convert = fromPixelXYZ . toPixelXYZ
@@ -105,11 +177,13 @@ convert = fromPixelXYZ . toPixelXYZ
 -- | Normalized primary matrix, which is used for conversion of linear sRGB with `D65`
 -- whitepoint to XYZ, as specified in @IEC 61966-2-1:1999@ standard
 --
--- >>> import Graphics.ColorSpace.RGB.S as SRGB
--- >>> SRGB.npmStandard
+-- >>> import Graphics.ColorSpace.RGB.S
+-- >>> npmStandard
 -- [ [ 0.4124000, 0.3576000, 0.1805000]
 -- , [ 0.2126000, 0.7152000, 0.0722000]
 -- , [ 0.0193000, 0.1192000, 0.9505000] ]
+-- >>> extractWhitePoint SRGB.npmStandard
+-- WhitePoint {xWhitePoint = 0.3127, yWhitePoint = 0.329}
 --
 -- If you prefer to use a matrix with values that wheren't rounded, like it is above, you
 -- can use the computed `npm` instead (below rounding is done only during conversion to
@@ -122,7 +196,7 @@ convert = fromPixelXYZ . toPixelXYZ
 -- , [ 0.0193308, 0.1191948, 0.9505322] ]
 --
 -- @since 0.1.0
-npmStandard :: NPM RGB 'D65
+npmStandard :: NPM SRGB 'D65
 npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
                          (V3 0.2126 0.7152 0.0722)
                          (V3 0.0193 0.1192 0.9505)
@@ -130,14 +204,14 @@ npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
 -- | Inverse of normalized primary matrix, which is used for conversion of XYZ to linear
 -- sRGB, as specified in @IEC 61966-2-1:1999@ standard
 --
--- >>> import Graphics.ColorSpace.RGB.S as SRGB
--- >>> SRGB.inpmStandard
+-- >>> import Graphics.ColorSpace.RGB.S
+-- >>> inpmStandard
 -- [ [ 3.2406000,-1.5372000,-0.4986000]
 -- , [-0.9689000, 1.8758000, 0.0415000]
 -- , [ 0.0557000,-0.2040000, 1.0570000] ]
 --
 -- @since 0.1.0
-inpmStandard :: INPM RGB 'D65
+inpmStandard :: INPM SRGB 'D65
 inpmStandard = INPM $ M3x3 (V3  3.2406 -1.5372 -0.4986)
                            (V3 -0.9689  1.8758  0.0415)
                            (V3  0.0557 -0.2040  1.0570)

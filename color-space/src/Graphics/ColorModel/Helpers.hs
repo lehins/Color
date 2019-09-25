@@ -47,7 +47,17 @@ shows5 :: Show a => a -> a -> a -> a -> a -> ShowS
 shows5 c0 c1 c2 c3 c4 = shows c0 . channelSeparator . shows4 c1 c2 c3 c4
 
 showsP :: String -> ShowS -> ShowS
-showsP t i = ('<' :) . (t ++) . (":(" ++) . i . (")>" ++)
+showsP t i = ('<' :) . (t ++) . (":>(" ++) . i . (")" ++)
+
+_showsGP ::
+     String
+  -- ^ Color space name
+  -> String
+  -- ^ Illuminant name
+  -> ShowS
+  -> ShowS
+_showsGP t i x = ('<':) . (t ++) . ((':':i) ++) . (">(" ++) . x . (")" ++)
+
 
 -- Foldable helpers
 
