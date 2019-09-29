@@ -29,7 +29,6 @@ library
                      , Graphics.ColorSpace.Algebra
                      -- , Graphics.ColorSpace.RGB
                      , Graphics.ColorSpace.RGB.S
-                     , Graphics.ColorSpace.RGB.Linear
                      -- , Graphics.ColorSpace.RGB.SC
                      -- , Graphics.ColorSpace.RGB.Adobe1998
                      -- , Graphics.ColorSpace.RGB.AdobeWideGamut
@@ -74,6 +73,7 @@ library
                      , Graphics.ColorModel.Elevator
                      , Graphics.ColorModel.Helpers
                      , Graphics.ColorSpace.Internal
+                     , Graphics.ColorSpace.RGB.Internal
   build-depends:       base            >= 4.8 && < 5
                      , deepseq
                      , data-default-class

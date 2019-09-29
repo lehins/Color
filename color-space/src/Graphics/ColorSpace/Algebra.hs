@@ -1,5 +1,4 @@
 {-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 -- |
@@ -22,6 +21,7 @@ module Graphics.ColorSpace.Algebra
   , detM3x3
   , invertM3x3
   , multM3x3byV3
+  , multM3x3byM3x3
   , transposeM3x3
   , Primary(..)
   , zPrimary
@@ -93,6 +93,20 @@ multM3x3byV3 (M3x3 (V3 a b c)
                                                   (d * v0 + e * v1 + f * v2)
                                                   (g * v0 + h * v1 + i * v2)
 {-# INLINE multM3x3byV3 #-}
+
+multM3x3byM3x3 :: M3x3 -> M3x3 -> M3x3
+multM3x3byM3x3 m1 m2 =
+  M3x3 (V3 (a1 * a2 + b1 * d2 + c1 * g2) (a1 * b2 + b1 * e2 + c1 * h2) (a1 * c2 + b1 * f2 + c1 * i2))
+       (V3 (d1 * a2 + e1 * d2 + f1 * g2) (d1 * b2 + e1 * e2 + f1 * h2) (d1 * c2 + e1 * f2 + f1 * i2))
+       (V3 (g1 * a2 + h1 * d2 + i1 * g2) (g1 * b2 + h1 * e2 + i1 * h2) (g1 * c2 + h1 * f2 + i1 * i2))
+  where
+    M3x3 (V3 a1 b1 c1)
+         (V3 d1 e1 f1)
+         (V3 g1 h1 i1) = m1
+    M3x3 (V3 a2 b2 c2)
+         (V3 d2 e2 f2)
+         (V3 g2 h2 i2) = m2
+{-# INLINE multM3x3byM3x3 #-}
 
 
 -- | Invert a 3x3 matrix.
