@@ -32,15 +32,16 @@ import qualified Graphics.ColorModel.HSI as CM
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RedGreenBlue.Internal
 
+
 data HSI (cs :: k -> *) (i :: k)
 
 newtype instance Pixel (HSI cs i) e = HSI (Pixel CM.HSI e)
   deriving (Eq, Functor, Applicative, Foldable, Traversable, Storable)
 
 instance ColorModel (cs i) e => Show (Pixel (HSI cs i) e) where
-  showsPrec _ px@(PixelHSI h s i) = showsP (showsColorModel px) (shows3 h s i)
+  showsPrec _ = showsColorModel
 
--- | Constructor for the most common @sRGB@ color space with the default `D65` illuminant
+-- | Constructor for an RGB color space in an alternative HSI color model
 pattern PixelHSI :: e -> e -> e -> Pixel (HSI cs i) e
 pattern PixelHSI h s i = HSI (CM.PixelHSI h s i)
 {-# COMPLETE PixelHSI #-}
@@ -59,7 +60,7 @@ instance ColorModel (cs i) e => ColorModel (HSI cs (i :: k)) e where
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModel _ = ("HSI (" ++) . showsColorModel (pure 0 :: Pixel (cs i) e) . (")" ++)
+  showsColorModelName _ = ("HSI" ++)
 
 
 -- | HSI color space, that is based on some actual RGB color space.
@@ -74,3 +75,4 @@ instance (Typeable cs, Typeable k, Typeable i, ColorSpace (cs i) e, RedGreenBlue
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
   {-# INLINE fromPixelXYZ #-}
+  showsColorSpaceName _ = showsColorSpaceName (pure 0 :: Pixel (cs i) e)

@@ -29,7 +29,7 @@ library
                      , Graphics.ColorSpace.Algebra
                      -- , Graphics.ColorSpace.RedGreenBlue
                      , Graphics.ColorSpace.RedGreenBlue.SRGB
-                     -- , Graphics.ColorSpace.RedGreenBlue.AdobeRGB
+                     , Graphics.ColorSpace.RedGreenBlue.AdobeRGB
                      -- , Graphics.ColorSpace.RedGreenBlue.Alternative
                      -- , Graphics.ColorSpace.RedGreenBlue.Alternative.HSI
                      -- , Graphics.ColorSpace.RedGreenBlue.Alternative.HSV
@@ -49,6 +49,7 @@ library
                      -- , Graphics.ColorSpace.LMS
                      -- , Graphics.ColorSpace.DCI_P3
                      -- , Graphics.ColorSpace.CIE1931.RGB
+                     , Graphics.ColorSpace.CIE1931
                      , Graphics.ColorSpace.CIE1931.XYZ
                      , Graphics.ColorSpace.CIE1931.Illuminants
                      -- , Graphics.ColorSpace.CIE1976.LUV
@@ -102,7 +103,6 @@ library
 --                     , Spec
 --   build-depends:      base             >= 4.8 && < 5
 --                     , color-space
---                     , doctest
 --                     , hspec
 --                     , QuickCheck
 
@@ -113,7 +113,6 @@ library
 --                       -Wredundant-constraints
 --                       -fno-warn-orphans
 --                       -threaded
---                       -with-rtsopts=-N2
 
 source-repository head
   type:     git

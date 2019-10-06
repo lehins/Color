@@ -1,6 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 -- |
--- Module      : Graphics.ColorSpace.Internal
+-- Module      : Graphics.ColorSpace.CIE1931.Internal
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
@@ -37,7 +37,7 @@ instance Illuminant 'F11 where whitePoint = WhitePoint 0.38050 0.37690
 instance Illuminant 'F12 where whitePoint = WhitePoint 0.43700 0.40420
 
 
--- References:
+-- | References:
 --
 -- * https://web.archive.org/web/20050523033826/http://www.hunterlab.com:80/appnotes/an05_05.pdf
 data Illuminant2
