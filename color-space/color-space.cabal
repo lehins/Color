@@ -27,10 +27,18 @@ library
                      -- , Graphics.ColorModel.YCbCr
                      -- , Graphics.ColorSpace
                      , Graphics.ColorSpace.Algebra
-                     -- , Graphics.ColorSpace.RGB
-                     , Graphics.ColorSpace.RGB.S
+                     -- , Graphics.ColorSpace.RedGreenBlue
+                     , Graphics.ColorSpace.RedGreenBlue.SRGB
+                     -- , Graphics.ColorSpace.RedGreenBlue.AdobeRGB
+                     -- , Graphics.ColorSpace.RedGreenBlue.Alternative
+                     -- , Graphics.ColorSpace.RedGreenBlue.Alternative.HSI
+                     -- , Graphics.ColorSpace.RedGreenBlue.Alternative.HSV
+                     -- , Graphics.ColorSpace.RedGreenBlue.Alternative.HSL
+                     -- , Graphics.ColorSpace.RedGreenBlue.Alternative.YCbCr
+                     -- , Graphics.ColorSpace.RedGreenBlue.Alternative.CMYK
+                     -- , Graphics.ColorSpace.RedGreenBlue.Derived.SRGB
+                     -- , Graphics.ColorSpace.RedGreenBlue.Derived.AdobeRGB
                      -- , Graphics.ColorSpace.RGB.SC
-                     -- , Graphics.ColorSpace.RGB.Adobe1998
                      -- , Graphics.ColorSpace.RGB.AdobeWideGamut
                      -- , Graphics.ColorSpace.RGB.ProPhoto
                      -- , Graphics.ColorSpace.Common
@@ -73,7 +81,7 @@ library
                      , Graphics.ColorModel.Elevator
                      , Graphics.ColorModel.Helpers
                      , Graphics.ColorSpace.Internal
-                     , Graphics.ColorSpace.RGB.Internal
+                     , Graphics.ColorSpace.RedGreenBlue.Internal
   build-depends:       base            >= 4.8 && < 5
                      , deepseq
                      , data-default-class

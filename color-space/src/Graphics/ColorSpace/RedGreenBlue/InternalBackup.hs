@@ -41,6 +41,56 @@ import Prelude hiding (map)
 import Data.Coerce
 --import GHC.TypeLits
 
+-- class Illuminant i => LinearRGB (cs :: k -> *) (i :: k) where
+--   chromaticity :: Chromaticity cs i
+
+--   mkPixelRGB :: Pixel CM.RGB e -> Pixel (cs i) e
+
+--   unPixelRGB :: Pixel (cs i) e -> Pixel CM.RGB e
+
+--   npm :: NPM cs i
+--   npm = npmDerive chromaticity
+
+--   inpm :: INPM cs i
+--   inpm = inpmDerive chromaticity
+
+--   -- | Encoding color component transfer function (inverse)
+--   ecctf :: ColorModel (cs i) e => Pixel CM.RGB Double -> Pixel (cs i) e
+--   ecctf = mkPixelRGB . fmap fromDouble
+--   {-# INLINE ecctf #-}
+
+--   -- | Decoding color component transfer function (forward)
+--   dcctf :: ColorModel (cs i) e => Pixel (cs i) e -> Pixel CM.RGB Double
+--   dcctf = fmap toDouble . unPixelRGB
+--   {-# INLINE dcctf #-}
+
+
+
+--   npmApply :: Pixel (cs i) Double -> Pixel XYZ Double
+--   npmApply px = fromV3 PixelXYZ (multM3x3byV3 (unNPM npm) (toV3 r g b))
+--     where CM.PixelRGB r g b = unPixelRGB px
+--   {-# INLINE npmApply #-}
+
+  -- inpmApply :: (Elevator e1, Elevator e2) => INPM cs i -> Pixel XYZ e2 -> Pixel CM.RGB e1
+  -- inpmApply inpm' (PixelXYZ x y z) = fromV3 CM.PixelRGB (multM3x3byV3 (unINPM inpm') (toV3 x y z))
+  -- {-# INLINE inpmApply #-}
+
+
+  -- standardRGBtoXYZ ::
+  --      forall cs i e. (StandardRGB cs i, ColorModel (cs i) e)
+  --   => Pixel (cs i) e
+  --   -> Pixel XYZ Double
+  -- standardRGBtoXYZ = npmApply (npmStandard :: NPM cs i) . dcctf
+  -- {-# INLINE standardRGBtoXYZ #-}
+
+  -- -- | Standard  transformation of @CIE1931 `XYZ`@ to @RGB@ colorspace.
+  -- standardXYZtoRGB ::
+  --      forall cs i e. (StandardRGB cs i, ColorModel (cs i) e)
+  --   => Pixel XYZ Double
+  --   -> Pixel (cs i) e
+  -- standardXYZtoRGB = ecctf . inpmApply (inpmStandard :: INPM cs i)
+  -- {-# INLINE standardXYZtoRGB #-}
+
 
 class Illuminant i => DerivedRGB (cs :: k -> *) (i :: k) where
   chromaticity :: Chromaticity cs i
@@ -64,6 +114,7 @@ class Illuminant i => DerivedRGB (cs :: k -> *) (i :: k) where
   dcctf :: ColorModel (cs i) e => Pixel (cs i) e -> Pixel CM.RGB Double
   dcctf = fmap toDouble . unPixelRGB
   {-# INLINE dcctf #-}
+
 
 class DerivedRGB cs i => StandardRGB cs i where
 

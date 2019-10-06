@@ -8,88 +8,91 @@
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
--- Module      : Graphics.ColorSpace.RGB.S
+-- Module      : Graphics.ColorSpace.RedGreenBlue.SRGB
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.RGB.S
+module Graphics.ColorSpace.RedGreenBlue.SRGB
   ( pattern PixelRGB
-  , pattern PixelSRGB
-  --, ToRGB(..)
   , RGB
   , SRGB
   , Pixel(RGB)
-  -- , computePixelXYZ
-  -- , computePixelRGB
   --, RGBA
-  -- , npm
-  -- , inpm
-  , npmStandard
-  , inpmStandard
+  , primaries
   , transfer
   , itransfer
   ) where
 
 import Data.Coerce
-import Data.Typeable
 import Foreign.Storable
 import Graphics.ColorModel.Helpers
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
-import qualified Graphics.ColorModel.HSI as CM
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.CIE1931.Illuminants
 import Graphics.ColorSpace.Internal
-import Graphics.ColorSpace.RGB.Internal
+import Graphics.ColorSpace.RedGreenBlue.Internal
 
 
 
--- | The most common @sRGB@ color space with the default `D65` illuminant
 type SRGB = RGB 'D65
 
 
--- | The most common @sRGB@ color space, but with a variable white point.
-data RGB (i :: k)
+-- | The most common @sRGB@ color space with the default `D65` illuminant
+data RGB (i :: Illuminant2)
 
-
-newtype instance Pixel (RGB i) e = RGB (Pixel CM.RGB e)
+newtype instance Pixel (RGB 'D65) e = RGB (Pixel CM.RGB e)
   deriving (Eq, Functor, Applicative, Foldable, Traversable, Storable)
 
-
 -- | Constructor for the most common @sRGB@ color space with the default `D65` illuminant
-pattern PixelRGB :: e -> e -> e -> Pixel (RGB i) e
+pattern PixelRGB :: e -> e -> e -> Pixel SRGB e
 pattern PixelRGB r g b = RGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGB #-}
 
--- | Constructor for the most common @sRGB@ color space with a polymorphic illuminant
-pattern PixelSRGB :: e -> e -> e -> Pixel SRGB e
-pattern PixelSRGB r g b = RGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelSRGB #-}
-
--- -- | Conversion to `RGB` color space.
--- class ColorSpace cs e => ToRGB cs e where
---   -- | Convert to an `RGB` pixel.
---   toPixelRGB :: Pixel cs e -> Pixel RGB Double
-
 -- TODO: round to 7 decimal places for floating point
-instance Show e => Show (Pixel (RGB i) e) where
+instance Show e => Show (Pixel (RGB 'D65) e) where
   showsPrec _ (PixelRGB r g b) =
     showsP "sRGB:" -- ++ show i
     (shows3 r g b)
 
 -- | sRGB defined in 'Graphics.ColorSpace.RGB.S'
-instance (Typeable i, Typeable k, Elevator e) => ColorModel (RGB (i :: k)) e where
-  type Components (RGB i) e = (e, e, e)
+instance Elevator e => ColorModel (RGB 'D65) e where
+  type Components (RGB 'D65) e = (e, e, e)
   toComponents = toComponents . coerce
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
+
+-- | sRGB color space
+instance Elevator e => ColorSpace (RGB 'D65) e where
+  type BaseColorSpace (RGB 'D65) = RGB 'D65
+  toBaseColorSpace = id
+  {-# INLINE toBaseColorSpace #-}
+  fromBaseColorSpace = id
+  {-# INLINE fromBaseColorSpace #-}
+  toPixelXYZ = rgb2xyz
+  {-# INLINE toPixelXYZ #-}
+  fromPixelXYZ = xyz2rgb
+  {-# INLINE fromPixelXYZ #-}
+
+
+instance RedGreenBlue RGB 'D65 where
+  chromaticity = primaries
+  npm = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
+                   (V3 0.2126 0.7152 0.0722)
+                   (V3 0.0193 0.1192 0.9505)
+  inpm = INPM $ M3x3 (V3  3.2406 -1.5372 -0.4986)
+                     (V3 -0.9689  1.8758  0.0415)
+                     (V3  0.0557 -0.2040  1.0570)
+  ecctf = fmap transfer
+  {-# INLINE ecctf #-}
+  dcctf = fmap itransfer
+  {-# INLINE dcctf #-}
 
 
 -- TODO: add tex formula
@@ -113,43 +116,26 @@ itransfer eu
   where !u = toDouble eu
 {-# INLINE itransfer #-}
 
+primaries :: Illuminant i => Chromaticity rgb i
+primaries = Chromaticity (Primary 0.64 0.33)
+                         (Primary 0.30 0.60)
+                         (Primary 0.15 0.06)
 
--- | sRGB color space
-instance (Typeable k, Typeable i, Illuminant i, Elevator e) => ColorSpace (RGB (i :: k)) e where
-  toPixelXYZ = derivedRGBtoXYZ
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = derivedXYZtoRGB
-  {-# INLINE fromPixelXYZ #-}
+-- vGamutNPM = M3x3 (V3  0.679644  0.152211  0.118600)
+--                  (V3  0.260686  0.774894 -0.035580)
+--                  (V3 -0.009310 -0.004612  1.102980)
 
+-- vGamutINPM = M3x3 (V3  1.589012 -0.313204 -0.180965)
+--                   (V3 -0.534053  1.396011  0.102458)
+--                   (V3  0.011179  0.003194  0.905535)
 
+-- acesNPM = M3x3 (V3 0.9525523959 0.0000000000  0.0000936786)
+--                (V3 0.3439664498 0.7281660966 -0.0721325464)
+--                (V3 0.0000000000 0.0000000000  1.0088251844)
 
--- | Derived sRGB conversion without gamma correction
-instance Illuminant i => DerivedRGB RGB i where
-  chromaticity = Chromaticity (Primary 0.64 0.33)
-                              (Primary 0.30 0.60)
-                              (Primary 0.15 0.06)
-  mkPixelRGB = coerce
-  unPixelRGB = coerce
-  ecctf = mkPixelRGB . fmap transfer
-  {-# INLINE ecctf #-}
-  dcctf = fmap itransfer . unPixelRGB
-  {-# INLINE dcctf #-}
-
-instance StandardRGB RGB 'D65 where
-  npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
-                           (V3 0.2126 0.7152 0.0722)
-                           (V3 0.0193 0.1192 0.9505)
-  inpmStandard = INPM $ M3x3 (V3  3.2406 -1.5372 -0.4986)
-                             (V3 -0.9689  1.8758  0.0415)
-                             (V3  0.0557 -0.2040  1.0570)
-
-vGamutNPM = M3x3 (V3  0.679644  0.152211  0.118600)
-                 (V3  0.260686  0.774894 -0.035580)
-                 (V3 -0.009310 -0.004612  1.102980)
-
-vGamutINPM = M3x3 (V3  1.589012 -0.313204 -0.180965)
-                  (V3 -0.534053  1.396011  0.102458)
-                  (V3  0.011179  0.003194  0.905535)
+-- acesINPM = M3x3 (V3  1.0498110175 0.0000000000 -0.0000974845)
+--                 (V3 -0.4959030231 1.3733130458  0.0982400361)
+--                 (V3  0.0000000000 0.0000000000  0.9912520182)
 -- -- | Convert a pixel in sRGB color space into XYZ color space pixel, by first applying
 -- -- gamma correction function and then using a computed `NPM` matrix (vs a `npmStandard`
 -- -- matrix with rounded values).
@@ -191,9 +177,6 @@ vGamutINPM = M3x3 (V3  1.589012 -0.313204 -0.180965)
 --   -> Pixel (RGB i) e
 -- computePixelRGB = mkPixelRGB . fmap transfer . inpmApply (inpm :: INPM RGB i)
 -- {-# INLINE computePixelRGB #-}
-
-convert :: (ColorSpace cs' e', ColorSpace cs e) => Pixel cs' e' -> Pixel cs e
-convert = fromPixelXYZ . toPixelXYZ
 
 
 
@@ -239,18 +222,6 @@ convert = fromPixelXYZ . toPixelXYZ
 --                        (V3 -0.9689  1.8758  0.0415)
 --                        (V3  0.0557 -0.2040  1.0570)
 
-
-data HSI (i :: k)
-
-newtype instance Pixel (HSI i) e = HSI (Pixel CM.HSI e)
-  deriving (Eq, Functor, Applicative, Foldable, Traversable, Storable)
-
-instance (Typeable i, Typeable k, Elevator e) => ColorModel (HSI (i :: k)) e where
-  type Components (HSI i) e = (e, e, e)
-  toComponents = toComponents . coerce
-  {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
-  {-# INLINE fromComponents #-}
 
 ------------
 --- RGBA ---

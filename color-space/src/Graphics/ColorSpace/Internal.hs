@@ -1,3 +1,4 @@
+{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -34,8 +35,21 @@ import Graphics.ColorModel.Helpers
 
 
 class ColorModel cs e => ColorSpace cs e where
+  type BaseColorSpace cs :: *
+
+  toBaseColorSpace :: Pixel cs e -> Pixel (BaseColorSpace cs) e
+  fromBaseColorSpace :: Pixel (BaseColorSpace cs) e -> Pixel cs e
+
   toPixelXYZ :: Pixel cs e -> Pixel XYZ Double
+  default toPixelXYZ :: ColorSpace (BaseColorSpace cs) e => Pixel cs e -> Pixel XYZ Double
+  toPixelXYZ = toPixelXYZ . toBaseColorSpace
+  {-# INLINE toPixelXYZ #-}
+
   fromPixelXYZ :: Pixel XYZ Double -> Pixel cs e
+  default fromPixelXYZ :: ColorSpace (BaseColorSpace cs) e => Pixel XYZ Double -> Pixel cs e
+  fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
+  {-# INLINE fromPixelXYZ #-}
+
 
 data Primary = Primary
   { xPrimary :: {-# UNPACK #-}!Double
@@ -90,8 +104,18 @@ instance Elevator e => ColorModel XYZ e where
   fromComponents (x, y, z) = PixelXYZ x y z
   {-# INLINE fromComponents #-}
 
+-- instance ColorSpace cs e => ColorModel cs e where
+--   type Components cs e = Components (BaseCM cs) e
+--   toComponents = toComponenets . toBaseColorModel
+--   {-# INLINE toComponents #-}
+--   fromComponents = fromBaseColorModel . fromComponents
+--   {-# INLINE fromComponents #-}
+
 
 instance Elevator e => ColorSpace XYZ e where
+  type BaseColorSpace XYZ = XYZ
+  toBaseColorSpace = id
+  fromBaseColorSpace = id
   toPixelXYZ (PixelXYZ x y z) = PixelXYZ (toDouble x) (toDouble y) (toDouble z)
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ (PixelXYZ x y z) = PixelXYZ (fromDouble x) (fromDouble y) (fromDouble z)

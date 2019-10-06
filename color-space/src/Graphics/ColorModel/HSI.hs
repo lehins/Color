@@ -16,11 +16,14 @@ module Graphics.ColorModel.HSI
   ( HSI
   --, HSIA(..)
   , Pixel(..)
+  , hsi2rgb
+  , rgb2hsi
   ) where
 
 import Foreign.Storable
-import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Helpers
+import Graphics.ColorModel.Internal
+import Graphics.ColorModel.RGB
 
 -----------
 --- HSI ---
@@ -74,6 +77,59 @@ instance Storable e => Storable (Pixel HSI e) where
   {-# INLINE peek #-}
   poke p (PixelHSI h s i) = poke3 p h s i
   {-# INLINE poke #-}
+
+-- TODO: switch to Either
+hsi2rgb :: Pixel HSI Double -> Pixel RGB Double
+hsi2rgb (PixelHSI h' s i) = getRGB (h' * 2 * pi)
+  where
+    !is = i * s
+    !second = i - is
+    errorHue = error $ "HSI pixel is not properly scaled, Hue: " ++ show h'
+    getFirst !a !b = i + is * cos a / cos b
+    {-# INLINE getFirst #-}
+    getThird !v1 !v2 = i + 2 * is + v1 - v2
+    {-# INLINE getThird #-}
+    getRGB h
+      | h < 0 = errorHue
+      | h < 2 * pi / 3 =
+        let !r = getFirst h (pi / 3 - h)
+            !b = second
+            !g = getThird b r
+         in PixelRGB r g b
+      | h < 4 * pi / 3 =
+        let !g = getFirst (h - 2 * pi / 3) (h + pi)
+            !r = second
+            !b = getThird r g
+         in PixelRGB r g b
+      | h < 2 * pi =
+        let !b = getFirst (h - 4 * pi / 3) (2 * pi - pi / 3 - h)
+            !g = second
+            !r = getThird g b
+         in PixelRGB r g b
+      | otherwise = errorHue
+    {-# INLINE getRGB #-}
+{-# INLINE hsi2rgb #-}
+
+
+rgb2hsi :: Pixel RGB Double -> Pixel HSI Double
+rgb2hsi (PixelRGB r g b) = PixelHSI h s i
+  where
+    !h' = atan2 y x
+    !h =
+      (if h' < 0
+         then h' + 2 * pi
+         else h') /
+      (2 * pi)
+    !s =
+      if i == 0
+        then 0
+        else 1 - minimum [r, g, b] / i
+    !i = (r + g + b) / 3
+    !x = (2 * r - g - b) / 2.449489742783178
+    !y = (g - b) / 1.4142135623730951
+{-# INLINE rgb2hsi #-}
+
+
 
 -- ------------
 -- --- HSIA ---
