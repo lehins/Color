@@ -6,6 +6,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.ColorSpace.RedGreenBlue.Derived.SRGB
@@ -18,7 +19,6 @@
 module Graphics.ColorSpace.RedGreenBlue.Derived.SRGB
   ( pattern PixelRGB
   , RGB
-  , SRGB
   , Pixel(RGB)
   --, RGBA
   , SRGB.primaries
@@ -26,20 +26,15 @@ module Graphics.ColorSpace.RedGreenBlue.Derived.SRGB
   , SRGB.itransfer
   ) where
 
+import Data.Proxy
 import Data.Typeable
 import Data.Coerce
 import Foreign.Storable
-import Graphics.ColorModel.Helpers
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import qualified Graphics.ColorSpace.RedGreenBlue.SRGB as SRGB
-import Graphics.ColorSpace.CIE1931.Illuminants
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RedGreenBlue.Internal
-
-
-
-type SRGB = RGB 'D65
 
 
 -- | The most common @sRGB@ color space with the default `D65` illuminant
@@ -54,18 +49,17 @@ pattern PixelRGB r g b = RGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGB #-}
 
 -- TODO: round to 7 decimal places for floating point
-instance (Illuminant i, Show e) => Show (Pixel (RGB i) e) where
-  showsPrec _ (PixelRGB r g b) =
-    showsP "sRGB:" -- ++ show i
-    (shows3 r g b)
+instance (Illuminant i, Elevator e) => Show (Pixel (RGB (i :: k)) e) where
+  showsPrec _ = showsColorModel
 
 -- | sRGB defined in 'Graphics.ColorSpace.RGB.S'
-instance (Typeable i, Typeable k, Elevator e) => ColorModel (RGB (i :: k)) e where
+instance (Illuminant i, Elevator e) => ColorModel (RGB (i :: k)) e where
   type Components (RGB i) e = (e, e, e)
   toComponents = toComponents . coerce
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
+  showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | sRGB color space
 instance (Illuminant i, Typeable i, Typeable k, Elevator e) => ColorSpace (RGB (i :: k)) e where
@@ -78,6 +72,7 @@ instance (Illuminant i, Typeable i, Typeable k, Elevator e) => ColorSpace (RGB (
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = xyz2rgb
   {-# INLINE fromPixelXYZ #-}
+  showsColorSpaceName _ = ('s':) . showsType (Proxy :: Proxy (RGB i))
 
 
 instance Illuminant i => RedGreenBlue RGB i where
@@ -143,9 +138,6 @@ instance Illuminant i => RedGreenBlue RGB i where
 --   -> Pixel (RGB i) e
 -- computePixelRGB = mkPixelRGB . fmap transfer . inpmApply (inpm :: INPM RGB i)
 -- {-# INLINE computePixelRGB #-}
-
-convert :: (ColorSpace cs' e', ColorSpace cs e) => Pixel cs' e' -> Pixel cs e
-convert = fromPixelXYZ . toPixelXYZ
 
 
 

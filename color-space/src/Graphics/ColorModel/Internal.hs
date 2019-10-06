@@ -1,4 +1,6 @@
+{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -14,29 +16,35 @@
 -- Portability : non-portable
 --
 module Graphics.ColorModel.Internal
-  ( Pixel
+  ( Pixel(Alpha)
   , ColorModel(..)
-  -- , AlphaSpace(..)
+  , Alpha
+  , alpha
+  , opaque
+  , setAlpha
+  , setOpaque
   , module Graphics.ColorModel.Elevator
-  , showsP
-  , shows3
-  , shows4
-  , shows5
+  -- , showsP
+  -- , shows3
+  -- , shows4
+  -- , shows5
+  , showsColorModel
+  , showsColorModelOpen
   , showsType
   , foldr3
   , foldr4
-  , foldr5
+  -- , foldr5
   , traverse3
   , traverse4
-  , traverse5
+  -- , traverse5
   , sizeOfN
   , alignmentN
   , peek3
   , poke3
   , peek4
   , poke4
-  , peek5
-  , poke5
+  -- , peek5
+  -- , poke5
   ) where
 
 import Control.Applicative
@@ -44,6 +52,7 @@ import Control.DeepSeq (NFData(rnf), deepseq)
 import Control.Monad (liftM)
 import Data.Default.Class (Default(..))
 import Data.Foldable
+import Data.List as L
 import Data.Typeable
 import qualified Data.Vector.Generic as V
 import qualified Data.Vector.Generic.Mutable as VM
@@ -52,6 +61,7 @@ import qualified Data.Vector.Unboxed as VU
 import Foreign.Ptr
 import Foreign.Storable
 import Graphics.ColorModel.Elevator
+import GHC.TypeLits
 
 
 -- | A Pixel family with a color space and a precision of elements.
@@ -77,31 +87,82 @@ class ( Functor (Pixel cs)
   -- | Display the @cs@ portion of the pixel. Pixel itself will not be evaluated.
   --
   -- @since 0.1.0
-  showsColorModel :: Pixel cs e -> ShowS
-  default showsColorModel :: Typeable cs => Pixel cs e -> ShowS
-  showsColorModel _ = showsType (Proxy :: Proxy cs)
+  showsColorModelName :: Pixel cs e -> ShowS
+  default showsColorModelName :: Typeable cs => Pixel cs e -> ShowS
+  showsColorModelName _ = showsType (Proxy :: Proxy cs)
+
+data Alpha cs
+
+data instance Pixel (Alpha cs) e = Alpha
+  { opaque :: !(Pixel cs e)
+  , alpha :: !e
+  }
+
+-- | Change the alpha channel value for the pixel
+--
+-- @since 0.1.0
+setAlpha :: Pixel (Alpha cs) e -> e -> Pixel (Alpha cs) e
+setAlpha px a = px { alpha = a }
+
+-- | Change the opaque pixel value, while leaving alpha channel intact.
+--
+-- @since 0.1.0
+setOpaque :: Pixel (Alpha cs) e -> Pixel cs e -> Pixel (Alpha cs) e
+setOpaque pxa px = pxa { opaque = px }
+
+instance (Eq (Pixel cs e), Eq e) => Eq (Pixel (Alpha cs) e) where
+  (==) (Alpha px1 a1) (Alpha px2 a2) = px1 == px2 && a1 == a2
+  {-# INLINE (==) #-}
+
+instance (ColorModel cs e, Opaque (Alpha cs) ~ cs) => Show (Pixel (Alpha cs) e) where
+  showsPrec _ = showsColorModel
+
+type family Opaque cs where
+  Opaque (Alpha (Alpha cs)) = TypeError ('Text "Nested alpha channels are not allowed")
+  Opaque (Alpha cs) = cs
+
+instance (ColorModel cs e, Opaque (Alpha cs) ~ cs) => ColorModel (Alpha cs) e where
+  type Components (Alpha cs) e = (Components cs e, e)
+  toComponents (Alpha px a) = (toComponents px, a)
+  {-# INLINE toComponents #-}
+  fromComponents (pxc, a) = Alpha (fromComponents pxc) a
+  {-# INLINE fromComponents #-}
+  showsColorModelName _ = showsColorModelName (pure 0 :: Pixel cs e) . ('A':)
 
 
--- -- | A color space that supports transparency.
--- class (ColorModel (Opaque cs) e, ColorModel cs e) => AlphaModel cs e where
---   -- | A corresponding opaque version of this color space.
---   type Opaque cs
+instance Functor (Pixel cs) => Functor (Pixel (Alpha cs)) where
+  fmap f (Alpha px a) = Alpha (fmap f px) (f a)
+  {-# INLINE fmap #-}
 
---   -- | Get an alpha channel of a transparant pixel.
---   getAlpha :: Pixel cs e -> e
+instance Applicative (Pixel cs) => Applicative (Pixel (Alpha cs)) where
+  pure e = Alpha (pure e) e
+  {-# INLINE pure #-}
+  (Alpha fpx fa) <*> (Alpha px a) = Alpha (fpx <*> px) (fa a)
+  {-# INLINE (<*>) #-}
 
---   -- | Add an alpha channel to an opaque pixel.
---   --
---   -- @ addAlpha 0 (PixelHSI 1 2 3) == PixelHSIA 1 2 3 0 @
---   addAlpha :: e -> Pixel (Opaque cs) e -> Pixel cs e
+instance Foldable (Pixel cs) => Foldable (Pixel (Alpha cs)) where
+  foldr f acc (Alpha px a) = foldr f (f a acc) px
+  {-# INLINE foldr #-}
+  foldr1 f (Alpha px a) = foldr f a px
+  {-# INLINE foldr1 #-}
 
---   -- | Convert a transparent pixel to an opaque one by dropping the alpha
---   -- channel.
---   --
---   -- @ dropAlpha (PixelRGBA 1 2 3 4) == PixelRGB 1 2 3 @
---   --
---   dropAlpha :: Pixel cs e -> Pixel (Opaque cs) e
+instance Traversable (Pixel cs) => Traversable (Pixel (Alpha cs)) where
+  traverse f (Alpha px a) = Alpha <$> traverse f px <*> f a
+  {-# INLINE traverse #-}
 
+instance (Storable (Pixel cs e), Storable e) => Storable (Pixel (Alpha cs) e) where
+  sizeOf _ = sizeOf (undefined :: Pixel cs e) + sizeOf (undefined :: e)
+  {-# INLINE sizeOf #-}
+  alignment _ = alignment (undefined :: e)
+  {-# INLINE alignment #-}
+  peek ptr = do
+    px <- peek (castPtr ptr)
+    Alpha px <$> peekByteOff ptr (sizeOf px)
+  {-# INLINE peek #-}
+  poke ptr (Alpha px a) = do
+    poke (castPtr ptr) px
+    pokeByteOff ptr (sizeOf px) a
+  {-# INLINE poke #-}
 
 instance ColorModel cs e => Default (Pixel cs e) where
   def = pure 0
@@ -225,36 +286,39 @@ instance (ColorModel cs e) => V.Vector VU.Vector (Pixel cs e) where
   elemseq (V_Pixel vec) val = V.elemseq vec (toComponents val)
   {-# INLINE elemseq #-}
 
+channelSeparator :: Char
+channelSeparator = '|'
+
+-- channelSeparatorS :: ShowS
+-- channelSeparatorS = (channelSeparator:)
+
+-- shows3 :: Show a => a -> a -> a -> ShowS
+-- shows3 c0 c1 c2 = shows c0 . channelSeparatorS . shows c1 . channelSeparatorS . shows c2
+
+-- shows4 :: Show a => a -> a -> a -> a -> ShowS
+-- shows4 c0 c1 c2 c3 = shows c0 . channelSeparatorS . shows3 c1 c2 c3
+
+-- shows5 :: Show a => a -> a -> a -> a -> a -> ShowS
+-- shows5 c0 c1 c2 c3 c4 = shows c0 . channelSeparatorS . shows4 c1 c2 c3 c4
+
+-- showsP :: ShowS -> ShowS -> ShowS
+-- showsP t i = ('<' :) . t . (":(" ++) . i . (")>" ++)
+
+-- showsColorSpace :: (ColorSpace cs e, Show e) => Pixel cs e -> ShowS
+-- showsColorSpace px = ('<' :) . showsColorSpaceName px . (' ' :) . showsColorModelOpen px . ('>' :)
 
 
+showsColorModel :: ColorModel cs e => Pixel cs e -> ShowS
+showsColorModel px = ('<' :) . showsColorModelOpen px . ('>' :)
 
-channelSeparator :: ShowS
-channelSeparator = ('|':)
-
-shows3 :: Show a => a -> a -> a -> ShowS
-shows3 c0 c1 c2 = shows c0 . channelSeparator . shows c1 . channelSeparator . shows c2
-
-shows4 :: Show a => a -> a -> a -> a -> ShowS
-shows4 c0 c1 c2 c3 = shows c0 . channelSeparator . shows3 c1 c2 c3
-
-shows5 :: Show a => a -> a -> a -> a -> a -> ShowS
-shows5 c0 c1 c2 c3 c4 = shows c0 . channelSeparator . shows4 c1 c2 c3 c4
-
-showsP :: ShowS -> ShowS -> ShowS
-showsP t i = ('<' :) . t . (":(" ++) . i . (")>" ++)
+showsColorModelOpen :: ColorModel cs e => Pixel cs e -> ShowS
+showsColorModelOpen px = t . (":(" ++) . (channels ++) . (')' :)
+  where
+    t = showsColorModelName px
+    channels = L.intercalate [channelSeparator] $ map show $ toList px
 
 showsType :: Typeable t => Proxy t -> ShowS
 showsType = showsTypeRep . typeRep
-
--- showsColorModel ::
---      String
---   -- ^ Color space name
---   -> String
---   -- ^ Illuminant name
---   -> ShowS
---   -> ShowS
--- _showsGP t i x = ('<':) . (t ++) . ((':':i) ++) . (">(" ++) . x . (")" ++)
-
 
 -- Foldable helpers
 
@@ -266,9 +330,9 @@ foldr4 :: (e -> a -> a) -> a -> e -> e -> e -> e -> a
 foldr4 f acc c0 c1 c2 c3 = f c0 (f c1 (f c2 (f c3 acc)))
 {-# INLINE foldr4 #-}
 
-foldr5 :: (e -> a -> a) -> a -> e -> e -> e -> e -> e -> a
-foldr5 f acc c0 c1 c2 c3 c4 = f c0 (f c1 (f c2 (f c3 (f c4 acc))))
-{-# INLINE foldr5 #-}
+-- foldr5 :: (e -> a -> a) -> a -> e -> e -> e -> e -> e -> a
+-- foldr5 f acc c0 c1 c2 c3 c4 = f c0 (f c1 (f c2 (f c3 (f c4 acc))))
+-- {-# INLINE foldr5 #-}
 
 traverse3 :: Applicative f => (a -> a -> a -> b) -> (t -> f a) -> t -> t -> t -> f b
 traverse3 g f c0 c1 c2 = g <$> f c0 <*> f c1 <*> f c2
@@ -278,10 +342,10 @@ traverse4 :: Applicative f => (a -> a -> a -> a -> b) -> (t -> f a) -> t -> t ->
 traverse4 g f c0 c1 c2 c3 = g <$> f c0 <*> f c1 <*> f c2 <*> f c3
 {-# INLINE traverse4 #-}
 
-traverse5 ::
-     Applicative f => (a -> a -> a -> a -> a -> b) -> (t -> f a) -> t -> t -> t -> t -> t -> f b
-traverse5 g f c0 c1 c2 c3 c4 = g <$> f c0 <*> f c1 <*> f c2 <*> f c3 <*> f c4
-{-# INLINE traverse5 #-}
+-- traverse5 ::
+--      Applicative f => (a -> a -> a -> a -> a -> b) -> (t -> f a) -> t -> t -> t -> t -> t -> f b
+-- traverse5 g f c0 c1 c2 c3 c4 = g <$> f c0 <*> f c1 <*> f c2 <*> f c3 <*> f c4
+-- {-# INLINE traverse5 #-}
 
 
 -- Storable helpers
@@ -327,18 +391,18 @@ poke4 p c0 c1 c2 c3 = do
   poke3 (p `plusPtr` sizeOf (undefined :: e)) c1 c2 c3
 {-# INLINE poke4 #-}
 
-peek5 ::
-     forall cs e. Storable e
-  => (e -> e -> e -> e -> e -> Pixel cs e)
-  -> Ptr (Pixel cs e)
-  -> IO (Pixel cs e)
-peek5 f p = do
-  c0 <- peek (castPtr p)
-  peek4 (f c0) (p `plusPtr` sizeOf (undefined :: e))
-{-# INLINE peek5 #-}
+-- peek5 ::
+--      forall cs e. Storable e
+--   => (e -> e -> e -> e -> e -> Pixel cs e)
+--   -> Ptr (Pixel cs e)
+--   -> IO (Pixel cs e)
+-- peek5 f p = do
+--   c0 <- peek (castPtr p)
+--   peek4 (f c0) (p `plusPtr` sizeOf (undefined :: e))
+-- {-# INLINE peek5 #-}
 
-poke5 :: forall cs e . Storable e => Ptr (Pixel cs e) -> e -> e -> e -> e -> e -> IO ()
-poke5 p c0 c1 c2 c3 c4 = do
-  poke (castPtr p) c0
-  poke4 (p `plusPtr` sizeOf (undefined :: e)) c1 c2 c3 c4
-{-# INLINE poke5 #-}
+-- poke5 :: forall cs e . Storable e => Ptr (Pixel cs e) -> e -> e -> e -> e -> e -> IO ()
+-- poke5 p c0 c1 c2 c3 c4 = do
+--   poke (castPtr p) c0
+--   poke4 (p `plusPtr` sizeOf (undefined :: e)) c1 c2 c3 c4
+-- {-# INLINE poke5 #-}

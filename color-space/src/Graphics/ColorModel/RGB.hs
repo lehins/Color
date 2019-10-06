@@ -30,7 +30,7 @@ data RGB
 data instance Pixel RGB e = PixelRGB !e !e !e deriving (Eq, Ord)
 
 instance Elevator e => Show (Pixel RGB e) where
-  showsPrec _ px@(PixelRGB r g b) = showsP (showsColorModel px) (shows3 r g b)
+  showsPrec _ = showsColorModel
 
 instance Elevator e => ColorModel RGB e where
   type Components RGB e = (e, e, e)
@@ -38,7 +38,6 @@ instance Elevator e => ColorModel RGB e where
   {-# INLINE toComponents #-}
   fromComponents (r, g, b) = PixelRGB r g b
   {-# INLINE fromComponents #-}
-  showsColorModel _ = ("RGB" ++)
 
 instance Functor (Pixel RGB) where
   fmap f (PixelRGB r g b) = PixelRGB (f r) (f g) (f b)

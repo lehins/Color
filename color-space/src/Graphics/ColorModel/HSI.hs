@@ -35,7 +35,7 @@ data instance Pixel HSI e = PixelHSI !e !e !e deriving (Eq, Ord)
 
 
 instance Elevator e => Show (Pixel HSI e) where
-  showsPrec _ px@(PixelHSI h s i) = showsP (showsColorModel px) (shows3 h s i)
+  showsPrec _ = showsColorModel
 
 
 instance Elevator e => ColorModel HSI e where

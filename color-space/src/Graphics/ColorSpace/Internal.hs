@@ -38,6 +38,12 @@ class ColorModel cs e => ColorSpace cs e where
   toBaseColorSpace :: Pixel cs e -> Pixel (BaseColorSpace cs) e
   fromBaseColorSpace :: Pixel (BaseColorSpace cs) e -> Pixel cs e
 
+  -- | Display the official color space name with any extra parameters. Pixel itself will
+  -- not be evaluated.
+  --
+  -- @since 0.1.0
+  showsColorSpaceName :: Pixel cs e -> ShowS
+
   toPixelXYZ :: Pixel cs e -> Pixel XYZ Double
   default toPixelXYZ :: ColorSpace (BaseColorSpace cs) e => Pixel cs e -> Pixel XYZ Double
   toPixelXYZ = toPixelXYZ . toBaseColorSpace
@@ -92,8 +98,8 @@ data XYZ
 
 data instance Pixel XYZ e = PixelXYZ !e !e !e deriving (Eq, Ord, Bounded)
 
-instance (Elevator e, Show e) => Show (Pixel XYZ e) where
-  showsPrec _ px@(PixelXYZ x y z) = showsP (showsColorModel px) (shows3 x y z)
+instance Elevator e => Show (Pixel XYZ e) where
+  showsPrec _ = showsColorModel
 
 instance Elevator e => ColorModel XYZ e where
   type Components XYZ e = (e, e, e)
@@ -101,27 +107,19 @@ instance Elevator e => ColorModel XYZ e where
   {-# INLINE toComponents #-}
   fromComponents (x, y, z) = PixelXYZ x y z
   {-# INLINE fromComponents #-}
-  showsColorModel _ = ("XYZ" ++)
-
--- instance ColorSpace cs e => ColorModel cs e where
---   type Components cs e = Components (BaseCM cs) e
---   toComponents = toComponenets . toBaseColorModel
---   {-# INLINE toComponents #-}
---   fromComponents = fromBaseColorModel . fromComponents
---   {-# INLINE fromComponents #-}
-
 
 instance Elevator e => ColorSpace XYZ e where
   type BaseColorSpace XYZ = XYZ
   toBaseColorSpace = id
   fromBaseColorSpace = id
+  showsColorSpaceName _ = ("CIE1931 XYZ" ++)
   toPixelXYZ (PixelXYZ x y z) = PixelXYZ (toDouble x) (toDouble y) (toDouble z)
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ (PixelXYZ x y z) = PixelXYZ (fromDouble x) (fromDouble y) (fromDouble z)
   {-# INLINE fromPixelXYZ #-}
 
 {-# RULES
-"toPixelXYZ :: Pixel XYZ Double -> Pixel XYZ Double"   toPixelXYZ = id
+"toPixelXYZ   :: Pixel XYZ Double -> Pixel XYZ Double"   toPixelXYZ = id
 "fromPixelXYZ :: Pixel XYZ Double -> Pixel XYZ Double" fromPixelXYZ = id
  #-}
 

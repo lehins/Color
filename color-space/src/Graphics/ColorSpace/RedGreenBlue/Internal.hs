@@ -159,3 +159,4 @@ chromaticityWhitePoint _ = whitePoint
 pixelChromaticity :: RedGreenBlue cs i => Pixel (cs i) e -> Chromaticity cs i
 pixelChromaticity _ = chromaticity
 {-# INLINE pixelChromaticity #-}
+

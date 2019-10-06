@@ -54,7 +54,7 @@ pattern PixelRGB r g b = RGB (CM.PixelRGB r g b)
 
 -- TODO: round to 7 decimal places for floating point
 instance Elevator e => Show (Pixel (RGB 'D65) e) where
-  showsPrec _ px@(PixelRGB r g b) = showsP (showsColorModel px) (shows3 r g b)
+  showsPrec _ = showsColorModel
 
 -- | sRGB defined in 'Graphics.ColorSpace.RGB.S'
 instance Elevator e => ColorModel (RGB 'D65) e where
@@ -63,7 +63,7 @@ instance Elevator e => ColorModel (RGB 'D65) e where
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModel _ = ("sRGB Standard" ++)
+  showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | sRGB color space
 instance Elevator e => ColorSpace (RGB 'D65) e where
@@ -76,6 +76,7 @@ instance Elevator e => ColorSpace (RGB 'D65) e where
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = xyz2rgb
   {-# INLINE fromPixelXYZ #-}
+  showsColorSpaceName _ = ("sRGB Standard" ++)
 
 
 instance RedGreenBlue RGB 'D65 where
