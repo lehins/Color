@@ -21,7 +21,6 @@ module Graphics.ColorModel.HSI
   ) where
 
 import Foreign.Storable
-import Graphics.ColorModel.Helpers
 import Graphics.ColorModel.Internal
 import Graphics.ColorModel.RGB
 
@@ -35,13 +34,12 @@ data HSI
 data instance Pixel HSI e = PixelHSI !e !e !e deriving (Eq, Ord)
 
 
-instance Show e => Show (Pixel HSI e) where
-  show (PixelHSI h s i) = "<HSI:("++show h++"|"++show s++"|"++show i++")>"
+instance Elevator e => Show (Pixel HSI e) where
+  showsPrec _ px@(PixelHSI h s i) = showsP (showsColorModel px) (shows3 h s i)
 
 
 instance Elevator e => ColorModel HSI e where
   type Components HSI e = (e, e, e)
-
   toComponents (PixelHSI h s i) = (h, s, i)
   {-# INLINE toComponents #-}
   fromComponents (h, s, i) = PixelHSI h s i

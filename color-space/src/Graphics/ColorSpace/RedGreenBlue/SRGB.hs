@@ -30,14 +30,12 @@ module Graphics.ColorSpace.RedGreenBlue.SRGB
 
 import Data.Coerce
 import Foreign.Storable
-import Graphics.ColorModel.Helpers
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.CIE1931.Illuminants
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RedGreenBlue.Internal
-
 
 
 type SRGB = RGB 'D65
@@ -55,10 +53,8 @@ pattern PixelRGB r g b = RGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGB #-}
 
 -- TODO: round to 7 decimal places for floating point
-instance Show e => Show (Pixel (RGB 'D65) e) where
-  showsPrec _ (PixelRGB r g b) =
-    showsP "sRGB:" -- ++ show i
-    (shows3 r g b)
+instance Elevator e => Show (Pixel (RGB 'D65) e) where
+  showsPrec _ px@(PixelRGB r g b) = showsP (showsColorModel px) (shows3 r g b)
 
 -- | sRGB defined in 'Graphics.ColorSpace.RGB.S'
 instance Elevator e => ColorModel (RGB 'D65) e where
@@ -67,6 +63,7 @@ instance Elevator e => ColorModel (RGB 'D65) e where
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
+  showsColorModel _ = ("sRGB Standard" ++)
 
 -- | sRGB color space
 instance Elevator e => ColorSpace (RGB 'D65) e where

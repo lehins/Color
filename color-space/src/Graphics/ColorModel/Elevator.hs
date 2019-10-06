@@ -27,7 +27,7 @@ import GHC.Float
 
 
 -- | A class with a set of convenient functions that allow for changing precision.
-class (Eq e, Num e, Typeable e, Unbox e, Storable e) => Elevator e where
+class (Show e, Eq e, Num e, Typeable e, Unbox e, Storable e) => Elevator e where
 
   -- | Values are scaled to @[0, 255]@ range.
   toWord8 :: e -> Word8

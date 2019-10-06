@@ -1,5 +1,4 @@
 {-# LANGUAGE DefaultSignatures #-}
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -31,7 +30,6 @@ module Graphics.ColorSpace.Internal
 
 import Foreign.Storable
 import Graphics.ColorModel.Internal
-import Graphics.ColorModel.Helpers
 
 
 class ColorModel cs e => ColorSpace cs e where
@@ -94,8 +92,8 @@ data XYZ
 
 data instance Pixel XYZ e = PixelXYZ !e !e !e deriving (Eq, Ord, Bounded)
 
-instance Show e => Show (Pixel XYZ e) where
-  showsPrec _ (PixelXYZ x y z) = showsP "XYZ" (shows3 x y z)
+instance (Elevator e, Show e) => Show (Pixel XYZ e) where
+  showsPrec _ px@(PixelXYZ x y z) = showsP (showsColorModel px) (shows3 x y z)
 
 instance Elevator e => ColorModel XYZ e where
   type Components XYZ e = (e, e, e)
@@ -103,6 +101,7 @@ instance Elevator e => ColorModel XYZ e where
   {-# INLINE toComponents #-}
   fromComponents (x, y, z) = PixelXYZ x y z
   {-# INLINE fromComponents #-}
+  showsColorModel _ = ("XYZ" ++)
 
 -- instance ColorSpace cs e => ColorModel cs e where
 --   type Components cs e = Components (BaseCM cs) e

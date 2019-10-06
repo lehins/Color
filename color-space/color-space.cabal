@@ -79,7 +79,6 @@ library
 
   other-modules:       Graphics.ColorModel.Internal
                      , Graphics.ColorModel.Elevator
-                     , Graphics.ColorModel.Helpers
                      , Graphics.ColorSpace.Internal
                      , Graphics.ColorSpace.RedGreenBlue.Internal
   build-depends:       base            >= 4.8 && < 5
