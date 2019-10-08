@@ -32,6 +32,8 @@ import Graphics.ColorSpace.Algebra
 import Data.Coerce
 
 class Illuminant i => RedGreenBlue (cs :: k -> *) (i :: k) where
+  -- | RGB primaries that are defined for the RGB color space, while point is defined by
+  -- the __@i@__ type parameter
   chromaticity :: Chromaticity cs i
 
   -- | Encoding color component transfer function (inverse)
@@ -40,31 +42,39 @@ class Illuminant i => RedGreenBlue (cs :: k -> *) (i :: k) where
   -- | Decoding color component transfer function (forward)
   dcctf :: Elevator e => Pixel (cs i) e -> Pixel (cs i) Double
 
-  mkPixelRGB :: Pixel CM.RGB e -> Pixel (cs i) e
-  default mkPixelRGB ::
-    Coercible (Pixel CM.RGB e) (Pixel (cs i) e) => Pixel CM.RGB e -> Pixel (cs i) e
-  mkPixelRGB = coerce
-
-  unPixelRGB :: Pixel (cs i) e -> Pixel CM.RGB e
-  default unPixelRGB ::
-    Coercible (Pixel (cs i) e) (Pixel CM.RGB e) => Pixel (cs i) e -> Pixel CM.RGB e
-  unPixelRGB = coerce
-
+  -- | Normalized primary matrix for this RGB color space. Default implementation derives
+  -- it from `chromaticity`
   npm :: NPM cs i
   npm = npmDerive chromaticity
 
+  -- | Inverse normalized primary matrix for this RGB color space. Default implementation
+  -- derives it from `chromaticity`
   inpm :: INPM cs i
   inpm = inpmDerive chromaticity
 
+  -- | Linear transformation of a pixel in a linear RGB color space into XYZ color space
   npmApply :: Pixel (cs i) Double -> Pixel XYZ Double
   npmApply px = fromV3 PixelXYZ (multM3x3byV3 (unNPM (npm :: NPM cs i)) (toV3 r g b))
     where CM.PixelRGB r g b = unPixelRGB px
   {-# INLINE npmApply #-}
 
+  -- | Linear transformation of a pixel in XYZ color space into a linear RGB color space
   inpmApply :: Pixel XYZ Double -> Pixel (cs i) Double
   inpmApply (PixelXYZ x y z) =
     mkPixelRGB $ fromV3 CM.PixelRGB (multM3x3byV3 (unINPM (inpm :: INPM cs i)) (toV3 x y z))
   {-# INLINE inpmApply #-}
+
+  -- | Lift RGB color model into a RGB color space
+  mkPixelRGB :: Pixel CM.RGB e -> Pixel (cs i) e
+  default mkPixelRGB ::
+    Coercible (Pixel CM.RGB e) (Pixel (cs i) e) => Pixel CM.RGB e -> Pixel (cs i) e
+  mkPixelRGB = coerce
+
+  -- | Drop RGB color space into the RGB color model
+  unPixelRGB :: Pixel (cs i) e -> Pixel CM.RGB e
+  default unPixelRGB ::
+    Coercible (Pixel (cs i) e) (Pixel CM.RGB e) => Pixel (cs i) e -> Pixel CM.RGB e
+  unPixelRGB = coerce
 
 
 rgb2xyz :: (RedGreenBlue cs i, Elevator e) => Pixel (cs i) e -> Pixel XYZ Double

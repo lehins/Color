@@ -1,3 +1,4 @@
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -17,7 +18,7 @@
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.RedGreenBlue.HSI
+module Graphics.ColorSpace.RedGreenBlue.Alternative.HSI
   ( pattern PixelHSI
   , pattern PixelHSI360
   , HSI
@@ -33,11 +34,28 @@ import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RedGreenBlue.Internal
 
 
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
 data HSI (cs :: k -> *) (i :: k)
 
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
 newtype instance Pixel (HSI cs i) e = HSI (Pixel CM.HSI e)
-  deriving (Eq, Functor, Applicative, Foldable, Traversable, Storable)
 
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Eq e => Eq (Pixel (HSI cs i) e)
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Ord e => Ord (Pixel (HSI cs i) e)
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Functor (Pixel (HSI cs i))
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Applicative (Pixel (HSI cs i))
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Foldable (Pixel (HSI cs i))
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Traversable (Pixel (HSI cs i))
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Storable e => Storable (Pixel (HSI cs i) e)
+
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel (cs i) e => Show (Pixel (HSI cs i) e) where
   showsPrec _ = showsColorModel
 
@@ -46,14 +64,15 @@ pattern PixelHSI :: e -> e -> e -> Pixel (HSI cs i) e
 pattern PixelHSI h s i = HSI (CM.PixelHSI h s i)
 {-# COMPLETE PixelHSI #-}
 
--- TODO: doc, warning about outside of 0-360.
+-- | Constructor for an RGB color space in an alternative HSI color model. Difference from
+-- `PixelHSI` is that the hue is specified in 0 to 360 degree range, rather than 0 to
+-- 1. Note, that this is not checked.
 pattern PixelHSI360 :: Double -> Double -> Double -> Pixel (HSI cs i) Double
 pattern PixelHSI360 h s i <- HSI (CM.PixelHSI ((* 360) -> h) s i) where
         PixelHSI360 h s i = HSI (CM.PixelHSI (h / 360) s i)
 {-# COMPLETE PixelHSI360 #-}
 
-
-
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel (cs i) e => ColorModel (HSI cs (i :: k)) e where
   type Components (HSI cs i) e = (e, e, e)
   toComponents = toComponents . coerce
@@ -63,8 +82,8 @@ instance ColorModel (cs i) e => ColorModel (HSI cs (i :: k)) e where
   showsColorModelName _ = ("HSI" ++)
 
 
--- | HSI color space, that is based on some actual RGB color space.
-instance (Typeable cs, Typeable k, Typeable i, ColorSpace (cs i) e, RedGreenBlue cs i) =>
+-- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
+instance (Typeable cs, ColorSpace (cs i) e, RedGreenBlue cs i) =>
          ColorSpace (HSI cs (i :: k)) e where
   type BaseColorSpace (HSI cs i) = cs i
   toBaseColorSpace = mkPixelRGB . fmap fromDouble . CM.hsi2rgb . fmap toDouble . coerce

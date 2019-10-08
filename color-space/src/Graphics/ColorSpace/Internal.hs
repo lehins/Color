@@ -24,13 +24,12 @@ module Graphics.ColorSpace.Internal
   , pixelWhitePoint
   , Illuminant(..)
   , Chromaticity(..)
-  --, AlphaSpace(..)
   , XYZ
   ) where
 
 import Foreign.Storable
 import Graphics.ColorModel.Internal
-
+import Data.Typeable
 
 class ColorModel cs e => ColorSpace cs e where
   type BaseColorSpace cs :: *
@@ -74,7 +73,7 @@ data Chromaticity cs i where
 deriving instance Eq (Chromaticity cs i)
 deriving instance Show (Chromaticity cs i)
 
-class Illuminant (i :: k) where
+class (Typeable i, Typeable k) => Illuminant (i :: k) where
   whitePoint :: WhitePoint i
 
 -- | Get the white point of any pixel with color space that specifies one. itself isn't
@@ -93,14 +92,23 @@ pixelWhitePoint _ = whitePoint
 --- XYZ ---
 -----------
 
--- | The original color space @CIE 1931 XYZ@ color space
+-- | The original color space CIE 1931 XYZ color space
 data XYZ
 
-data instance Pixel XYZ e = PixelXYZ !e !e !e deriving (Eq, Ord, Bounded)
+-- | CIE1931 `XYZ` color space
+data instance Pixel XYZ e = PixelXYZ !e !e !e
 
+-- | CIE1931 `XYZ` color space
+deriving instance Eq e => Eq (Pixel XYZ e)
+
+-- | CIE1931 `XYZ` color space
+deriving instance Ord e => Ord (Pixel XYZ e)
+
+-- | CIE1931 `XYZ` color space
 instance Elevator e => Show (Pixel XYZ e) where
   showsPrec _ = showsColorModel
 
+-- | CIE1931 `XYZ` color space
 instance Elevator e => ColorModel XYZ e where
   type Components XYZ e = (e, e, e)
   toComponents (PixelXYZ x y z) = (x, y, z)
@@ -108,6 +116,7 @@ instance Elevator e => ColorModel XYZ e where
   fromComponents (x, y, z) = PixelXYZ x y z
   {-# INLINE fromComponents #-}
 
+-- | CIE1931 `XYZ` color space
 instance Elevator e => ColorSpace XYZ e where
   type BaseColorSpace XYZ = XYZ
   toBaseColorSpace = id
@@ -123,24 +132,29 @@ instance Elevator e => ColorSpace XYZ e where
 "fromPixelXYZ :: Pixel XYZ Double -> Pixel XYZ Double" fromPixelXYZ = id
  #-}
 
+-- | CIE1931 `XYZ` color space
 instance Functor (Pixel XYZ) where
   fmap f (PixelXYZ x y z) = PixelXYZ (f x) (f y) (f z)
   {-# INLINE fmap #-}
 
+-- | CIE1931 `XYZ` color space
 instance Applicative (Pixel XYZ) where
   pure e = PixelXYZ e e e
   {-# INLINE pure #-}
   (PixelXYZ fx fy fz) <*> (PixelXYZ x y z) = PixelXYZ (fx x) (fy y) (fz z)
   {-# INLINE (<*>) #-}
 
+-- | CIE1931 `XYZ` color space
 instance Foldable (Pixel XYZ) where
   foldr f acc (PixelXYZ x y z) = foldr3 f acc x y z
   {-# INLINE foldr #-}
 
+-- | CIE1931 `XYZ` color space
 instance Traversable (Pixel XYZ) where
   traverse f (PixelXYZ x y z) = traverse3 PixelXYZ f x y z
   {-# INLINE traverse #-}
 
+-- | CIE1931 `XYZ` color space
 instance Storable e => Storable (Pixel XYZ e) where
   sizeOf = sizeOfN 3
   {-# INLINE sizeOf #-}

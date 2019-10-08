@@ -1,3 +1,4 @@
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -14,7 +15,6 @@
 --
 module Graphics.ColorModel.HSI
   ( HSI
-  --, HSIA(..)
   , Pixel(..)
   , hsi2rgb
   , rgb2hsi
@@ -31,13 +31,18 @@ import Graphics.ColorModel.RGB
 -- | Hue, Saturation and Intensity color space.
 data HSI
 
-data instance Pixel HSI e = PixelHSI !e !e !e deriving (Eq, Ord)
+-- | `HSI` color model
+data instance Pixel HSI e = PixelHSI !e !e !e
+-- | `HSI` color model
+deriving instance Eq e => Eq (Pixel HSI e)
+-- | `HSI` color model
+deriving instance Ord e => Ord (Pixel HSI e)
 
-
+-- | `HSI` color model
 instance Elevator e => Show (Pixel HSI e) where
   showsPrec _ = showsColorModel
 
-
+-- | `HSI` color model
 instance Elevator e => ColorModel HSI e where
   type Components HSI e = (e, e, e)
   toComponents (PixelHSI h s i) = (h, s, i)
@@ -45,27 +50,29 @@ instance Elevator e => ColorModel HSI e where
   fromComponents (h, s, i) = PixelHSI h s i
   {-# INLINE fromComponents #-}
 
+-- | `HSI` color model
 instance Functor (Pixel HSI) where
   fmap f (PixelHSI h s i) = PixelHSI (f h) (f s) (f i)
   {-# INLINE fmap #-}
 
-
+-- | `HSI` color model
 instance Applicative (Pixel HSI) where
   pure !e = PixelHSI e e e
   {-# INLINE pure #-}
   (PixelHSI fh fs fi) <*> (PixelHSI h s i) = PixelHSI (fh h) (fs s) (fi i)
   {-# INLINE (<*>) #-}
 
-
+-- | `HSI` color model
 instance Foldable (Pixel HSI) where
   foldr f !z (PixelHSI h s i) = f h (f s (f i z))
   {-# INLINE foldr #-}
 
+-- | `HSI` color model
 instance Traversable (Pixel HSI) where
   traverse f (PixelHSI h s i) = PixelHSI <$> f h <*> f s <*> f i
   {-# INLINE traverse #-}
 
-
+-- | `HSI` color model
 instance Storable e => Storable (Pixel HSI e) where
   sizeOf = sizeOfN 3
   {-# INLINE sizeOf #-}

@@ -1,5 +1,5 @@
 name:                color-space
-version:             0.1.0.0
+version:             0.1.0
 synopsis:            Short description
 description:         Please see the README on GitHub at <https://github.com/lehins/color-space#readme>
 homepage:            https://github.com/lehins/color-space
@@ -25,19 +25,22 @@ library
                      -- , Graphics.ColorModel.HSL
                      -- , Graphics.ColorModel.HSV
                      -- , Graphics.ColorModel.YCbCr
-                     -- , Graphics.ColorSpace
+                     , Graphics.ColorSpace
                      , Graphics.ColorSpace.Algebra
-                     -- , Graphics.ColorSpace.RedGreenBlue
+                     , Graphics.ColorSpace.RedGreenBlue
                      , Graphics.ColorSpace.RedGreenBlue.SRGB
                      , Graphics.ColorSpace.RedGreenBlue.AdobeRGB
                      -- , Graphics.ColorSpace.RedGreenBlue.Alternative
-                     -- , Graphics.ColorSpace.RedGreenBlue.Alternative.HSI
+                     , Graphics.ColorSpace.RedGreenBlue.Alternative.HSI
                      -- , Graphics.ColorSpace.RedGreenBlue.Alternative.HSV
                      -- , Graphics.ColorSpace.RedGreenBlue.Alternative.HSL
                      -- , Graphics.ColorSpace.RedGreenBlue.Alternative.YCbCr
                      -- , Graphics.ColorSpace.RedGreenBlue.Alternative.CMYK
-                     -- , Graphics.ColorSpace.RedGreenBlue.Derived.SRGB
-                     -- , Graphics.ColorSpace.RedGreenBlue.Derived.AdobeRGB
+                     --, Graphics.ColorSpace.Derived.RedGreenBlue.SRGB
+                     --, Graphics.ColorSpace.Derived.RedGreenBlue.AdobeRGB
+                     --, Graphics.ColorSpace.RedGreenBlue.Derived
+                     , Graphics.ColorSpace.RedGreenBlue.Derived.SRGB
+                     , Graphics.ColorSpace.RedGreenBlue.Derived.AdobeRGB
                      -- , Graphics.ColorSpace.RGB.SC
                      -- , Graphics.ColorSpace.RGB.AdobeWideGamut
                      -- , Graphics.ColorSpace.RGB.ProPhoto
@@ -49,7 +52,7 @@ library
                      -- , Graphics.ColorSpace.LMS
                      -- , Graphics.ColorSpace.DCI_P3
                      -- , Graphics.ColorSpace.CIE1931.RGB
-                     , Graphics.ColorSpace.CIE1931
+                     --, Graphics.ColorSpace.CIE1931
                      , Graphics.ColorSpace.CIE1931.XYZ
                      , Graphics.ColorSpace.CIE1931.Illuminants
                      -- , Graphics.ColorSpace.CIE1976.LUV

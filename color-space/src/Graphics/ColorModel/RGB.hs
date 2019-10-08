@@ -1,3 +1,4 @@
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -16,7 +17,6 @@
 --
 module Graphics.ColorModel.RGB
   ( RGB
-  --, RGBA
   , Pixel(..)
   ) where
 
@@ -27,11 +27,18 @@ import Graphics.ColorModel.Internal
 -- | The most common @RGB@ color model
 data RGB
 
-data instance Pixel RGB e = PixelRGB !e !e !e deriving (Eq, Ord)
+-- | `RGB` color model
+data instance Pixel RGB e = PixelRGB !e !e !e
 
+-- | `RGB` color model
+deriving instance Eq e => Eq (Pixel RGB e)
+-- | `RGB` color model
+deriving instance Ord e => Ord (Pixel RGB e)
+-- | `RGB` color model
 instance Elevator e => Show (Pixel RGB e) where
   showsPrec _ = showsColorModel
 
+-- | `RGB` color model
 instance Elevator e => ColorModel RGB e where
   type Components RGB e = (e, e, e)
   toComponents (PixelRGB r g b) = (r, g, b)
@@ -39,24 +46,29 @@ instance Elevator e => ColorModel RGB e where
   fromComponents (r, g, b) = PixelRGB r g b
   {-# INLINE fromComponents #-}
 
+-- | `RGB` color model
 instance Functor (Pixel RGB) where
   fmap f (PixelRGB r g b) = PixelRGB (f r) (f g) (f b)
   {-# INLINE fmap #-}
 
+-- | `RGB` color model
 instance Applicative (Pixel RGB) where
   pure !e = PixelRGB e e e
   {-# INLINE pure #-}
   (PixelRGB fr fg fb) <*> (PixelRGB r g b) = PixelRGB (fr r) (fg g) (fb b)
   {-# INLINE (<*>) #-}
 
+-- | `RGB` color model
 instance Foldable (Pixel RGB) where
   foldr f !acc (PixelRGB r g b) = foldr3 f acc r g b
   {-# INLINE foldr #-}
 
+-- | `RGB` color model
 instance Traversable (Pixel RGB) where
   traverse f (PixelRGB r g b) = traverse3 PixelRGB f r g b
   {-# INLINE traverse #-}
 
+-- | `RGB` color model
 instance Storable e => Storable (Pixel RGB e) where
   sizeOf = sizeOfN 3
   {-# INLINE sizeOf #-}

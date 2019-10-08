@@ -1,3 +1,4 @@
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
@@ -18,11 +19,9 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace.RedGreenBlue.SRGB
-  ( pattern PixelRGB
+  ( SRGB
+  , pattern PixelRGB
   , RGB
-  , SRGB
-  , Pixel(RGB)
-  --, RGBA
   , primaries
   , transfer
   , itransfer
@@ -38,25 +37,39 @@ import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RedGreenBlue.Internal
 
 
+-- | The most common @sRGB@ color space with the default `D65` illuminant
 type SRGB = RGB 'D65
 
-
--- | The most common @sRGB@ color space with the default `D65` illuminant
+-- | The most common @sRGB@ color space
 data RGB (i :: Illuminant2)
 
 newtype instance Pixel (RGB 'D65) e = RGB (Pixel CM.RGB e)
-  deriving (Eq, Functor, Applicative, Foldable, Traversable, Storable)
 
 -- | Constructor for the most common @sRGB@ color space with the default `D65` illuminant
 pattern PixelRGB :: e -> e -> e -> Pixel SRGB e
 pattern PixelRGB r g b = RGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGB #-}
 
--- TODO: round to 7 decimal places for floating point
+-- | s`RGB` color space
+deriving instance Eq e => Eq (Pixel (RGB 'D65) e)
+-- | s`RGB` color space
+deriving instance Ord e => Ord (Pixel (RGB 'D65) e)
+-- | s`RGB` color space
+deriving instance Functor (Pixel (RGB 'D65))
+-- | s`RGB` color space
+deriving instance Applicative (Pixel (RGB 'D65))
+-- | s`RGB` color space
+deriving instance Foldable (Pixel (RGB 'D65))
+-- | s`RGB` color space
+deriving instance Traversable (Pixel (RGB 'D65))
+-- | s`RGB` color space
+deriving instance Storable e => Storable (Pixel (RGB 'D65) e)
+
+-- | s`RGB` color space
 instance Elevator e => Show (Pixel (RGB 'D65) e) where
   showsPrec _ = showsColorModel
 
--- | sRGB defined in 'Graphics.ColorSpace.RGB.S'
+-- | s`RGB` color space
 instance Elevator e => ColorModel (RGB 'D65) e where
   type Components (RGB 'D65) e = (e, e, e)
   toComponents = toComponents . coerce
@@ -65,7 +78,7 @@ instance Elevator e => ColorModel (RGB 'D65) e where
   {-# INLINE fromComponents #-}
   showsColorModelName = showsColorModelName . unPixelRGB
 
--- | sRGB color space
+-- | s`RGB` color space
 instance Elevator e => ColorSpace (RGB 'D65) e where
   type BaseColorSpace (RGB 'D65) = RGB 'D65
   toBaseColorSpace = id
@@ -78,7 +91,7 @@ instance Elevator e => ColorSpace (RGB 'D65) e where
   {-# INLINE fromPixelXYZ #-}
   showsColorSpaceName _ = ("sRGB Standard" ++)
 
-
+-- | s`RGB` color space
 instance RedGreenBlue RGB 'D65 where
   chromaticity = primaries
   npm = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)

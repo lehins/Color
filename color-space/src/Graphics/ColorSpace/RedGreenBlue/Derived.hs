@@ -6,8 +6,8 @@
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.RedGreenBlue
-  ( module Graphics.ColorSpace.RedGreenBlue.Internal
+module Graphics.ColorSpace.RedGreenBlue.Derived
+  ( module Graphics.ColorSpace.RedGreenBlue.Derived.SRGB
   ) where
 
-import Graphics.ColorSpace.RedGreenBlue.Internal
+import Graphics.ColorSpace.RedGreenBlue.Derived.SRGB
