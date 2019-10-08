@@ -6,14 +6,14 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
--- Module      : Graphics.ColorSpace.RedGreenBlue.Internal
+-- Module      : Graphics.ColorSpace.RGB.Internal
 -- Copyright   : (c) Alexey Kuleshevich 2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.RedGreenBlue.Internal
+module Graphics.ColorSpace.RGB.Internal
   ( RedGreenBlue(..)
   , rgb2xyz
   , xyz2rgb

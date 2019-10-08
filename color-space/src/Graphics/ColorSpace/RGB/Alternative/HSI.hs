@@ -11,14 +11,14 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ViewPatterns #-}
 -- |
--- Module      : Graphics.ColorSpace.RedGreenBlue.Alternative.HSI
+-- Module      : Graphics.ColorSpace.RGB.Alternative.HSI
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.RedGreenBlue.Alternative.HSI
+module Graphics.ColorSpace.RGB.Alternative.HSI
   ( pattern PixelHSI
   , pattern PixelHSI360
   , HSI
@@ -31,8 +31,7 @@ import Foreign.Storable
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.HSI as CM
 import Graphics.ColorSpace.Internal
-import Graphics.ColorSpace.RedGreenBlue.Internal
-
+import Graphics.ColorSpace.RGB.Internal
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
 data HSI (cs :: k -> *) (i :: k)

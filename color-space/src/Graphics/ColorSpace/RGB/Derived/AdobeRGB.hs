@@ -10,14 +10,14 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
--- Module      : Graphics.ColorSpace.RedGreenBlue.Derived.AdobeRGB
+-- Module      : Graphics.ColorSpace.RGB.Derived.AdobeRGB
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.RedGreenBlue.Derived.AdobeRGB
+module Graphics.ColorSpace.RGB.Derived.AdobeRGB
   ( pattern PixelRGB
   , RGB
   , AdobeRGB.primaries
@@ -30,9 +30,9 @@ import Data.Coerce
 import Foreign.Storable
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
-import qualified Graphics.ColorSpace.RedGreenBlue.AdobeRGB as AdobeRGB
+import qualified Graphics.ColorSpace.RGB.AdobeRGB as AdobeRGB
 import Graphics.ColorSpace.Internal
-import Graphics.ColorSpace.RedGreenBlue.Internal
+import Graphics.ColorSpace.RGB.Internal
 
 
 -- | The most common @AdobeRGB@ color space with an arbitrary illuminant
