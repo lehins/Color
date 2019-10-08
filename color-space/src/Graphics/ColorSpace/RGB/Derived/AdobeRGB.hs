@@ -1,4 +1,3 @@
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -8,6 +7,7 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.ColorSpace.RGB.Derived.AdobeRGB
@@ -19,19 +19,21 @@
 --
 module Graphics.ColorSpace.RGB.Derived.AdobeRGB
   ( pattern PixelRGB
+  , pattern PixelRGBA
   , RGB
   , AdobeRGB.primaries
   , AdobeRGB.transfer
   , AdobeRGB.itransfer
   ) where
 
-import Data.Proxy
 import Data.Coerce
+import Data.Proxy
 import Foreign.Storable
+import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
-import qualified Graphics.ColorSpace.RGB.AdobeRGB as AdobeRGB
 import Graphics.ColorSpace.Internal
+import qualified Graphics.ColorSpace.RGB.AdobeRGB as AdobeRGB
 import Graphics.ColorSpace.RGB.Internal
 
 
@@ -45,6 +47,11 @@ newtype instance Pixel (RGB i) e = RGB (Pixel CM.RGB e)
 pattern PixelRGB :: e -> e -> e -> Pixel (RGB i) e
 pattern PixelRGB r g b = RGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGB #-}
+
+-- | Constructor for @AdobeRGB@ with alpha channel.
+pattern PixelRGBA :: e -> e -> e -> e -> Pixel (Alpha (RGB i)) e
+pattern PixelRGBA r g b a = Alpha (RGB (CM.PixelRGB r g b)) a
+{-# COMPLETE PixelRGBA #-}
 
 
 -- | Adobe`RGB` color space (derived)

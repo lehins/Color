@@ -1,4 +1,3 @@
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -8,6 +7,7 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ViewPatterns #-}
 -- |
@@ -20,6 +20,7 @@
 --
 module Graphics.ColorSpace.RGB.Alternative.HSI
   ( pattern PixelHSI
+  , pattern PixelHSIA
   , pattern PixelHSI360
   , HSI
   , Pixel(HSI)
@@ -28,8 +29,9 @@ module Graphics.ColorSpace.RGB.Alternative.HSI
 import Data.Coerce
 import Data.Typeable
 import Foreign.Storable
-import Graphics.ColorModel.Internal
+import Graphics.ColorModel.Alpha
 import qualified Graphics.ColorModel.HSI as CM
+import Graphics.ColorModel.Internal
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RGB.Internal
 
@@ -62,6 +64,12 @@ instance ColorModel (cs i) e => Show (Pixel (HSI cs i) e) where
 pattern PixelHSI :: e -> e -> e -> Pixel (HSI cs i) e
 pattern PixelHSI h s i = HSI (CM.PixelHSI h s i)
 {-# COMPLETE PixelHSI #-}
+
+-- | Constructor for @HSI@ with alpha channel.
+pattern PixelHSIA :: e -> e -> e -> e -> Pixel (Alpha (HSI cs i)) e
+pattern PixelHSIA r g b a = Alpha (HSI (CM.PixelHSI r g b)) a
+{-# COMPLETE PixelHSIA #-}
+
 
 -- | Constructor for an RGB color space in an alternative HSI color model. Difference from
 -- `PixelHSI` is that the hue is specified in 0 to 360 degree range, rather than 0 to
