@@ -24,8 +24,8 @@ library
                      , Graphics.ColorModel.RGB
                      , Graphics.ColorModel.HSI
                      -- , Graphics.ColorModel.HSL
-                     -- , Graphics.ColorModel.HSV
-                     -- , Graphics.ColorModel.YCbCr
+                     , Graphics.ColorModel.HSV
+                     , Graphics.ColorModel.YCbCr
                      , Graphics.ColorSpace
                      , Graphics.ColorSpace.Algebra
                      , Graphics.ColorSpace.RGB
@@ -63,16 +63,7 @@ library
                      -- , Graphics.ColorSpace.Standard.RAL -- https://en.wikipedia.org/wiki/List_of_RAL_colors
 
                      -- , Graphics.ColorSpace.Chromaticities -- eg. ITU-R BT.709
-                     -- , Graphics.ColorSpace.SRGB
                      -- , Graphics.ColorSpace.CMYK
-                     -- , Graphics.ColorSpace.HSI
-                     -- , Graphics.ColorSpace.HSL
-                     -- , Graphics.ColorSpace.HSV
-                     -- , Graphics.ColorSpace.YCbCr
-                     -- , Graphics.ColorSpace.AdobeRGB.CMYK
-                     -- , Graphics.ColorSpace.AdobeRGB.HSI
-                     -- , Graphics.ColorSpace.AdobeRGB.HSL
-                     -- , Graphics.ColorSpace.AdobeRGB.HSV
 
 
                      --   Graphics.ColorSpace
@@ -98,25 +89,32 @@ library
                        -Wredundant-constraints
 
 
--- test-suite tests
---   type:               exitcode-stdio-1.0
---   hs-source-dirs:     tests
---   main-is:            Main.hs
---   other-modules:      Common
---                     , LibSpec
---                     , Spec
---   build-depends:      base             >= 4.8 && < 5
---                     , color-space
---                     , hspec
---                     , QuickCheck
+test-suite tests
+  type:               exitcode-stdio-1.0
+  hs-source-dirs:     tests
+  main-is:            Main.hs
+  other-modules:      Graphics.ColorModelSpec
+                    , Graphics.ColorModel.HSISpec
+                    , Graphics.ColorModel.HSVSpec
+                    , Graphics.ColorModel.RGBSpec
+                    , Graphics.ColorModel.YCbCrSpec
+                    , Graphics.ColorSpaceSpec
+                    , Graphics.ColorSpace.RGB.SRGBSpec
+                    , Graphics.ColorSpace.RGB.Derived.SRGBSpec
+                    , Spec
+  build-depends:      QuickCheck
+                    , base             >= 4.8 && < 5
+                    , color-space
+                    , hspec
+                    , random
 
---   default-language:   Haskell2010
---   ghc-options:        -Wall
---                       -Wincomplete-record-updates
---                       -Wincomplete-uni-patterns
---                       -Wredundant-constraints
---                       -fno-warn-orphans
---                       -threaded
+  default-language:   Haskell2010
+  ghc-options:        -Wall
+                      -Wincomplete-record-updates
+                      -Wincomplete-uni-patterns
+                      -Wredundant-constraints
+                      -fno-warn-orphans
+                      -threaded
 
 source-repository head
   type:     git

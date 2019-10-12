@@ -28,6 +28,9 @@ import GHC.Float
 
 -- | A class with a set of convenient functions that allow for changing precision.
 class (Show e, Eq e, Num e, Typeable e, Unbox e, Storable e) => Elevator e where
+  maxValue :: e
+
+  minValue :: e
 
   -- | Values are scaled to @[0, 255]@ range.
   toWord8 :: e -> Word8
@@ -81,6 +84,8 @@ clamp01 !x = min (max 0 x) 1
 
 -- | Values between @[0, 255]]@
 instance Elevator Word8 where
+  maxValue = maxBound
+  minValue = minBound
   toWord8 = id
   {-# INLINE toWord8 #-}
   toWord16 = raiseUp
@@ -99,6 +104,8 @@ instance Elevator Word8 where
 
 -- | Values between @[0, 65535]]@
 instance Elevator Word16 where
+  maxValue = maxBound
+  minValue = minBound
   toWord8 = dropDown
   {-# INLINE toWord8 #-}
   toWord16 = id
@@ -117,6 +124,8 @@ instance Elevator Word16 where
 
 -- | Values between @[0, 4294967295]@
 instance Elevator Word32 where
+  maxValue = maxBound
+  minValue = minBound
   toWord8 = dropDown
   {-# INLINE toWord8 #-}
   toWord16 = dropDown
@@ -135,6 +144,8 @@ instance Elevator Word32 where
 
 -- | Values between @[0, 18446744073709551615]@
 instance Elevator Word64 where
+  maxValue = maxBound
+  minValue = minBound
   toWord8 = dropDown
   {-# INLINE toWord8 #-}
   toWord16 = dropDown
@@ -152,6 +163,8 @@ instance Elevator Word64 where
 
 -- | Values between @[0, 18446744073709551615]@ on 64bit
 instance Elevator Word where
+  maxValue = maxBound
+  minValue = minBound
   toWord8 = dropDown
   {-# INLINE toWord8 #-}
   toWord16 = dropDown
@@ -169,6 +182,8 @@ instance Elevator Word where
 
 -- | Values between @[0, 127]@
 instance Elevator Int8 where
+  maxValue = maxBound
+  minValue = 0
   toWord8 = fromIntegral . max 0
   {-# INLINE toWord8 #-}
   toWord16 = raiseUp . max 0
@@ -187,6 +202,8 @@ instance Elevator Int8 where
 
 -- | Values between @[0, 32767]@
 instance Elevator Int16 where
+  maxValue = maxBound
+  minValue = 0
   toWord8 = dropDown . max 0
   {-# INLINE toWord8 #-}
   toWord16 = fromIntegral . max 0
@@ -205,6 +222,8 @@ instance Elevator Int16 where
 
 -- | Values between @[0, 2147483647]@
 instance Elevator Int32 where
+  maxValue = maxBound
+  minValue = 0
   toWord8 = dropDown . max 0
   {-# INLINE toWord8 #-}
   toWord16 = dropDown . max 0
@@ -223,6 +242,8 @@ instance Elevator Int32 where
 
 -- | Values between @[0, 9223372036854775807]@
 instance Elevator Int64 where
+  maxValue = maxBound
+  minValue = 0
   toWord8 = dropDown . max 0
   {-# INLINE toWord8 #-}
   toWord16 = dropDown . max 0
@@ -241,6 +262,8 @@ instance Elevator Int64 where
 
 -- | Values between @[0, 9223372036854775807]@ on 64bit
 instance Elevator Int where
+  maxValue = maxBound
+  minValue = 0
   toWord8 = dropDown . max 0
   {-# INLINE toWord8 #-}
   toWord16 = dropDown . max 0
@@ -259,6 +282,8 @@ instance Elevator Int where
 
 -- | Values between @[0.0, 1.0]@
 instance Elevator Float where
+  maxValue = 1
+  minValue = 0
   toWord8 = stretch . clamp01
   {-# INLINE toWord8 #-}
   toWord16 = stretch . clamp01
@@ -277,6 +302,8 @@ instance Elevator Float where
 
 -- | Values between @[0.0, 1.0]@
 instance Elevator Double where
+  maxValue = 1
+  minValue = 0
   toWord8 = stretch . clamp01
   {-# INLINE toWord8 #-}
   toWord16 = stretch . clamp01
@@ -295,6 +322,8 @@ instance Elevator Double where
 
 -- | Discards imaginary part and changes precision of real part.
 instance (Num e, Elevator e, RealFloat e) => Elevator (C.Complex e) where
+  maxValue = maxValue C.:+ maxValue
+  minValue = minValue C.:+ minValue
   toWord8 = toWord8 . C.realPart
   {-# INLINE toWord8 #-}
   toWord16 = toWord16 . C.realPart

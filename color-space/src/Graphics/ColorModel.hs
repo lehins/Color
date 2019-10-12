@@ -7,11 +7,9 @@
 -- Portability : non-portable
 --
 module Graphics.ColorModel
-  ( Alpha
-  , Pixel(..)
+  ( ColorModel(..)
   , Elevator(..)
-  , ColorModel(..)
+  , Pixel
   ) where
 
 import Graphics.ColorModel.Internal
-import Graphics.ColorModel.Alpha

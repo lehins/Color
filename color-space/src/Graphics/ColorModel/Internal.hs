@@ -134,10 +134,10 @@ instance (ColorModel cs e, Floating e) => Floating (Pixel cs e) where
   acosh   = fmap acosh
   {-# INLINE acosh #-}
 
-instance (ColorModel cs e, Bounded e) => Bounded (Pixel cs e) where
-  maxBound = pure maxBound
+instance ColorModel cs e => Bounded (Pixel cs e) where
+  maxBound = pure maxValue
   {-# INLINE maxBound #-}
-  minBound = pure minBound
+  minBound = pure minValue
   {-# INLINE minBound #-}
 
 instance (ColorModel cs e, NFData e) => NFData (Pixel cs e) where
