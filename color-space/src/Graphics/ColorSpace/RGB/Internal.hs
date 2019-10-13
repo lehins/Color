@@ -1,9 +1,11 @@
-{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.ColorSpace.RGB.Internal
@@ -15,6 +17,7 @@
 --
 module Graphics.ColorSpace.RGB.Internal
   ( RedGreenBlue(..)
+  , Chromaticity(..)
   , rgb2xyz
   , xyz2rgb
   , NPM(..)
@@ -75,6 +78,16 @@ class Illuminant i => RedGreenBlue (cs :: k -> *) (i :: k) where
   default unPixelRGB ::
     Coercible (Pixel (cs i) e) (Pixel CM.RGB e) => Pixel (cs i) e -> Pixel CM.RGB e
   unPixelRGB = coerce
+
+
+data Chromaticity cs i where
+  Chromaticity :: Illuminant i =>
+    { chromaRed   :: {-# UNPACK #-}!Primary
+    , chromaGreen :: {-# UNPACK #-}!Primary
+    , chromaBlue  :: {-# UNPACK #-}!Primary
+    } -> Chromaticity cs i
+deriving instance Eq (Chromaticity cs i)
+deriving instance Show (Chromaticity cs i)
 
 
 rgb2xyz :: (RedGreenBlue cs i, Elevator e) => Pixel (cs i) e -> Pixel XYZ Double

@@ -1,8 +1,8 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE GADTs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -20,15 +20,21 @@ module Graphics.ColorSpace.Internal
   ( Pixel(..)
   , ColorSpace(..)
   , Primary(..)
+  , zPrimary
+  , primaryXZ
+  , primaryXYZ
   , WhitePoint(..)
+  , zWhitePoint
+  , whitePointXZ
+  , whitePointXYZ
   , pixelWhitePoint
   , Illuminant(..)
-  , Chromaticity(..)
   , XYZ
   ) where
 
 import Foreign.Storable
 import Graphics.ColorModel.Internal
+import Graphics.ColorSpace.Algebra
 import Data.Typeable
 
 class ColorModel cs e => ColorSpace cs e where
@@ -54,27 +60,86 @@ class ColorModel cs e => ColorSpace cs e where
   {-# INLINE fromPixelXYZ #-}
 
 
+----------------
+-- WhitePoint --
+----------------
+
+class (Typeable i, Typeable k) => Illuminant (i :: k) where
+  whitePoint :: WhitePoint i
+
+data WhitePoint (i :: k) = WhitePoint
+  { xWhitePoint :: {-# UNPACK #-}!Double
+  , yWhitePoint :: {-# UNPACK #-}!Double
+  } deriving (Eq, Show)
+
+zWhitePoint :: WhitePoint i -> Double
+zWhitePoint wp = 1 - xWhitePoint wp - yWhitePoint wp
+{-# INLINE zWhitePoint #-}
+
+-- | Compute @XYZ@ tristimulus of a white point, where @Y = 1@
+--
+-- @since 0.1.0
+whitePointXYZ ::
+     WhitePoint i
+     -- ^ White point that specifies @x@ and @y@
+  -> V3
+whitePointXYZ = whitePointXZ 1
+{-# INLINE whitePointXYZ #-}
+
+
+-- | Compute @XYZ@ tristimulus of a white point.
+--
+-- @since 0.1.0
+whitePointXZ :: Double
+              -- ^ @Y@ value, which is usually set to @1@
+              -> WhitePoint i
+              -- ^ White point that specifies @x@ and @y@
+              -> V3
+whitePointXZ vY (WhitePoint x y) = V3 (vYy * x) vY (vYy * (1 - x - y))
+  where !vYy = vY / y
+{-# INLINE whitePointXZ #-}
+
+-------------
+-- Primary --
+-------------
+
 data Primary = Primary
   { xPrimary :: {-# UNPACK #-}!Double
   , yPrimary :: {-# UNPACK #-}!Double
   } deriving (Eq, Show)
 
-data WhitePoint i = WhitePoint
-  { xWhitePoint :: {-# UNPACK #-}!Double
-  , yWhitePoint :: {-# UNPACK #-}!Double
-  } deriving (Eq, Show)
 
-data Chromaticity cs i where
-  Chromaticity :: Illuminant i =>
-    { chromaRed   :: {-# UNPACK #-}!Primary
-    , chromaGreen :: {-# UNPACK #-}!Primary
-    , chromaBlue  :: {-# UNPACK #-}!Primary
-    } -> Chromaticity cs i
-deriving instance Eq (Chromaticity cs i)
-deriving instance Show (Chromaticity cs i)
+-- | Compute @z = 1 - x - y@ of a `Primary`.
+zPrimary :: Primary -> Double
+zPrimary p = 1 - xPrimary p - yPrimary p
+{-# INLINE zPrimary #-}
 
-class (Typeable i, Typeable k) => Illuminant (i :: k) where
-  whitePoint :: WhitePoint i
+
+
+
+-- | Compute @XYZ@ tristimulus of a Primary, where @Y = 1@
+--
+-- @since 0.1.0
+primaryXYZ ::
+     Primary
+     -- ^ Primary that specifies @x@ and @y@
+  -> V3
+primaryXYZ = primaryXZ 1
+{-# INLINE primaryXYZ #-}
+
+-- | Compute @XYZ@ tristimulus of a Primary.
+--
+-- @since 0.1.0
+primaryXZ ::
+     Double
+     -- ^ @Y@ value, which is usually set to @1@
+  -> Primary
+     -- ^ Primary that specifies @x@ and @y@
+  -> V3
+primaryXZ vY (Primary x y) = V3 (vYy * x) vY (vYy * (1 - x - y))
+  where !vYy = vY / y
+{-# INLINE primaryXZ #-}
+
 
 -- | Get the white point of any pixel with color space that specifies one. itself isn't
 -- actually evaluated, its type carries enough information for getting the white point.
@@ -87,6 +152,7 @@ class (Typeable i, Typeable k) => Illuminant (i :: k) where
 pixelWhitePoint :: Illuminant i => Pixel (cs i) e -> WhitePoint i
 pixelWhitePoint _ = whitePoint
 {-# INLINE pixelWhitePoint #-}
+
 
 -----------
 --- XYZ ---

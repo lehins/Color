@@ -23,18 +23,9 @@ module Graphics.ColorSpace.Algebra
   , multM3x3byV3
   , multM3x3byM3x3
   , transposeM3x3
-  , Primary(..)
-  , zPrimary
-  , primaryXZ
-  , primaryXYZ
-  , WhitePoint(..)
-  , whitePointXZ
-  , whitePointXYZ
-  , Chromaticity(..)
   ) where
 
 import Text.Printf
-import Graphics.ColorSpace.Internal
 import Graphics.ColorModel.Elevator
 
 -- | A 3D vector with @x@, @y@ and @z@ components in double floating point precision.
@@ -283,59 +274,4 @@ instance Floating M3x3 where
   {-# INLINE atanh #-}
   acosh   = mapM3x3 acosh
   {-# INLINE acosh #-}
-
-
--- | Compute @z = 1 - x - y@ of a `Primary`.
-zPrimary :: Primary -> Double
-zPrimary p = 1 - xPrimary p - yPrimary p
-{-# INLINE zPrimary #-}
-
-
--- | Compute @XYZ@ tristimulus of a white point, where @Y = 1@
---
--- @since 0.1.0
-whitePointXYZ ::
-     WhitePoint i
-     -- ^ White point that specifies @x@ and @y@
-  -> V3
-whitePointXYZ = whitePointXZ 1
-{-# INLINE whitePointXYZ #-}
-
-
--- | Compute @XYZ@ tristimulus of a white point.
---
--- @since 0.1.0
-whitePointXZ :: Double
-              -- ^ @Y@ value, which is usually set to @1@
-              -> WhitePoint i
-              -- ^ White point that specifies @x@ and @y@
-              -> V3
-whitePointXZ vY (WhitePoint x y) = V3 (vYy * x) vY (vYy * (1 - x - y))
-  where !vYy = vY / y
-{-# INLINE whitePointXZ #-}
-
-
--- | Compute @XYZ@ tristimulus of a Primary, where @Y = 1@
---
--- @since 0.1.0
-primaryXYZ ::
-     Primary
-     -- ^ Primary that specifies @x@ and @y@
-  -> V3
-primaryXYZ = primaryXZ 1
-{-# INLINE primaryXYZ #-}
-
--- | Compute @XYZ@ tristimulus of a Primary.
---
--- @since 0.1.0
-primaryXZ ::
-     Double
-     -- ^ @Y@ value, which is usually set to @1@
-  -> Primary
-     -- ^ Primary that specifies @x@ and @y@
-  -> V3
-primaryXZ vY (Primary x y) = V3 (vYy * x) vY (vYy * (1 - x - y))
-  where !vYy = vY / y
-{-# INLINE primaryXZ #-}
-
 

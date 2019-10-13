@@ -20,6 +20,7 @@ library
                      -- , Graphics.ColorModel.Binary
                      -- , Graphics.ColorModel.Complex
                      -- , Graphics.ColorModel.CMYK
+                     , Graphics.ColorModel.Internal
                      , Graphics.ColorModel.Alpha
                      , Graphics.ColorModel.RGB
                      , Graphics.ColorModel.HSI
@@ -73,8 +74,7 @@ library
                      -- , Graphics.ColorSpace.YCbCr
                      -- , Graphics.ColorSpace.RGB
 
-  other-modules:       Graphics.ColorModel.Internal
-                     , Graphics.ColorModel.Elevator
+  other-modules:       Graphics.ColorModel.Elevator
                      , Graphics.ColorSpace.Internal
                      , Graphics.ColorSpace.RGB.Internal
   build-depends:       base            >= 4.8 && < 5
@@ -99,12 +99,14 @@ test-suite tests
                     , Graphics.ColorModel.RGBSpec
                     , Graphics.ColorModel.YCbCrSpec
                     , Graphics.ColorSpaceSpec
+                    , Graphics.ColorSpace.CIE1931.IlluminantsSpec
                     , Graphics.ColorSpace.RGB.SRGBSpec
                     , Graphics.ColorSpace.RGB.Derived.SRGBSpec
                     , Spec
   build-depends:      QuickCheck
                     , base             >= 4.8 && < 5
                     , color-space
+                    , colour
                     , hspec
                     , random
 

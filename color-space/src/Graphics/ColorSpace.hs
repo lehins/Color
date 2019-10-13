@@ -7,12 +7,9 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace
-  ( ColorSpace(..)
-  , Primary(..)
-  , WhitePoint(..)
-  , pixelWhitePoint
-  , Illuminant(..)
-  , Chromaticity(..)
+  ( module Graphics.ColorSpace.Internal
+  , module Graphics.ColorSpace.CIE1931.Illuminants
   ) where
 
 import Graphics.ColorSpace.Internal
+import Graphics.ColorSpace.CIE1931.Illuminants
