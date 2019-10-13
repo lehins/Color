@@ -1,9 +1,10 @@
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.ColorModel.YCbCr
@@ -15,12 +16,17 @@
 --
 module Graphics.ColorModel.YCbCr
   ( YCbCr
-  , Pixel(..)
+  -- * Constructors for an YCbCr color model.
+  , pattern PixelYCbCr
+  , pattern PixelYCbCrA
+  , Pixel
+  , ColorModel(..)
   , ycbcr2rgb
   , rgb2ycbcr
   ) where
 
 import Foreign.Storable
+import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 import Graphics.ColorModel.RGB
 
@@ -33,6 +39,12 @@ data YCbCr
 
 -- | `YCbCr` color model
 data instance Pixel YCbCr e = PixelYCbCr !e !e !e
+
+-- | Constructor for @YCbCr@ with alpha channel.
+pattern PixelYCbCrA :: e -> e -> e -> e -> Pixel (Alpha YCbCr) e
+pattern PixelYCbCrA h s i a = Alpha (PixelYCbCr h s i) a
+{-# COMPLETE PixelYCbCrA #-}
+
 -- | `YCbCr` color model
 deriving instance Eq e => Eq (Pixel YCbCr e)
 -- | `YCbCr` color model

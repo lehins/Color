@@ -21,7 +21,7 @@
 module Graphics.ColorSpace.RGB.Alternative.HSI
   ( pattern PixelHSI
   , pattern PixelHSIA
-  , pattern PixelHSI360
+  , pattern PixelH360SI
   , HSI
   , Pixel(HSI)
   ) where
@@ -67,17 +67,17 @@ pattern PixelHSI h s i = HSI (CM.PixelHSI h s i)
 
 -- | Constructor for @HSI@ with alpha channel.
 pattern PixelHSIA :: e -> e -> e -> e -> Pixel (Alpha (HSI cs i)) e
-pattern PixelHSIA r g b a = Alpha (HSI (CM.PixelHSI r g b)) a
+pattern PixelHSIA h s i a = Alpha (HSI (CM.PixelHSI h s i)) a
 {-# COMPLETE PixelHSIA #-}
 
 
 -- | Constructor for an RGB color space in an alternative HSI color model. Difference from
 -- `PixelHSI` is that the hue is specified in 0 to 360 degree range, rather than 0 to
 -- 1. Note, that this is not checked.
-pattern PixelHSI360 :: Double -> Double -> Double -> Pixel (HSI cs i) Double
-pattern PixelHSI360 h s i <- HSI (CM.PixelHSI ((* 360) -> h) s i) where
-        PixelHSI360 h s i = HSI (CM.PixelHSI (h / 360) s i)
-{-# COMPLETE PixelHSI360 #-}
+pattern PixelH360SI :: Double -> Double -> Double -> Pixel (HSI cs i) Double
+pattern PixelH360SI h s i <- PixelHSI ((* 360) -> h) s i where
+        PixelH360SI h s i = PixelHSI (h / 360) s i
+{-# COMPLETE PixelH360SI #-}
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel (cs i) e => ColorModel (HSI cs (i :: k)) e where

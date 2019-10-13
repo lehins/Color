@@ -17,18 +17,29 @@
 --
 module Graphics.ColorModel.RGB
   ( RGB
-  , Pixel(..)
+  -- * Constructors for an RGB color model.
+  , pattern PixelRGB
+  , pattern PixelRGBA
+  , Pixel
+  , ColorModel(..)
   ) where
 
 import Foreign.Storable
+import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 
 
 -- | The most common @RGB@ color model
 data RGB
 
+
 -- | `RGB` color model
 data instance Pixel RGB e = PixelRGB !e !e !e
+
+-- | Constructor for @RGB@ with alpha channel.
+pattern PixelRGBA :: e -> e -> e -> e -> Pixel (Alpha RGB) e
+pattern PixelRGBA r g b a = Alpha (PixelRGB r g b) a
+{-# COMPLETE PixelRGBA #-}
 
 -- | `RGB` color model
 deriving instance Eq e => Eq (Pixel RGB e)

@@ -21,6 +21,7 @@ module Graphics.ColorModel.Alpha
   , setAlpha
   , setOpaque
   , Pixel(Alpha)
+  , ColorModel(..)
   ) where
 
 import Foreign.Ptr

@@ -1,10 +1,12 @@
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.ColorModel.HSI
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
@@ -15,12 +17,18 @@
 --
 module Graphics.ColorModel.HSI
   ( HSI
-  , Pixel(..)
+  -- * Constructors for an HSI color model.
+  , pattern PixelHSI
+  , pattern PixelHSIA
+  , pattern PixelH360SI
+  , Pixel
+  , ColorModel(..)
   , hsi2rgb
   , rgb2hsi
   ) where
 
 import Foreign.Storable
+import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 import Graphics.ColorModel.RGB
 
@@ -28,11 +36,26 @@ import Graphics.ColorModel.RGB
 --- HSI ---
 -----------
 
--- | Hue, Saturation and Intensity color space.
+-- | Hue, Saturation and Intensity color model.
 data HSI
 
 -- | `HSI` color model
 data instance Pixel HSI e = PixelHSI !e !e !e
+
+-- | Constructor for @HSI@ with alpha channel.
+pattern PixelHSIA :: e -> e -> e -> e -> Pixel (Alpha HSI) e
+pattern PixelHSIA h s i a = Alpha (PixelHSI h s i) a
+{-# COMPLETE PixelHSIA #-}
+
+-- | Constructor for an HSI color model. Difference from `PixelHSI` is that channels are
+-- restricted to `Double` and the hue is specified in 0 to 360 degree range, rather than 0
+-- to 1. Note, that this is not checked.
+pattern PixelH360SI :: Double -> Double -> Double -> Pixel HSI Double
+pattern PixelH360SI h s i <- PixelHSI ((* 360) -> h) s i where
+        PixelH360SI h s i = PixelHSI (h / 360) s i
+{-# COMPLETE PixelH360SI #-}
+
+
 -- | `HSI` color model
 deriving instance Eq e => Eq (Pixel HSI e)
 -- | `HSI` color model
@@ -83,20 +106,19 @@ instance Storable e => Storable (Pixel HSI e) where
   poke p (PixelHSI h s i) = poke3 p h s i
   {-# INLINE poke #-}
 
--- TODO: switch to Either
+
 hsi2rgb :: Pixel HSI Double -> Pixel RGB Double
 hsi2rgb (PixelHSI h' s i) = getRGB (h' * 2 * pi)
   where
     !is = i * s
     !second = i - is
     !pi3 = pi / 3
-    errorHue = error $ "HSI pixel is not properly scaled, Hue: " ++ show h'
     getFirst !a !b = i + is * cos a / cos b
     {-# INLINE getFirst #-}
     getThird !v1 !v2 = i + 2 * is + v1 - v2
     {-# INLINE getThird #-}
     getRGB h
-      | h < 0 = errorHue
+      | h < 0 = PixelRGB 0 0 0
       | h < 2 * pi3 =
         let !r = getFirst h (pi3 - h)
             !b = second
@@ -112,7 +134,7 @@ hsi2rgb (PixelHSI h' s i) = getRGB (h' * 2 * pi)
             !g = second
             !r = getThird g b
          in PixelRGB r g b
-      | otherwise = errorHue
+      | otherwise = PixelRGB 0 0 0
     {-# INLINE getRGB #-}
 {-# INLINE hsi2rgb #-}
 
@@ -127,7 +149,7 @@ rgb2hsi (PixelRGB r g b) = PixelHSI h s i
       | otherwise = h'2pi
     !s
       | i == 0 = 0
-      | otherwise = 1 - minimum [r, g, b] / i
+      | otherwise = 1 - min r (min g b) / i
     !i = (r + g + b) / 3
     !x = (2 * r - g - b) / 2.449489742783178
     !y = (g - b) / 1.4142135623730951

@@ -1,10 +1,12 @@
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.ColorModel.HSV
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
@@ -15,12 +17,18 @@
 --
 module Graphics.ColorModel.HSV
   ( HSV
-  , Pixel(..)
+  -- * Constructors for an HSV color model.
+  , pattern PixelHSV
+  , pattern PixelHSVA
+  , pattern PixelH360SV
+  , Pixel
+  , ColorModel(..)
   , hsv2rgb
   , rgb2hsv
   ) where
 
 import Foreign.Storable
+import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 import Graphics.ColorModel.RGB
 
@@ -28,11 +36,25 @@ import Graphics.ColorModel.RGB
 --- HSV ---
 -----------
 
--- | Hue, Saturation and Intensity color space.
+-- | Hue, Saturation and Value (Brightness) color model.
 data HSV
 
 -- | `HSV` color model
 data instance Pixel HSV e = PixelHSV !e !e !e
+
+-- | Constructor for @HSV@ with alpha channel.
+pattern PixelHSVA :: e -> e -> e -> e -> Pixel (Alpha HSV) e
+pattern PixelHSVA h s i a = Alpha (PixelHSV h s i) a
+{-# COMPLETE PixelHSVA #-}
+
+-- | Constructor for an HSV color model. Difference from `PixelHSV` is that channels are
+-- restricted to `Double` and the hue is specified in 0 to 360 degree range, rather than 0
+-- to 1. Note, that this is not checked.
+pattern PixelH360SV :: Double -> Double -> Double -> Pixel HSV Double
+pattern PixelH360SV h s i <- PixelHSV ((* 360) -> h) s i where
+        PixelH360SV h s i = PixelHSV (h / 360) s i
+{-# COMPLETE PixelH360SV #-}
+
 -- | `HSV` color model
 deriving instance Eq e => Eq (Pixel HSV e)
 -- | `HSV` color model
@@ -98,13 +120,14 @@ hc2rgb h c
     !hTrunc = truncate h' :: Int
     !hMod2 = fromIntegral (hTrunc `mod` 2) + (h' - fromIntegral hTrunc)
     !x = c * (1 - abs (hMod2 - 1))
+{-# INLINE hc2rgb #-}
 
--- TODO: switch to Either
 hsv2rgb :: Pixel HSV Double -> Pixel RGB Double
 hsv2rgb (PixelHSV h s v) = (+ m) <$> hc2rgb h c
   where
     !c = v * s
     !m = v - c
+{-# INLINE hsv2rgb #-}
 
 
 rgb2hsv :: Pixel RGB Double -> Pixel HSV Double
@@ -112,10 +135,10 @@ rgb2hsv (PixelRGB r g b) = PixelHSV h s v
   where
     !max' = max r (max g b)
     !min' = min r (min g b)
-    h' | max' == r = (    (g - b) / (max' - min')) / 6
-       | max' == g = (2 + (b - r) / (max' - min')) / 6
-       | max' == b = (4 + (r - g) / (max' - min')) / 6
-       | otherwise = 0
+    !h' | max' == r = (    (g - b) / (max' - min')) / 6
+        | max' == g = (2 + (b - r) / (max' - min')) / 6
+        | max' == b = (4 + (r - g) / (max' - min')) / 6
+        | otherwise = 0
     !h
       | h' < 0 = h' + 1
       | otherwise = h'
