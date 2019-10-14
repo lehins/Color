@@ -23,6 +23,7 @@ module Graphics.ColorModel.HSV
   , pattern PixelH360SV
   , Pixel
   , ColorModel(..)
+  , hc2rgb
   , hsv2rgb
   , rgb2hsv
   ) where
@@ -44,15 +45,15 @@ data instance Pixel HSV e = PixelHSV !e !e !e
 
 -- | Constructor for @HSV@ with alpha channel.
 pattern PixelHSVA :: e -> e -> e -> e -> Pixel (Alpha HSV) e
-pattern PixelHSVA h s i a = Alpha (PixelHSV h s i) a
+pattern PixelHSVA h s v a = Alpha (PixelHSV h s v) a
 {-# COMPLETE PixelHSVA #-}
 
 -- | Constructor for an HSV color model. Difference from `PixelHSV` is that channels are
 -- restricted to `Double` and the hue is specified in 0 to 360 degree range, rather than 0
 -- to 1. Note, that this is not checked.
 pattern PixelH360SV :: Double -> Double -> Double -> Pixel HSV Double
-pattern PixelH360SV h s i <- PixelHSV ((* 360) -> h) s i where
-        PixelH360SV h s i = PixelHSV (h / 360) s i
+pattern PixelH360SV h s v <- PixelHSV ((* 360) -> h) s v where
+        PixelH360SV h s v = PixelHSV (h / 360) s v
 {-# COMPLETE PixelH360SV #-}
 
 -- | `HSV` color model

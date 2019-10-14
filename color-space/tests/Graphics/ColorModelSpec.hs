@@ -5,6 +5,7 @@ module Graphics.ColorModelSpec
   , epsilonEq
   , epsilonEqPixel
   , epsilonEqPixelTol
+  , epsilonEqPixelTolIx
   , arbitraryElevator
   ) where
 
@@ -39,6 +40,12 @@ epsilonEqPixel = epsilonEqPixelTol epsilon
 
 epsilonEqPixelTol :: (ColorModel cs e, RealFloat e) => e -> Pixel cs e -> Pixel cs e -> Property
 epsilonEqPixelTol epsilon x y = conjoin $ F.toList $ liftA2 (epsilonEq epsilon) x y
+
+-- | Same as `epsilonEqPixelTol` but with indexed counterexample.
+epsilonEqPixelTolIx ::
+     (ColorModel cs e, RealFloat e) => e -> Int -> Pixel cs e -> Pixel cs e -> Property
+epsilonEqPixelTolIx tol ix expected actual =
+  counterexample ("Index: " ++ show ix) $ epsilonEqPixelTol tol expected actual
 
 
 spec :: Spec

@@ -1,0 +1,51 @@
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+module Graphics.ColorModel.HSLSpec (spec) where
+
+import Graphics.ColorModel
+import Graphics.ColorModelSpec (arbitraryElevator, epsilonEqPixel, epsilonEqPixelTolIx)
+import Graphics.ColorModel.HSL
+import Graphics.ColorModel.RGBSpec (rgbs)
+import System.Random
+import Test.Hspec
+import Test.Hspec.QuickCheck
+import Test.QuickCheck
+
+instance (Elevator e, Random e) => Arbitrary (Pixel HSL e) where
+  arbitrary = PixelHSL <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
+
+spec :: Spec
+spec =
+  describe "HSL" $ do
+    it "rgb2hsl . hsl2rgb" $ property $ \rgb -> rgb `epsilonEqPixel` hsl2rgb (rgb2hsl rgb)
+    it "hsl2rgb . rgb2hsl" $ property $ \hsl -> hsl `epsilonEqPixel` rgb2hsl (hsl2rgb hsl)
+    describe "samples" $ do
+      let tol = 2e-3
+      prop "rgb2hsl" $
+        once $ conjoin $ zipWith3 (epsilonEqPixelTolIx tol) [0 ..] hsls (rgb2hsl <$> rgbs)
+      prop "hsl2rgb" $
+        once $ conjoin $ zipWith3 (epsilonEqPixelTolIx tol) [0 ..] rgbs (hsl2rgb <$> hsls)
+
+
+hsls :: [Pixel HSL Double]
+hsls =
+  [ PixelH360SL (0 / 0) 0 1
+  , PixelH360SL (0 / 0) 0 0.5
+  , PixelH360SL (0 / 0) 0 0
+  , PixelH360SL 0.0 1 0.5
+  , PixelH360SL 60.0 1 0.375
+  , PixelH360SL 120.0 1 0.25
+  , PixelH360SL 180.0 1 0.75
+  , PixelH360SL 240.0 1 0.75
+  , PixelH360SL 300.0 0.5 0.5
+  , PixelH360SL 61.8 0.638 0.393
+  , PixelH360SL 251.1 0.832 0.511
+  , PixelH360SL 134.9 0.707 0.396
+  , PixelH360SL 49.5 0.893 0.498
+  , PixelH360SL 283.7 0.775 0.543
+  , PixelH360SL 14.3 0.817 0.624
+  , PixelH360SL 56.9 0.991 0.765
+  , PixelH360SL 162.4 0.779 0.447
+  , PixelH360SL 248.3 0.601 0.373
+  , PixelH360SL 240.5 0.29 0.608
+  ]

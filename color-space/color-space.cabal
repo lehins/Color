@@ -24,7 +24,7 @@ library
                      , Graphics.ColorModel.Alpha
                      , Graphics.ColorModel.RGB
                      , Graphics.ColorModel.HSI
-                     -- , Graphics.ColorModel.HSL
+                     , Graphics.ColorModel.HSL
                      , Graphics.ColorModel.HSV
                      , Graphics.ColorModel.YCbCr
                      , Graphics.ColorSpace
@@ -95,6 +95,7 @@ test-suite tests
   main-is:            Main.hs
   other-modules:      Graphics.ColorModelSpec
                     , Graphics.ColorModel.HSISpec
+                    , Graphics.ColorModel.HSLSpec
                     , Graphics.ColorModel.HSVSpec
                     , Graphics.ColorModel.RGBSpec
                     , Graphics.ColorModel.YCbCrSpec

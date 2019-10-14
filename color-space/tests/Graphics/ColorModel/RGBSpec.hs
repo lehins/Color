@@ -2,8 +2,8 @@
 module Graphics.ColorModel.RGBSpec (spec, rgbs) where
 
 import Graphics.ColorModel
-import Graphics.ColorModelSpec (arbitraryElevator)
 import Graphics.ColorModel.RGB
+import Graphics.ColorModelSpec (arbitraryElevator)
 import System.Random
 import Test.Hspec
 import Test.QuickCheck

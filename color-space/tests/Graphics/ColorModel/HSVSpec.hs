@@ -2,7 +2,7 @@
 module Graphics.ColorModel.HSVSpec (spec) where
 
 import Graphics.ColorModel
-import Graphics.ColorModelSpec (arbitraryElevator, epsilonEqPixel, epsilonEqPixelTol)
+import Graphics.ColorModelSpec (arbitraryElevator, epsilonEqPixel, epsilonEqPixelTolIx)
 import Graphics.ColorModel.HSV
 import Graphics.ColorModel.RGBSpec (rgbs)
 import System.Random
@@ -16,12 +16,14 @@ instance (Elevator e, Random e) => Arbitrary (Pixel HSV e) where
 spec :: Spec
 spec =
   describe "HSV" $ do
-    it "rgb2hsv . hsv2rgb" $ property $ \ rgb -> rgb `epsilonEqPixel` hsv2rgb (rgb2hsv rgb)
-    it "hsv2rgb . rgb2hsv" $ property $ \ hsv -> hsv `epsilonEqPixel` rgb2hsv (hsv2rgb hsv)
+    it "rgb2hsv . hsv2rgb" $ property $ \rgb -> rgb `epsilonEqPixel` hsv2rgb (rgb2hsv rgb)
+    it "hsv2rgb . rgb2hsv" $ property $ \hsv -> hsv `epsilonEqPixel` rgb2hsv (hsv2rgb hsv)
     describe "samples" $ do
       let tol = 1e-3
-      prop "rgb2hsv" $ once $ conjoin $ zipWith (epsilonEqPixelTol tol) (rgb2hsv <$> rgbs) hsvs
-      prop "hsv2rgb" $ once $ conjoin $ zipWith (epsilonEqPixelTol tol) rgbs (hsv2rgb <$> hsvs)
+      prop "rgb2hsv" $
+        once $ conjoin $ zipWith3 (epsilonEqPixelTolIx tol) [0 ..] hsvs (rgb2hsv <$> rgbs)
+      prop "hsv2rgb" $
+        once $ conjoin $ zipWith3 (epsilonEqPixelTolIx tol) [0 ..] rgbs (hsv2rgb <$> hsvs)
 
 
 hsvs :: [Pixel HSV Double]
