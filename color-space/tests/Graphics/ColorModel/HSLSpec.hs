@@ -3,12 +3,16 @@
 module Graphics.ColorModel.HSLSpec (spec) where
 
 import Graphics.ColorModel
-import Graphics.ColorModelSpec (arbitraryElevator, epsilonEqPixel, epsilonEqPixelTolIx)
+import Graphics.ColorModelSpec
+  ( arbitraryElevator
+  , epsilonEqPixel
+  , epsilonPixelIxSpec
+  , izipWithM_
+  )
 import Graphics.ColorModel.HSL
 import Graphics.ColorModel.RGBSpec (rgbs)
 import System.Random
 import Test.Hspec
-import Test.Hspec.QuickCheck
 import Test.QuickCheck
 
 instance (Elevator e, Random e) => Arbitrary (Pixel HSL e) where
@@ -21,10 +25,8 @@ spec =
     it "hsl2rgb . rgb2hsl" $ property $ \hsl -> hsl `epsilonEqPixel` rgb2hsl (hsl2rgb hsl)
     describe "samples" $ do
       let tol = 2e-3
-      prop "rgb2hsl" $
-        once $ conjoin $ zipWith3 (epsilonEqPixelTolIx tol) [0 ..] hsls (rgb2hsl <$> rgbs)
-      prop "hsl2rgb" $
-        once $ conjoin $ zipWith3 (epsilonEqPixelTolIx tol) [0 ..] rgbs (hsl2rgb <$> hsls)
+      describe "rgb2hsl" $ izipWithM_ (epsilonPixelIxSpec tol) hsls (rgb2hsl <$> rgbs)
+      describe "hsl2rgb" $ izipWithM_ (epsilonPixelIxSpec tol) rgbs (hsl2rgb <$> hsls)
 
 
 hsls :: [Pixel HSL Double]

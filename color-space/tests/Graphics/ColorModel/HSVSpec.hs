@@ -2,12 +2,11 @@
 module Graphics.ColorModel.HSVSpec (spec) where
 
 import Graphics.ColorModel
-import Graphics.ColorModelSpec (arbitraryElevator, epsilonEqPixel, epsilonEqPixelTolIx)
+import Graphics.ColorModelSpec (arbitraryElevator, epsilonEqPixel, epsilonPixelIxSpec, izipWithM_)
 import Graphics.ColorModel.HSV
 import Graphics.ColorModel.RGBSpec (rgbs)
 import System.Random
 import Test.Hspec
-import Test.Hspec.QuickCheck
 import Test.QuickCheck
 
 instance (Elevator e, Random e) => Arbitrary (Pixel HSV e) where
@@ -20,10 +19,8 @@ spec =
     it "hsv2rgb . rgb2hsv" $ property $ \hsv -> hsv `epsilonEqPixel` rgb2hsv (hsv2rgb hsv)
     describe "samples" $ do
       let tol = 1e-3
-      prop "rgb2hsv" $
-        once $ conjoin $ zipWith3 (epsilonEqPixelTolIx tol) [0 ..] hsvs (rgb2hsv <$> rgbs)
-      prop "hsv2rgb" $
-        once $ conjoin $ zipWith3 (epsilonEqPixelTolIx tol) [0 ..] rgbs (hsv2rgb <$> hsvs)
+      describe "rgb2hsv" $ izipWithM_ (epsilonPixelIxSpec tol) hsvs (rgb2hsv <$> rgbs)
+      describe "hsv2rgb" $ izipWithM_ (epsilonPixelIxSpec tol) rgbs (hsv2rgb <$> hsvs)
 
 
 hsvs :: [Pixel HSV Double]

@@ -2,12 +2,11 @@
 module Graphics.ColorModel.HSISpec (spec) where
 
 import Graphics.ColorModel
-import Graphics.ColorModelSpec (arbitraryElevator, epsilonEqPixel, epsilonEqPixelTolIx)
+import Graphics.ColorModelSpec (izipWithM_, arbitraryElevator, epsilonEqPixel, epsilonPixelIxSpec)
 import Graphics.ColorModel.HSI
 import Graphics.ColorModel.RGBSpec (rgbs)
 import System.Random
 import Test.Hspec
-import Test.Hspec.QuickCheck
 import Test.QuickCheck
 
 instance (Elevator e, Random e) => Arbitrary (Pixel HSI e) where
@@ -20,10 +19,8 @@ spec =
     it "hsi2rgb . rgb2hsi" $ property $ \hsi -> hsi `epsilonEqPixel` rgb2hsi (hsi2rgb hsi)
     describe "samples" $ do
       let tol = 1e-3
-      prop "rgb2hsi" $
-        once $ conjoin $ zipWith3 (epsilonEqPixelTolIx tol) [0 ..] hsis (rgb2hsi <$> rgbs)
-      prop "hsi2rgb" $
-        once $ conjoin $ zipWith3 (epsilonEqPixelTolIx tol) [0 ..] rgbs (hsi2rgb <$> hsis)
+      describe "rgb2hsi" $ izipWithM_ (epsilonPixelIxSpec tol) hsis (rgb2hsi <$> rgbs)
+      describe "hsi2rgb" $ izipWithM_ (epsilonPixelIxSpec tol) rgbs (hsi2rgb <$> hsis)
 
 
 hsis :: [Pixel HSI Double]

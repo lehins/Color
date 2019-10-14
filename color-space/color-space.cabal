@@ -104,7 +104,8 @@ test-suite tests
                     , Graphics.ColorSpace.RGB.SRGBSpec
                     , Graphics.ColorSpace.RGB.Derived.SRGBSpec
                     , Spec
-  build-depends:      QuickCheck
+  build-depends:      HUnit
+                    , QuickCheck
                     , base             >= 4.8 && < 5
                     , color-space
                     , colour
