@@ -6,12 +6,8 @@
 module Graphics.ColorSpace.CIE1931.IlluminantsSpec (spec) where
 
 import Data.Proxy
-import Graphics.ColorSpaceSpec hiding (spec)
-import Graphics.ColorSpace
+import Graphics.ColorSpace.Common
 import Graphics.ColorModel.Internal (showsType)
-import Test.Hspec
-import Test.Hspec.QuickCheck
-import Test.QuickCheck
 import qualified Data.Colour.CIE as Colour
 import qualified Data.Colour.CIE.Illuminant as Colour
 

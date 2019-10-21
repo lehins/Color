@@ -1,7 +1,7 @@
 module Main where
 
 import Spec
-import System.IO    (BufferMode (LineBuffering), hSetBuffering, stdout)
+import System.IO (BufferMode (LineBuffering), hSetBuffering, stdout)
 import Test.Hspec
 
 main :: IO ()

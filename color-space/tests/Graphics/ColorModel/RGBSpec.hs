@@ -1,19 +1,18 @@
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TypeApplications #-}
 module Graphics.ColorModel.RGBSpec (spec, rgbs) where
 
-import Graphics.ColorModel
 import Graphics.ColorModel.RGB
-import Graphics.ColorModelSpec (arbitraryElevator)
-import System.Random
-import Test.Hspec
-import Test.QuickCheck
+import Graphics.ColorModel.Common
 
 instance (Elevator e, Random e) => Arbitrary (Pixel RGB e) where
   arbitrary = PixelRGB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
 
 
 spec :: Spec
-spec = pure ()
+spec =
+  describe "RGB" $
+    colorModelSpec @RGB @Word
 
 
 rgbs :: [Pixel RGB Double]

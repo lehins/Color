@@ -1,13 +1,10 @@
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TypeApplications #-}
 module Graphics.ColorModel.HSISpec (spec) where
 
-import Graphics.ColorModel
-import Graphics.ColorModelSpec (izipWithM_, arbitraryElevator, epsilonEqPixel, epsilonPixelIxSpec)
+import Graphics.ColorModel.Common
 import Graphics.ColorModel.HSI
 import Graphics.ColorModel.RGBSpec (rgbs)
-import System.Random
-import Test.Hspec
-import Test.QuickCheck
 
 instance (Elevator e, Random e) => Arbitrary (Pixel HSI e) where
   arbitrary = PixelHSI <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
@@ -15,6 +12,7 @@ instance (Elevator e, Random e) => Arbitrary (Pixel HSI e) where
 spec :: Spec
 spec =
   describe "HSI" $ do
+    colorModelSpec @HSI @Word
     it "rgb2hsi . hsi2rgb" $ property $ \rgb -> rgb `epsilonEqPixel` hsi2rgb (rgb2hsi rgb)
     it "hsi2rgb . rgb2hsi" $ property $ \hsi -> hsi `epsilonEqPixel` rgb2hsi (hsi2rgb hsi)
     describe "samples" $ do

@@ -1,16 +1,14 @@
 {-# LANGUAGE RankNTypes #-}
-module Graphics.ColorSpaceSpec
-  ( spec
-  , module Graphics.ColorModelSpec
+module Graphics.ColorSpace.Common
+  ( module Graphics.ColorSpace
+  , module Graphics.ColorModel.Common
   , prop_toFromPixelXYZ
   , prop_toFromLenientPixelXYZ
   , prop_toFromColorSpace
   ) where
 
 import Graphics.ColorSpace
-import Graphics.ColorModelSpec hiding (spec)
-import Test.Hspec
-import Test.QuickCheck
+import Graphics.ColorModel.Common
 
 
 prop_toFromPixelXYZ ::
@@ -32,6 +30,3 @@ prop_toFromLenientPixelXYZ epsilon px = epsilonEqPixelTol epsilon px (fromPixelX
 prop_toFromColorSpace :: (ColorSpace cs e, RealFloat e) => Pixel cs e -> Property
 prop_toFromColorSpace px = px `epsilonEqPixel` fromBaseColorSpace (toBaseColorSpace px)
 
-
-spec :: Spec
-spec = pure ()

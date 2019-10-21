@@ -1,19 +1,11 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TypeApplications #-}
 module Graphics.ColorModel.HSLSpec (spec) where
 
-import Graphics.ColorModel
-import Graphics.ColorModelSpec
-  ( arbitraryElevator
-  , epsilonEqPixel
-  , epsilonPixelIxSpec
-  , izipWithM_
-  )
+import Graphics.ColorModel.Common
 import Graphics.ColorModel.HSL
 import Graphics.ColorModel.RGBSpec (rgbs)
-import System.Random
-import Test.Hspec
-import Test.QuickCheck
 
 instance (Elevator e, Random e) => Arbitrary (Pixel HSL e) where
   arbitrary = PixelHSL <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
@@ -21,6 +13,7 @@ instance (Elevator e, Random e) => Arbitrary (Pixel HSL e) where
 spec :: Spec
 spec =
   describe "HSL" $ do
+    colorModelSpec @HSL @Word
     it "rgb2hsl . hsl2rgb" $ property $ \rgb -> rgb `epsilonEqPixel` hsl2rgb (rgb2hsl rgb)
     it "hsl2rgb . rgb2hsl" $ property $ \hsl -> hsl `epsilonEqPixel` rgb2hsl (hsl2rgb hsl)
     describe "samples" $ do

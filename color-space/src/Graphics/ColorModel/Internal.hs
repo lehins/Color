@@ -58,6 +58,7 @@ class ( Functor (Pixel cs)
       , Foldable (Pixel cs)
       , Traversable (Pixel cs)
       , Eq (Pixel cs e)
+      , Show (Pixel cs e)
       , VU.Unbox (Components cs e)
       , VS.Storable (Pixel cs e)
       , Elevator e

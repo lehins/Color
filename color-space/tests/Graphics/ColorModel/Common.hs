@@ -1,7 +1,12 @@
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE FlexibleInstances #-}
-module Graphics.ColorModelSpec
-  ( spec
-  , module Graphics.ColorModel
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
+module Graphics.ColorModel.Common
+  ( module Graphics.ColorModel
+  , colorModelSpec
+  , toFromComponentsSpec
   , izipWithM_
   , epsilonExpect
   , epsilonPixelExpect
@@ -11,6 +16,10 @@ module Graphics.ColorModelSpec
   , epsilonEqPixelTol
   , epsilonEqPixelTolIx
   , arbitraryElevator
+  , module Test.Hspec
+  , module Test.Hspec.QuickCheck
+  , module Test.QuickCheck
+  , module System.Random
   ) where
 
 import Control.Applicative
@@ -18,6 +27,7 @@ import Data.Foldable as F
 import Graphics.ColorModel
 import System.Random
 import Test.Hspec
+import Test.Hspec.QuickCheck
 import Test.HUnit (assertBool)
 import Test.QuickCheck
 import Control.Monad
@@ -81,6 +91,17 @@ epsilonEqPixelTolIx ::
 epsilonEqPixelTolIx tol ix expected actual =
   counterexample ("Index: " ++ show ix) $ epsilonEqPixelTol tol expected actual
 
+prop_ToFromComponents ::
+     forall cs e. ColorModel cs e
+  => Pixel cs e
+  -> Property
+prop_ToFromComponents px = px === fromComponents (toComponents px)
 
-spec :: Spec
-spec = pure ()
+toFromComponentsSpec :: forall cs e . (ColorModel cs e, Arbitrary (Pixel cs e)) => Spec
+toFromComponentsSpec = prop "fromComponents . toComponents" $ prop_ToFromComponents @cs @e
+
+
+colorModelSpec :: forall cs e . (ColorModel cs e, Arbitrary (Pixel cs e)) => Spec
+colorModelSpec =
+  describe "ColorModel" $
+    toFromComponentsSpec @cs @e

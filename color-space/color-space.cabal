@@ -94,14 +94,14 @@ test-suite tests
   type:               exitcode-stdio-1.0
   hs-source-dirs:     tests
   main-is:            Main.hs
-  other-modules:      Graphics.ColorModelSpec
+  other-modules:      Graphics.ColorModel.Common
                     , Graphics.ColorModel.CMYKSpec
                     , Graphics.ColorModel.HSISpec
                     , Graphics.ColorModel.HSLSpec
                     , Graphics.ColorModel.HSVSpec
                     , Graphics.ColorModel.RGBSpec
                     , Graphics.ColorModel.YCbCrSpec
-                    , Graphics.ColorSpaceSpec
+                    , Graphics.ColorSpace.Common
                     , Graphics.ColorSpace.CIE1931.IlluminantsSpec
                     , Graphics.ColorSpace.RGB.SRGBSpec
                     , Graphics.ColorSpace.RGB.Derived.SRGBSpec
