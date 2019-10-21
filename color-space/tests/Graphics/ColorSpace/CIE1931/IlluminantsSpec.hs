@@ -20,16 +20,18 @@ shouldMatchApprox ::
   => (Double, Double, Double)
   -> WhitePoint i
   -> Spec
-shouldMatchApprox (x, y, z) wp =
+shouldMatchApprox (x, y, _) wp =
   let (x', y', z') = (xWhitePoint wp, yWhitePoint wp, zWhitePoint wp)
-      eps = 1e-5
+      eps = 1e-3 -- This is rather unfortunate, but it seems that "colour" package authors
+                 -- decided to go with the values from wikipedia, rather than from the
+                 -- document created by CIE: Technical Report: Colorimetry, 3rd edition
    in prop (showsType (Proxy :: Proxy (WhitePoint i)) "") $ once $
-      epsilonEq eps x x' .&&. epsilonEq eps y y' .&&. epsilonEq eps z z'
+      epsilonEq eps x x' .&&. epsilonEq eps y y' .&&. epsilonEq 1e-12 1 (x' + y' + z')
 
 spec :: Spec
 spec =
   describe "Illuminants" $
-    xdescribe "ColourMatch" $ do
+    describe "ColourMatch" $ do
       Colour.chromaCoords Colour.a `shouldMatchApprox` (whitePoint :: WhitePoint 'A)
       Colour.chromaCoords Colour.b `shouldMatchApprox` (whitePoint :: WhitePoint 'B)
       Colour.chromaCoords Colour.c `shouldMatchApprox` (whitePoint :: WhitePoint 'C)

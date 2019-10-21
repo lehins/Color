@@ -14,8 +14,6 @@ instance (Elevator e, Random e) => Arbitrary (Pixel YCbCr e) where
 
 spec :: Spec
 spec =
-  describe "YCbCr" $ do
+  describe "YCbCr" $
     it "rgb2ycbcr . ycbcr2rgb" $
       property $ \rgb -> epsilonEqPixelTol 1e-5 rgb (ycbcr2rgb (rgb2ycbcr rgb))
-    xit "ycbcr2rgb . rgb2ycbcr" $
-      property $ \ycbcr -> epsilonEqPixelTol 1e-5 ycbcr (rgb2ycbcr (ycbcr2rgb ycbcr))
