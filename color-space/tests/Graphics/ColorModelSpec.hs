@@ -23,7 +23,7 @@ import Test.QuickCheck
 import Control.Monad
 
 izipWithM_ :: Applicative m => (Int -> a -> b -> m c) -> [a] -> [b] -> m ()
-izipWithM_ f xs = zipWithM_ (\(i, x) -> f i x) (zip [0..] xs)
+izipWithM_ f xs = zipWithM_ (uncurry f) (zip [0..] xs)
 
 arbitraryElevator :: (Elevator e, Random e) => Gen e
 arbitraryElevator = choose (minValue, maxValue)

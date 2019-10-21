@@ -2,18 +2,19 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
--- Module      : Graphics.ColorSpace.Binary
+-- Module      : Graphics.ColorModel.Binary
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.Binary
+module Graphics.ColorModel.Binary
   ( Bit
   , zero
   , one
@@ -27,21 +28,19 @@ module Graphics.ColorSpace.Binary
 
 import Control.Monad
 import Data.Bits
-import Data.Typeable (Typeable)
 import qualified Data.Vector.Generic as V
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Unboxed as U
 import Data.Word (Word8)
-import Foreign.Ptr
 import Foreign.Storable
-import Graphics.ColorSpace.Internal
+import Graphics.ColorModel.Internal
 import Prelude hiding (map)
 
 
--- | Under the hood, binary pixels are represented as `Word8`, but can only take
+-- | Under the hood, binary pixels are backed by `Word8`, but can only take
 -- values of @0@ or @1@. Use `zero`\/`one` to construct a bit and `on`\/`off` to
 -- construct a binary pixel.
-newtype Bit = Bit Word8 deriving (Ord, Eq, Typeable)
+newtype Bit = Bit Word8 deriving (Ord, Eq, Storable)
 
 
 instance Show Bit where
@@ -134,14 +133,14 @@ one = Bit 1
 
 -- | Represents value 'True' or @1@ in binary. Often also called a foreground
 -- pixel of an object.
-on :: ColorSpace cs Bit => Pixel cs Bit
+on :: ColorModel cs Bit => Pixel cs Bit
 on = pure one
 {-# INLINE on #-}
 
 
 -- | Represents value 'False' or @0@ in binary. Often also called a background
 -- pixel.
-off :: ColorSpace cs Bit => Pixel cs Bit
+off :: ColorModel cs Bit => Pixel cs Bit
 off = pure zero
 {-# INLINE off #-}
 
@@ -161,27 +160,31 @@ off = pure zero
 
 -- | Values: @0@ and @1@
 instance Elevator Bit where
-  eToWord8 (Bit 0) = 0
-  eToWord8 _       = maxBound
-  {-# INLINE eToWord8 #-}
-  eToWord16 (Bit 0) = 0
-  eToWord16 _       = maxBound
-  {-# INLINE eToWord16 #-}
-  eToWord32 (Bit 0) = 0
-  eToWord32 _       = maxBound
-  {-# INLINE eToWord32 #-}
-  eToWord64 (Bit 0) = 0
-  eToWord64 _       = maxBound
-  {-# INLINE eToWord64 #-}
-  eToFloat (Bit 0) = 0
-  eToFloat _       = 1
-  {-# INLINE eToFloat #-}
-  eToDouble (Bit 0) = 0
-  eToDouble _       = 1
-  {-# INLINE eToDouble #-}
-  eFromDouble 0 = Bit 0
-  eFromDouble _ = Bit 1
-  {-# INLINE eFromDouble #-}
+  minValue = Bit 0
+  {-# INLINE minValue #-}
+  maxValue = Bit 1
+  {-# INLINE maxValue #-}
+  toWord8 (Bit 0) = 0
+  toWord8 _       = maxBound
+  {-# INLINE toWord8 #-}
+  toWord16 (Bit 0) = 0
+  toWord16 _       = maxBound
+  {-# INLINE toWord16 #-}
+  toWord32 (Bit 0) = 0
+  toWord32 _       = maxBound
+  {-# INLINE toWord32 #-}
+  toWord64 (Bit 0) = 0
+  toWord64 _       = maxBound
+  {-# INLINE toWord64 #-}
+  toFloat (Bit 0) = 0
+  toFloat _       = 1
+  {-# INLINE toFloat #-}
+  toDouble (Bit 0) = 0
+  toDouble _       = 1
+  {-# INLINE toDouble #-}
+  fromDouble 0 = Bit 0
+  fromDouble _ = Bit 1
+  {-# INLINE fromDouble #-}
 
 
 instance Num Bit where
@@ -204,24 +207,6 @@ instance Num Bit where
   fromInteger 0 = Bit 0
   fromInteger _ = Bit 1
   {-# INLINE fromInteger #-}
-
-
-instance Storable Bit where
-
-  sizeOf _ = sizeOf (undefined :: Word8)
-  {-# INLINE sizeOf #-}
-  alignment _ = alignment (undefined :: Word8)
-  {-# INLINE alignment #-}
-  peek !p = do
-    let !q = castPtr p
-    b <- peek q
-    return (Bit b)
-  {-# INLINE peek #-}
-  poke !p (Bit b) = do
-    let !q = castPtr p
-    poke q b
-  {-# INLINE poke #-}
-
 
 -- | Unboxing of a `Bit`.
 instance U.Unbox Bit

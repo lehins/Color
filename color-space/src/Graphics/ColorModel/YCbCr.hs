@@ -71,7 +71,7 @@ instance Functor (Pixel YCbCr) where
 instance Applicative (Pixel YCbCr) where
   pure !e = PixelYCbCr e e e
   {-# INLINE pure #-}
-  (PixelYCbCr fh fs fi) <*> (PixelYCbCr y cb cr) = PixelYCbCr (fh y) (fs cb) (fi cr)
+  (PixelYCbCr fy fcb fcr) <*> (PixelYCbCr y cb cr) = PixelYCbCr (fy y) (fcb cb) (fcr cr)
   {-# INLINE (<*>) #-}
 
 -- | `YCbCr` color model

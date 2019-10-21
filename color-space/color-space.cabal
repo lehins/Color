@@ -1,6 +1,6 @@
 name:                color-space
 version:             0.1.0
-synopsis:            Short description
+synopsis:            Collection of common color spaces and coversions between them
 description:         Please see the README on GitHub at <https://github.com/lehins/color-space#readme>
 homepage:            https://github.com/lehins/color-space
 license:             BSD3
@@ -17,8 +17,8 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Graphics.ColorModel
-                     -- , Graphics.ColorModel.Binary
-                     -- , Graphics.ColorModel.Complex
+                     , Graphics.ColorModel.Binary
+                     , Graphics.ColorModel.Complex
                      -- , Graphics.ColorModel.CMYK
                      , Graphics.ColorModel.Internal
                      , Graphics.ColorModel.Alpha
@@ -34,8 +34,8 @@ library
                      , Graphics.ColorSpace.RGB.AdobeRGB
                      -- , Graphics.ColorSpace.RGB.Alternative
                      , Graphics.ColorSpace.RGB.Alternative.HSI
-                     -- , Graphics.ColorSpace.RGB.Alternative.HSV
-                     -- , Graphics.ColorSpace.RGB.Alternative.HSL
+                     , Graphics.ColorSpace.RGB.Alternative.HSV
+                     , Graphics.ColorSpace.RGB.Alternative.HSL
                      -- , Graphics.ColorSpace.RGB.Alternative.YCbCr
                      -- , Graphics.ColorSpace.RGB.Alternative.CMYK
                      --, Graphics.ColorSpace.Derived.RGB.SRGB
@@ -61,7 +61,7 @@ library
                      -- , Graphics.ColorSpace.CIE1976.LAB.LCH
                      -- , Graphics.ColorSpace.CIE1976.LAB
                      -- , Graphics.ColorSpace.CIE1976.LAB.HLC
-                     -- , Graphics.ColorSpace.Standard.RAL -- https://en.wikipedia.org/wiki/List_of_RAL_colors
+                     -- , Graphics.ColorStandard.RAL -- https://en.wikipedia.org/wiki/List_of_RAL_colors
 
                      -- , Graphics.ColorSpace.Chromaticities -- eg. ITU-R BT.709
                      -- , Graphics.ColorSpace.CMYK
