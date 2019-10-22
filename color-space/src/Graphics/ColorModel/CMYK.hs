@@ -94,7 +94,7 @@ instance Storable e => Storable (Pixel CMYK e) where
   poke p (PixelCMYK c m y k) = poke4 p c m y k
   {-# INLINE poke #-}
 
-cmyk2rgb :: Pixel CMYK Double -> Pixel RGB Double
+cmyk2rgb :: Num e => Pixel CMYK e -> Pixel RGB e
 cmyk2rgb (PixelCMYK c m y k) = PixelRGB r g b
   where
     !r = (1 - c) * (1 - k)
@@ -103,7 +103,7 @@ cmyk2rgb (PixelCMYK c m y k) = PixelRGB r g b
 {-# INLINE cmyk2rgb #-}
 
 
-rgb2cmyk :: Pixel RGB Double -> Pixel CMYK Double
+rgb2cmyk :: (Ord e, Fractional e) => Pixel RGB e -> Pixel CMYK e
 rgb2cmyk (PixelRGB r g b) = PixelCMYK c m y k
   where
     !c = (k' - r) / k'

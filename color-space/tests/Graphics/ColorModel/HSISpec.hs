@@ -1,9 +1,11 @@
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 module Graphics.ColorModel.HSISpec (spec) where
 
 import Graphics.ColorModel.Common
 import Graphics.ColorModel.HSI
+import Graphics.ColorModel.RGB
 import Graphics.ColorModel.RGBSpec (rgbs)
 
 instance (Elevator e, Random e) => Arbitrary (Pixel HSI e) where
@@ -13,8 +15,10 @@ spec :: Spec
 spec =
   describe "HSI" $ do
     colorModelSpec @HSI @Word
-    it "rgb2hsi . hsi2rgb" $ property $ \rgb -> rgb `epsilonEqPixel` hsi2rgb (rgb2hsi rgb)
-    it "hsi2rgb . rgb2hsi" $ property $ \hsi -> hsi `epsilonEqPixel` rgb2hsi (hsi2rgb hsi)
+    prop "rgb2hsi . hsi2rgb" $ \(rgb :: Pixel RGB Double) ->
+      rgb `epsilonEqPixel` hsi2rgb (rgb2hsi rgb)
+    prop "hsi2rgb . rgb2hsi" $ \(hsi :: Pixel HSI Double) ->
+      hsi `epsilonEqPixel` rgb2hsi (hsi2rgb hsi)
     describe "samples" $ do
       let tol = 1e-3
       describe "rgb2hsi" $ izipWithM_ (epsilonPixelIxSpec tol) hsis (rgb2hsi <$> rgbs)

@@ -106,7 +106,7 @@ instance Storable e => Storable (Pixel HSV e) where
   poke p (PixelHSV h s v) = poke3 p h s v
   {-# INLINE poke #-}
 
-hc2rgb :: Double -> Double -> Pixel RGB Double
+hc2rgb :: RealFrac e => e -> e -> Pixel RGB e
 hc2rgb h c
   | h' < 0 = PixelRGB 0 0 0
   | h' <= 1 = PixelRGB c x 0
@@ -123,7 +123,7 @@ hc2rgb h c
     !x = c * (1 - abs (hMod2 - 1))
 {-# INLINE hc2rgb #-}
 
-hsv2rgb :: Pixel HSV Double -> Pixel RGB Double
+hsv2rgb :: RealFrac e => Pixel HSV e -> Pixel RGB e
 hsv2rgb (PixelHSV h s v) = (+ m) <$> hc2rgb h c
   where
     !c = v * s
@@ -131,7 +131,7 @@ hsv2rgb (PixelHSV h s v) = (+ m) <$> hc2rgb h c
 {-# INLINE hsv2rgb #-}
 
 
-rgb2hsv :: Pixel RGB Double -> Pixel HSV Double
+rgb2hsv :: (Ord e, Fractional e) => Pixel RGB e -> Pixel HSV e
 rgb2hsv (PixelRGB r g b) = PixelHSV h s v
   where
     !max' = max r (max g b)

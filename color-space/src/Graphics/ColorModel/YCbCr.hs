@@ -95,16 +95,16 @@ instance Storable e => Storable (Pixel YCbCr e) where
   poke p (PixelYCbCr y cb cr) = poke3 p y cb cr
   {-# INLINE poke #-}
 
-ycbcr2rgb :: Pixel YCbCr Double -> Pixel RGB Double
+ycbcr2rgb :: Fractional e => Pixel YCbCr e -> Pixel RGB e
 ycbcr2rgb (PixelYCbCr y cb cr) = PixelRGB r g b
   where
     !cb05 = cb - 0.5
     !cr05 = cr - 0.5
-    !r = clamp01 (y                  +   1.402 * cr05)
-    !g = clamp01 (y - 0.34414 * cb05 - 0.71414 * cr05)
-    !b = clamp01 (y +   1.772 * cb05)
+    !r = y                  +   1.402 * cr05
+    !g = y - 0.34414 * cb05 - 0.71414 * cr05
+    !b = y +   1.772 * cb05
 
-rgb2ycbcr :: Pixel RGB Double -> Pixel YCbCr Double
+rgb2ycbcr :: Fractional e => Pixel RGB e -> Pixel YCbCr e
 rgb2ycbcr (PixelRGB r g b) = PixelYCbCr y cb cr
   where
     !y  =          0.299 * r +    0.587 * g +    0.114 * b

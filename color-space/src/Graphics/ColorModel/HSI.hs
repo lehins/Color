@@ -107,7 +107,7 @@ instance Storable e => Storable (Pixel HSI e) where
   {-# INLINE poke #-}
 
 
-hsi2rgb :: Pixel HSI Double -> Pixel RGB Double
+hsi2rgb :: (Ord e, Floating e) => Pixel HSI e -> Pixel RGB e
 hsi2rgb (PixelHSI h' s i) = getRGB (h' * 2 * pi)
   where
     !is = i * s
@@ -139,7 +139,7 @@ hsi2rgb (PixelHSI h' s i) = getRGB (h' * 2 * pi)
 {-# INLINE hsi2rgb #-}
 
 
-rgb2hsi :: Pixel RGB Double -> Pixel HSI Double
+rgb2hsi :: RealFloat e => Pixel RGB e -> Pixel HSI e
 rgb2hsi (PixelRGB r g b) = PixelHSI h s i
   where
     !h' = atan2 y x

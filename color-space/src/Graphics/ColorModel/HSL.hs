@@ -107,7 +107,7 @@ instance Storable e => Storable (Pixel HSL e) where
   poke p (PixelHSL h s l) = poke3 p h s l
   {-# INLINE poke #-}
 
-hsl2rgb :: Pixel HSL Double -> Pixel RGB Double
+hsl2rgb :: RealFrac e => Pixel HSL e -> Pixel RGB e
 hsl2rgb (PixelHSL h s l) = (+ m) <$> hc2rgb h c
   where
     !c = (1 - abs (2 * l - 1)) * s
@@ -115,7 +115,7 @@ hsl2rgb (PixelHSL h s l) = (+ m) <$> hc2rgb h c
 {-# INLINE hsl2rgb #-}
 
 
-rgb2hsl :: Pixel RGB Double -> Pixel HSL Double
+rgb2hsl :: (Ord e, Floating e) => Pixel RGB e -> Pixel HSL e
 rgb2hsl (PixelRGB r g b) = PixelHSL h s l
   where
     !max' = max r (max g b)

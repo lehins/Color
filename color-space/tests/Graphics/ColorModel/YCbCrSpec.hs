@@ -14,4 +14,4 @@ spec =
   describe "YCbCr" $ do
     colorModelSpec @YCbCr @Word
     it "rgb2ycbcr . ycbcr2rgb" $
-      property $ \rgb -> epsilonEqPixelTol 1e-5 rgb (ycbcr2rgb (rgb2ycbcr rgb))
+      property $ \rgb -> epsilonEqPixelTol (1e-5 :: Double) rgb (ycbcr2rgb (rgb2ycbcr rgb))

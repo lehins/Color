@@ -1,9 +1,11 @@
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 module Graphics.ColorModel.HSVSpec (spec) where
 
 import Graphics.ColorModel.Common
 import Graphics.ColorModel.HSV
+import Graphics.ColorModel.RGB
 import Graphics.ColorModel.RGBSpec (rgbs)
 
 instance (Elevator e, Random e) => Arbitrary (Pixel HSV e) where
@@ -13,8 +15,10 @@ spec :: Spec
 spec =
   describe "HSV" $ do
     colorModelSpec @HSV @Word
-    it "rgb2hsv . hsv2rgb" $ property $ \rgb -> rgb `epsilonEqPixel` hsv2rgb (rgb2hsv rgb)
-    it "hsv2rgb . rgb2hsv" $ property $ \hsv -> hsv `epsilonEqPixel` rgb2hsv (hsv2rgb hsv)
+    prop "rgb2hsv . hsv2rgb" $ \(rgb :: Pixel RGB Double) ->
+      rgb `epsilonEqPixel` hsv2rgb (rgb2hsv rgb)
+    prop "hsv2rgb . rgb2hsv" $ \(hsv :: Pixel HSV Double) ->
+      hsv `epsilonEqPixel` rgb2hsv (hsv2rgb hsv)
     describe "samples" $ do
       let tol = 1e-3
       describe "rgb2hsv" $ izipWithM_ (epsilonPixelIxSpec tol) hsvs (rgb2hsv <$> rgbs)
