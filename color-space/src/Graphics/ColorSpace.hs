@@ -8,8 +8,6 @@
 --
 module Graphics.ColorSpace
   ( module Graphics.ColorSpace.Internal
-  , module Graphics.ColorSpace.CIE1931.Illuminants
   ) where
 
 import Graphics.ColorSpace.Internal
-import Graphics.ColorSpace.CIE1931.Illuminants

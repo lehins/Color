@@ -36,6 +36,8 @@ library
                      , Graphics.ColorSpace.RGB.Alternative.HSI
                      , Graphics.ColorSpace.RGB.Alternative.HSV
                      , Graphics.ColorSpace.RGB.Alternative.HSL
+                     , Graphics.ColorSpace.RGB.ITU
+                     , Graphics.ColorSpace.RGB.ITU.Rec709
                      -- , Graphics.ColorSpace.RGB.Alternative.YCbCr
                      -- , Graphics.ColorSpace.RGB.Alternative.CMYK
                      --, Graphics.ColorSpace.Derived.RGB.SRGB
@@ -56,7 +58,7 @@ library
                      -- , Graphics.ColorSpace.CIE1931
                      -- , Graphics.ColorSpace.CIE1931.RGB
                      , Graphics.ColorSpace.CIE1931.XYZ
-                     , Graphics.ColorSpace.CIE1931.Illuminants
+                     , Graphics.ColorSpace.CIE1931.Illuminant
                      -- , Graphics.ColorSpace.CIE1976.LUV
                      -- , Graphics.ColorSpace.CIE1976.LAB.LCH
                      -- , Graphics.ColorSpace.CIE1976.LAB
@@ -102,9 +104,10 @@ test-suite tests
                     , Graphics.ColorModel.RGBSpec
                     , Graphics.ColorModel.YCbCrSpec
                     , Graphics.ColorSpace.Common
-                    , Graphics.ColorSpace.CIE1931.IlluminantsSpec
+                    , Graphics.ColorSpace.CIE1931.IlluminantSpec
                     , Graphics.ColorSpace.RGB.SRGBSpec
                     , Graphics.ColorSpace.RGB.Derived.SRGBSpec
+                    , Graphics.ColorSpace.RGB.ITU.Rec709Spec
                     , Spec
   build-depends:      HUnit
                     , QuickCheck

@@ -3,10 +3,11 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
-module Graphics.ColorSpace.CIE1931.IlluminantsSpec (spec) where
+module Graphics.ColorSpace.CIE1931.IlluminantSpec (spec) where
 
 import Data.Proxy
 import Graphics.ColorSpace.Common
+import Graphics.ColorSpace.CIE1931.Illuminant
 import Graphics.ColorModel.Internal (showsType)
 import qualified Data.Colour.CIE as Colour
 import qualified Data.Colour.CIE.Illuminant as Colour

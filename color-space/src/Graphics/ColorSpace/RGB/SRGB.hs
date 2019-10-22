@@ -20,6 +20,7 @@
 --
 module Graphics.ColorSpace.RGB.SRGB
   ( SRGB
+  , ITU(..)
   , pattern PixelRGB
   , pattern PixelRGBA
   , RGB
@@ -36,16 +37,17 @@ import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Alpha
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Algebra
-import Graphics.ColorSpace.CIE1931.Illuminants
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RGB.Internal
+import Graphics.ColorSpace.RGB.ITU
+import Graphics.ColorSpace.RGB.ITU.Rec709 (primaries)
 
 
 -- | The most common @sRGB@ color space with the default `D65` illuminant
 type SRGB = RGB 'D65
 
 -- | The most common @sRGB@ color space
-data RGB (i :: Illuminant2)
+data RGB (i :: ITU)
 
 newtype instance Pixel (RGB 'D65) e = RGB (Pixel CM.RGB e)
 
@@ -175,12 +177,3 @@ itransfer eu
   where !u = toDouble eu
 {-# INLINE itransfer #-}
 
-
--- | Primaries for sRGB color space. This is a helper definition, therefore `chromaticity` should
--- be used instead.
---
--- @since 0.1.0
-primaries :: Illuminant i => Chromaticity rgb i
-primaries = Chromaticity (Primary 0.64 0.33)
-                         (Primary 0.30 0.60)
-                         (Primary 0.15 0.06)
