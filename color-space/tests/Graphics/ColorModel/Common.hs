@@ -80,7 +80,7 @@ epsilonEq epsilon x y = once $ epsilonExpect epsilon x y
 epsilonEqPixel :: (ColorModel cs e, RealFloat e) => Pixel cs e -> Pixel cs e -> Property
 epsilonEqPixel = epsilonEqPixelTol epsilon
   where
-    epsilon = 1e-12
+    epsilon = 1e-11
 
 epsilonEqPixelTol :: (ColorModel cs e, RealFloat e) => e -> Pixel cs e -> Pixel cs e -> Property
 epsilonEqPixelTol epsilon x y = conjoin $ F.toList $ liftA2 (epsilonEq epsilon) x y

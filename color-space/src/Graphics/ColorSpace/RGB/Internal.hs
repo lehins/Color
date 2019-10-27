@@ -41,7 +41,8 @@ class Illuminant i => RedGreenBlue (cs :: k -> *) (i :: k) where
   -- the __@i@__ type parameter
   chromaticity :: Chromaticity cs i
 
-  -- | Encoding color component transfer function (inverse)
+  -- | Encoding color component transfer function (inverse). Also known as opto-electronic
+  -- transfer function (OETF / OECF) or gamma function.
   ecctf :: (RealFloat a, Elevator a) => Pixel (cs i) a -> Pixel (cs i) a
 
   -- | Decoding color component transfer function (forward)

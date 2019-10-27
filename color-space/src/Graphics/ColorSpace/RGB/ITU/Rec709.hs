@@ -1,5 +1,5 @@
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -125,17 +125,19 @@ transfer l
 -- be used instead.
 --
 -- \[
--- \gamma^{-1}(V) = \begin{cases}
---     V / 4.5 & V \leq 0.081 \\
---     \left(\tfrac{V + 0.099}{1.099}\right)^{\frac{1}{0.45}} & \text{otherwise}
+-- \gamma^{-1}(E) = \begin{cases}
+--     E / 4.5 & E \leq gamma(0.018) \\
+--     \left(\tfrac{E + 0.099}{1.099}\right)^{\frac{1}{0.45}} & \text{otherwise}
 --   \end{cases}
 -- \]
 --
 -- @since 0.1.0
 itransfer :: (Ord a, Floating a) => a -> a
-itransfer v
-  | v < 0.081 = v / 4.5
-  | otherwise = ((v + 0.099) / 1.099) ** (1 / 0.45)
+itransfer e
+  | e < inv0018 = e / 4.5
+  | otherwise = ((e + 0.099) / 1.099) ** (1 / 0.45)
+  where
+    !inv0018 = transfer 0.018 -- ~ 0.081
 {-# INLINE itransfer #-}
 
 
