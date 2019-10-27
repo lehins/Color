@@ -97,17 +97,17 @@ instance Elevator e => ColorSpace (RGB 'D65) e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelXYZ = rgb2xyz
+  toPixelXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = xyz2rgb
+  fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
   showsColorSpaceName _ = ("sRGB Standard" ++)
 
 -- | s`RGB` color space
 instance RedGreenBlue RGB 'D65 where
   chromaticity = primaries
-  npm = npmStandard
-  inpm = inpmStandard
+  npm = fmap toRealFloat npmStandard
+  inpm = fmap toRealFloat inpmStandard
   ecctf = fmap transfer
   {-# INLINE ecctf #-}
   dcctf = fmap itransfer
@@ -122,7 +122,7 @@ instance RedGreenBlue RGB 'D65 where
 -- , [ 0.0193000, 0.1192000, 0.9505000] ]
 --
 -- @since 0.1.0
-npmStandard :: NPM RGB 'D65
+npmStandard :: NPM RGB 'D65 Float
 npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
                          (V3 0.2126 0.7152 0.0722)
                          (V3 0.0193 0.1192 0.9505)
@@ -136,7 +136,7 @@ npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
 -- , [ 0.0557000,-0.2040000, 1.0570000] ]
 --
 -- @since 0.1.0
-inpmStandard :: INPM RGB 'D65
+inpmStandard :: INPM RGB 'D65 Float
 inpmStandard = INPM $ M3x3 (V3  3.2406 -1.5372 -0.4986)
                            (V3 -0.9689  1.8758  0.0415)
                            (V3  0.0557 -0.2040  1.0570)
@@ -153,10 +153,10 @@ inpmStandard = INPM $ M3x3 (V3  3.2406 -1.5372 -0.4986)
 -- \]
 --
 -- @since 0.1.0
-transfer :: Elevator e => Double -> e
+transfer :: (Ord a, Floating a) => a -> a
 transfer u
-  | u <= 0.0031308 = fromDouble (12.92 * u)
-  | otherwise = fromDouble (1.055 * (u ** (1 / 2.4)) - 0.055)
+  | u <= 0.0031308 = 12.92 * u
+  | otherwise = 1.055 * (u ** (1 / 2.4)) - 0.055
 {-# INLINE transfer #-}
 
 -- | sRGB inverse transfer function "gamma". This is a helper function, therefore `dcctf` should
@@ -170,10 +170,9 @@ transfer u
 -- \]
 --
 -- @since 0.1.0
-itransfer :: Elevator e => e -> Double
-itransfer eu
+itransfer :: (Ord a, Floating a) => a -> a
+itransfer u
   | u <= 0.04045 = u / 12.92
   | otherwise = ((u + 0.055) / 1.055) ** 2.4
-  where !u = toDouble eu
 {-# INLINE itransfer #-}
 

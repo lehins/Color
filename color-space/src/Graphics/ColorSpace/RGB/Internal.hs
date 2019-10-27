@@ -1,7 +1,9 @@
+{-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -40,31 +42,31 @@ class Illuminant i => RedGreenBlue (cs :: k -> *) (i :: k) where
   chromaticity :: Chromaticity cs i
 
   -- | Encoding color component transfer function (inverse)
-  ecctf :: Elevator e => Pixel (cs i) Double -> Pixel (cs i) e
+  ecctf :: (RealFloat a, Elevator a) => Pixel (cs i) a -> Pixel (cs i) a
 
   -- | Decoding color component transfer function (forward)
-  dcctf :: Elevator e => Pixel (cs i) e -> Pixel (cs i) Double
+  dcctf :: (RealFloat a, Elevator a) => Pixel (cs i) a -> Pixel (cs i) a
 
   -- | Normalized primary matrix for this RGB color space. Default implementation derives
   -- it from `chromaticity`
-  npm :: NPM cs i
+  npm :: (Elevator a, RealFloat a) => NPM cs i a
   npm = npmDerive chromaticity
 
   -- | Inverse normalized primary matrix for this RGB color space. Default implementation
   -- derives it from `chromaticity`
-  inpm :: INPM cs i
+  inpm :: (Elevator a, RealFloat a) => INPM cs i a
   inpm = inpmDerive chromaticity
 
   -- | Linear transformation of a pixel in a linear RGB color space into XYZ color space
-  npmApply :: Pixel (cs i) Double -> Pixel XYZ Double
-  npmApply px = fromV3 PixelXYZ (multM3x3byV3 (unNPM (npm :: NPM cs i)) (toV3 r g b))
+  npmApply :: forall a . (Elevator a, RealFloat a) => Pixel (cs i) a -> Pixel XYZ a
+  npmApply px = XYZ (multM3x3byV3 (unNPM (npm :: NPM cs i a)) (V3 r g b))
     where CM.PixelRGB r g b = unPixelRGB px
   {-# INLINE npmApply #-}
 
   -- | Linear transformation of a pixel in XYZ color space into a linear RGB color space
-  inpmApply :: Pixel XYZ Double -> Pixel (cs i) Double
-  inpmApply (PixelXYZ x y z) =
-    mkPixelRGB $ fromV3 CM.PixelRGB (multM3x3byV3 (unINPM (inpm :: INPM cs i)) (toV3 x y z))
+  inpmApply :: forall a . (Elevator a, RealFloat a) => Pixel XYZ a -> Pixel (cs i) a
+  inpmApply xyz =
+    mkPixelRGB $ fromV3 CM.PixelRGB (multM3x3byV3 (unINPM (inpm :: INPM cs i a)) (coerce xyz))
   {-# INLINE inpmApply #-}
 
   -- | Lift RGB color model into a RGB color space
@@ -90,10 +92,10 @@ deriving instance Eq (Chromaticity cs i)
 deriving instance Show (Chromaticity cs i)
 
 
-rgb2xyz :: (RedGreenBlue cs i, Elevator e) => Pixel (cs i) e -> Pixel XYZ Double
+rgb2xyz :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel (cs i) e -> Pixel XYZ e
 rgb2xyz = npmApply . dcctf
 
-xyz2rgb :: (RedGreenBlue cs i, Elevator e) => Pixel XYZ Double -> Pixel (cs i) e
+xyz2rgb :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel XYZ e -> Pixel (cs i) e
 xyz2rgb = ecctf . inpmApply
 
 
@@ -126,11 +128,11 @@ xyz2rgb = ecctf . inpmApply
 -- into `Graphics.ColorSpace.CIE1931.XYZ.XYZ` color space.
 --
 -- @since 0.1.0
-newtype NPM (cs :: k -> *) (i :: k) = NPM
-  { unNPM :: M3x3
-  } deriving (Eq)
+newtype NPM (cs :: k -> *) (i :: k) a = NPM
+  { unNPM :: M3x3 a
+  } deriving (Eq, Functor, Applicative, Foldable, Traversable)
 
-instance Show (NPM cs i) where
+instance Elevator a => Show (NPM cs i a) where
   show = show . unNPM
 
 -- | Inverse normalized primary matrix (iNPM), which is used to tranform linear
@@ -138,32 +140,43 @@ instance Show (NPM cs i) where
 -- literally a matrix inverse of `NPM`
 --
 -- @since 0.1.0
-newtype INPM (cs :: k -> *) (i :: k) = INPM
-  { unINPM :: M3x3
-  } deriving (Eq)
+newtype INPM (cs :: k -> *) (i :: k) a = INPM
+  { unINPM :: M3x3 a
+  } deriving (Eq, Functor, Applicative, Foldable, Traversable)
 
-instance Show (INPM cs i) where
+instance Elevator a => Show (INPM cs i a) where
   show = show . unINPM
 
 
 -- | Derive a `NPM` form chromaticities and a white point
 --
 -- @since 0.1.0
-npmDerive :: forall cs i . Illuminant i => Chromaticity cs i -> NPM cs i
+npmDerive ::
+     forall cs i a. (Elevator a, RealFloat a, Illuminant i)
+  => Chromaticity cs i
+  -> NPM cs i a
 npmDerive (Chromaticity r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
-  where
     -- transposed matrix with xyz primaries
-    !primaries' = M3x3 (V3 (xPrimary r) (xPrimary g) (xPrimary b))
-                       (V3 (yPrimary r) (yPrimary g) (yPrimary b))
-                       (V3 (zPrimary r) (zPrimary g) (zPrimary b))
-    !coeff = invertM3x3 primaries' `multM3x3byV3` whitePointXYZ (whitePoint :: WhitePoint i)
+  where
+    !primaries' =
+      toRealFloat <$>
+      M3x3
+        (V3 (xPrimary r) (xPrimary g) (xPrimary b))
+        (V3 (yPrimary r) (yPrimary g) (yPrimary b))
+        (V3 (zPrimary r) (zPrimary g) (zPrimary b))
+    !coeff =
+      invertM3x3 primaries' `multM3x3byV3`
+      fmap fromDouble (coerce (whitePointXYZ (whitePoint :: WhitePoint i)))
 {-# INLINE npmDerive #-}
 
 -- | Derive an `INPM` form chromaticities and a white point
 --
 -- @since 0.1.0
-inpmDerive :: forall cs i . Illuminant i => Chromaticity cs i -> INPM cs i
-inpmDerive = coerce . invertM3x3 . coerce . npmDerive
+inpmDerive ::
+     forall cs i a. (Elevator a, RealFloat a, Illuminant i)
+  => Chromaticity cs i
+  -> INPM cs i a
+inpmDerive = INPM . invertM3x3 . unNPM . npmDerive
 {-# INLINE inpmDerive #-}
 
 

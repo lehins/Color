@@ -1,3 +1,4 @@
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE DataKinds #-}
@@ -30,9 +31,12 @@ module Graphics.ColorSpace.Internal
   , pixelWhitePoint
   , Illuminant(..)
   , XYZ
+  , pattern PixelXYZ
+  , pattern PixelXYZA
   ) where
 
 import Foreign.Storable
+import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 import Graphics.ColorSpace.Algebra
 import Data.Typeable
@@ -49,13 +53,15 @@ class ColorModel cs e => ColorSpace cs e where
   -- @since 0.1.0
   showsColorSpaceName :: Pixel cs e -> ShowS
 
-  toPixelXYZ :: Pixel cs e -> Pixel XYZ Double
-  default toPixelXYZ :: ColorSpace (BaseColorSpace cs) e => Pixel cs e -> Pixel XYZ Double
+  toPixelXYZ :: (Elevator a, RealFloat a) => Pixel cs e -> Pixel XYZ a
+  default toPixelXYZ ::
+    (ColorSpace (BaseColorSpace cs) e, Elevator a, RealFloat a) => Pixel cs e -> Pixel XYZ a
   toPixelXYZ = toPixelXYZ . toBaseColorSpace
   {-# INLINE toPixelXYZ #-}
 
-  fromPixelXYZ :: Pixel XYZ Double -> Pixel cs e
-  default fromPixelXYZ :: ColorSpace (BaseColorSpace cs) e => Pixel XYZ Double -> Pixel cs e
+  fromPixelXYZ :: (Elevator a, RealFloat a) => Pixel XYZ a -> Pixel cs e
+  default fromPixelXYZ ::
+    (ColorSpace (BaseColorSpace cs) e, Elevator a, RealFloat a) => Pixel XYZ a -> Pixel cs e
   fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
   {-# INLINE fromPixelXYZ #-}
 
@@ -82,7 +88,7 @@ zWhitePoint wp = 1 - xWhitePoint wp - yWhitePoint wp
 whitePointXYZ ::
      WhitePoint i
      -- ^ White point that specifies @x@ and @y@
-  -> V3
+  -> Pixel XYZ Double
 whitePointXYZ = whitePointXZ 1
 {-# INLINE whitePointXYZ #-}
 
@@ -94,8 +100,8 @@ whitePointXZ :: Double
               -- ^ @Y@ value, which is usually set to @1@
               -> WhitePoint i
               -- ^ White point that specifies @x@ and @y@
-              -> V3
-whitePointXZ vY (WhitePoint x y) = V3 (vYy * x) vY (vYy * (1 - x - y))
+              -> Pixel XYZ Double
+whitePointXZ vY (WhitePoint x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
   where !vYy = vY / y
 {-# INLINE whitePointXZ #-}
 
@@ -123,7 +129,7 @@ zPrimary p = 1 - xPrimary p - yPrimary p
 primaryXYZ ::
      Primary
      -- ^ Primary that specifies @x@ and @y@
-  -> V3
+  -> Pixel XYZ Double
 primaryXYZ = primaryXZ 1
 {-# INLINE primaryXYZ #-}
 
@@ -135,8 +141,8 @@ primaryXZ ::
      -- ^ @Y@ value, which is usually set to @1@
   -> Primary
      -- ^ Primary that specifies @x@ and @y@
-  -> V3
-primaryXZ vY (Primary x y) = V3 (vYy * x) vY (vYy * (1 - x - y))
+  -> Pixel XYZ Double
+primaryXZ vY (Primary x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
   where !vYy = vY / y
 {-# INLINE primaryXZ #-}
 
@@ -162,7 +168,18 @@ pixelWhitePoint _ = whitePoint
 data XYZ
 
 -- | CIE1931 `XYZ` color space
-data instance Pixel XYZ e = PixelXYZ !e !e !e
+newtype instance Pixel XYZ e = XYZ (V3 e) -- PixelXYZ !e !e !e
+
+-- | Constructor for the most common @XYZ@ color space
+pattern PixelXYZ :: e -> e -> e -> Pixel XYZ e
+pattern PixelXYZ x y z = XYZ (V3 x y z)
+{-# COMPLETE PixelXYZ #-}
+
+-- | Constructor for @XYZ@ with alpha channel.
+pattern PixelXYZA :: e -> e -> e -> e -> Pixel (Alpha XYZ) e
+pattern PixelXYZA x y z a = Alpha (XYZ (V3 x y z)) a
+{-# COMPLETE PixelXYZA #-}
+
 
 -- | CIE1931 `XYZ` color space
 deriving instance Eq e => Eq (Pixel XYZ e)
@@ -188,14 +205,14 @@ instance Elevator e => ColorSpace XYZ e where
   toBaseColorSpace = id
   fromBaseColorSpace = id
   showsColorSpaceName _ = ("CIE1931 XYZ" ++)
-  toPixelXYZ (PixelXYZ x y z) = PixelXYZ (toDouble x) (toDouble y) (toDouble z)
+  toPixelXYZ (PixelXYZ x y z) = PixelXYZ (toRealFloat x) (toRealFloat y) (toRealFloat z)
   {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ (PixelXYZ x y z) = PixelXYZ (fromDouble x) (fromDouble y) (fromDouble z)
+  fromPixelXYZ (PixelXYZ x y z) = PixelXYZ (fromRealFloat x) (fromRealFloat y) (fromRealFloat z)
   {-# INLINE fromPixelXYZ #-}
 
 {-# RULES
-"toPixelXYZ   :: Pixel XYZ Double -> Pixel XYZ Double"   toPixelXYZ = id
-"fromPixelXYZ :: Pixel XYZ Double -> Pixel XYZ Double" fromPixelXYZ = id
+"toPixelXYZ   :: RealFloat a => Pixel XYZ a -> Pixel XYZ a"   toPixelXYZ = id
+"fromPixelXYZ :: RealFloat a => Pixel XYZ a -> Pixel XYZ a" fromPixelXYZ = id
  #-}
 
 -- | CIE1931 `XYZ` color space

@@ -179,12 +179,12 @@ instance Elevator Bit where
   toFloat (Bit 0) = 0
   toFloat _       = 1
   {-# INLINE toFloat #-}
-  toDouble (Bit 0) = 0
-  toDouble _       = 1
-  {-# INLINE toDouble #-}
-  fromDouble 0 = Bit 0
-  fromDouble _ = Bit 1
-  {-# INLINE fromDouble #-}
+  toRealFloat (Bit 0) = 0
+  toRealFloat _       = 1
+  {-# INLINE toRealFloat #-}
+  fromRealFloat 0 = Bit 0
+  fromRealFloat _ = Bit 1
+  {-# INLINE fromRealFloat #-}
 
 
 instance Num Bit where

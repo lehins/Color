@@ -88,9 +88,9 @@ instance Elevator e => ColorSpace (RGB 'D65) e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelXYZ = rgb2xyz
+  toPixelXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = xyz2rgb
+  fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
   showsColorSpaceName _ = ("sRGB Standard" ++)
 
@@ -115,10 +115,10 @@ instance RedGreenBlue RGB 'D65 where
 -- \]
 --
 -- @since 0.1.0
-transfer :: Elevator e => Double -> e
+transfer :: (Ord a, Floating a) => a -> a
 transfer l
-  | l < 0.018 = fromDouble (4.5 * l)
-  | otherwise = fromDouble (1.099 * (l ** 0.45 {- ~ 1 / 2.2 -}) - 0.099)
+  | l < 0.018 = 4.5 * l
+  | otherwise = 1.099 * (l ** 0.45 {- ~ 1 / 2.2 -}) - 0.099
 {-# INLINE transfer #-}
 
 -- | Rec.709 inverse transfer function "gamma". This is a helper function, therefore `dcctf` should
@@ -132,11 +132,10 @@ transfer l
 -- \]
 --
 -- @since 0.1.0
-itransfer :: Elevator e => e -> Double
-itransfer ev
+itransfer :: (Ord a, Floating a) => a -> a
+itransfer v
   | v < 0.081 = v / 4.5
   | otherwise = ((v + 0.099) / 1.099) ** (1 / 0.45)
-  where !v = toDouble ev
 {-# INLINE itransfer #-}
 
 

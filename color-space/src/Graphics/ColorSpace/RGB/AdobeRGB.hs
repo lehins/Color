@@ -93,9 +93,9 @@ instance Elevator e => ColorSpace (RGB 'D65) e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelXYZ = rgb2xyz
+  toPixelXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = xyz2rgb
+  fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
   showsColorSpaceName _ = ("AdobeRGB 1998 Standard" ++)
 
@@ -103,8 +103,8 @@ instance Elevator e => ColorSpace (RGB 'D65) e where
 -- | Adobe`RGB` color space
 instance RedGreenBlue RGB 'D65 where
   chromaticity = primaries
-  npm = npmStandard
-  inpm = inpmStandard
+  npm = fmap toRealFloat npmStandard
+  inpm = fmap toRealFloat inpmStandard
   ecctf = fmap transfer
   {-# INLINE ecctf #-}
   dcctf = fmap itransfer
@@ -118,7 +118,7 @@ instance RedGreenBlue RGB 'D65 where
 -- , [ 0.0270300, 0.0706900, 0.9913400] ]
 --
 -- @since 0.1.0
-npmStandard :: NPM RGB 'D65
+npmStandard :: NPM RGB 'D65 Float
 npmStandard = NPM $ M3x3 (V3 0.57667 0.18556 0.18823)
                          (V3 0.29734 0.62736 0.07529)
                          (V3 0.02703 0.07069 0.99134)
@@ -132,7 +132,7 @@ npmStandard = NPM $ M3x3 (V3 0.57667 0.18556 0.18823)
 -- , [ 0.0134400,-0.1183600, 1.0151700] ]
 --
 -- @since 0.1.0
-inpmStandard :: INPM RGB 'D65
+inpmStandard :: INPM RGB 'D65 Float
 inpmStandard = INPM $ M3x3 (V3  2.04159 -0.56501 -0.34473)
                            (V3 -0.96924  1.87597  0.04156)
                            (V3  0.01344 -0.11836  1.01517)
@@ -146,8 +146,8 @@ inpmStandard = INPM $ M3x3 (V3  2.04159 -0.56501 -0.34473)
 -- \]
 --
 -- @since 0.1.0
-transfer :: Elevator e => Double -> e
-transfer u = fromDouble (u ** (256 / 563))
+transfer :: Floating a => a -> a
+transfer u = u ** (256 / 563)
 {-# INLINE transfer #-}
 
 
@@ -158,8 +158,8 @@ transfer u = fromDouble (u ** (256 / 563))
 -- \]
 --
 -- @since 0.1.0
-itransfer :: Elevator e => e -> Double
-itransfer eu = toDouble eu ** 2.19921875 -- in rational form 563/256
+itransfer :: Floating a => a -> a
+itransfer u = u ** 2.19921875 -- in rational form 563/256
 {-# INLINE itransfer #-}
 
 primaries :: Illuminant i => Chromaticity rgb i

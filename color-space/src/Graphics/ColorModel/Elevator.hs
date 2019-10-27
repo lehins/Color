@@ -26,7 +26,8 @@ import Data.Word
 import GHC.Float
 
 
--- | A class with a set of convenient functions that allow for changing precision.
+-- | A class with a set of functions that allow for changing precision by shrinking and
+-- streatching the values.
 class (Show e, Eq e, Num e, Typeable e, Unbox e, Storable e) => Elevator e where
   maxValue :: e
 
@@ -45,13 +46,22 @@ class (Show e, Eq e, Num e, Typeable e, Unbox e, Storable e) => Elevator e where
   toWord64 :: e -> Word64
 
   -- | Values are scaled to @[0.0, 1.0]@ range.
+  toRealFloat :: (Elevator a, RealFloat a) => e -> a
+
+  -- | Values are scaled from @[0.0, 1.0]@ range.
+  fromRealFloat :: (Elevator a, RealFloat a) => a -> e
+
+  -- | Values are scaled to @[0.0, 1.0]@ range.
   toFloat :: e -> Float
+  toFloat = toRealFloat
 
   -- | Values are scaled to @[0.0, 1.0]@ range.
   toDouble :: e -> Double
+  toDouble = toRealFloat
 
   -- | Values are scaled from @[0.0, 1.0]@ range.
   fromDouble :: Double -> e
+  fromDouble = fromRealFloat
 
 
 -- | Lower the precision
@@ -100,6 +110,10 @@ instance Elevator Word8 where
   {-# INLINE toDouble #-}
   fromDouble = toWord8
   {-# INLINE fromDouble #-}
+  toRealFloat = squashTo1
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = toWord8
+  {-# INLINE fromRealFloat #-}
 
 
 -- | Values between @[0, 65535]]@
@@ -120,6 +134,10 @@ instance Elevator Word16 where
   {-# INLINE toDouble #-}
   fromDouble = toWord16
   {-# INLINE fromDouble #-}
+  toRealFloat = squashTo1
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = toWord16
+  {-# INLINE fromRealFloat #-}
 
 
 -- | Values between @[0, 4294967295]@
@@ -140,6 +158,10 @@ instance Elevator Word32 where
   {-# INLINE toDouble #-}
   fromDouble = toWord32
   {-# INLINE fromDouble #-}
+  toRealFloat = squashTo1
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = toWord32
+  {-# INLINE fromRealFloat #-}
 
 
 -- | Values between @[0, 18446744073709551615]@
@@ -160,6 +182,10 @@ instance Elevator Word64 where
   {-# INLINE toDouble #-}
   fromDouble = toWord64
   {-# INLINE fromDouble #-}
+  toRealFloat = squashTo1
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = toWord64
+  {-# INLINE fromRealFloat #-}
 
 -- | Values between @[0, 18446744073709551615]@ on 64bit
 instance Elevator Word where
@@ -179,6 +205,10 @@ instance Elevator Word where
   {-# INLINE toDouble #-}
   fromDouble = stretch . clamp01
   {-# INLINE fromDouble #-}
+  toRealFloat = squashTo1
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = stretch . clamp01
+  {-# INLINE fromRealFloat #-}
 
 -- | Values between @[0, 127]@
 instance Elevator Int8 where
@@ -194,10 +224,10 @@ instance Elevator Int8 where
   {-# INLINE toWord64 #-}
   toFloat = squashTo1 . max 0
   {-# INLINE toFloat #-}
-  toDouble = squashTo1 . max 0
-  {-# INLINE toDouble #-}
-  fromDouble = stretch . clamp01
-  {-# INLINE fromDouble #-}
+  toRealFloat = squashTo1 . max 0
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = stretch . clamp01
+  {-# INLINE fromRealFloat #-}
 
 
 -- | Values between @[0, 32767]@
@@ -214,10 +244,10 @@ instance Elevator Int16 where
   {-# INLINE toWord64 #-}
   toFloat = squashTo1 . max 0
   {-# INLINE toFloat #-}
-  toDouble = squashTo1 . max 0
-  {-# INLINE toDouble #-}
-  fromDouble = stretch . clamp01
-  {-# INLINE fromDouble #-}
+  toRealFloat = squashTo1 . max 0
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = stretch . clamp01
+  {-# INLINE fromRealFloat #-}
 
 
 -- | Values between @[0, 2147483647]@
@@ -234,10 +264,10 @@ instance Elevator Int32 where
   {-# INLINE toWord64 #-}
   toFloat = squashTo1 . max 0
   {-# INLINE toFloat #-}
-  toDouble = squashTo1 . max 0
-  {-# INLINE toDouble #-}
-  fromDouble = stretch . clamp01
-  {-# INLINE fromDouble #-}
+  toRealFloat = squashTo1 . max 0
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = stretch . clamp01
+  {-# INLINE fromRealFloat #-}
 
 
 -- | Values between @[0, 9223372036854775807]@
@@ -254,10 +284,10 @@ instance Elevator Int64 where
   {-# INLINE toWord64 #-}
   toFloat = squashTo1 . max 0
   {-# INLINE toFloat #-}
-  toDouble = squashTo1 . max 0
-  {-# INLINE toDouble #-}
-  fromDouble = stretch . clamp01
-  {-# INLINE fromDouble #-}
+  toRealFloat = squashTo1 . max 0
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = stretch . clamp01
+  {-# INLINE fromRealFloat #-}
 
 
 -- | Values between @[0, 9223372036854775807]@ on 64bit
@@ -274,10 +304,10 @@ instance Elevator Int where
   {-# INLINE toWord64 #-}
   toFloat = squashTo1 . max 0
   {-# INLINE toFloat #-}
-  toDouble = squashTo1 . max 0
-  {-# INLINE toDouble #-}
-  fromDouble = stretch . clamp01
-  {-# INLINE fromDouble #-}
+  toRealFloat = squashTo1 . max 0
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = stretch . clamp01
+  {-# INLINE fromRealFloat #-}
 
 
 -- | Values between @[0.0, 1.0]@
@@ -298,6 +328,10 @@ instance Elevator Float where
   {-# INLINE toDouble #-}
   fromDouble = toFloat
   {-# INLINE fromDouble #-}
+  toRealFloat = uncurry encodeFloat . decodeFloat
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = uncurry encodeFloat . decodeFloat
+  {-# INLINE fromRealFloat #-}
 
 
 -- | Values between @[0.0, 1.0]@
@@ -318,6 +352,19 @@ instance Elevator Double where
   {-# INLINE toDouble #-}
   fromDouble = id
   {-# INLINE fromDouble #-}
+  toRealFloat = uncurry encodeFloat . decodeFloat
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = uncurry encodeFloat . decodeFloat
+  {-# INLINE fromRealFloat #-}
+
+{-# RULES
+"toRealFloat   :: Double -> Double / Float -> Float" toRealFloat = id
+"toRealFloat   :: Double -> Float"                   toRealFloat = double2Float
+"toRealFloat   :: Float -> Double"                   toRealFloat = float2Double
+"fromRealFloat :: Double -> Double / Float -> Float" fromRealFloat = id
+"fromRealFloat :: Double -> Float"                   fromRealFloat = double2Float
+"fromRealFloat :: Float -> Double"                   fromRealFloat = float2Double
+ #-}
 
 
 -- | Discards imaginary part and changes precision of real part.
@@ -338,3 +385,7 @@ instance (Num e, Elevator e, RealFloat e) => Elevator (C.Complex e) where
   {-# INLINE toDouble #-}
   fromDouble = (C.:+ 0) . fromDouble
   {-# INLINE fromDouble #-}
+  toRealFloat = toRealFloat . C.realPart
+  {-# INLINE toRealFloat #-}
+  fromRealFloat = (C.:+ 0) . fromRealFloat
+  {-# INLINE fromRealFloat #-}

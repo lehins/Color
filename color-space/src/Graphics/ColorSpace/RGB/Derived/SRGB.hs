@@ -89,9 +89,9 @@ instance (Illuminant i, Elevator e) => ColorSpace (RGB (i :: k)) e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelXYZ = rgb2xyz
+  toPixelXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = xyz2rgb
+  fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
   showsColorSpaceName _ = ('s':) . showsType (Proxy :: Proxy (RGB i))
 

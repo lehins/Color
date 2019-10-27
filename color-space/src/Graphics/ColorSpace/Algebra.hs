@@ -11,7 +11,6 @@
 --
 module Graphics.ColorSpace.Algebra
   ( V3(..)
-  , toV3
   , fromV3
   , showV3
   , printV3
@@ -25,59 +24,48 @@ module Graphics.ColorSpace.Algebra
   , transposeM3x3
   ) where
 
-import Text.Printf
+--import Text.Printf
+import Control.Applicative
 import Graphics.ColorModel.Elevator
 
 -- | A 3D vector with @x@, @y@ and @z@ components in double floating point precision.
-data V3 =
-  V3 {-# UNPACK #-}!Double
-     {-# UNPACK #-}!Double
-     {-# UNPACK #-}!Double
-  deriving (Eq)
+data V3 a = V3 !a !a !a
+  deriving (Eq, Ord)
 
-instance Show V3 where
-  show (V3 x y z) = printf "[% .7f,% .7f,% .7f]" x y z
+instance Elevator a => Show (V3 a) where
+  show = showV3 -- (V3 x y z) = printf "[% .7f,% .7f,% .7f]" x y z
 
-toV3 :: Elevator e => e -> e -> e -> V3
-toV3 v0 v1 v2 = V3 (toDouble v0) (toDouble v1) (toDouble v2)
-{-# INLINE[1] toV3 #-}
 
-{-# RULES
-"toV3 :: Double -> Double -> Double -> V3" toV3 = V3
-  #-}
-
-fromV3 :: Elevator e => (e -> e -> e -> a) -> V3 -> a
-fromV3 mk (V3 v0 v1 v2) = mk (fromDouble v0) (fromDouble v1) (fromDouble v2)
+fromV3 :: (e -> e -> e -> a) -> V3 e -> a
+fromV3 mk (V3 v0 v1 v2) = mk v0 v1 v2
+{-# INLINE fromV3 #-}
 
 
 -- | A 3x3 Matrix
-data M3x3 =
-  M3x3 {-# UNPACK #-}!V3
-       {-# UNPACK #-}!V3
-       {-# UNPACK #-}!V3
+data M3x3 a = M3x3 !(V3 a) !(V3 a) !(V3 a)
   deriving (Eq)
 
-instance Show M3x3 where
+instance Elevator a => Show (M3x3 a) where
   showsPrec _ (M3x3 v0 v1 v2) =
     ("[ " ++) . shows v0 . ("\n, " ++) . shows v1 . ("\n, " ++) . shows v2 . (" ]" ++)
 
-showV3 :: V3 -> String
+showV3 :: Show a => V3 a -> String
 showV3 (V3 x y z) = concat ["[ ", show x, ", ", show y, ", ", show z, " ]"]
 
-printV3 :: V3 -> IO ()
+printV3 :: Show a => V3 a -> IO ()
 printV3 = putStrLn . showV3
 
-showM3x3 :: M3x3 -> String
+showM3x3 :: Show a => M3x3 a -> String
 showM3x3 (M3x3 v0 v1 v2) =
   concat ["[ ", showV3 v0, "\n, ", showV3 v1, "\n, ", showV3 v2, " ]"]
 
-printM3x3 :: M3x3 -> IO ()
+printM3x3 :: Show a => M3x3 a -> IO ()
 printM3x3 = putStrLn . showM3x3
 
 -- | Mulitply a 3x3 matrix by a 3x1 vector, while getting a vector back.
 --
 -- @since 0.1.0
-multM3x3byV3 :: M3x3 -> V3 -> V3
+multM3x3byV3 :: Num a => M3x3 a -> V3 a -> V3 a
 multM3x3byV3 (M3x3 (V3 a b c)
                    (V3 d e f)
                    (V3 g h i)) (V3 v0 v1 v2) = V3 (a * v0 + b * v1 + c * v2)
@@ -85,7 +73,7 @@ multM3x3byV3 (M3x3 (V3 a b c)
                                                   (g * v0 + h * v1 + i * v2)
 {-# INLINE multM3x3byV3 #-}
 
-multM3x3byM3x3 :: M3x3 -> M3x3 -> M3x3
+multM3x3byM3x3 :: Num a => M3x3 a -> M3x3 a -> M3x3 a
 multM3x3byM3x3 m1 m2 =
   M3x3 (V3 (a1 * a2 + b1 * d2 + c1 * g2) (a1 * b2 + b1 * e2 + c1 * h2) (a1 * c2 + b1 * f2 + c1 * i2))
        (V3 (d1 * a2 + e1 * d2 + f1 * g2) (d1 * b2 + e1 * e2 + f1 * h2) (d1 * c2 + e1 * f2 + f1 * i2))
@@ -103,7 +91,7 @@ multM3x3byM3x3 m1 m2 =
 -- | Invert a 3x3 matrix.
 --
 -- @since 0.1.0
-invertM3x3 :: M3x3 -> M3x3
+invertM3x3 :: Fractional a => M3x3 a -> M3x3 a
 invertM3x3 (M3x3 (V3 a b c)
                  (V3 d e f)
                  (V3 g h i)) =
@@ -127,7 +115,7 @@ invertM3x3 (M3x3 (V3 a b c)
 -- | Compute a determinant of a 3x3 matrix.
 --
 -- @since 0.1.0
-detM3x3 :: M3x3 -> Double
+detM3x3 :: Num a => M3x3 a -> a
 detM3x3 (M3x3 (V3 i00 i01 i02)
               (V3 i10 i11 i12)
               (V3 i20 i21 i22)) = i00 * (i11 * i22 - i12 * i21) +
@@ -136,7 +124,7 @@ detM3x3 (M3x3 (V3 i00 i01 i02)
 {-# INLINE detM3x3 #-}
 
 
-transposeM3x3 :: M3x3 -> M3x3
+transposeM3x3 :: M3x3 a -> M3x3 a
 transposeM3x3 (M3x3 (V3 i00 i01 i02)
                     (V3 i10 i11 i12)
                     (V3 i20 i21 i22)) = M3x3 (V3 i00 i10 i20)
@@ -144,86 +132,118 @@ transposeM3x3 (M3x3 (V3 i00 i01 i02)
                                              (V3 i02 i12 i22)
 {-# INLINE transposeM3x3 #-}
 
-
-pureV3 :: Double -> V3
-pureV3 x = V3 x x x
-{-# INLINE pureV3 #-}
-
-mapV3 :: (Double -> Double) -> V3 -> V3
-mapV3 f (V3 x y z) = V3 (f x) (f y) (f z)
-{-# INLINE mapV3 #-}
-
-zipWithV3 :: (Double -> Double -> Double) -> V3 -> V3 -> V3
+zipWithV3 :: (a -> b -> c) -> V3 a -> V3 b -> V3 c
 zipWithV3 f (V3 x1 y1 z1) (V3 x2 y2 z2) = V3 (f x1 x2) (f y1 y2) (f z1 z2)
 {-# INLINE zipWithV3 #-}
 
-instance Num V3 where
+instance Functor V3 where
+  fmap f (V3 x y z) = V3 (f x) (f y) (f z)
+  {-# INLINE fmap #-}
+
+instance Applicative V3 where
+  pure x = V3 x x x
+  {-# INLINE pure #-}
+  (<*>) (V3 fx1 fy1 fz1) (V3 x2 y2 z2) = V3 (fx1 x2) (fy1 y2) (fz1 z2)
+  {-# INLINE (<*>) #-}
+  liftA2 = zipWithV3
+  {-# INLINE liftA2 #-}
+
+instance Foldable V3 where
+  foldr f acc (V3 x y z) = f x (f y (f z acc))
+  {-# INLINE foldr #-}
+
+instance Traversable V3 where
+  traverse f (V3 x y z) = V3 <$> f x <*> f y <*> f z
+  {-# INLINE traverse #-}
+
+instance Num a => Num (V3 a) where
   (+)         = zipWithV3 (+)
   {-# INLINE (+) #-}
   (-)         = zipWithV3 (-)
   {-# INLINE (-) #-}
   (*)         = zipWithV3 (*)
   {-# INLINE (*) #-}
-  abs         = mapV3 abs
+  abs         = fmap abs
   {-# INLINE abs #-}
-  signum      = mapV3 signum
+  signum      = fmap signum
   {-# INLINE signum #-}
-  fromInteger = pureV3 . fromInteger
+  fromInteger = pure . fromInteger
   {-# INLINE fromInteger #-}
 
 
-instance Fractional V3 where
+instance Fractional a => Fractional (V3 a) where
   (/)          = zipWithV3 (/)
   {-# INLINE (/) #-}
-  recip        = mapV3 recip
+  recip        = fmap recip
   {-# INLINE recip #-}
-  fromRational = pureV3 . fromRational
+  fromRational = pure . fromRational
   {-# INLINE fromRational #-}
 
 
-instance Floating V3 where
-  pi      = pureV3 pi
+instance Floating a => Floating (V3 a) where
+  pi      = pure pi
   {-# INLINE pi #-}
-  exp     = mapV3 exp
+  exp     = fmap exp
   {-# INLINE exp #-}
-  log     = mapV3 log
+  log     = fmap log
   {-# INLINE log #-}
-  sin     = mapV3 sin
+  sin     = fmap sin
   {-# INLINE sin #-}
-  cos     = mapV3 cos
+  cos     = fmap cos
   {-# INLINE cos #-}
-  asin    = mapV3 asin
+  asin    = fmap asin
   {-# INLINE asin #-}
-  atan    = mapV3 atan
+  atan    = fmap atan
   {-# INLINE atan #-}
-  acos    = mapV3 acos
+  acos    = fmap acos
   {-# INLINE acos #-}
-  sinh    = mapV3 sinh
+  sinh    = fmap sinh
   {-# INLINE sinh #-}
-  cosh    = mapV3 cosh
+  cosh    = fmap cosh
   {-# INLINE cosh #-}
-  asinh   = mapV3 asinh
+  asinh   = fmap asinh
   {-# INLINE asinh #-}
-  atanh   = mapV3 atanh
+  atanh   = fmap atanh
   {-# INLINE atanh #-}
-  acosh   = mapV3 acosh
+  acosh   = fmap acosh
   {-# INLINE acosh #-}
 
-pureM3x3 :: Double -> M3x3
-pureM3x3 x = M3x3 (pureV3 x) (pureV3 x) (pureV3 x)
+pureM3x3 :: a -> M3x3 a
+pureM3x3 x = M3x3 (pure x) (pure x) (pure x)
 {-# INLINE pureM3x3 #-}
 
-mapM3x3 :: (Double -> Double) -> M3x3 -> M3x3
-mapM3x3 f (M3x3 v0 v1 v2) = M3x3 (mapV3 f v0) (mapV3 f v1) (mapV3 f v2)
+mapM3x3 :: (a -> a) -> M3x3 a -> M3x3 a
+mapM3x3 f (M3x3 v0 v1 v2) = M3x3 (fmap f v0) (fmap f v1) (fmap f v2)
 {-# INLINE mapM3x3 #-}
 
-zipWithM3x3 :: (Double -> Double -> Double) -> M3x3 -> M3x3 -> M3x3
+zipWithM3x3 :: (a -> b -> c) -> M3x3 a -> M3x3 b -> M3x3 c
 zipWithM3x3 f (M3x3 v10 v11 v12) (M3x3 v20 v21 v22) =
   M3x3 (zipWithV3 f v10 v20) (zipWithV3 f v11 v21) (zipWithV3 f v12 v22)
 {-# INLINE zipWithM3x3 #-}
 
 
-instance Num M3x3 where
+instance Functor M3x3 where
+  fmap f (M3x3 v0 v1 v2) = M3x3 (fmap f v0) (fmap f v1) (fmap f v2)
+  {-# INLINE fmap #-}
+
+instance Applicative M3x3 where
+  pure x = M3x3 (pure x) (pure x) (pure x)
+  {-# INLINE pure #-}
+  (<*>) (M3x3 fx1 fy1 fz1) (M3x3 x2 y2 z2) = M3x3 (fx1 <*> x2) (fy1 <*> y2) (fz1 <*> z2)
+  {-# INLINE (<*>) #-}
+  liftA2 = zipWithM3x3
+  {-# INLINE liftA2 #-}
+
+instance Foldable M3x3 where
+  foldr f acc (M3x3 x y z) = foldr f (foldr f (foldr f acc z) y) x
+  {-# INLINE foldr #-}
+
+instance Traversable M3x3 where
+  traverse f (M3x3 x y z) = M3x3 <$> traverse f x <*> traverse f y <*> traverse f z
+  {-# INLINE traverse #-}
+
+
+instance Num a => Num (M3x3 a) where
   (+)         = zipWithM3x3 (+)
   {-# INLINE (+) #-}
   (-)         = zipWithM3x3 (-)
@@ -238,7 +258,7 @@ instance Num M3x3 where
   {-# INLINE fromInteger #-}
 
 
-instance Fractional M3x3 where
+instance Fractional a => Fractional (M3x3 a) where
   (/)          = zipWithM3x3 (/)
   {-# INLINE (/) #-}
   recip        = mapM3x3 recip
@@ -247,7 +267,7 @@ instance Fractional M3x3 where
   {-# INLINE fromRational #-}
 
 
-instance Floating M3x3 where
+instance Floating a => Floating (M3x3 a) where
   pi      = pureM3x3 pi
   {-# INLINE pi #-}
   exp     = mapM3x3 exp

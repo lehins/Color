@@ -1,4 +1,5 @@
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TypeApplications #-}
 module Graphics.ColorSpace.Common
   ( module Graphics.ColorSpace
   , module Graphics.ColorModel.Common
@@ -15,7 +16,7 @@ prop_toFromPixelXYZ ::
      forall cs e. (ColorSpace cs e, RealFloat e)
   => Pixel cs e
   -> Property
-prop_toFromPixelXYZ px = px `epsilonEqPixel` fromPixelXYZ (toPixelXYZ px)
+prop_toFromPixelXYZ px = px `epsilonEqPixel` fromPixelXYZ (toPixelXYZ @_ @_ @Double px)
 
 
 -- For RGB standards, that have matrices rounded to 4 digits after the decimal point
@@ -24,7 +25,8 @@ prop_toFromLenientPixelXYZ ::
   => e
   -> Pixel cs e
   -> Property
-prop_toFromLenientPixelXYZ epsilon px = epsilonEqPixelTol epsilon px (fromPixelXYZ (toPixelXYZ px))
+prop_toFromLenientPixelXYZ epsilon px =
+  epsilonEqPixelTol epsilon px (fromPixelXYZ (toPixelXYZ @_ @_ @Double px))
 
 
 prop_toFromColorSpace :: (ColorSpace cs e, RealFloat e) => Pixel cs e -> Property
