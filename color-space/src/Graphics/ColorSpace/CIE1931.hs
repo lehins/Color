@@ -1,4 +1,3 @@
-{-# LANGUAGE DataKinds #-}
 -- |
 -- Module      : Graphics.ColorSpace.CIE1931
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
@@ -8,7 +7,7 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace.CIE1931
-  ( module Graphics.ColorSpace.CIE1931.Illuminants
+  ( module Graphics.ColorSpace.CIE1931.Illuminant
   ) where
 
-import Graphics.ColorSpace.CIE1931.Illuminants
+import Graphics.ColorSpace.CIE1931.Illuminant
