@@ -53,53 +53,136 @@ instance Illuminant 'D75 where whitePoint = WhitePoint 0.29903 0.31488
 -- /https://www.colour-science.org/
 instance Illuminant 'E   where whitePoint = WhitePoint (1 / 3) (1 / 3)
 
+
 -- | @[x=0.31310, y=0.33710]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL1  where whitePoint = WhitePoint 0.3131 0.3371
+instance Illuminant 'FL1  where whitePoint = WhitePoint 0.31310 0.33710
 
 -- | @[x=0.37210, y=0.37510]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL2  where whitePoint = WhitePoint 0.3721 0.3751
+instance Illuminant 'FL2  where whitePoint = WhitePoint 0.37210 0.37510
 
 -- | @[x=0.40910, y=0.39410]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3  where whitePoint = WhitePoint 0.4091 0.3941
+instance Illuminant 'FL3  where whitePoint = WhitePoint 0.40910 0.39410
 
 -- | @[x=0.44020, y=0.40310]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL4  where whitePoint = WhitePoint 0.4402 0.4031
+instance Illuminant 'FL4  where whitePoint = WhitePoint 0.44020 0.40310
 
 -- | @[x=0.31380, y=0.34520]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL5  where whitePoint = WhitePoint 0.3138 0.3452
+instance Illuminant 'FL5  where whitePoint = WhitePoint 0.31380 0.34520
 
 -- | @[x=0.37790, y=0.38820]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL6  where whitePoint = WhitePoint 0.3779 0.3882
+instance Illuminant 'FL6  where whitePoint = WhitePoint 0.37790 0.38820
 
 -- | @[x=0.31290, y=0.32920]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL7  where whitePoint = WhitePoint 0.3129 0.3292
+instance Illuminant 'FL7  where whitePoint = WhitePoint 0.31290 0.32920
 
 -- | @[x=0.34580, y=0.35860]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL8  where whitePoint = WhitePoint 0.3458 0.3586
+instance Illuminant 'FL8  where whitePoint = WhitePoint 0.34580 0.35860
 
 -- | @[x=0.37410, y=0.37270]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL9  where whitePoint = WhitePoint 0.3741 0.3727
+instance Illuminant 'FL9  where whitePoint = WhitePoint 0.37410 0.37270
 
 -- | @[x=0.34580, y=0.35880]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL10 where whitePoint = WhitePoint 0.3458 0.3588
+instance Illuminant 'FL10 where whitePoint = WhitePoint 0.34580 0.35880
 
 -- | @[x=0.38050, y=0.37690]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL11 where whitePoint = WhitePoint 0.3805 0.3769
+instance Illuminant 'FL11 where whitePoint = WhitePoint 0.38050 0.37690
 
 -- | @[x=0.43700, y=0.40420]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL12 where whitePoint = WhitePoint 0.4370 0.4042
+instance Illuminant 'FL12 where whitePoint = WhitePoint 0.43700 0.40420
+
+
+-- | @[x=0.44070, y=0.40330]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_1 where whitePoint = WhitePoint 0.44070 0.40330
+
+-- | @[x=0.38080, y=0.37340]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_2 where whitePoint = WhitePoint 0.38080 0.37340
+
+-- | @[x=0.31530, y=0.34390]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_3 where whitePoint = WhitePoint 0.31530 0.34390
+
+-- | @[x=0.44290, y=0.40430]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_4 where whitePoint = WhitePoint 0.44290 0.40430
+
+-- | @[x=0.37490, y=0.36720]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_5 where whitePoint = WhitePoint 0.37490 0.36720
+
+-- | @[x=0.34880, y=0.36000]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_6 where whitePoint = WhitePoint 0.34880 0.36000
+
+-- | @[x=0.43840, y=0.40450]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_7 where whitePoint = WhitePoint 0.43840 0.40450
+
+-- | @[x=0.38200, y=0.38320]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_8 where whitePoint = WhitePoint 0.38200 0.38320
+
+-- | @[x=0.34990, y=0.35910]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_9 where whitePoint = WhitePoint 0.34990 0.35910
+
+-- | @[x=0.34550, y=0.35600]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_10 where whitePoint = WhitePoint 0.34550 0.35600
+
+-- | @[x=0.32450, y=0.34340]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_11 where whitePoint = WhitePoint 0.32450 0.34340
+
+-- | @[x=0.43770, y=0.40370]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_12 where whitePoint = WhitePoint 0.43770 0.40370
+
+-- | @[x=0.38300, y=0.37240]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_13 where whitePoint = WhitePoint 0.38300 0.37240
+
+-- | @[x=0.34470, y=0.36090]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_14 where whitePoint = WhitePoint 0.34470 0.36090
+
+-- | @[x=0.31270, y=0.32880]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'FL3_15 where whitePoint = WhitePoint 0.31270 0.32880
+
+
+-- | @[x=0.53300, y=0.41500]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'HP1  where whitePoint = WhitePoint 0.53300 0.41500
+
+-- | @[x=0.47780, y=0.41580]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'HP2  where whitePoint = WhitePoint 0.47780 0.41580
+
+-- | @[x=0.43020, y=0.40750]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'HP3  where whitePoint = WhitePoint 0.43020 0.40750
+
+-- | @[x=0.38120, y=0.37970]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'HP4  where whitePoint = WhitePoint 0.38120 0.37970
+
+-- | @[x=0.37760, y=0.37130]@ - CIE 1931 2° Observer -
+-- /CIE15: Technical Report: Colorimetry, 3rd edition/
+instance Illuminant 'HP5  where whitePoint = WhitePoint 0.37760 0.37130
 
 
 -- | CIE 1931 2° observer illuminants
@@ -161,6 +244,46 @@ data CIE1931
   -- /Note/ - Takes precedence over other F illuminants
   | FL12
   -- ^ Philips TL83, Ultralume 30
+  | FL3_1
+  -- ^ Standard halophosphate lamp (New set of fluorescent lamps)
+  | FL3_2
+  -- ^ Standard halophosphate lamp (New set of fluorescent lamps)
+  | FL3_3
+  -- ^ Standard halophosphate lamp (New set of fluorescent lamps)
+  | FL3_4
+  -- ^ Deluxe type lamp (New set of fluorescent lamps)
+  | FL3_5
+  -- ^ Deluxe type lamp (New set of fluorescent lamps)
+  | FL3_6
+  -- ^ Deluxe type lamp (New set of fluorescent lamps)
+  | FL3_7
+  -- ^ Three band fluorescent lamp (New set of fluorescent lamps)
+  | FL3_8
+  -- ^ Three band fluorescent lamp (New set of fluorescent lamps)
+  | FL3_9
+  -- ^ Three band fluorescent lamp (New set of fluorescent lamps)
+  | FL3_10
+  -- ^ Three band fluorescent lamp (New set of fluorescent lamps)
+  | FL3_11
+  -- ^ Three band fluorescent lamp (New set of fluorescent lamps)
+  | FL3_12
+  -- ^ Multi-band fluorescent lamp (New set of fluorescent lamps)
+  | FL3_13
+  -- ^ Multi-band fluorescent lamp (New set of fluorescent lamps)
+  | FL3_14
+  -- ^ Multi-band fluorescent lamp (New set of fluorescent lamps)
+  | FL3_15
+  -- ^ `D65` simulator lamp (New set of fluorescent lamps)
+  | HP1
+  -- ^ Standard high pressure sodium lamp
+  | HP2
+  -- ^ Colour enhanced high pressure sodium lamp
+  | HP3
+  -- ^ High pressure metal halide lamp
+  | HP4
+  -- ^ High pressure metal halide lamp
+  | HP5
+  -- ^ High pressure metal halide lamp
   deriving (Eq, Show)
 
 -- | Academy Color Encoding System

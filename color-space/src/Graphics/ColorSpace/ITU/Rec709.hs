@@ -11,14 +11,14 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
--- Module      : Graphics.ColorSpace.RGB.ITU.Rec709
+-- Module      : Graphics.ColorSpace.ITU.Rec709
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.RGB.ITU.Rec709
+module Graphics.ColorSpace.ITU.Rec709
   ( ITU(..)
   , pattern PixelRGB
   , pattern PixelRGBA
@@ -30,7 +30,7 @@ module Graphics.ColorSpace.RGB.ITU.Rec709
 
 import Data.Coerce
 import Foreign.Storable
-import Graphics.ColorSpace.RGB.ITU
+import Graphics.ColorSpace.ITU
 import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Alpha
 import qualified Graphics.ColorModel.RGB as CM
@@ -148,3 +148,4 @@ primaries :: Illuminant i => Chromaticity rgb i
 primaries = Chromaticity (Primary 0.64 0.33)
                          (Primary 0.30 0.60)
                          (Primary 0.15 0.06)
+

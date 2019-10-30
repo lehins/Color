@@ -8,6 +8,8 @@
 --
 module Graphics.ColorSpace
   ( module Graphics.ColorSpace.Internal
+  --, module Graphics.ColorSpace.RGB
   ) where
 
 import Graphics.ColorSpace.Internal
+--import Graphics.ColorSpace.RGB

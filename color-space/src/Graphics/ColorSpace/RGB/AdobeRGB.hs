@@ -37,7 +37,7 @@ import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RGB.Internal
-import Graphics.ColorSpace.RGB.ITU
+import Graphics.ColorSpace.ITU
 
 
 -- | A very common @AdobeRGB@ color space with the default `D65` illuminant

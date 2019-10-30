@@ -16,10 +16,11 @@
 module Graphics.ColorModel.Alpha
   ( Alpha
   , Opaque
+  , addAlpha
   , getAlpha
-  , getOpaque
   , setAlpha
-  , setOpaque
+  , dropAlpha
+  , modifyOpaque
   , Pixel(Alpha)
   , ColorModel(..)
   ) where
@@ -41,24 +42,35 @@ data instance Pixel (Alpha cs) e = Alpha
 -- @since 0.1.0
 getAlpha :: Pixel (Alpha cs) e -> e
 getAlpha = _alpha
+{-# INLINE getAlpha #-}
 
 -- | Get the opaque pixel value, while leaving alpha channel intact.
 --
 -- @since 0.1.0
-getOpaque :: Pixel (Alpha cs) e -> Pixel cs e
-getOpaque = _opaque
+dropAlpha :: Pixel (Alpha cs) e -> Pixel cs e
+dropAlpha = _opaque
+{-# INLINE dropAlpha #-}
+
+-- | Add an alpha channel value to an opaque pixel
+--
+-- @since 0.1.0
+addAlpha :: Pixel cs e -> e -> Pixel (Alpha cs) e
+addAlpha = Alpha
+{-# INLINE addAlpha #-}
 
 -- | Change the alpha channel value for the pixel
 --
 -- @since 0.1.0
 setAlpha :: Pixel (Alpha cs) e -> e -> Pixel (Alpha cs) e
 setAlpha px a = px { _alpha = a }
+{-# INLINE setAlpha #-}
 
 -- | Change the opaque pixel value, while leaving alpha channel intact.
 --
 -- @since 0.1.0
-setOpaque :: Pixel (Alpha cs) e -> Pixel cs e -> Pixel (Alpha cs) e
-setOpaque pxa px = pxa { _opaque = px }
+modifyOpaque :: (Pixel cs e -> Pixel cs' e) -> Pixel (Alpha cs) e -> Pixel (Alpha cs') e
+modifyOpaque fpx pxa = pxa { _opaque = fpx (_opaque pxa) }
+{-# INLINE modifyOpaque #-}
 
 instance (Eq (Pixel cs e), Eq e) => Eq (Pixel (Alpha cs) e) where
   (==) (Alpha px1 a1) (Alpha px2 a2) = px1 == px2 && a1 == a2

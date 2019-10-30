@@ -23,6 +23,7 @@ module Graphics.ColorSpace.RGB.SRGB
   , ITU(..)
   , pattern PixelRGB
   , pattern PixelRGBA
+  , ToRGB(..)
   , RGB
   , primaries
   , npmStandard
@@ -39,8 +40,9 @@ import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RGB.Internal
-import Graphics.ColorSpace.RGB.ITU
-import Graphics.ColorSpace.RGB.ITU.Rec709 (primaries)
+import Graphics.ColorSpace.ITU
+import Graphics.ColorSpace.ITU.Rec709 (primaries)
+import Graphics.ColorSpace.YUV.YCbCr
 
 
 -- | The most common @sRGB@ color space with the default `D65` illuminant
@@ -176,3 +178,43 @@ itransfer u
   | otherwise = ((u + 0.055) / 1.055) ** 2.4
 {-# INLINE itransfer #-}
 
+-- | Conversion to s`RGB` color model.
+class ToRGB cs where
+
+  -- | Convert to an s`RGB` pixel.
+  toPixelRGB :: (Elevator e, Elevator a, RealFloat a) => Pixel cs e -> Pixel SRGB a
+  -- | Convert to an s`RGB` pixel with alpha channel
+  toPixelRGBA :: (Elevator e, Elevator a, RealFloat a) => Pixel cs e -> Pixel (Alpha SRGB) a
+  toPixelRGBA = (`addAlpha` 1) . toPixelRGB
+  {-# INLINE toPixelRGBA #-}
+
+instance ToRGB SRGB where
+  toPixelRGB = fmap toRealFloat
+  {-# INLINE toPixelRGB #-}
+
+instance ToRGB YCbCr where
+  toPixelRGB = ycbcr2rgb . fmap toRealFloat
+  {-# INLINE toPixelRGB #-}
+
+
+instance ToYCbCr SRGB where
+  toPixelYCbCr = rgb2ycbcr . fmap toRealFloat
+  {-# INLINE toPixelYCbCr #-}
+
+
+ycbcr2rgb :: Fractional e => Pixel YCbCr e -> Pixel SRGB e
+ycbcr2rgb (PixelYCbCr y cb cr) = PixelRGB r g b
+  where
+    !cb05 = cb - 0.5
+    !cr05 = cr - 0.5
+    !r = y                  +   1.402 * cr05
+    !g = y - 0.34414 * cb05 - 0.71414 * cr05
+    !b = y +   1.772 * cb05
+
+rgb2ycbcr :: Fractional e => Pixel SRGB e -> Pixel YCbCr e
+rgb2ycbcr (PixelRGB r g b) = PixelYCbCr y cb cr
+  where
+    !y  =          0.299 * r +    0.587 * g +    0.114 * b
+    !cb = 0.5 - 0.168736 * r - 0.331264 * g +      0.5 * b
+    !cr = 0.5 +      0.5 * r - 0.418688 * g - 0.081312 * b
+{-# INLINE rgb2ycbcr #-}

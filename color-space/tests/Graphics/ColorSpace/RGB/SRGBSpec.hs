@@ -12,5 +12,5 @@ instance (Elevator e, Random e) => Arbitrary (Pixel SRGB e) where
 spec :: Spec
 spec = describe "SRGB" $ do
   colorModelSpec @SRGB @Word
-  it "toFromLenientPixelXYZ" $ property (prop_toFromLenientPixelXYZ @SRGB @Double 0.001)
-  it "toFromColorSpace" $ property (prop_toFromColorSpace @SRGB @Double)
+  prop "toFromPixelXYZ (lenient)" $ prop_toFromLenientPixelXYZ @SRGB @Double 0.001
+  prop "toFromColorSpace" $ prop_toFromColorSpace @SRGB @Double

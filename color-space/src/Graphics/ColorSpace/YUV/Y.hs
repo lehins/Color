@@ -8,20 +8,19 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
--- Module      : Graphics.ColorModel.Y
+-- Module      : Graphics.ColorSpace.YUV.Y
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorModel.Y
+module Graphics.ColorSpace.YUV.Y
   ( Y
-  -- * Constructors for an Y color model.
+  -- * Constructors for an Y color space.
   , pattern PixelY
   , pattern PixelYA
   , Pixel
-  , ColorModel(..)
   , y2rgb
   , rgb2y
   ) where
@@ -35,10 +34,10 @@ import Graphics.ColorModel.RGB
 --- Y ---
 -------------
 
--- | Luma component (commonly denoted as __Y'__), blue and red difference chroma components
+-- | Luma component (commonly denoted as __Y'__)
 data Y
 
--- | `Y` color model
+-- | `Y` color space
 newtype instance Pixel Y e = PixelY e
 
 -- | Constructor for @Y@ with alpha channel.
@@ -46,19 +45,19 @@ pattern PixelYA :: e -> e -> Pixel (Alpha Y) e
 pattern PixelYA y a = Alpha (PixelY y) a
 {-# COMPLETE PixelYA #-}
 
--- | `Y` color model
+-- | `Y` color space
 deriving instance Eq e => Eq (Pixel Y e)
--- | `Y` color model
+-- | `Y` color space
 deriving instance Ord e => Ord (Pixel Y e)
--- | `Y` color model
+-- | `Y` color space
 deriving instance Storable e => Storable (Pixel Y e)
 
 
--- | `Y` color model
+-- | `Y` color space
 instance Elevator e => Show (Pixel Y e) where
   showsPrec _ = showsColorModel
 
--- | `Y` color model
+-- | `Y` color space
 instance Elevator e => ColorModel Y e where
   type Components Y e = e
   toComponents (PixelY y) = y
@@ -66,24 +65,24 @@ instance Elevator e => ColorModel Y e where
   fromComponents = PixelY
   {-# INLINE fromComponents #-}
 
--- | `Y` color model
+-- | `Y` color space
 instance Functor (Pixel Y) where
   fmap f (PixelY y) = PixelY (f y)
   {-# INLINE fmap #-}
 
--- | `Y` color model
+-- | `Y` color space
 instance Applicative (Pixel Y) where
   pure = PixelY
   {-# INLINE pure #-}
   (PixelY fy) <*> (PixelY y) = PixelY (fy y)
   {-# INLINE (<*>) #-}
 
--- | `Y` color model
+-- | `Y` color space
 instance Foldable (Pixel Y) where
   foldr f !z (PixelY y) = f y z
   {-# INLINE foldr #-}
 
--- | `Y` color model
+-- | `Y` color space
 instance Traversable (Pixel Y) where
   traverse f (PixelY y) = PixelY <$> f y
   {-# INLINE traverse #-}

@@ -25,7 +25,10 @@ module Graphics.ColorSpace.Algebra
   ) where
 
 --import Text.Printf
+import Foreign.Ptr
 import Control.Applicative
+import Foreign.Storable
+import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Elevator
 
 -- | A 3D vector with @x@, @y@ and @z@ components in double floating point precision.
@@ -295,3 +298,22 @@ instance Floating a => Floating (M3x3 a) where
   acosh   = mapM3x3 acosh
   {-# INLINE acosh #-}
 
+instance Storable e => Storable (V3 e) where
+  sizeOf _ = 3 * sizeOf (undefined :: e)
+  {-# INLINE sizeOf #-}
+  alignment _ = alignment (undefined :: e)
+  {-# INLINE alignment #-}
+  peek p = do
+    let q = castPtr p
+    v0 <- peek q
+    v1 <- peekElemOff q 1
+    v2 <- peekElemOff q 2
+    return $! V3 v0 v1 v2
+
+  {-# INLINE peek #-}
+  poke p (V3 v0 v1 v2) = do
+    let q = castPtr p
+    poke q v0
+    pokeElemOff q 1 v1
+    pokeElemOff q 2 v2
+  {-# INLINE poke #-}

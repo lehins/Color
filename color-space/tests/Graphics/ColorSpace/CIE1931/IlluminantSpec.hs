@@ -7,7 +7,7 @@ module Graphics.ColorSpace.CIE1931.IlluminantSpec (spec) where
 
 import Data.Proxy
 import Graphics.ColorSpace.Common
-import Graphics.ColorSpace.CIE1931.Illuminant
+import Graphics.ColorSpace.CIE1931.Illuminant as CIE1931
 import Graphics.ColorModel.Internal (showsType)
 import qualified Data.Colour.CIE as Colour
 import qualified Data.Colour.CIE.Illuminant as Colour
@@ -34,7 +34,7 @@ spec =
       Colour.chromaCoords Colour.c `shouldMatchApprox` (whitePoint :: WhitePoint 'C)
       Colour.chromaCoords Colour.d50 `shouldMatchApprox` (whitePoint :: WhitePoint 'D50)
       Colour.chromaCoords Colour.d55 `shouldMatchApprox` (whitePoint :: WhitePoint 'D55)
-      Colour.chromaCoords Colour.d65 `shouldMatchApprox` (whitePoint :: WhitePoint 'D65)
+      Colour.chromaCoords Colour.d65 `shouldMatchApprox` (whitePoint :: WhitePoint 'CIE1931.D65)
       Colour.chromaCoords Colour.d75 `shouldMatchApprox` (whitePoint :: WhitePoint 'D75)
       Colour.chromaCoords Colour.e `shouldMatchApprox` (whitePoint :: WhitePoint 'E)
       Colour.chromaCoords Colour.f1 `shouldMatchApprox` (whitePoint :: WhitePoint 'FL1)
