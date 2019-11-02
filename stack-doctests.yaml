@@ -1,0 +1,5 @@
+resolver: lts-14.4
+packages:
+- color-space
+extra-deps:
+- cabal-doctest-1.0.8@sha256:471f182dabe23bac29d47ae55a33d11f85a0b0ab64d3b8f2907b437ab47d5ba7,1467
