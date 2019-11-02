@@ -37,25 +37,25 @@ matrix:
   # The Stack builds. We can pass in arbitrary Stack arguments via the ARGS
   # variable, such as using --stack-yaml to point to a different file.
 
-  - env: BUILD=stack ARGS="--resolver lts-7.24 --stack-yaml stack-doctests.yaml"
+  - env: BUILD=stack ARGS="--resolver lts-7.24 --stack-yaml stack-doctests.yaml --haddock --no-haddock-deps"
     compiler: ": #stack GHC-8.0.1 (lts-7.24)"
     addons:
       apt:
         packages: [libgmp-dev]
 
-  - env: BUILD=stack ARGS="--resolver lts-8.24 --stack-yaml stack-doctests.yaml"
+  - env: BUILD=stack ARGS="--resolver lts-8.24 --stack-yaml stack-doctests.yaml --haddock --no-haddock-deps"
     compiler: ": #stack GHC-8.0.2 (lts-8.24)"
     addons:
       apt:
         packages: [libgmp-dev]
 
-  - env: BUILD=stack ARGS="--resolver lts-9.21 --stack-yaml stack-doctests.yaml"
+  - env: BUILD=stack ARGS="--resolver lts-9.21 --stack-yaml stack-doctests.yaml --haddock --no-haddock-deps"
     compiler: ": #stack GHC-8.0.2 (lts-9.21)"
     addons:
       apt:
         packages: [libgmp-dev]
 
-  - env: BUILD=stack ARGS="--resolver lts-11.22 --stack-yaml stack-doctests.yaml"
+  - env: BUILD=stack ARGS="--resolver lts-11.22 --stack-yaml stack-doctests.yaml --haddock --no-haddock-deps"
     compiler: ": #stack GHC-8.2.2 (lts-11.22)"
     addons:
       apt:
@@ -104,7 +104,7 @@ matrix:
       apt:
         packages: [libgmp-dev]
 
-  - env: BUILD=stack ARGS="--resolver lts-11.22" DOCTEST_ARGS="--stack-yaml stack-doctests.yaml"
+  - env: BUILD=stack ARGS="--resolver lts-11.22 --stack-yaml stack-doctests.yaml --haddock --no-haddock-deps"
     compiler: ": #stack GHC-8.2.2 (lts-11.22)"
     os: osx
 
@@ -143,12 +143,12 @@ script:
 - |
   set -ex
   if [ -n "${COVERALLS_STACK_YAML}" ] && [ -n "${COVERALLS_REPO_TOKEN}" ]; then
-     stack --stack-yaml $COVERALLS_STACK_YAML test color-space:tests --coverage --haddock --no-haddock-deps
+     stack --stack-yaml $COVERALLS_STACK_YAML test color-space:tests --coverage
      stack --stack-yaml $COVERALLS_STACK_YAML hpc report --all
      travis_retry curl -L https://github.com/lehins/stack-hpc-coveralls/releases/download/0.0.5.0/shc.tar.gz | tar xz shc
      STACK_YAML="$COVERALLS_STACK_YAML" ./shc --repo-token=$COVERALLS_REPO_TOKEN combined custom
   else
-    stack $ARGS $DOCTEST_ARGS test color-space:tests --haddock --no-haddock-deps
-    stack $ARGS $DOCTEST_ARGS test color-space:doctests --haddock --no-haddock-deps --no-run-tests
+    stack $ARGS $DOCTEST_ARGS test color-space:tests
+    stack $ARGS $DOCTEST_ARGS test color-space:doctests --no-run-tests
   fi
   set +ex
