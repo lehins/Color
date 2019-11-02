@@ -37,7 +37,7 @@ matrix:
   # The Stack builds. We can pass in arbitrary Stack arguments via the ARGS
   # variable, such as using --stack-yaml to point to a different file.
 
-  - env: BUILD=stack ARGS="--resolver lts-7.24 --stack-yaml stack-doctests.yaml --haddock --no-haddock-deps"
+  - env: BUILD=stack ARGS="--resolver lts-7.24 --stack-yaml stack-doctests.yaml"
     compiler: ": #stack GHC-8.0.1 (lts-7.24)"
     addons:
       apt:
