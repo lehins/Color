@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -148,8 +149,10 @@ instance Applicative V3 where
   {-# INLINE pure #-}
   (<*>) (V3 fx1 fy1 fz1) (V3 x2 y2 z2) = V3 (fx1 x2) (fy1 y2) (fz1 z2)
   {-# INLINE (<*>) #-}
+#if MIN_VERSION_base(4,10,0)
   liftA2 = zipWithV3
   {-# INLINE liftA2 #-}
+#endif
 
 instance Foldable V3 where
   foldr f acc (V3 x y z) = f x (f y (f z acc))
@@ -234,8 +237,10 @@ instance Applicative M3x3 where
   {-# INLINE pure #-}
   (<*>) (M3x3 fx1 fy1 fz1) (M3x3 x2 y2 z2) = M3x3 (fx1 <*> x2) (fy1 <*> y2) (fz1 <*> z2)
   {-# INLINE (<*>) #-}
+#if MIN_VERSION_base(4,10,0)
   liftA2 = zipWithM3x3
   {-# INLINE liftA2 #-}
+#endif
 
 instance Foldable M3x3 where
   foldr f acc (M3x3 x y z) = foldr f (foldr f (foldr f acc z) y) x

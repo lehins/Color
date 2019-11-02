@@ -85,7 +85,7 @@ matrix:
       apt:
         packages: [libgmp-dev]
 
-  - env: BUILD=stack ARGS="--resolver lts-13.30"  DOCTEST_ARGS="--stack-yaml stack-doctests.yaml" COVERALLS_STACK_YAML="stack.yaml"
+  - env: BUILD=stack ARGS="--resolver lts-13.30" OVERALLS_STACK_YAML="stack.yaml" DOCTEST_ARGS="--stack-yaml stack-doctests.yaml"
     compiler: ": #stack GHC-8.6.5 (lts-13.30)"
     addons:
       apt:
@@ -145,12 +145,12 @@ script:
   if [ -n "${COVERALLS_STACK_YAML}" ] && [ -n "${COVERALLS_REPO_TOKEN}" ]; then
      stack --stack-yaml $COVERALLS_STACK_YAML test color-space:tests --coverage --haddock --no-haddock-deps
      stack --stack-yaml $COVERALLS_STACK_YAML hpc report --all
-     travis_retry curl -L https://github.com/lehins/stack-hpc-coveralls/releases/download/0.0.5.0/shc.tar.gz | tar xz -C ~/.local/bin 'shc'
-     STACK_YAML="$COVERALLS_STACK_YAML" shc --repo-token=$COVERALLS_REPO_TOKEN combined custom
+     travis_retry curl -L https://github.com/lehins/stack-hpc-coveralls/releases/download/0.0.5.0/shc.tar.gz | tar xz shc
+     STACK_YAML="$COVERALLS_STACK_YAML" ./shc --repo-token=$COVERALLS_REPO_TOKEN combined custom
   else
     stack $ARGS test color-space:tests --haddock --no-haddock-deps
   fi
   if [ "${DOCTEST_ARGS}" ]; then
-    stack $ARGS test color-space:doctests --haddock --no-haddock-deps
+    stack $ARGS test color-space:doctests --haddock --no-haddock-deps --no-run-tests
   fi
   set +ex

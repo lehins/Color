@@ -1,3 +1,4 @@
+{-# LANGUAGE PatternSynonyms #-}
 -- |
 -- Module      : Graphics.ColorSpace.CIE1931.XYZ
 -- Copyright   : (c) Alexey Kuleshevich 2019
@@ -7,7 +8,8 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace.CIE1931.XYZ (
-  XYZ, Pixel(PixelXYZ)
+  XYZ, Pixel
+  , pattern PixelXYZ
   ) where
 
 import Graphics.ColorSpace.Internal
