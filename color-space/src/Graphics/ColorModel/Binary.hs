@@ -164,6 +164,8 @@ instance Elevator Bit where
   {-# INLINE minValue #-}
   maxValue = Bit 1
   {-# INLINE maxValue #-}
+  toShowS (Bit 0) = ('0':)
+  toShowS _       = ('1':)
   toWord8 (Bit 0) = 0
   toWord8 _       = maxBound
   {-# INLINE toWord8 #-}

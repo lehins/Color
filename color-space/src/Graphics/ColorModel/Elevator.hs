@@ -1,3 +1,4 @@
+{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -17,14 +18,17 @@ module Graphics.ColorModel.Elevator (
   , clamp01
   ) where
 
-import qualified Data.Complex as C
+import Data.Complex
 import Data.Int
 import Data.Typeable
 import Data.Vector.Storable (Storable)
 import Data.Vector.Unboxed (Unbox)
 import Data.Word
 import GHC.Float
+import Text.Printf
 
+defFieldFormat :: FieldFormat
+defFieldFormat = FieldFormat Nothing Nothing Nothing Nothing False "" 'v'
 
 -- | A class with a set of functions that allow for changing precision by shrinking and
 -- streatching the values.
@@ -32,6 +36,14 @@ class (Show e, Eq e, Num e, Typeable e, Unbox e, Storable e) => Elevator e where
   maxValue :: e
 
   minValue :: e
+
+  fieldFormat :: e -> FieldFormat
+  fieldFormat _ = defFieldFormat
+
+  -- | This is a pretty printer for the value.
+  toShowS :: e -> ShowS
+  default toShowS :: PrintfArg e => e -> ShowS
+  toShowS e = formatArg e (fieldFormat e)
 
   -- | Values are scaled to @[0, 255]@ range.
   toWord8 :: e -> Word8
@@ -96,6 +108,7 @@ clamp01 !x = min (max 0 x) 1
 instance Elevator Word8 where
   maxValue = maxBound
   minValue = minBound
+  fieldFormat _ = defFieldFormat {fmtWidth = Just 3, fmtChar = 'd'}
   toWord8 = id
   {-# INLINE toWord8 #-}
   toWord16 = raiseUp
@@ -120,6 +133,7 @@ instance Elevator Word8 where
 instance Elevator Word16 where
   maxValue = maxBound
   minValue = minBound
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 5, fmtChar = 'd'}
   toWord8 = dropDown
   {-# INLINE toWord8 #-}
   toWord16 = id
@@ -144,6 +158,7 @@ instance Elevator Word16 where
 instance Elevator Word32 where
   maxValue = maxBound
   minValue = minBound
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 10, fmtChar = 'd'}
   toWord8 = dropDown
   {-# INLINE toWord8 #-}
   toWord16 = dropDown
@@ -168,6 +183,7 @@ instance Elevator Word32 where
 instance Elevator Word64 where
   maxValue = maxBound
   minValue = minBound
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 20, fmtChar = 'd'}
   toWord8 = dropDown
   {-# INLINE toWord8 #-}
   toWord16 = dropDown
@@ -191,6 +207,11 @@ instance Elevator Word64 where
 instance Elevator Word where
   maxValue = maxBound
   minValue = minBound
+#if WORD_SIZE_IN_BITS < 64
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 10, fmtChar = 'd'}
+#else
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 20, fmtChar = 'd'}
+#endif
   toWord8 = dropDown
   {-# INLINE toWord8 #-}
   toWord16 = dropDown
@@ -214,6 +235,7 @@ instance Elevator Word where
 instance Elevator Int8 where
   maxValue = maxBound
   minValue = 0
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 3, fmtChar = 'd'}
   toWord8 = fromIntegral . max 0
   {-# INLINE toWord8 #-}
   toWord16 = raiseUp . max 0
@@ -234,6 +256,7 @@ instance Elevator Int8 where
 instance Elevator Int16 where
   maxValue = maxBound
   minValue = 0
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 5, fmtChar = 'd'}
   toWord8 = dropDown . max 0
   {-# INLINE toWord8 #-}
   toWord16 = fromIntegral . max 0
@@ -254,6 +277,7 @@ instance Elevator Int16 where
 instance Elevator Int32 where
   maxValue = maxBound
   minValue = 0
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 10, fmtChar = 'd'}
   toWord8 = dropDown . max 0
   {-# INLINE toWord8 #-}
   toWord16 = dropDown . max 0
@@ -274,6 +298,7 @@ instance Elevator Int32 where
 instance Elevator Int64 where
   maxValue = maxBound
   minValue = 0
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 19, fmtChar = 'd'}
   toWord8 = dropDown . max 0
   {-# INLINE toWord8 #-}
   toWord16 = dropDown . max 0
@@ -294,6 +319,11 @@ instance Elevator Int64 where
 instance Elevator Int where
   maxValue = maxBound
   minValue = 0
+#if WORD_SIZE_IN_BITS < 64
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 10, fmtChar = 'd'}
+#else
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 19, fmtChar = 'd'}
+#endif
   toWord8 = dropDown . max 0
   {-# INLINE toWord8 #-}
   toWord16 = dropDown . max 0
@@ -314,6 +344,7 @@ instance Elevator Int where
 instance Elevator Float where
   maxValue = 1
   minValue = 0
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 9, fmtPrecision = Just 6, fmtChar = 'f'}
   toWord8 = stretch . clamp01
   {-# INLINE toWord8 #-}
   toWord16 = stretch . clamp01
@@ -338,6 +369,7 @@ instance Elevator Float where
 instance Elevator Double where
   maxValue = 1
   minValue = 0
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 15, fmtPrecision = Just 12, fmtChar = 'f'}
   toWord8 = stretch . clamp01
   {-# INLINE toWord8 #-}
   toWord16 = stretch . clamp01
@@ -368,24 +400,25 @@ instance Elevator Double where
 
 
 -- | Discards imaginary part and changes precision of real part.
-instance (Num e, Elevator e, RealFloat e) => Elevator (C.Complex e) where
-  maxValue = maxValue C.:+ maxValue
-  minValue = minValue C.:+ minValue
-  toWord8 = toWord8 . C.realPart
+instance (PrintfArg e, Elevator e, RealFloat e) => Elevator (Complex e) where
+  maxValue = maxValue :+ maxValue
+  minValue = minValue :+ minValue
+  toShowS (r :+ i) = toShowS r . formatArg i ((fieldFormat i) {fmtSign = Just SignPlus}) . ('i' :)
+  toWord8 = toWord8 . realPart
   {-# INLINE toWord8 #-}
-  toWord16 = toWord16 . C.realPart
+  toWord16 = toWord16 . realPart
   {-# INLINE toWord16 #-}
-  toWord32 = toWord32 . C.realPart
+  toWord32 = toWord32 . realPart
   {-# INLINE toWord32 #-}
-  toWord64 = toWord64 . C.realPart
+  toWord64 = toWord64 . realPart
   {-# INLINE toWord64 #-}
-  toFloat = toFloat . C.realPart
+  toFloat = toFloat . realPart
   {-# INLINE toFloat #-}
-  toDouble = toDouble . C.realPart
+  toDouble = toDouble . realPart
   {-# INLINE toDouble #-}
-  fromDouble = (C.:+ 0) . fromDouble
+  fromDouble = (:+ 0) . fromDouble
   {-# INLINE fromDouble #-}
-  toRealFloat = toRealFloat . C.realPart
+  toRealFloat = toRealFloat . realPart
   {-# INLINE toRealFloat #-}
-  fromRealFloat = (C.:+ 0) . fromRealFloat
+  fromRealFloat = (:+ 0) . fromRealFloat
   {-# INLINE fromRealFloat #-}

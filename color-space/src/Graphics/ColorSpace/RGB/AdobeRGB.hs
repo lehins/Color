@@ -113,9 +113,9 @@ instance RedGreenBlue RGB 'D65 where
 -- | sRGB normalized primary matrix. This is a helper definition, use `npm` instead.
 --
 -- >>> npmStandard
--- [ [ 0.5766700, 0.1855600, 0.1882300]
--- , [ 0.2973400, 0.6273600, 0.0752900]
--- , [ 0.0270300, 0.0706900, 0.9913400] ]
+-- [ [ 0.576670, 0.185560, 0.188230 ]
+-- , [ 0.297340, 0.627360, 0.075290 ]
+-- , [ 0.027030, 0.070690, 0.991340 ] ]
 --
 -- @since 0.1.0
 npmStandard :: NPM RGB 'D65 Float
@@ -127,9 +127,9 @@ npmStandard = NPM $ M3x3 (V3 0.57667 0.18556 0.18823)
 -- | sRGB inverse normalized primary matrix. This is a helper definition, use `inpm` instead.
 --
 -- >>> inpmStandard
--- [ [ 2.0415900,-0.5650100,-0.3447300]
--- , [-0.9692400, 1.8759700, 0.0415600]
--- , [ 0.0134400,-0.1183600, 1.0151700] ]
+-- [ [ 2.041590,-0.565010,-0.344730 ]
+-- , [-0.969240, 1.875970, 0.041560 ]
+-- , [ 0.013440,-0.118360, 1.015170 ] ]
 --
 -- @since 0.1.0
 inpmStandard :: INPM RGB 'D65 Float

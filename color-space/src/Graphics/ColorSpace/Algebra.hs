@@ -25,11 +25,9 @@ module Graphics.ColorSpace.Algebra
   , transposeM3x3
   ) where
 
---import Text.Printf
 import Foreign.Ptr
 import Control.Applicative
 import Foreign.Storable
-import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Elevator
 
 -- | A 3D vector with @x@, @y@ and @z@ components in double floating point precision.
@@ -37,7 +35,8 @@ data V3 a = V3 !a !a !a
   deriving (Eq, Ord)
 
 instance Elevator a => Show (V3 a) where
-  show = showV3 -- (V3 x y z) = printf "[% .7f,% .7f,% .7f]" x y z
+  showsPrec _ (V3 x y z) =
+    ('[' :) . toShowS x . (',' :) . toShowS y . (',' :) . toShowS z . (" ]" ++)
 
 
 fromV3 :: (e -> e -> e -> a) -> V3 e -> a
@@ -79,9 +78,10 @@ multM3x3byV3 (M3x3 (V3 a b c)
 
 multM3x3byM3x3 :: Num a => M3x3 a -> M3x3 a -> M3x3 a
 multM3x3byM3x3 m1 m2 =
-  M3x3 (V3 (a1 * a2 + b1 * d2 + c1 * g2) (a1 * b2 + b1 * e2 + c1 * h2) (a1 * c2 + b1 * f2 + c1 * i2))
-       (V3 (d1 * a2 + e1 * d2 + f1 * g2) (d1 * b2 + e1 * e2 + f1 * h2) (d1 * c2 + e1 * f2 + f1 * i2))
-       (V3 (g1 * a2 + h1 * d2 + i1 * g2) (g1 * b2 + h1 * e2 + i1 * h2) (g1 * c2 + h1 * f2 + i1 * i2))
+  M3x3
+  (V3 (a1 * a2 + b1 * d2 + c1 * g2) (a1 * b2 + b1 * e2 + c1 * h2) (a1 * c2 + b1 * f2 + c1 * i2))
+  (V3 (d1 * a2 + e1 * d2 + f1 * g2) (d1 * b2 + e1 * e2 + f1 * h2) (d1 * c2 + e1 * f2 + f1 * i2))
+  (V3 (g1 * a2 + h1 * d2 + i1 * g2) (g1 * b2 + h1 * e2 + i1 * h2) (g1 * c2 + h1 * f2 + i1 * i2))
   where
     M3x3 (V3 a1 b1 c1)
          (V3 d1 e1 f1)

@@ -39,7 +39,6 @@ import Control.DeepSeq (NFData(rnf), deepseq)
 import Control.Monad (liftM)
 import Data.Default.Class (Default(..))
 import Data.Foldable
-import Data.List as L
 import Data.Typeable
 import qualified Data.Vector.Generic as V
 import qualified Data.Vector.Generic.Mutable as VM
@@ -207,10 +206,13 @@ showsColorModel :: ColorModel cs e => Pixel cs e -> ShowS
 showsColorModel px = ('<' :) . showsColorModelOpen px . ('>' :)
 
 showsColorModelOpen :: ColorModel cs e => Pixel cs e -> ShowS
-showsColorModelOpen px = t . (":(" ++) . (channels ++) . (')' :)
+showsColorModelOpen px = t . (":(" ++) . channels . (')' :)
   where
     t = showsColorModelName px
-    channels = L.intercalate [channelSeparator] $ map show $ toList px
+    channels =
+      case toList px of
+        [] -> id
+        (x:xs) -> foldl' (\facc y -> facc . (channelSeparator :) . toShowS y) (toShowS x) xs
 
 showsType :: Typeable t => Proxy t -> ShowS
 showsType = showsTypeRep . typeRep

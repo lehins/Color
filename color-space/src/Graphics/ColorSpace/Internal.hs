@@ -123,7 +123,7 @@ zPrimary p = 1 - xPrimary p - yPrimary p
 
 
 
--- | Compute @XYZ@ tristimulus of a Primary, where @Y = 1@
+-- | Compute `XYZ` tristimulus of a `Primary`, where @Y = 1@
 --
 -- @since 0.1.0
 primaryXYZ ::
@@ -133,7 +133,7 @@ primaryXYZ ::
 primaryXYZ = primaryXZ 1
 {-# INLINE primaryXYZ #-}
 
--- | Compute @XYZ@ tristimulus of a Primary.
+-- | Compute `XYZ` tristimulus of a `Primary`.
 --
 -- @since 0.1.0
 primaryXZ ::
@@ -150,8 +150,8 @@ primaryXZ vY (Primary x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
 -- | Get the white point of any pixel with color space that specifies one. itself isn't
 -- actually evaluated, its type carries enough information for getting the white point.
 --
--- >>> import Graphics.ColorSpace.RGB.S as SRGB
--- >>> pixelWhitePoint (PixelRGB 0.1 0.2 0.3 :: Pixel RGB Double)
+-- >>> import Graphics.ColorSpace.RGB.SRGB
+-- >>> pixelWhitePoint (PixelRGB 0.1 0.2 0.3 :: Pixel SRGB Double)
 -- WhitePoint {xWhitePoint = 0.3127, yWhitePoint = 0.329}
 --
 -- @since 0.1.0

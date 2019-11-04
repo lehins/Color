@@ -149,6 +149,6 @@ script:
      STACK_YAML="$COVERALLS_STACK_YAML" ./shc --repo-token=$COVERALLS_REPO_TOKEN combined custom
   else
     stack $ARGS $DOCTEST_ARGS test color-space:tests
-    stack $ARGS $DOCTEST_ARGS test color-space:doctests --no-run-tests
+    stack $ARGS $DOCTEST_ARGS test color-space:doctests
   fi
   set +ex
