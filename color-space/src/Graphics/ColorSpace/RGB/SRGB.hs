@@ -108,8 +108,8 @@ instance Elevator e => ColorSpace (RGB 'D65) e where
 -- | s`RGB` color space
 instance RedGreenBlue RGB 'D65 where
   chromaticity = primaries
-  npm = fmap toRealFloat npmStandard
-  inpm = fmap toRealFloat inpmStandard
+  npm = npmStandard
+  inpm = inpmStandard
   ecctf = fmap transfer
   {-# INLINE ecctf #-}
   dcctf = fmap itransfer
@@ -124,7 +124,7 @@ instance RedGreenBlue RGB 'D65 where
 -- , [ 0.019300, 0.119200, 0.950500 ] ]
 --
 -- @since 0.1.0
-npmStandard :: NPM RGB 'D65 Float
+npmStandard :: RealFloat a => NPM RGB 'D65 a
 npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
                          (V3 0.2126 0.7152 0.0722)
                          (V3 0.0193 0.1192 0.9505)
@@ -138,7 +138,7 @@ npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
 -- , [ 0.055700,-0.204000, 1.057000 ] ]
 --
 -- @since 0.1.0
-inpmStandard :: INPM RGB 'D65 Float
+inpmStandard :: RealFloat a => INPM RGB 'D65 a
 inpmStandard = INPM $ M3x3 (V3  3.2406 -1.5372 -0.4986)
                            (V3 -0.9689  1.8758  0.0415)
                            (V3  0.0557 -0.2040  1.0570)

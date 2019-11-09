@@ -95,9 +95,11 @@ deriving instance Show (Chromaticity cs i)
 
 rgb2xyz :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel (cs i) e -> Pixel XYZ e
 rgb2xyz = npmApply . dcctf
+{-# INLINE rgb2xyz #-}
 
 xyz2rgb :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel XYZ e -> Pixel (cs i) e
 xyz2rgb = ecctf . inpmApply
+{-# INLINE xyz2rgb #-}
 
 
 -- newtype ConversionMatrix cs' cs = ConversionMatrix M3x3

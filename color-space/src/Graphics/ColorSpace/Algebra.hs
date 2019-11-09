@@ -45,7 +45,7 @@ fromV3 mk (V3 v0 v1 v2) = mk v0 v1 v2
 
 
 -- | A 3x3 Matrix
-data M3x3 a = M3x3 !(V3 a) !(V3 a) !(V3 a)
+data M3x3 a = M3x3 {-#UNPACK #-} !(V3 a) {-#UNPACK #-} !(V3 a) {-#UNPACK #-} !(V3 a)
   deriving (Eq)
 
 instance Elevator a => Show (M3x3 a) where
