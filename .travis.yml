@@ -142,7 +142,7 @@ script:
      travis_retry curl -L https://github.com/lehins/stack-hpc-coveralls/releases/download/0.0.5.0/shc.tar.gz | tar xz shc
      STACK_YAML="$COVERALLS_STACK_YAML" ./shc --repo-token=$COVERALLS_REPO_TOKEN combined custom
   else
-    stack $ARGS $DOCTEST_ARGS test color-space:tests
+    stack $ARGS $DOCTEST_ARGS test color-space:tests/
     stack $ARGS $DOCTEST_ARGS test color-space:doctests
   fi
   set +ex
