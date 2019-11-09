@@ -236,6 +236,7 @@ ycbcr2rgb (PixelYCbCr y cb cr) = PixelRGB r g b
     !r = y                  +   1.402 * cr05
     !g = y - 0.34414 * cb05 - 0.71414 * cr05
     !b = y +   1.772 * cb05
+{-# INLINE ycbcr2rgb #-}
 
 rgb2ycbcr :: Fractional e => Pixel SRGB e -> Pixel YCbCr e
 rgb2ycbcr (PixelRGB r g b) = PixelYCbCr y cb cr
