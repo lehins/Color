@@ -200,7 +200,7 @@ instance (ColorModel cs e) => V.Vector VU.Vector (Pixel cs e) where
   {-# INLINE elemseq #-}
 
 channelSeparator :: Char
-channelSeparator = '|'
+channelSeparator = ','
 
 showsColorModel :: ColorModel cs e => Pixel cs e -> ShowS
 showsColorModel px = ('<' :) . showsColorModelOpen px . ('>' :)

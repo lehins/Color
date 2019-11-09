@@ -20,11 +20,15 @@
 --
 module Graphics.ColorSpace.RGB.SRGB
   ( SRGB
-  , ITU(..)
-  , pattern PixelRGB
-  , pattern PixelRGBA
+  , pattern PixelRGB8
+  , pattern PixelRGB16
+  , pattern PixelRGB32
+  , pattern PixelRGB64
+  , pattern PixelRGBF
+  , pattern PixelRGBD
   , ToRGB(..)
   , RGB
+  , ITU(..)
   , primaries
   , npmStandard
   , inpmStandard
@@ -53,15 +57,35 @@ data RGB (i :: ITU)
 
 newtype instance Pixel (RGB 'D65) e = RGB (Pixel CM.RGB e)
 
--- | Constructor for the most common @sRGB@ color space with the default `D65` illuminant
-pattern PixelRGB :: e -> e -> e -> Pixel SRGB e
-pattern PixelRGB r g b = RGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelRGB #-}
+-- | Constructor for a pixel in @sRGB@ color space with 8-bits per channel
+pattern PixelRGB8 :: Word8 -> Word8 -> Word8 -> Pixel SRGB Word8
+pattern PixelRGB8 r g b = RGB (CM.PixelRGB r g b)
+{-# COMPLETE PixelRGB8 #-}
 
--- | Constructor for @sRGB@ with alpha channel.
-pattern PixelRGBA :: e -> e -> e -> e -> Pixel (Alpha SRGB) e
-pattern PixelRGBA r g b a = Alpha (RGB (CM.PixelRGB r g b)) a
-{-# COMPLETE PixelRGBA #-}
+-- | Constructor for a pixel in @sRGB@ color space with 16-bits per channel
+pattern PixelRGB16 :: Word16 -> Word16 -> Word16 -> Pixel SRGB Word16
+pattern PixelRGB16 r g b = RGB (CM.PixelRGB r g b)
+{-# COMPLETE PixelRGB16 #-}
+
+-- | Constructor for a pixel in @sRGB@ color space with 32-bits per channel
+pattern PixelRGB32 :: Word32 -> Word32 -> Word32 -> Pixel SRGB Word32
+pattern PixelRGB32 r g b = RGB (CM.PixelRGB r g b)
+{-# COMPLETE PixelRGB32 #-}
+
+-- | Constructor for a pixel in @sRGB@ color space with 64-bits per channel
+pattern PixelRGB64 :: Word64 -> Word64 -> Word64 -> Pixel SRGB Word64
+pattern PixelRGB64 r g b = RGB (CM.PixelRGB r g b)
+{-# COMPLETE PixelRGB64 #-}
+
+-- | Constructor for a pixel in @sRGB@ color space with 32-bit floating point value per channel
+pattern PixelRGBF :: Float -> Float -> Float -> Pixel SRGB Float
+pattern PixelRGBF r g b = RGB (CM.PixelRGB r g b)
+{-# COMPLETE PixelRGBF #-}
+
+-- | Constructor for a pixel in @sRGB@ color space with 32-bit floating point value per channel
+pattern PixelRGBD :: Double -> Double -> Double -> Pixel SRGB Double
+pattern PixelRGBD r g b = RGB (CM.PixelRGB r g b)
+{-# COMPLETE PixelRGBD #-}
 
 
 -- | s`RGB` color space
@@ -180,7 +204,7 @@ itransfer u
   | otherwise = ((u + 0.055) / 1.055) ** 2.4
 {-# INLINE itransfer #-}
 
--- | Conversion to s`RGB` color model.
+-- | Conversion to s`RGB` color space.
 class ToRGB cs where
 
   -- | Convert to an s`RGB` pixel.

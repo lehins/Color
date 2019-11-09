@@ -9,7 +9,7 @@ import Graphics.ColorSpace.Common
 import Graphics.ColorSpace.CIE1931.Illuminant
 import Graphics.ColorSpace.RGB.Derived.SRGB
 
-instance (Elevator e, Random e) => Arbitrary (Pixel (RGB (i :: k)) e) where
+instance (Elevator e, Random e, Illuminant i) => Arbitrary (Pixel (RGB (i :: k)) e) where
   arbitrary = PixelRGB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
 
 

@@ -147,11 +147,12 @@ primaryXZ vY (Primary x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
 {-# INLINE primaryXZ #-}
 
 
--- | Get the white point of any pixel with color space that specifies one. itself isn't
--- actually evaluated, its type carries enough information for getting the white point.
+-- | Get the white point of any pixel with color space that specifies one. Pixel itself
+-- isn't actually evaluated, since its type carries enough information for getting the
+-- white point.
 --
 -- >>> import Graphics.ColorSpace.RGB.SRGB
--- >>> pixelWhitePoint (PixelRGB 0.1 0.2 0.3 :: Pixel SRGB Double)
+-- >>> pixelWhitePoint (PixelRGB8 1 2 3)
 -- WhitePoint {xWhitePoint = 0.3127, yWhitePoint = 0.329}
 --
 -- @since 0.1.0

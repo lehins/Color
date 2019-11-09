@@ -74,7 +74,7 @@ pattern PixelHSVA h s i a = Alpha (HSV (CM.PixelHSV h s i)) a
 -- | Constructor for an RGB color space in an alternative HSV color model. Difference from
 -- `PixelHSV` is that the hue is specified in 0 to 360 degree range, rather than 0 to
 -- 1. Note, that this is not checked.
-pattern PixelH360SI :: Double -> Double -> Double -> Pixel (HSV cs i) Double
+pattern PixelH360SI :: RealFloat e => e -> e -> e -> Pixel (HSV cs i) e
 pattern PixelH360SI h s i <- PixelHSV ((* 360) -> h) s i where
         PixelH360SI h s i = PixelHSV (h / 360) s i
 {-# COMPLETE PixelH360SI #-}

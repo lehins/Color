@@ -18,9 +18,7 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace.RGB.Derived.SRGB
-  ( pattern PixelRGB
-  , pattern PixelRGBA
-  , RGB
+  ( RGB
   , SRGB.primaries
   , SRGB.transfer
   , SRGB.itransfer
@@ -42,17 +40,6 @@ data RGB (i :: k)
 
 -- | s`RGB` color space (derived)
 newtype instance Pixel (RGB i) e = RGB (Pixel CM.RGB e)
-
--- | Constructor for @sRGB@ color space with an arbitrary illuminant
-pattern PixelRGB :: e -> e -> e -> Pixel (RGB i) e
-pattern PixelRGB r g b = RGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelRGB #-}
-
--- | Constructor for @AdobeRGB@ with alpha channel.
-pattern PixelRGBA :: e -> e -> e -> e -> Pixel (Alpha (RGB i)) e
-pattern PixelRGBA r g b a = Alpha (RGB (CM.PixelRGB r g b)) a
-{-# COMPLETE PixelRGBA #-}
-
 
 -- | s`RGB` color space (derived)
 deriving instance Eq e => Eq (Pixel (RGB i) e)

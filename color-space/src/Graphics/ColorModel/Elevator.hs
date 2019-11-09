@@ -13,8 +13,9 @@
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorModel.Elevator (
-  Elevator(..)
+module Graphics.ColorModel.Elevator
+  ( Elevator(..)
+  , module Data.Word
   , clamp01
   ) where
 

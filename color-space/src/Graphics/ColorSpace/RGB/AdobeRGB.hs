@@ -19,8 +19,6 @@
 --
 module Graphics.ColorSpace.RGB.AdobeRGB
   ( AdobeRGB
-  , pattern PixelRGB
-  , pattern PixelRGBA
   , RGB
   , primaries
   , npmStandard
@@ -45,16 +43,6 @@ type AdobeRGB = RGB 'D65
 
 -- | A very common @AdobeRGB@ color space
 data RGB (i :: ITU)
-
--- | Constructor for a very common @AdobeRGB@ color space with the default `D65` illuminant
-pattern PixelRGB :: e -> e -> e -> Pixel AdobeRGB e
-pattern PixelRGB r g b = RGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelRGB #-}
-
--- | Constructor for @AdobeRGB@ with alpha channel.
-pattern PixelRGBA :: e -> e -> e -> e -> Pixel (Alpha AdobeRGB) e
-pattern PixelRGBA r g b a = Alpha (RGB (CM.PixelRGB r g b)) a
-{-# COMPLETE PixelRGBA #-}
 
 newtype instance Pixel (RGB 'D65) e = RGB (Pixel CM.RGB e)
 

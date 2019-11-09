@@ -20,8 +20,6 @@
 --
 module Graphics.ColorSpace.ITU.Rec709
   ( ITU(..)
-  , pattern PixelRGB
-  , pattern PixelRGBA
   , RGB
   , primaries
   , transfer
@@ -32,7 +30,6 @@ import Data.Coerce
 import Foreign.Storable
 import Graphics.ColorSpace.ITU
 import Graphics.ColorModel.Internal
-import Graphics.ColorModel.Alpha
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RGB.Internal
@@ -41,17 +38,6 @@ import Graphics.ColorSpace.RGB.Internal
 data RGB (i :: ITU)
 
 newtype instance Pixel (RGB 'D65) e = RGB (Pixel CM.RGB e)
-
--- | Constructor for the Rec.709 color space with the default `D65` illuminant
-pattern PixelRGB :: e -> e -> e -> Pixel (RGB 'D65) e
-pattern PixelRGB r g b = RGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelRGB #-}
-
--- | Constructor for Rec.709 color space with alpha channel.
-pattern PixelRGBA :: e -> e -> e -> e -> Pixel (Alpha (RGB 'D65)) e
-pattern PixelRGBA r g b a = Alpha (RGB (CM.PixelRGB r g b)) a
-{-# COMPLETE PixelRGBA #-}
-
 
 -- | ITU-R BT.709 color space
 deriving instance Eq e => Eq (Pixel (RGB 'D65) e)

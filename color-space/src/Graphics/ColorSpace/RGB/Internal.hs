@@ -1,3 +1,4 @@
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DefaultSignatures #-}
@@ -9,6 +10,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.ColorSpace.RGB.Internal
 -- Copyright   : (c) Alexey Kuleshevich 2019
@@ -28,9 +30,12 @@ module Graphics.ColorSpace.RGB.Internal
   , inpmDerive
   , pixelChromaticity
   , chromaticityWhitePoint
+  , pattern PixelRGB
+  , pattern PixelRGBA
   ) where
 
 import qualified Graphics.ColorModel.RGB as CM
+import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.Algebra
@@ -100,6 +105,19 @@ rgb2xyz = npmApply . dcctf
 xyz2rgb :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel XYZ e -> Pixel (cs i) e
 xyz2rgb = ecctf . inpmApply
 {-# INLINE xyz2rgb #-}
+
+
+-- | Constructor for an RGB color space.
+pattern PixelRGB :: RedGreenBlue cs i => e -> e -> e -> Pixel (cs i) e
+pattern PixelRGB r g b <- (unPixelRGB -> CM.PixelRGB r g b) where
+        PixelRGB r g b = mkPixelRGB (CM.PixelRGB r g b)
+{-# COMPLETE PixelRGB #-}
+
+-- | Constructor for an RGB color space with Alpha channel
+pattern PixelRGBA :: RedGreenBlue cs i => e -> e -> e -> e -> Pixel (Alpha (cs i)) e
+pattern PixelRGBA r g b a <- Alpha (unPixelRGB -> CM.PixelRGB r g b) a where
+        PixelRGBA r g b a = Alpha (mkPixelRGB (CM.PixelRGB r g b)) a
+{-# COMPLETE PixelRGBA #-}
 
 
 -- newtype ConversionMatrix cs' cs = ConversionMatrix M3x3

@@ -74,7 +74,7 @@ pattern PixelHSIA h s i a = Alpha (HSI (CM.PixelHSI h s i)) a
 -- | Constructor for an RGB color space in an alternative HSI color model. Difference from
 -- `PixelHSI` is that the hue is specified in 0 to 360 degree range, rather than 0 to
 -- 1. Note, that this is not checked.
-pattern PixelH360SI :: Double -> Double -> Double -> Pixel (HSI cs i) Double
+pattern PixelH360SI :: RealFloat e => e -> e -> e -> Pixel (HSI cs i) e
 pattern PixelH360SI h s i <- PixelHSI ((* 360) -> h) s i where
         PixelH360SI h s i = PixelHSI (h / 360) s i
 {-# COMPLETE PixelH360SI #-}
