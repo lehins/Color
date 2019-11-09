@@ -1,13 +1,13 @@
 {-# LANGUAGE DataKinds #-}
 -- |
--- Module      : Graphics.ColorSpace.ITU
+-- Module      : Graphics.ColorSpace.RGB.ITU
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.ITU
+module Graphics.ColorSpace.RGB.ITU
   ( ITU(..)
   ) where
 

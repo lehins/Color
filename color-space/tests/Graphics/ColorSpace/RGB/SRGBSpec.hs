@@ -4,7 +4,6 @@ module Graphics.ColorSpace.RGB.SRGBSpec (spec, arbitraryElevator) where
 
 import Graphics.ColorSpace.Common
 import Graphics.ColorSpace.RGB.SRGB
-import qualified Graphics.ColorSpace.RGB.AdobeRGB as AdobeRGB
 
 instance (Elevator e, Random e) => Arbitrary (Pixel SRGB e) where
   arbitrary = PixelRGB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator

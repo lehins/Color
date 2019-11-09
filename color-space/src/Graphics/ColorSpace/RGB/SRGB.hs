@@ -44,8 +44,8 @@ import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RGB.Internal
-import Graphics.ColorSpace.ITU
-import Graphics.ColorSpace.ITU.Rec709 (primaries)
+import Graphics.ColorSpace.RGB.ITU
+import Graphics.ColorSpace.RGB.ITU.Rec709 (primaries)
 import Graphics.ColorSpace.YUV.YCbCr
 
 

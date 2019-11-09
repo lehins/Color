@@ -11,14 +11,14 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
--- Module      : Graphics.ColorSpace.ITU.Rec709
+-- Module      : Graphics.ColorSpace.RGB.ITU.Rec709
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.ITU.Rec709
+module Graphics.ColorSpace.RGB.ITU.Rec709
   ( ITU(..)
   , RGB
   , primaries
@@ -28,7 +28,7 @@ module Graphics.ColorSpace.ITU.Rec709
 
 import Data.Coerce
 import Foreign.Storable
-import Graphics.ColorSpace.ITU
+import Graphics.ColorSpace.RGB.ITU
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Internal

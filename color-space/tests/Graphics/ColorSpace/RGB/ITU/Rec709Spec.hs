@@ -2,10 +2,10 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
-module Graphics.ColorSpace.ITU.Rec709Spec (spec) where
+module Graphics.ColorSpace.RGB.ITU.Rec709Spec (spec) where
 
 import Graphics.ColorSpace.Common
-import Graphics.ColorSpace.ITU.Rec709
+import Graphics.ColorSpace.RGB.ITU.Rec709
 
 instance (Elevator e, Random e) => Arbitrary (Pixel (RGB 'D65) e) where
   arbitrary = PixelRGB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
