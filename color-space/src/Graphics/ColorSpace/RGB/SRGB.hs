@@ -118,7 +118,8 @@ instance RedGreenBlue RGB 'D65 where
 
 -- | sRGB normalized primary matrix. This is a helper definition, use `npm` instead.
 --
--- >>> npmStandard
+-- >>> :set -XTypeApplications
+-- >>> npmStandard @Float
 -- [ [ 0.412400, 0.357600, 0.180500 ]
 -- , [ 0.212600, 0.715200, 0.072200 ]
 -- , [ 0.019300, 0.119200, 0.950500 ] ]
@@ -132,7 +133,8 @@ npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
 
 -- | sRGB inverse normalized primary matrix. This is a helper definition, use `inpm` instead.
 --
--- >>> inpmStandard
+-- >>> :set -XTypeApplications
+-- >>> inpmStandard @Float
 -- [ [ 3.240600,-1.537200,-0.498600 ]
 -- , [-0.968900, 1.875800, 0.041500 ]
 -- , [ 0.055700,-0.204000, 1.057000 ] ]
