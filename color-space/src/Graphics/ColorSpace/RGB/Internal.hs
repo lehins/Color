@@ -65,7 +65,7 @@ class Illuminant i => RedGreenBlue (cs :: k -> *) (i :: k) where
 
   -- | Linear transformation of a pixel in a linear RGB color space into XYZ color space
   npmApply :: forall a . (Elevator a, RealFloat a) => Pixel (cs i) a -> Pixel XYZ a
-  npmApply px = XYZ (multM3x3byV3 (unNPM (npm :: NPM cs i a)) (V3 r g b))
+  npmApply px = coerce (multM3x3byV3 (unNPM (npm :: NPM cs i a)) (V3 r g b))
     where CM.PixelRGB r g b = unPixelRGB px
   {-# INLINE npmApply #-}
 

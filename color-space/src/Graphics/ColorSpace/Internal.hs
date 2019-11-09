@@ -169,7 +169,7 @@ pixelWhitePoint _ = whitePoint
 data XYZ
 
 -- | CIE1931 `XYZ` color space
-newtype instance Pixel XYZ e = XYZ (V3 e) -- PixelXYZ !e !e !e
+newtype instance Pixel XYZ e = XYZ (V3 e)
 
 -- | Constructor for the most common @XYZ@ color space
 pattern PixelXYZ :: e -> e -> e -> Pixel XYZ e

@@ -14,12 +14,12 @@ module Graphics.ColorModel
   ) where
 
 import Graphics.ColorModel.Alpha
-import Graphics.ColorModel.HSI
-import Graphics.ColorModel.HSL
-import Graphics.ColorModel.HSV
+-- import Graphics.ColorModel.HSI
+-- import Graphics.ColorModel.HSL
+-- import Graphics.ColorModel.HSV
 import Graphics.ColorModel.Internal
-import Graphics.ColorModel.RGB
-import Graphics.ColorModel.CMYK
+-- import Graphics.ColorModel.RGB
+-- import Graphics.ColorModel.CMYK
 
 
 -- -- | Conversion to `RGB` color model.
