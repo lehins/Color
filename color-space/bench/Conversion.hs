@@ -4,7 +4,6 @@
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
 module Main where
 
 import Criterion.Main
@@ -15,7 +14,7 @@ import Graphics.ColorModel
 import Graphics.ColorSpace
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.RGB
-import qualified Graphics.ColorSpace.RGB.Derived.SRGB as DerivedSRGB
+import qualified Graphics.ColorSpace.RGB.Derived.SRGB as Derived
 
 import qualified Data.Colour as Colour
 import qualified Data.Colour.SRGB as Colour
@@ -31,7 +30,8 @@ randomV3 g0 = (V3 v0 v1 v2, g3)
     (v1, g2) = randomR (minValue, maxValue) g1
     (v2, g3) = randomR (minValue, maxValue) g2
 
-makeRandomRGB :: (RedGreenBlue (cs :: k -> *) (i :: k), RandomGen g, Random a, Elevator a) => g -> (Pixel (cs i) a, g)
+makeRandomRGB ::
+     (RedGreenBlue cs (i :: k), RandomGen g, Random a, Elevator a) => g -> (Pixel cs a, g)
 makeRandomRGB gen =
   case randomV3 gen of
     (V3 r g b, gen') -> (mkPixelRGB (CM.PixelRGB r g b), gen')
@@ -50,7 +50,7 @@ mkBenchmarks :: forall f. (Random f, Elevator f, RealFloat f, NFData f) => f -> 
 mkBenchmarks _ tyName =
   let g0 = mkStdGen 2019
       !(srgb :: Pixel SRGB f, g1) = makeRandomRGB g0
-      !(srgbDerived :: Pixel (DerivedSRGB.RGB 'D65) f, g2) = makeRandomRGB g1
+      !(srgbDerived :: Pixel (Derived.SRGB 'D65) f, g2) = makeRandomRGB g1
       !(xyz :: Pixel XYZ f) = toPixelXYZ srgb
       !(srgbColour :: Colour.Colour f, _g3) = makeRandomColour g2
       xyzColour@(!_, !_, !_) = Colour.cieXYZView srgbColour
