@@ -13,9 +13,7 @@ extra-source-files:  README.md
                    , CHANGELOG.md
 cabal-version:       >=1.10
 build-type:          Custom
-tested-with:          GHC == 8.0.2
-                    , GHC == 8.2.2
-                    , GHC == 8.4.3
+tested-with:          GHC == 8.4.3
                     , GHC == 8.4.4
                     , GHC == 8.6.3
                     , GHC == 8.6.4
@@ -89,7 +87,7 @@ library
   other-modules:       Graphics.ColorModel.Elevator
                      , Graphics.ColorSpace.Internal
                      , Graphics.ColorSpace.RGB.Internal
-  build-depends:       base            >= 4.8 && < 5
+  build-depends:       base            >= 4.11 && < 5
                      , deepseq
                      , data-default-class
                      , vector          >= 0.10
