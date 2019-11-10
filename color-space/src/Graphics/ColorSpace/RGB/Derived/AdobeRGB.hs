@@ -22,6 +22,7 @@ module Graphics.ColorSpace.RGB.Derived.AdobeRGB
   , AdobeRGB.primaries
   , AdobeRGB.transfer
   , AdobeRGB.itransfer
+  , module Graphics.ColorSpace
   ) where
 
 import Data.Coerce
@@ -30,9 +31,8 @@ import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
-import Graphics.ColorSpace.Internal
+import Graphics.ColorSpace
 import qualified Graphics.ColorSpace.RGB.AdobeRGB as AdobeRGB
-import Graphics.ColorSpace.RGB.Internal
 
 
 -- | The most common @AdobeRGB@ color space with an arbitrary illuminant

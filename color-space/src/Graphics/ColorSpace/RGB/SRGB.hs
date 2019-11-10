@@ -34,6 +34,8 @@ module Graphics.ColorSpace.RGB.SRGB
   , inpmStandard
   , transfer
   , itransfer
+  , module Graphics.ColorSpace.Internal
+  , module Graphics.ColorSpace.RGB.Internal
   ) where
 
 import Data.Coerce
@@ -143,6 +145,7 @@ instance RedGreenBlue RGB 'D65 where
 -- | sRGB normalized primary matrix. This is a helper definition, use `npm` instead.
 --
 -- >>> :set -XDataKinds
+-- >>> import Graphics.ColorSpace.RGB
 -- >>> npmStandard :: NPM RGB 'D65 Float
 -- [ [ 0.412400, 0.357600, 0.180500 ]
 -- , [ 0.212600, 0.715200, 0.072200 ]
@@ -158,6 +161,7 @@ npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
 -- | sRGB inverse normalized primary matrix. This is a helper definition, use `inpm` instead.
 --
 -- >>> :set -XDataKinds
+-- >>> import Graphics.ColorSpace.RGB
 -- >>> inpmStandard :: INPM RGB 'D65 Float
 -- [ [ 3.240600,-1.537200,-0.498600 ]
 -- , [-0.968900, 1.875800, 0.041500 ]

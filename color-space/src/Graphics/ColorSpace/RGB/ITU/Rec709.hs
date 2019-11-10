@@ -24,6 +24,7 @@ module Graphics.ColorSpace.RGB.ITU.Rec709
   , primaries
   , transfer
   , itransfer
+  , module Graphics.ColorSpace
   ) where
 
 import Data.Coerce
@@ -31,8 +32,7 @@ import Foreign.Storable
 import Graphics.ColorSpace.RGB.ITU
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
-import Graphics.ColorSpace.Internal
-import Graphics.ColorSpace.RGB.Internal
+import Graphics.ColorSpace
 
 -- | ITU-R BT.709 color space
 data RGB (i :: ITU)

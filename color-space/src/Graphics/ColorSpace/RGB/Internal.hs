@@ -21,6 +21,8 @@
 --
 module Graphics.ColorSpace.RGB.Internal
   ( RedGreenBlue(..)
+  , pattern PixelRGB
+  , pattern PixelRGBA
   , Chromaticity(..)
   , rgb2xyz
   , xyz2rgb
@@ -30,8 +32,6 @@ module Graphics.ColorSpace.RGB.Internal
   , inpmDerive
   , pixelChromaticity
   , chromaticityWhitePoint
-  , pattern PixelRGB
-  , pattern PixelRGBA
   ) where
 
 import qualified Graphics.ColorModel.RGB as CM

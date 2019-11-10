@@ -22,6 +22,7 @@ module Graphics.ColorSpace.RGB.Derived.SRGB
   , SRGB.primaries
   , SRGB.transfer
   , SRGB.itransfer
+  , module Graphics.ColorSpace
   ) where
 
 import Data.Coerce
@@ -30,8 +31,7 @@ import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
-import Graphics.ColorSpace.Internal
-import Graphics.ColorSpace.RGB.Internal
+import Graphics.ColorSpace
 import qualified Graphics.ColorSpace.RGB.SRGB as SRGB
 
 

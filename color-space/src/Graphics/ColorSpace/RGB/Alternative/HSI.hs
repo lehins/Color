@@ -24,6 +24,7 @@ module Graphics.ColorSpace.RGB.Alternative.HSI
   , pattern PixelH360SI
   , HSI
   , Pixel(HSI)
+  , module Graphics.ColorSpace
   ) where
 
 import Data.Coerce
@@ -32,8 +33,7 @@ import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import qualified Graphics.ColorModel.HSI as CM
 import Graphics.ColorModel.Internal
-import Graphics.ColorSpace.Internal
-import Graphics.ColorSpace.RGB.Internal
+import Graphics.ColorSpace
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
 data HSI (cs :: k -> *) (i :: k)

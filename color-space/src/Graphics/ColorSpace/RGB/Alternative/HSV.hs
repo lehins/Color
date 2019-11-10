@@ -24,6 +24,7 @@ module Graphics.ColorSpace.RGB.Alternative.HSV
   , pattern PixelH360SI
   , HSV
   , Pixel(HSV)
+  , module Graphics.ColorSpace
   ) where
 
 import Data.Coerce
@@ -32,8 +33,7 @@ import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import qualified Graphics.ColorModel.HSV as CM
 import Graphics.ColorModel.Internal
-import Graphics.ColorSpace.Internal
-import Graphics.ColorSpace.RGB.Internal
+import Graphics.ColorSpace
 
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
 data HSV (cs :: k -> *) (i :: k)
