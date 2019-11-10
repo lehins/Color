@@ -28,7 +28,6 @@ module Graphics.ColorSpace.Internal
   , zWhitePoint
   , whitePointXZ
   , whitePointXYZ
-  , pixelWhitePoint
   , Illuminant(..)
   , XYZ
   , pattern PixelXYZ
@@ -145,20 +144,6 @@ primaryXZ ::
 primaryXZ vY (Primary x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
   where !vYy = vY / y
 {-# INLINE primaryXZ #-}
-
-
--- | Get the white point of any pixel with color space that specifies one. Pixel itself
--- isn't actually evaluated, since its type carries enough information for getting the
--- white point.
---
--- >>> import Graphics.ColorSpace.RGB.SRGB
--- >>> pixelWhitePoint (PixelRGB8 1 2 3)
--- WhitePoint {xWhitePoint = 0.3127, yWhitePoint = 0.329}
---
--- @since 0.1.0
-pixelWhitePoint :: Illuminant i => Pixel (cs i) e -> WhitePoint i
-pixelWhitePoint _ = whitePoint
-{-# INLINE pixelWhitePoint #-}
 
 
 -----------

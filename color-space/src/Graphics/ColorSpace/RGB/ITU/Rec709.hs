@@ -19,8 +19,8 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace.RGB.ITU.Rec709
-  ( ITU(..)
-  , RGB
+  ( Rec601(..)
+  , BT709
   , primaries
   , transfer
   , itransfer
@@ -29,38 +29,38 @@ module Graphics.ColorSpace.RGB.ITU.Rec709
 
 import Data.Coerce
 import Foreign.Storable
-import Graphics.ColorSpace.RGB.ITU
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace
+import Graphics.ColorSpace.RGB.ITU.Rec601 (Rec601(..))
 
 -- | ITU-R BT.709 color space
-data RGB (i :: ITU)
+data BT709
 
-newtype instance Pixel (RGB 'D65) e = RGB (Pixel CM.RGB e)
-
--- | ITU-R BT.709 color space
-deriving instance Eq e => Eq (Pixel (RGB 'D65) e)
--- | ITU-R BT.709 color space
-deriving instance Ord e => Ord (Pixel (RGB 'D65) e)
--- | ITU-R BT.709 color space
-deriving instance Functor (Pixel (RGB 'D65))
--- | ITU-R BT.709 color space
-deriving instance Applicative (Pixel (RGB 'D65))
--- | ITU-R BT.709 color space
-deriving instance Foldable (Pixel (RGB 'D65))
--- | ITU-R BT.709 color space
-deriving instance Traversable (Pixel (RGB 'D65))
--- | ITU-R BT.709 color space
-deriving instance Storable e => Storable (Pixel (RGB 'D65) e)
+newtype instance Pixel BT709 e = BT709 (Pixel CM.RGB e)
 
 -- | ITU-R BT.709 color space
-instance Elevator e => Show (Pixel (RGB 'D65) e) where
+deriving instance Eq e => Eq (Pixel BT709 e)
+-- | ITU-R BT.709 color space
+deriving instance Ord e => Ord (Pixel BT709 e)
+-- | ITU-R BT.709 color space
+deriving instance Functor (Pixel BT709)
+-- | ITU-R BT.709 color space
+deriving instance Applicative (Pixel BT709)
+-- | ITU-R BT.709 color space
+deriving instance Foldable (Pixel BT709)
+-- | ITU-R BT.709 color space
+deriving instance Traversable (Pixel BT709)
+-- | ITU-R BT.709 color space
+deriving instance Storable e => Storable (Pixel BT709 e)
+
+-- | ITU-R BT.709 color space
+instance Elevator e => Show (Pixel BT709 e) where
   showsPrec _ = showsColorModel
 
 -- | ITU-R BT.709 color space
-instance Elevator e => ColorModel (RGB 'D65) e where
-  type Components (RGB 'D65) e = (e, e, e)
+instance Elevator e => ColorModel BT709 e where
+  type Components BT709 e = (e, e, e)
   toComponents = toComponents . coerce
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
@@ -68,8 +68,8 @@ instance Elevator e => ColorModel (RGB 'D65) e where
   showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | ITU-R BT.709 color space
-instance Elevator e => ColorSpace (RGB 'D65) e where
-  type BaseColorSpace (RGB 'D65) = RGB 'D65
+instance Elevator e => ColorSpace BT709 e where
+  type BaseColorSpace BT709 = BT709
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
@@ -78,10 +78,10 @@ instance Elevator e => ColorSpace (RGB 'D65) e where
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = ("sRGB Standard" ++)
+  showsColorSpaceName _ = ("sBT709 Standard" ++)
 
 -- | ITU-R BT.709 color space
-instance RedGreenBlue RGB 'D65 where
+instance RedGreenBlue BT709 'D65 where
   chromaticity = primaries
   ecctf = fmap transfer
   {-# INLINE ecctf #-}

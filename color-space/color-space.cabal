@@ -59,7 +59,8 @@ library
                      , Graphics.ColorSpace.RGB.Alternative.HSL
                      , Graphics.ColorSpace.RGB.Derived.SRGB
                      , Graphics.ColorSpace.RGB.Derived.AdobeRGB
-                     , Graphics.ColorSpace.RGB.ITU
+                     , Graphics.ColorSpace.RGB.ITU.Rec470
+                     , Graphics.ColorSpace.RGB.ITU.Rec601
                      , Graphics.ColorSpace.RGB.ITU.Rec709
                      , Graphics.ColorSpace.YUV.Y
                      , Graphics.ColorSpace.YUV.YCbCr

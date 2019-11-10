@@ -27,8 +27,7 @@ module Graphics.ColorSpace.RGB.SRGB
   , pattern PixelRGBF
   , pattern PixelRGBD
   , ToRGB(..)
-  , RGB
-  , ITU(..)
+  , Rec601(..)
   , primaries
   , npmStandard
   , inpmStandard
@@ -46,72 +45,68 @@ import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RGB.Internal
-import Graphics.ColorSpace.RGB.ITU
-import Graphics.ColorSpace.RGB.ITU.Rec709 (primaries)
+import Graphics.ColorSpace.RGB.ITU.Rec709 (Rec601(..), primaries)
 import Graphics.ColorSpace.YUV.YCbCr
 
 
 -- | The most common @sRGB@ color space with the default `D65` illuminant
-type SRGB = RGB 'D65
+data SRGB
 
--- | The most common @sRGB@ color space
-data RGB (i :: ITU)
-
-newtype instance Pixel (RGB 'D65) e = RGB (Pixel CM.RGB e)
+newtype instance Pixel SRGB e = SRGB (Pixel CM.RGB e)
 
 -- | Constructor for a pixel in @sRGB@ color space with 8-bits per channel
 pattern PixelRGB8 :: Word8 -> Word8 -> Word8 -> Pixel SRGB Word8
-pattern PixelRGB8 r g b = RGB (CM.PixelRGB r g b)
+pattern PixelRGB8 r g b = SRGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGB8 #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with 16-bits per channel
 pattern PixelRGB16 :: Word16 -> Word16 -> Word16 -> Pixel SRGB Word16
-pattern PixelRGB16 r g b = RGB (CM.PixelRGB r g b)
+pattern PixelRGB16 r g b = SRGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGB16 #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with 32-bits per channel
 pattern PixelRGB32 :: Word32 -> Word32 -> Word32 -> Pixel SRGB Word32
-pattern PixelRGB32 r g b = RGB (CM.PixelRGB r g b)
+pattern PixelRGB32 r g b = SRGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGB32 #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with 64-bits per channel
 pattern PixelRGB64 :: Word64 -> Word64 -> Word64 -> Pixel SRGB Word64
-pattern PixelRGB64 r g b = RGB (CM.PixelRGB r g b)
+pattern PixelRGB64 r g b = SRGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGB64 #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with 32-bit floating point value per channel
 pattern PixelRGBF :: Float -> Float -> Float -> Pixel SRGB Float
-pattern PixelRGBF r g b = RGB (CM.PixelRGB r g b)
+pattern PixelRGBF r g b = SRGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGBF #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with 32-bit floating point value per channel
 pattern PixelRGBD :: Double -> Double -> Double -> Pixel SRGB Double
-pattern PixelRGBD r g b = RGB (CM.PixelRGB r g b)
+pattern PixelRGBD r g b = SRGB (CM.PixelRGB r g b)
 {-# COMPLETE PixelRGBD #-}
 
 
 -- | s`RGB` color space
-deriving instance Eq e => Eq (Pixel (RGB 'D65) e)
+deriving instance Eq e => Eq (Pixel SRGB e)
 -- | s`RGB` color space
-deriving instance Ord e => Ord (Pixel (RGB 'D65) e)
+deriving instance Ord e => Ord (Pixel SRGB e)
 -- | s`RGB` color space
-deriving instance Functor (Pixel (RGB 'D65))
+deriving instance Functor (Pixel SRGB)
 -- | s`RGB` color space
-deriving instance Applicative (Pixel (RGB 'D65))
+deriving instance Applicative (Pixel SRGB)
 -- | s`RGB` color space
-deriving instance Foldable (Pixel (RGB 'D65))
+deriving instance Foldable (Pixel SRGB)
 -- | s`RGB` color space
-deriving instance Traversable (Pixel (RGB 'D65))
+deriving instance Traversable (Pixel SRGB)
 -- | s`RGB` color space
-deriving instance Storable e => Storable (Pixel (RGB 'D65) e)
+deriving instance Storable e => Storable (Pixel SRGB e)
 
 -- | s`RGB` color space
-instance Elevator e => Show (Pixel (RGB 'D65) e) where
+instance Elevator e => Show (Pixel SRGB e) where
   showsPrec _ = showsColorModel
 
 -- | s`RGB` color space
-instance Elevator e => ColorModel (RGB 'D65) e where
-  type Components (RGB 'D65) e = (e, e, e)
+instance Elevator e => ColorModel SRGB e where
+  type Components SRGB e = (e, e, e)
   toComponents = toComponents . coerce
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
@@ -119,8 +114,8 @@ instance Elevator e => ColorModel (RGB 'D65) e where
   showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | s`RGB` color space
-instance Elevator e => ColorSpace (RGB 'D65) e where
-  type BaseColorSpace (RGB 'D65) = RGB 'D65
+instance Elevator e => ColorSpace SRGB e where
+  type BaseColorSpace SRGB = SRGB
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
@@ -132,7 +127,7 @@ instance Elevator e => ColorSpace (RGB 'D65) e where
   showsColorSpaceName _ = ("sRGB Standard" ++)
 
 -- | s`RGB` color space
-instance RedGreenBlue RGB 'D65 where
+instance RedGreenBlue SRGB 'D65 where
   chromaticity = primaries
   npm = npmStandard
   inpm = inpmStandard
@@ -146,13 +141,13 @@ instance RedGreenBlue RGB 'D65 where
 --
 -- >>> :set -XDataKinds
 -- >>> import Graphics.ColorSpace.RGB
--- >>> npmStandard :: NPM RGB 'D65 Float
+-- >>> npmStandard :: NPM SRGB 'D65 Float
 -- [ [ 0.412400, 0.357600, 0.180500 ]
 -- , [ 0.212600, 0.715200, 0.072200 ]
 -- , [ 0.019300, 0.119200, 0.950500 ] ]
 --
 -- @since 0.1.0
-npmStandard :: RealFloat a => NPM RGB 'D65 a
+npmStandard :: RealFloat a => NPM SRGB 'D65 a
 npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
                          (V3 0.2126 0.7152 0.0722)
                          (V3 0.0193 0.1192 0.9505)
@@ -162,13 +157,13 @@ npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
 --
 -- >>> :set -XDataKinds
 -- >>> import Graphics.ColorSpace.RGB
--- >>> inpmStandard :: INPM RGB 'D65 Float
+-- >>> inpmStandard :: INPM SRGB 'D65 Float
 -- [ [ 3.240600,-1.537200,-0.498600 ]
 -- , [-0.968900, 1.875800, 0.041500 ]
 -- , [ 0.055700,-0.204000, 1.057000 ] ]
 --
 -- @since 0.1.0
-inpmStandard :: RealFloat a => INPM RGB 'D65 a
+inpmStandard :: RealFloat a => INPM SRGB 'D65 a
 inpmStandard = INPM $ M3x3 (V3  3.2406 -1.5372 -0.4986)
                            (V3 -0.9689  1.8758  0.0415)
                            (V3  0.0557 -0.2040  1.0570)

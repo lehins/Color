@@ -18,7 +18,7 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace.RGB.Derived.AdobeRGB
-  ( RGB
+  ( AdobeRGB
   , AdobeRGB.primaries
   , AdobeRGB.transfer
   , AdobeRGB.itransfer
@@ -36,42 +36,42 @@ import qualified Graphics.ColorSpace.RGB.AdobeRGB as AdobeRGB
 
 
 -- | The most common @AdobeRGB@ color space with an arbitrary illuminant
-data RGB (i :: k)
+data AdobeRGB (i :: k)
 
--- | Adobe`RGB` color space (derived)
-newtype instance Pixel (RGB i) e = RGB (Pixel CM.RGB e)
+-- | `AdobeRGB` color space (derived)
+newtype instance Pixel (AdobeRGB i) e = AdobeRGB (Pixel CM.RGB e)
 
--- | Adobe`RGB` color space (derived)
-deriving instance Eq e => Eq (Pixel (RGB i) e)
--- | Adobe`RGB` color space (derived)
-deriving instance Ord e => Ord (Pixel (RGB i) e)
--- | Adobe`RGB` color space (derived)
-deriving instance Functor (Pixel (RGB i))
--- | Adobe`RGB` color space (derived)
-deriving instance Applicative (Pixel (RGB i))
--- | Adobe`RGB` color space (derived)
-deriving instance Foldable (Pixel (RGB i))
--- | Adobe`RGB` color space (derived)
-deriving instance Traversable (Pixel (RGB i))
--- | Adobe`RGB` color space (derived)
-deriving instance Storable e => Storable (Pixel (RGB i) e)
+-- | `AdobeRGB` color space (derived)
+deriving instance Eq e => Eq (Pixel (AdobeRGB i) e)
+-- | `AdobeRGB` color space (derived)
+deriving instance Ord e => Ord (Pixel (AdobeRGB i) e)
+-- | `AdobeRGB` color space (derived)
+deriving instance Functor (Pixel (AdobeRGB i))
+-- | `AdobeRGB` color space (derived)
+deriving instance Applicative (Pixel (AdobeRGB i))
+-- | `AdobeRGB` color space (derived)
+deriving instance Foldable (Pixel (AdobeRGB i))
+-- | `AdobeRGB` color space (derived)
+deriving instance Traversable (Pixel (AdobeRGB i))
+-- | `AdobeRGB` color space (derived)
+deriving instance Storable e => Storable (Pixel (AdobeRGB i) e)
 
--- | Adobe`RGB` color space (derived)
-instance (Illuminant i, Elevator e) => Show (Pixel (RGB (i :: k)) e) where
+-- | `AdobeRGB` color space (derived)
+instance (Illuminant i, Elevator e) => Show (Pixel (AdobeRGB (i :: k)) e) where
   showsPrec _ = showsColorModel
 
--- | Adobe`RGB` color space (derived)
-instance (Illuminant i, Elevator e) => ColorModel (RGB (i :: k)) e where
-  type Components (RGB i) e = (e, e, e)
+-- | `AdobeRGB` color space (derived)
+instance (Illuminant i, Elevator e) => ColorModel (AdobeRGB (i :: k)) e where
+  type Components (AdobeRGB i) e = (e, e, e)
   toComponents = toComponents . coerce
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName = showsColorModelName . unPixelRGB
 
--- | Adobe`RGB` color space (derived)
-instance (Illuminant i, Elevator e) => ColorSpace (RGB (i :: k)) e where
-  type BaseColorSpace (RGB i) = RGB i
+-- | `AdobeRGB` color space (derived)
+instance (Illuminant i, Elevator e) => ColorSpace (AdobeRGB (i :: k)) e where
+  type BaseColorSpace (AdobeRGB i) = AdobeRGB i
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
@@ -80,10 +80,10 @@ instance (Illuminant i, Elevator e) => ColorSpace (RGB (i :: k)) e where
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = ('s':) . showsType (Proxy :: Proxy (RGB i))
+  showsColorSpaceName _ = showsType (Proxy :: Proxy (AdobeRGB i))
 
--- | Adobe`RGB` color space (derived)
-instance Illuminant i => RedGreenBlue RGB i where
+-- | `AdobeRGB` color space (derived)
+instance Illuminant i => RedGreenBlue (AdobeRGB i) i where
   chromaticity = AdobeRGB.primaries
   ecctf = fmap AdobeRGB.transfer
   {-# INLINE ecctf #-}

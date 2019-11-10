@@ -1,3 +1,4 @@
+{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -36,37 +37,37 @@ import Graphics.ColorModel.Internal
 import Graphics.ColorSpace
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-data HSI (cs :: k -> *) (i :: k)
+data HSI cs
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-newtype instance Pixel (HSI cs i) e = HSI (Pixel CM.HSI e)
+newtype instance Pixel (HSI cs) e = HSI (Pixel CM.HSI e)
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Eq e => Eq (Pixel (HSI cs i) e)
+deriving instance Eq e => Eq (Pixel (HSI cs) e)
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Ord e => Ord (Pixel (HSI cs i) e)
+deriving instance Ord e => Ord (Pixel (HSI cs) e)
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Functor (Pixel (HSI cs i))
+deriving instance Functor (Pixel (HSI cs))
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Applicative (Pixel (HSI cs i))
+deriving instance Applicative (Pixel (HSI cs))
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Foldable (Pixel (HSI cs i))
+deriving instance Foldable (Pixel (HSI cs))
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Traversable (Pixel (HSI cs i))
+deriving instance Traversable (Pixel (HSI cs))
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Storable e => Storable (Pixel (HSI cs i) e)
+deriving instance Storable e => Storable (Pixel (HSI cs) e)
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-instance ColorModel (cs i) e => Show (Pixel (HSI cs i) e) where
+instance ColorModel cs e => Show (Pixel (HSI cs) e) where
   showsPrec _ = showsColorModel
 
 -- | Constructor for an RGB color space in an alternative HSI color model
-pattern PixelHSI :: e -> e -> e -> Pixel (HSI cs i) e
+pattern PixelHSI :: e -> e -> e -> Pixel (HSI cs) e
 pattern PixelHSI h s i = HSI (CM.PixelHSI h s i)
 {-# COMPLETE PixelHSI #-}
 
 -- | Constructor for @HSI@ with alpha channel.
-pattern PixelHSIA :: e -> e -> e -> e -> Pixel (Alpha (HSI cs i)) e
+pattern PixelHSIA :: e -> e -> e -> e -> Pixel (Alpha (HSI cs)) e
 pattern PixelHSIA h s i a = Alpha (HSI (CM.PixelHSI h s i)) a
 {-# COMPLETE PixelHSIA #-}
 
@@ -74,14 +75,14 @@ pattern PixelHSIA h s i a = Alpha (HSI (CM.PixelHSI h s i)) a
 -- | Constructor for an RGB color space in an alternative HSI color model. Difference from
 -- `PixelHSI` is that the hue is specified in 0 to 360 degree range, rather than 0 to
 -- 1. Note, that this is not checked.
-pattern PixelH360SI :: RealFloat e => e -> e -> e -> Pixel (HSI cs i) e
+pattern PixelH360SI :: RealFloat e => e -> e -> e -> Pixel (HSI cs) e
 pattern PixelH360SI h s i <- PixelHSI ((* 360) -> h) s i where
         PixelH360SI h s i = PixelHSI (h / 360) s i
 {-# COMPLETE PixelH360SI #-}
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-instance ColorModel (cs i) e => ColorModel (HSI cs (i :: k)) e where
-  type Components (HSI cs i) e = (e, e, e)
+instance ColorModel cs e => ColorModel (HSI cs) e where
+  type Components (HSI cs) e = (e, e, e)
   toComponents = toComponents . coerce
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
@@ -90,9 +91,8 @@ instance ColorModel (cs i) e => ColorModel (HSI cs (i :: k)) e where
 
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-instance (Typeable cs, ColorSpace (cs i) e, RedGreenBlue cs i) =>
-         ColorSpace (HSI cs (i :: k)) e where
-  type BaseColorSpace (HSI cs i) = cs i
+instance (Typeable cs, ColorSpace cs e, RedGreenBlue cs i) => ColorSpace (HSI cs) e where
+  type BaseColorSpace (HSI cs) = cs
   toBaseColorSpace = mkPixelRGB . fmap fromDouble . CM.hsi2rgb . fmap toDouble . coerce
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = coerce . fmap fromDouble . CM.rgb2hsi . fmap toDouble . unPixelRGB
@@ -101,4 +101,4 @@ instance (Typeable cs, ColorSpace (cs i) e, RedGreenBlue cs i) =>
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = showsColorSpaceName (pure 0 :: Pixel (cs i) e)
+  showsColorSpaceName _ = showsColorSpaceName (pure 0 :: Pixel cs e)
