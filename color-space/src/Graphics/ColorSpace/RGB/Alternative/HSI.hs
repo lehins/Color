@@ -97,8 +97,4 @@ instance (Typeable cs, ColorSpace cs e, RedGreenBlue cs i) => ColorSpace (HSI cs
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = coerce . fmap fromDouble . CM.rgb2hsi . fmap toDouble . unPixelRGB
   {-# INLINE fromBaseColorSpace #-}
-  toPixelXYZ = toPixelXYZ . toBaseColorSpace
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
-  {-# INLINE fromPixelXYZ #-}
   showsColorSpaceName _ = showsColorSpaceName (pure 0 :: Pixel cs e)

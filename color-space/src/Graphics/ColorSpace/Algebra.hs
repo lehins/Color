@@ -12,7 +12,6 @@
 --
 module Graphics.ColorSpace.Algebra
   ( V3(..)
-  , fromV3
   , showV3
   , printV3
   , dotProduct
@@ -40,14 +39,12 @@ instance Elevator a => Show (V3 a) where
     ('[' :) . toShowS x . (',' :) . toShowS y . (',' :) . toShowS z . (" ]" ++)
 
 
-fromV3 :: (e -> e -> e -> a) -> V3 e -> a
-fromV3 mk (V3 v0 v1 v2) = mk v0 v1 v2
-{-# INLINE fromV3 #-}
-
-
 -- | A 3x3 Matrix
-data M3x3 a = M3x3 {-#UNPACK #-} !(V3 a) {-#UNPACK #-} !(V3 a) {-#UNPACK #-} !(V3 a)
-  deriving (Eq)
+data M3x3 a = M3x3
+  { m3x3row0 :: {-# UNPACK #-}!(V3 a)
+  , m3x3row1 :: {-# UNPACK #-}!(V3 a)
+  , m3x3row2 :: {-# UNPACK #-}!(V3 a)
+  } deriving (Eq)
 
 instance Elevator a => Show (M3x3 a) where
   showsPrec _ (M3x3 v0 v1 v2) =

@@ -27,6 +27,7 @@ module Graphics.ColorSpace.RGB.Internal
   , Chromaticity(..)
   , rgb2xyz
   , xyz2rgb
+  , rgbLuminocity
   , NPM(..)
   , npmDerive
   , INPM(..)
@@ -39,6 +40,7 @@ module Graphics.ColorSpace.RGB.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
+import Graphics.ColorModel.Y
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.Algebra
 import Data.Coerce
@@ -68,15 +70,20 @@ class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
 
   -- | Linear transformation of a pixel in a linear RGB color space into XYZ color space
   npmApply :: forall a . (Elevator a, RealFloat a) => Pixel cs a -> Pixel XYZ a
-  npmApply px = coerce (multM3x3byV3 (unNPM (npm :: NPM cs i a)) (V3 r g b))
-    where CM.PixelRGB r g b = unPixelRGB px
+  npmApply = coerce . multM3x3byV3 (unNPM (npm :: NPM cs i a)) . coerce . unPixelRGB
   {-# INLINE npmApply #-}
 
   -- | Linear transformation of a pixel in XYZ color space into a linear RGB color space
   inpmApply :: forall a . (Elevator a, RealFloat a) => Pixel XYZ a -> Pixel cs a
-  inpmApply xyz =
-    mkPixelRGB $ fromV3 CM.PixelRGB (multM3x3byV3 (unINPM (inpm :: INPM cs i a)) (coerce xyz))
+  inpmApply = mkPixelRGB . coerce . multM3x3byV3 (unINPM (inpm :: INPM cs i a)) . coerce
   {-# INLINE inpmApply #-}
+
+  -- | Linear transformation of a pixel in a linear luminocity, i.e. the Y component of
+  -- XYZ color space
+  npmApplyLuminocity :: forall a . (Elevator a, RealFloat a) => Pixel cs a -> Pixel Y a
+  npmApplyLuminocity px =
+    coerce (m3x3row1 (unNPM (npm :: NPM cs i a)) `dotProduct` coerce (unPixelRGB px))
+  {-# INLINE npmApplyLuminocity #-}
 
   -- | Lift RGB color model into a RGB color space
   mkPixelRGB :: Pixel CM.RGB e -> Pixel cs e
@@ -100,6 +107,10 @@ data Chromaticity cs i where
 deriving instance Eq (Chromaticity cs i)
 deriving instance Show (Chromaticity cs i)
 
+
+rgbLuminocity :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel cs e -> Pixel Y e
+rgbLuminocity = npmApplyLuminocity . dcctf
+{-# INLINE rgbLuminocity #-}
 
 rgb2xyz :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel cs e -> Pixel XYZ e
 rgb2xyz = npmApply . dcctf
@@ -160,8 +171,8 @@ instance Elevator a => Show (NPM cs i a) where
   show = show . unNPM
 
 -- | Inverse normalized primary matrix (iNPM), which is used to tranform linear
--- `Graphics.ColorSpace.CIE1931.XYZ.XYZ` color space into an RGB color space. It is
--- literally a matrix inverse of `NPM`
+-- `Graphics.ColorSpace.CIE1931.XYZ.XYZ` color space into a linear RGB color space. It is
+-- literally a inverse matrix of `NPM`
 --
 -- @since 0.1.0
 newtype INPM cs (i :: k) a = INPM
