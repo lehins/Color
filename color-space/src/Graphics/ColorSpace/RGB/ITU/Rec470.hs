@@ -27,7 +27,6 @@ module Graphics.ColorSpace.RGB.ITU.Rec470
   , module Graphics.ColorSpace
   ) where
 
-import Data.Coerce
 import Foreign.Storable
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
@@ -79,9 +78,9 @@ instance Elevator e => Show (Pixel BT470_525 e) where
 -- | ITU-R BT.470 (525) color space
 instance Elevator e => ColorModel BT470_525 e where
   type Components BT470_525 e = (e, e, e)
-  toComponents = toComponents . coerce
+  toComponents = toComponents . unPixelRGB
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName = showsColorModelName . unPixelRGB
 
@@ -138,9 +137,9 @@ instance Elevator e => Show (Pixel BT470_625 e) where
 -- | ITU-R BT.470 (625) color space
 instance Elevator e => ColorModel BT470_625 e where
   type Components BT470_625 e = (e, e, e)
-  toComponents = toComponents . coerce
+  toComponents = toComponents . unPixelRGB
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName = showsColorModelName . unPixelRGB
 

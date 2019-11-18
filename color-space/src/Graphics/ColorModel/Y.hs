@@ -8,36 +8,38 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
--- Module      : Graphics.ColorSpace.YUV.Y
+-- Module      : Graphics.ColorModel.Y
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.YUV.Y
+module Graphics.ColorModel.Y
   ( Y
-  -- * Constructors for an Y color space.
+  -- * Constructors for Y color model.
   , pattern PixelY
   , pattern PixelYA
   , Pixel
-  , y2rgb
+  , Weights(..)
   , rgb2y
   ) where
 
+import Data.Coerce
 import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 import Graphics.ColorModel.RGB
+import Graphics.ColorSpace.Algebra
 
 -------------
 --- Y ---
 -------------
 
--- | Luma component (commonly denoted as __Y'__)
+-- | Luminance of a color
 data Y
 
--- | `Y` color space
+-- | Luminance `Y`
 newtype instance Pixel Y e = PixelY e
 
 -- | Constructor for @Y@ with alpha channel.
@@ -45,19 +47,19 @@ pattern PixelYA :: e -> e -> Pixel (Alpha Y) e
 pattern PixelYA y a = Alpha (PixelY y) a
 {-# COMPLETE PixelYA #-}
 
--- | `Y` color space
+-- | `Y` color model
 deriving instance Eq e => Eq (Pixel Y e)
--- | `Y` color space
+-- | `Y` color model
 deriving instance Ord e => Ord (Pixel Y e)
--- | `Y` color space
+-- | `Y` color model
 deriving instance Storable e => Storable (Pixel Y e)
 
 
--- | `Y` color space
+-- | `Y` color model
 instance Elevator e => Show (Pixel Y e) where
   showsPrec _ = showsColorModel
 
--- | `Y` color space
+-- | `Y` color model
 instance Elevator e => ColorModel Y e where
   type Components Y e = e
   toComponents (PixelY y) = y
@@ -65,33 +67,39 @@ instance Elevator e => ColorModel Y e where
   fromComponents = PixelY
   {-# INLINE fromComponents #-}
 
--- | `Y` color space
+-- | `Y` color model
 instance Functor (Pixel Y) where
   fmap f (PixelY y) = PixelY (f y)
   {-# INLINE fmap #-}
 
--- | `Y` color space
+-- | `Y` color model
 instance Applicative (Pixel Y) where
   pure = PixelY
   {-# INLINE pure #-}
   (PixelY fy) <*> (PixelY y) = PixelY (fy y)
   {-# INLINE (<*>) #-}
 
--- | `Y` color space
+-- | `Y` color model
 instance Foldable (Pixel Y) where
   foldr f !z (PixelY y) = f y z
   {-# INLINE foldr #-}
 
--- | `Y` color space
+-- | `Y` color model
 instance Traversable (Pixel Y) where
   traverse f (PixelY y) = PixelY <$> f y
   {-# INLINE traverse #-}
 
 
-y2rgb :: Pixel Y Double -> Pixel RGB Double
-y2rgb (PixelY y) = PixelRGB y y y
-{-# INLINE y2rgb #-}
-
-rgb2y :: Pixel RGB Double -> Pixel Y Double
-rgb2y (PixelRGB r g b) = PixelY $ 0.299 * r + 0.587 * g + 0.114 * b
+rgb2y ::
+     forall e e'. (Elevator e', Elevator e, RealFloat e)
+  => Pixel RGB e'
+  -> Weights e
+  -> Pixel Y e
+rgb2y rgb weights =
+  PixelY (coerce (fmap toRealFloat rgb :: Pixel RGB e) `dotProduct` coerce weights)
 {-# INLINE rgb2y #-}
+
+
+newtype Weights e = Weights
+  { unWeights :: V3 e
+  }

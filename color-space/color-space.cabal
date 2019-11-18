@@ -38,6 +38,8 @@ library
                      , Graphics.ColorModel.HSI
                      , Graphics.ColorModel.HSL
                      , Graphics.ColorModel.HSV
+                     , Graphics.ColorModel.Y
+                     , Graphics.ColorModel.YCbCr
                      , Graphics.ColorSpace
                      , Graphics.ColorSpace.Algebra
                      -- , Graphics.ColorSpace.CIE1931
@@ -55,13 +57,13 @@ library
                      , Graphics.ColorSpace.RGB.Alternative.HSI
                      , Graphics.ColorSpace.RGB.Alternative.HSV
                      , Graphics.ColorSpace.RGB.Alternative.HSL
+                     , Graphics.ColorSpace.RGB.Alternative.YCbCr
                      , Graphics.ColorSpace.RGB.Derived.SRGB
                      , Graphics.ColorSpace.RGB.Derived.AdobeRGB
                      , Graphics.ColorSpace.RGB.ITU.Rec470
                      , Graphics.ColorSpace.RGB.ITU.Rec601
                      , Graphics.ColorSpace.RGB.ITU.Rec709
-                     , Graphics.ColorSpace.YUV.Y
-                     , Graphics.ColorSpace.YUV.YCbCr
+                     , Graphics.ColorSpace.RGB.Luma
                      -- , Graphics.ColorSpace.RGB.SC
                      -- , Graphics.ColorSpace.RGB.AdobeWideGamut
                      -- , Graphics.ColorSpace.RGB.ProPhoto

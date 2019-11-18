@@ -1,10 +1,11 @@
-{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE BangPatterns #-}
-{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
@@ -37,6 +38,7 @@ module Graphics.ColorSpace.Internal
 import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
+import Graphics.ColorModel.Y
 import Graphics.ColorSpace.Algebra
 import Data.Typeable
 
@@ -52,6 +54,15 @@ class ColorModel cs e => ColorSpace cs e where
   -- @since 0.1.0
   showsColorSpaceName :: Pixel cs e -> ShowS
 
+  -- | Get pixel luminocity
+  --
+  -- @since 0.1.0
+  toPixelY :: (Elevator a, RealFloat a) => Pixel cs e -> Pixel Y a
+  default toPixelY ::
+    (ColorSpace (BaseColorSpace cs) e, Elevator a, RealFloat a) => Pixel cs e -> Pixel Y a
+  toPixelY = toPixelY . toBaseColorSpace
+  {-# INLINE toPixelY #-}
+
   toPixelXYZ :: (Elevator a, RealFloat a) => Pixel cs e -> Pixel XYZ a
   default toPixelXYZ ::
     (ColorSpace (BaseColorSpace cs) e, Elevator a, RealFloat a) => Pixel cs e -> Pixel XYZ a
@@ -63,7 +74,6 @@ class ColorModel cs e => ColorSpace cs e where
     (ColorSpace (BaseColorSpace cs) e, Elevator a, RealFloat a) => Pixel XYZ a -> Pixel cs e
   fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
   {-# INLINE fromPixelXYZ #-}
-
 
 ----------------
 -- WhitePoint --
@@ -191,6 +201,8 @@ instance Elevator e => ColorSpace XYZ e where
   toBaseColorSpace = id
   fromBaseColorSpace = id
   showsColorSpaceName _ = ("CIE1931 XYZ" ++)
+  toPixelY (PixelXYZ _ y _) = PixelY (toRealFloat y)
+  {-# INLINE toPixelY #-}
   toPixelXYZ (PixelXYZ x y z) = PixelXYZ (toRealFloat x) (toRealFloat y) (toRealFloat z)
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ (PixelXYZ x y z) = PixelXYZ (fromRealFloat x) (fromRealFloat y) (fromRealFloat z)

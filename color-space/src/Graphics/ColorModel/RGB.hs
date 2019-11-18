@@ -20,6 +20,7 @@ module Graphics.ColorModel.RGB
   -- * Constructors for an RGB color model.
   , pattern PixelRGB
   , pattern PixelRGBA
+  , pattern RGB
   , Pixel
   , ColorModel(..)
   ) where
@@ -27,18 +28,23 @@ module Graphics.ColorModel.RGB
 import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
-
+import Graphics.ColorSpace.Algebra
 
 -- | The most common @RGB@ color model
 data RGB
 
 
 -- | `RGB` color model
-data instance Pixel RGB e = PixelRGB !e !e !e
+newtype instance Pixel RGB e = RGB (V3 e)
+
+-- | Constructor for @RGB@ with alpha channel.
+pattern PixelRGB :: e -> e -> e -> Pixel RGB e
+pattern PixelRGB r g b = RGB (V3 r g b)
+{-# COMPLETE PixelRGB #-}
 
 -- | Constructor for @RGB@ with alpha channel.
 pattern PixelRGBA :: e -> e -> e -> e -> Pixel (Alpha RGB) e
-pattern PixelRGBA r g b a = Alpha (PixelRGB r g b) a
+pattern PixelRGBA r g b a = Alpha (RGB (V3 r g b)) a
 {-# COMPLETE PixelRGBA #-}
 
 -- | `RGB` color model

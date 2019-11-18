@@ -28,7 +28,6 @@ module Graphics.ColorSpace.RGB.AdobeRGB
   , module Graphics.ColorSpace
   ) where
 
-import Data.Coerce
 import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
@@ -65,9 +64,9 @@ instance Elevator e => Show (Pixel AdobeRGB e) where
 -- | Adobe`RGB` color space
 instance Elevator e => ColorModel AdobeRGB e where
   type Components AdobeRGB e = (e, e, e)
-  toComponents = toComponents . coerce
+  toComponents = toComponents . unPixelRGB
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName = showsColorModelName . unPixelRGB
 

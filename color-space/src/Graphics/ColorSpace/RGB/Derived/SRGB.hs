@@ -23,15 +23,17 @@ module Graphics.ColorSpace.RGB.Derived.SRGB
   , SRGB.transfer
   , SRGB.itransfer
   , module Graphics.ColorSpace
+  , module Graphics.ColorSpace.CIE1931.Illuminant
   ) where
 
-import Data.Coerce
 import Data.Proxy
 import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace
+import Graphics.ColorSpace.CIE1931.Illuminant
+import Graphics.ColorSpace.RGB.Luma
 import qualified Graphics.ColorSpace.RGB.SRGB as SRGB
 
 
@@ -63,9 +65,9 @@ instance (Illuminant i, Elevator e) => Show (Pixel (SRGB (i :: k)) e) where
 -- | `SRGB` color space (derived)
 instance (Illuminant i, Elevator e) => ColorModel (SRGB (i :: k)) e where
   type Components (SRGB i) e = (e, e, e)
-  toComponents = toComponents . coerce
+  toComponents = toComponents . unPixelRGB
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName = showsColorModelName . unPixelRGB
 
@@ -89,3 +91,9 @@ instance Illuminant i => RedGreenBlue (SRGB i) i where
   {-# INLINE ecctf #-}
   dcctf = fmap SRGB.itransfer
   {-# INLINE dcctf #-}
+
+
+instance Luma (SRGB i) where
+  rWeight = 0.299
+  gWeight = 0.587
+  bWeight = 0.114

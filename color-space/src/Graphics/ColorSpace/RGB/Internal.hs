@@ -43,6 +43,7 @@ import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.Algebra
 import Data.Coerce
 
+
 class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
   -- | RGB primaries that are defined for the RGB color space, while point is defined by
   -- the __@i@__ type parameter
@@ -231,4 +232,6 @@ pixelChromaticity _ = chromaticity
 pixelWhitePoint :: RedGreenBlue cs i => Pixel cs e -> WhitePoint i
 pixelWhitePoint _ = whitePoint
 {-# INLINE pixelWhitePoint #-}
+
+
 

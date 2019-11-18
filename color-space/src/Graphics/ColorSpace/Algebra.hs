@@ -15,6 +15,7 @@ module Graphics.ColorSpace.Algebra
   , fromV3
   , showV3
   , printV3
+  , dotProduct
   , M3x3(..)
   , showM3x3
   , printM3x3
@@ -64,6 +65,14 @@ showM3x3 (M3x3 v0 v1 v2) =
 
 printM3x3 :: Show a => M3x3 a -> IO ()
 printM3x3 = putStrLn . showM3x3
+
+-- | Mulitply a 1x3 vector by a 3x1 vector, i.e. dot product.
+--
+-- @since 0.1.0
+dotProduct :: Num a => V3 a -> V3 a -> a
+dotProduct (V3 u0 u1 u2) (V3 v0 v1 v2) = u0 * v0 + u1 * v1 + u2 * v2
+{-# INLINE dotProduct #-}
+
 
 -- | Mulitply a 3x3 matrix by a 3x1 vector, while getting a vector back.
 --

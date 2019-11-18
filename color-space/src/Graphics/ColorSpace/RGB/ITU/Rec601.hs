@@ -29,12 +29,12 @@ module Graphics.ColorSpace.RGB.ITU.Rec601
   , module Graphics.ColorSpace
   ) where
 
-import Data.Coerce
 import Foreign.Storable
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace
 import Graphics.ColorSpace.RGB.ITU.Rec470 (primaries625)
+import Graphics.ColorSpace.RGB.Luma
 
 -- | International Telecommunication Union - Radiocommunication Sector (ITU-R)
 data Rec601 = D65
@@ -77,9 +77,9 @@ instance Elevator e => Show (Pixel BT601_525 e) where
 -- | ITU-R BT.601 (525) color space
 instance Elevator e => ColorModel BT601_525 e where
   type Components BT601_525 e = (e, e, e)
-  toComponents = toComponents . coerce
+  toComponents = toComponents . unPixelRGB
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName = showsColorModelName . unPixelRGB
 
@@ -136,9 +136,9 @@ instance Elevator e => Show (Pixel BT601_625 e) where
 -- | ITU-R BT.601 (625) color space
 instance Elevator e => ColorModel BT601_625 e where
   type Components BT601_625 e = (e, e, e)
-  toComponents = toComponents . coerce
+  toComponents = toComponents . unPixelRGB
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName = showsColorModelName . unPixelRGB
 
@@ -163,7 +163,15 @@ instance RedGreenBlue BT601_625 'D65 where
   dcctf = fmap itransfer
   {-# INLINE dcctf #-}
 
+instance Luma BT601_525 where
+  rWeight = 0.299
+  gWeight = 0.587
+  bWeight = 0.114
 
+instance Luma BT601_625 where
+  rWeight = 0.299
+  gWeight = 0.587
+  bWeight = 0.114
 
 
 -- | Rec.601 transfer function "gamma". This is a helper function, therefore `ecctf` should be used

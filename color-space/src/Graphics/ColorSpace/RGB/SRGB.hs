@@ -1,4 +1,3 @@
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
@@ -9,6 +8,7 @@
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.ColorSpace.RGB.SRGB
@@ -37,16 +37,15 @@ module Graphics.ColorSpace.RGB.SRGB
   , module Graphics.ColorSpace.RGB.Internal
   ) where
 
-import Data.Coerce
 import Foreign.Storable
-import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Alpha
+import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RGB.Internal
+import Graphics.ColorSpace.RGB.Luma
 import Graphics.ColorSpace.RGB.ITU.Rec709 (Rec601(..), primaries)
-import Graphics.ColorSpace.YUV.YCbCr
 
 
 -- | The most common @sRGB@ color space with the default `D65` illuminant
@@ -107,9 +106,9 @@ instance Elevator e => Show (Pixel SRGB e) where
 -- | s`RGB` color space
 instance Elevator e => ColorModel SRGB e where
   type Components SRGB e = (e, e, e)
-  toComponents = toComponents . coerce
+  toComponents = toComponents . unPixelRGB
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName = showsColorModelName . unPixelRGB
 
@@ -135,6 +134,11 @@ instance RedGreenBlue SRGB 'D65 where
   {-# INLINE ecctf #-}
   dcctf = fmap itransfer
   {-# INLINE dcctf #-}
+
+instance Luma SRGB where
+  rWeight = 0.299
+  gWeight = 0.587
+  bWeight = 0.114
 
 
 -- | sRGB normalized primary matrix. This is a helper definition, use `npm` instead.
@@ -217,30 +221,32 @@ instance ToRGB SRGB where
   toPixelRGB = fmap toRealFloat
   {-# INLINE toPixelRGB #-}
 
-instance ToRGB YCbCr where
-  toPixelRGB = ycbcr2rgb . fmap toRealFloat
-  {-# INLINE toPixelRGB #-}
+-- instance ToRGB YCbCr where
+--   toPixelRGB = ycbcr2rgb . fmap toRealFloat
+--   {-# INLINE toPixelRGB #-}
 
 
-instance ToYCbCr SRGB where
-  toPixelYCbCr = rgb2ycbcr . fmap toRealFloat
-  {-# INLINE toPixelYCbCr #-}
+-- instance ToYCbCr SRGB where
+--   toPixelYCbCr = rgb2ycbcr . fmap toRealFloat
+--   {-# INLINE toPixelYCbCr #-}
 
+-- -- | Source: ITU-T Rec. T.871
+-- ycbcr2rgb :: (Ord e, Floating e) => Pixel YCbCr e -> Pixel SRGB e
+-- ycbcr2rgb (PixelYCbCr y cb cr) = PixelRGB r g b
+--   where
+--     !cb05 = cb - 0.5
+--     !cr05 = cr - 0.5
+--     !r = clamp01 (y                  +   1.402 * cr05)
+--     !g = clamp01 (y - 0.34414 * cb05 - 0.71414 * cr05)
+--     !b = clamp01 (y + 1.772   * cb05)
+-- {-# INLINE ycbcr2rgb #-}
 
-ycbcr2rgb :: Fractional e => Pixel YCbCr e -> Pixel SRGB e
-ycbcr2rgb (PixelYCbCr y cb cr) = PixelRGB r g b
-  where
-    !cb05 = cb - 0.5
-    !cr05 = cr - 0.5
-    !r = y                  +   1.402 * cr05
-    !g = y - 0.34414 * cb05 - 0.71414 * cr05
-    !b = y +   1.772 * cb05
-{-# INLINE ycbcr2rgb #-}
+-- -- | Source: ITU-T Rec. T.871
+-- rgb2ycbcr :: Floating e => Pixel SRGB e -> Pixel YCbCr e
+-- rgb2ycbcr (PixelRGB r g b) = PixelYCbCr y cb cr
+--   where
+--     !y  =          0.299 * r +    0.587 * g +    0.114 * b
+--     !cb = 0.5 - 0.168736 * r - 0.331264 * g +      0.5 * b
+--     !cr = 0.5 +      0.5 * r - 0.418688 * g - 0.081312 * b
+-- {-# INLINE rgb2ycbcr #-}
 
-rgb2ycbcr :: Fractional e => Pixel SRGB e -> Pixel YCbCr e
-rgb2ycbcr (PixelRGB r g b) = PixelYCbCr y cb cr
-  where
-    !y  =          0.299 * r +    0.587 * g +    0.114 * b
-    !cb = 0.5 - 0.168736 * r - 0.331264 * g +      0.5 * b
-    !cr = 0.5 +      0.5 * r - 0.418688 * g - 0.081312 * b
-{-# INLINE rgb2ycbcr #-}

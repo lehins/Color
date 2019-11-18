@@ -23,15 +23,16 @@ module Graphics.ColorSpace.RGB.Derived.AdobeRGB
   , AdobeRGB.transfer
   , AdobeRGB.itransfer
   , module Graphics.ColorSpace
+  , module Graphics.ColorSpace.CIE1931.Illuminant
   ) where
 
-import Data.Coerce
 import Data.Proxy
 import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace
+import Graphics.ColorSpace.CIE1931.Illuminant
 import qualified Graphics.ColorSpace.RGB.AdobeRGB as AdobeRGB
 
 
@@ -63,9 +64,9 @@ instance (Illuminant i, Elevator e) => Show (Pixel (AdobeRGB (i :: k)) e) where
 -- | `AdobeRGB` color space (derived)
 instance (Illuminant i, Elevator e) => ColorModel (AdobeRGB (i :: k)) e where
   type Components (AdobeRGB i) e = (e, e, e)
-  toComponents = toComponents . coerce
+  toComponents = toComponents . unPixelRGB
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName = showsColorModelName . unPixelRGB
 

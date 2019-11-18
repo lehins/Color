@@ -22,17 +22,17 @@ module Graphics.ColorSpace.RGB.ITU.Rec709
   ( Rec601(..)
   , BT709
   , primaries
-  , transfer
-  , itransfer
+  , Rec601.transfer
+  , Rec601.itransfer
   , module Graphics.ColorSpace
   ) where
 
-import Data.Coerce
 import Foreign.Storable
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace
-import Graphics.ColorSpace.RGB.ITU.Rec601 (Rec601(..))
+import Graphics.ColorSpace.RGB.ITU.Rec601 as Rec601 (Rec601(..), transfer, itransfer)
+import Graphics.ColorSpace.RGB.Luma
 
 -- | ITU-R BT.709 color space
 data BT709
@@ -61,9 +61,9 @@ instance Elevator e => Show (Pixel BT709 e) where
 -- | ITU-R BT.709 color space
 instance Elevator e => ColorModel BT709 e where
   type Components BT709 e = (e, e, e)
-  toComponents = toComponents . coerce
+  toComponents = toComponents . unPixelRGB
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName = showsColorModelName . unPixelRGB
 
@@ -83,48 +83,10 @@ instance Elevator e => ColorSpace BT709 e where
 -- | ITU-R BT.709 color space
 instance RedGreenBlue BT709 'D65 where
   chromaticity = primaries
-  ecctf = fmap transfer
+  ecctf = fmap Rec601.transfer
   {-# INLINE ecctf #-}
-  dcctf = fmap itransfer
+  dcctf = fmap Rec601.itransfer
   {-# INLINE dcctf #-}
-
-
-
--- | Rec.709 transfer function "gamma". This is a helper function, therefore `ecctf` should be used
--- instead.
---
--- \[
--- \gamma(L) = \begin{cases}
---     4.500 L & L \le 0.018 \\
---     1.099 L^{0.45} - 0.099 & \text{otherwise}
---   \end{cases}
--- \]
---
--- @since 0.1.0
-transfer :: (Ord a, Floating a) => a -> a
-transfer l
-  | l < 0.018 = 4.5 * l
-  | otherwise = 1.099 * (l ** 0.45 {- ~ 1 / 2.2 -}) - 0.099
-{-# INLINE transfer #-}
-
--- | Rec.709 inverse transfer function "gamma". This is a helper function, therefore `dcctf` should
--- be used instead.
---
--- \[
--- \gamma^{-1}(E) = \begin{cases}
---     E / 4.5 & E \leq gamma(0.018) \\
---     \left(\tfrac{E + 0.099}{1.099}\right)^{\frac{1}{0.45}} & \text{otherwise}
---   \end{cases}
--- \]
---
--- @since 0.1.0
-itransfer :: (Ord a, Floating a) => a -> a
-itransfer e
-  | e < inv0018 = e / 4.5
-  | otherwise = ((e + 0.099) / 1.099) ** (1 / 0.45)
-  where
-    !inv0018 = transfer 0.018 -- ~ 0.081
-{-# INLINE itransfer #-}
 
 
 -- | Primaries for ITU-R BT.709, which are also the primaries for sRGB color space.
@@ -135,3 +97,8 @@ primaries = Chromaticity (Primary 0.64 0.33)
                          (Primary 0.30 0.60)
                          (Primary 0.15 0.06)
 
+
+instance Luma BT709 where
+  rWeight = 0.2126
+  gWeight = 0.7152
+  bWeight = 0.0722
