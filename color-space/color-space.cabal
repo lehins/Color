@@ -48,7 +48,7 @@ library
                      , Graphics.ColorSpace.CIE1931.Illuminant
                      -- , Graphics.ColorSpace.CIE1976.LUV
                      -- , Graphics.ColorSpace.CIE1976.LAB.LCH
-                     -- , Graphics.ColorSpace.CIE1976.LAB
+                     , Graphics.ColorSpace.CIE1976.LAB
                      -- , Graphics.ColorSpace.CIE1976.LAB.HLC
                      -- , Graphics.ColorSpace.CIE1976.Illuminants
                      , Graphics.ColorSpace.RGB
