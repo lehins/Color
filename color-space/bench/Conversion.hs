@@ -14,6 +14,7 @@ import Graphics.ColorModel
 import Graphics.ColorSpace
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.RGB
+import Graphics.ColorSpace.CIE1931.Illuminant
 import qualified Graphics.ColorSpace.RGB.Derived.SRGB as Derived
 
 import qualified Data.Colour as Colour

@@ -8,9 +8,7 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace.CIE1931.XYZ
-  ( pattern PixelXYZ
-  , XYZ
-  , module Graphics.ColorSpace.Internal
+  ( module Graphics.ColorSpace.Internal
   ) where
 
 import Graphics.ColorSpace.Internal

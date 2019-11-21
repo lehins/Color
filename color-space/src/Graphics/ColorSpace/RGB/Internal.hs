@@ -29,8 +29,10 @@ module Graphics.ColorSpace.RGB.Internal
   , xyz2rgb
   , rgbLuminocity
   , NPM(..)
+  , npmApply
   , npmDerive
   , INPM(..)
+  , inpmApply
   , inpmDerive
   , pixelChromaticity
   , pixelWhitePoint
@@ -68,23 +70,6 @@ class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
   inpm :: (Elevator a, RealFloat a) => INPM cs i a
   inpm = inpmDerive chromaticity
 
-  -- | Linear transformation of a pixel in a linear RGB color space into XYZ color space
-  npmApply :: forall a . (Elevator a, RealFloat a) => Pixel cs a -> Pixel XYZ a
-  npmApply = coerce . multM3x3byV3 (unNPM (npm :: NPM cs i a)) . coerce . unPixelRGB
-  {-# INLINE npmApply #-}
-
-  -- | Linear transformation of a pixel in XYZ color space into a linear RGB color space
-  inpmApply :: forall a . (Elevator a, RealFloat a) => Pixel XYZ a -> Pixel cs a
-  inpmApply = mkPixelRGB . coerce . multM3x3byV3 (unINPM (inpm :: INPM cs i a)) . coerce
-  {-# INLINE inpmApply #-}
-
-  -- | Linear transformation of a pixel in a linear luminocity, i.e. the Y component of
-  -- XYZ color space
-  npmApplyLuminocity :: forall a . (Elevator a, RealFloat a) => Pixel cs a -> Pixel Y a
-  npmApplyLuminocity px =
-    coerce (m3x3row1 (unNPM (npm :: NPM cs i a)) `dotProduct` coerce (unPixelRGB px))
-  {-# INLINE npmApplyLuminocity #-}
-
   -- | Lift RGB color model into a RGB color space
   mkPixelRGB :: Pixel CM.RGB e -> Pixel cs e
   default mkPixelRGB ::
@@ -107,17 +92,71 @@ data Chromaticity cs i where
 deriving instance Eq (Chromaticity cs i)
 deriving instance Show (Chromaticity cs i)
 
+-- | Linear transformation of a pixel in a linear RGB color space into XYZ color space
+--
+-- ==== __Examples__
+--
+-- This example depicts the fact that even in @ghci@ when @npm@ is instantiated to a
+-- concrete type, despite being derived it is memoized and gets computed only once.
+--
+-- >>> :set -XDataKinds
+-- >>> import Debug.Trace
+-- >>> import Graphics.ColorSpace.RGB.Derived.SRGB
+-- >>> :{
+-- srgbFromLinear :: Pixel (SRGB 'D65) Float -> Pixel XYZ Float
+-- srgbFromLinear = npmApply npm'
+--   where npm' = trace "Evaluated only once!!!" npm :: NPM (SRGB 'D65) 'D65 Float
+-- :}
+-- 
+-- >>> srgbFromLinear $ PixelRGB 0.1 0.2 0.3
+-- <XYZ:(Evaluated only once!!!
+--  0.166888, 0.185953, 0.310856)>
+-- >>> srgbFromLinear $ PixelRGB 0.1 0.2 0.3
+-- <XYZ:( 0.166888, 0.185953, 0.310856)>
+--
+-- Here is a comparison with a non-liner sRGB conversion:
+--
+-- >>> rgb = PixelRGB 0.1 0.2 0.3 :: Pixel (SRGB 'D65) Float
+-- >>> npmApply npm (dcctf rgb) :: Pixel XYZ Float {- non-linear transformation -}
+-- <XYZ:( 0.029186, 0.031093, 0.073737)>
+-- >>> toPixelXYZ rgb :: Pixel XYZ Float           {- non-linear transformation -}
+-- <XYZ:( 0.029186, 0.031093, 0.073737)>
+--
+--
+-- @since 0.1.0
+npmApply :: (RedGreenBlue cs i, Elevator a) => NPM cs i a -> Pixel cs a -> Pixel XYZ a
+npmApply (NPM npm') = coerce . multM3x3byV3 npm' . coerce . unPixelRGB
+{-# INLINE npmApply #-}
+
+-- | Linear transformation of a pixel in XYZ color space into a linear RGB color space
+--
+-- @since 0.1.0
+inpmApply ::
+     (RedGreenBlue cs i, Elevator a) => INPM cs i a -> Pixel XYZ a -> Pixel cs a
+inpmApply (INPM inpm') = mkPixelRGB . coerce . multM3x3byV3 inpm' . coerce
+{-# INLINE inpmApply #-}
+
+-- | Linear transformation of a pixel in a linear luminocity, i.e. the Y component of
+-- XYZ color space
+npmApplyLuminocity ::
+     forall cs i a. (RedGreenBlue cs i, Elevator a, RealFloat a)
+  => Pixel cs a
+  -> Pixel Y a
+npmApplyLuminocity px =
+  coerce (m3x3row1 (unNPM (npm :: NPM cs i a)) `dotProduct` coerce (unPixelRGB px))
+{-# INLINE npmApplyLuminocity #-}
+
 
 rgbLuminocity :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel cs e -> Pixel Y e
 rgbLuminocity = npmApplyLuminocity . dcctf
 {-# INLINE rgbLuminocity #-}
 
 rgb2xyz :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel cs e -> Pixel XYZ e
-rgb2xyz = npmApply . dcctf
+rgb2xyz = npmApply npm . dcctf
 {-# INLINE rgb2xyz #-}
 
 xyz2rgb :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel XYZ e -> Pixel cs e
-xyz2rgb = ecctf . inpmApply
+xyz2rgb = ecctf . inpmApply inpm
 {-# INLINE xyz2rgb #-}
 
 
