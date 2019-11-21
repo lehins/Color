@@ -28,12 +28,14 @@ module Graphics.ColorSpace.Internal
   , primaryXYZ
   , WhitePoint(..)
   , Tristimulus(..)
-  , tristimulus
+  , normalTristimulus
   , zWhitePoint
   , whitePointXZ
   , whitePointXYZ
   , Illuminant(..)
+  , CCT(..)
   , XYZ
+  , module GHC.TypeNats
   , pattern PixelXYZ
   , pattern PixelXYZA
   ) where
@@ -44,6 +46,7 @@ import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Y
 import Graphics.ColorSpace.Algebra
 import Data.Typeable
+import GHC.TypeNats
 
 class ColorModel cs e => ColorSpace cs e where
   type BaseColorSpace cs :: *
@@ -82,12 +85,21 @@ class ColorModel cs e => ColorSpace cs e where
 -- WhitePoint --
 ----------------
 
-class (Typeable i, Typeable k) => Illuminant (i :: k)
-  where
+-- | Correlated color temperature (CCT) of a white point in Kelvin
+newtype CCT (i :: k) = CCT
+  { unCCT :: Double
+  } deriving (Eq, Show)
+
+class (Typeable i, Typeable k, KnownNat (Temperature i)) => Illuminant (i :: k) where
+  type Temperature i :: n
   whitePoint :: WhitePoint i
 
-tristimulus :: forall i e. (Illuminant i, Elevator e, RealFloat e) => Tristimulus i e
-tristimulus = Tristimulus (toRealFloat <$> PixelXYZ (wx / wy) 1 ((1 - wx - wy) / wy))
+  colorTemperature :: CCT i
+  colorTemperature = CCT (fromIntegral (natVal (Proxy :: Proxy (Temperature i))))
+
+
+normalTristimulus :: forall i e. (Illuminant i, Elevator e, RealFloat e) => Tristimulus i e
+normalTristimulus = Tristimulus (toRealFloat <$> PixelXYZ (wx / wy) 1 ((1 - wx - wy) / wy))
   where
     WhitePoint wx wy = whitePoint :: WhitePoint i
 

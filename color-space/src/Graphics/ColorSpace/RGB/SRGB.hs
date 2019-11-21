@@ -1,4 +1,3 @@
-{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -26,7 +25,6 @@ module Graphics.ColorSpace.RGB.SRGB
   , pattern PixelRGB64
   , pattern PixelRGBF
   , pattern PixelRGBD
-  , ToRGB(..)
   , primaries
   , npmStandard
   , inpmStandard
@@ -207,47 +205,3 @@ itransfer u
   | u <= 0.04045 = u / 12.92
   | otherwise = ((u + 0.055) / 1.055) ** 2.4
 {-# INLINE itransfer #-}
-
--- | Conversion to s`RGB` color space.
-class ToRGB cs where
-
-  -- | Convert to an s`RGB` pixel.
-  toPixelRGB :: (Elevator e, Elevator a, RealFloat a) => Pixel cs e -> Pixel SRGB a
-  -- | Convert to an s`RGB` pixel with alpha channel
-  toPixelRGBA :: (Elevator e, Elevator a, RealFloat a) => Pixel cs e -> Pixel (Alpha SRGB) a
-  toPixelRGBA = (`addAlpha` 1) . toPixelRGB
-  {-# INLINE toPixelRGBA #-}
-
-instance ToRGB SRGB where
-  toPixelRGB = fmap toRealFloat
-  {-# INLINE toPixelRGB #-}
-
--- instance ToRGB YCbCr where
---   toPixelRGB = ycbcr2rgb . fmap toRealFloat
---   {-# INLINE toPixelRGB #-}
-
-
--- instance ToYCbCr SRGB where
---   toPixelYCbCr = rgb2ycbcr . fmap toRealFloat
---   {-# INLINE toPixelYCbCr #-}
-
--- -- | Source: ITU-T Rec. T.871
--- ycbcr2rgb :: (Ord e, Floating e) => Pixel YCbCr e -> Pixel SRGB e
--- ycbcr2rgb (PixelYCbCr y cb cr) = PixelRGB r g b
---   where
---     !cb05 = cb - 0.5
---     !cr05 = cr - 0.5
---     !r = clamp01 (y                  +   1.402 * cr05)
---     !g = clamp01 (y - 0.34414 * cb05 - 0.71414 * cr05)
---     !b = clamp01 (y + 1.772   * cb05)
--- {-# INLINE ycbcr2rgb #-}
-
--- -- | Source: ITU-T Rec. T.871
--- rgb2ycbcr :: Floating e => Pixel SRGB e -> Pixel YCbCr e
--- rgb2ycbcr (PixelRGB r g b) = PixelYCbCr y cb cr
---   where
---     !y  =          0.299 * r +    0.587 * g +    0.114 * b
---     !cb = 0.5 - 0.168736 * r - 0.331264 * g +      0.5 * b
---     !cr = 0.5 +      0.5 * r - 0.418688 * g - 0.081312 * b
--- {-# INLINE rgb2ycbcr #-}
-

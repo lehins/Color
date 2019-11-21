@@ -6,7 +6,7 @@
 module Graphics.ColorSpace.CIE1976.LABSpec (spec) where
 
 import Graphics.ColorSpace.Common
-import Graphics.ColorSpace.CIE1931.Illuminant
+import Graphics.ColorSpace.CIE1931.Illuminant as I2
 import Graphics.ColorSpace.CIE1976.LAB
 
 

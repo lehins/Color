@@ -41,10 +41,14 @@ data Rec470
   -- the one defined by CIE1931 and the one in Rec.601, thus a separate daclaration in here.
 
 -- | @[x=0.310, y=0.316]@ - /Rec. ITU-R BT.470-7/
-instance Illuminant 'C where whitePoint = WhitePoint 0.310 0.316
+instance Illuminant 'C where
+  type Temperature 'C = 6774
+  whitePoint = WhitePoint 0.310 0.316
 
 -- | @[x=0.313, y=0.329]@ - /Rec. ITU-R BT.470-7/
-instance Illuminant 'D65 where whitePoint = WhitePoint 0.313 0.329
+instance Illuminant 'D65 where
+  type Temperature 'D65 = 6504
+  whitePoint = WhitePoint 0.313 0.329
 
 ------------------------------------
 -- ITU-R BT.470 (525) --------------

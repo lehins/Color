@@ -1,3 +1,5 @@
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE DataKinds #-}
 -- |
@@ -10,179 +12,276 @@
 --
 module Graphics.ColorSpace.CIE1931.Illuminant
   ( CIE1931(..)
-  , ACES(..)
   , wavelengths
+  , rectifyColorTemperature
   ) where
 
 import Graphics.ColorSpace.Algebra
-import Graphics.ColorSpace.Internal (Illuminant(..), WhitePoint(..))
+import Graphics.ColorSpace.Internal (Illuminant(..), WhitePoint(..), CCT(..))
+
+rectifyColorTemperature ::
+     Int
+  -- ^ Original temperature
+  -> Double
+  -- ^ Original radiation constant c2
+  -> CCT (i :: k)
+rectifyColorTemperature cct c2 = CCT (fromIntegral cct * 1.4388 / c2)
+
 
 -- | @[x=0.44758, y=0.40745]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'A   where whitePoint = WhitePoint 0.44758 0.40745
+instance Illuminant 'A   where
+  type Temperature 'A = 2856
+  whitePoint = WhitePoint 0.44758 0.40745
+  colorTemperature = rectifyColorTemperature 2848 1.4350
 
 -- | @[x=0.34842, y=0.35161]@ - CIE 1931 2° Observer -
 -- /https://www.colour-science.org/
-instance Illuminant 'B   where whitePoint = WhitePoint 0.34842 0.35161
+instance Illuminant 'B   where
+  type Temperature 'B = 4874
+  whitePoint = WhitePoint 0.34842 0.35161
 
 -- | @[x=0.31006, y=0.31616]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'C   where whitePoint = WhitePoint 0.31006 0.31616
+instance Illuminant 'C   where
+  type Temperature 'C = 6774
+  whitePoint = WhitePoint 0.31006 0.31616
 
 -- | @[x=0.34567, y=0.35851]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'D50 where whitePoint = WhitePoint 0.34567 0.35851
+instance Illuminant 'D50 where
+  type Temperature 'D50 = 5003
+  whitePoint = WhitePoint 0.34567 0.35851
+  colorTemperature = rectifyColorTemperature 5000 1.4380
 
 -- | @[x=0.33243, y=0.34744]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'D55 where whitePoint = WhitePoint 0.33243 0.34744
+instance Illuminant 'D55 where
+  type Temperature 'D55 = 5503
+  whitePoint = WhitePoint 0.33243 0.34744
+  colorTemperature = rectifyColorTemperature 5500 1.4380
 
 -- | @[x=0.32163, y=0.33774]@ - CIE 1931 2° Observer -
 -- /https://www.colour-science.org (rounded to 5 decimal points)/
-instance Illuminant 'D60 where whitePoint = WhitePoint 0.32163 0.33774
+instance Illuminant 'D60 where
+  type Temperature 'D60 = 6003
+  whitePoint = WhitePoint 0.32163 0.33774
+  colorTemperature = rectifyColorTemperature 6000 1.4380
 
 -- | @[x=0.31272, y=0.32903]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'D65 where whitePoint = WhitePoint 0.31272 0.32903
+instance Illuminant 'D65 where
+  type Temperature 'D65 = 6504
+  whitePoint = WhitePoint 0.31272 0.32903
+  colorTemperature = rectifyColorTemperature 6500 1.4380
 
 -- | @[x=0.29903, y=0.31488]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'D75 where whitePoint = WhitePoint 0.29903 0.31488
+instance Illuminant 'D75 where
+  type Temperature 'D75 = 7504
+  whitePoint = WhitePoint 0.29903 0.31488
+  colorTemperature = rectifyColorTemperature 7500 1.4380
 
 -- | @[x=1/3, y=1/3]@ - CIE 1931 2° Observer -
 -- /https://www.colour-science.org/
-instance Illuminant 'E   where whitePoint = WhitePoint (1 / 3) (1 / 3)
+instance Illuminant 'E   where
+  type Temperature 'E = 5454
+  whitePoint = WhitePoint (1 / 3) (1 / 3)
 
 
 -- | @[x=0.31310, y=0.33710]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL1  where whitePoint = WhitePoint 0.31310 0.33710
+instance Illuminant 'FL1  where
+  type Temperature 'FL1 = 6430
+  whitePoint = WhitePoint 0.31310 0.33710
 
 -- | @[x=0.37210, y=0.37510]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL2  where whitePoint = WhitePoint 0.37210 0.37510
+instance Illuminant 'FL2  where
+  type Temperature 'FL2 = 4230
+  whitePoint = WhitePoint 0.37210 0.37510
 
 -- | @[x=0.40910, y=0.39410]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3  where whitePoint = WhitePoint 0.40910 0.39410
+instance Illuminant 'FL3  where
+  type Temperature 'FL3 = 3450
+  whitePoint = WhitePoint 0.40910 0.39410
 
 -- | @[x=0.44020, y=0.40310]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL4  where whitePoint = WhitePoint 0.44020 0.40310
+instance Illuminant 'FL4  where
+  type Temperature 'FL4 = 2940
+  whitePoint = WhitePoint 0.44020 0.40310
 
 -- | @[x=0.31380, y=0.34520]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL5  where whitePoint = WhitePoint 0.31380 0.34520
+instance Illuminant 'FL5  where
+  type Temperature 'FL5 = 6350
+  whitePoint = WhitePoint 0.31380 0.34520
 
 -- | @[x=0.37790, y=0.38820]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL6  where whitePoint = WhitePoint 0.37790 0.38820
+instance Illuminant 'FL6  where
+  type Temperature 'FL6 = 4150
+  whitePoint = WhitePoint 0.37790 0.38820
 
 -- | @[x=0.31290, y=0.32920]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL7  where whitePoint = WhitePoint 0.31290 0.32920
+instance Illuminant 'FL7  where
+  type Temperature 'FL7 = 6500
+  whitePoint = WhitePoint 0.31290 0.32920
 
 -- | @[x=0.34580, y=0.35860]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL8  where whitePoint = WhitePoint 0.34580 0.35860
+instance Illuminant 'FL8  where
+  type Temperature 'FL8 = 5000
+  whitePoint = WhitePoint 0.34580 0.35860
 
 -- | @[x=0.37410, y=0.37270]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL9  where whitePoint = WhitePoint 0.37410 0.37270
+instance Illuminant 'FL9  where
+  type Temperature 'FL9 = 4150
+  whitePoint = WhitePoint 0.37410 0.37270
 
 -- | @[x=0.34580, y=0.35880]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL10 where whitePoint = WhitePoint 0.34580 0.35880
+instance Illuminant 'FL10 where
+  type Temperature 'FL10 = 5000
+  whitePoint = WhitePoint 0.34580 0.35880
 
 -- | @[x=0.38050, y=0.37690]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL11 where whitePoint = WhitePoint 0.38050 0.37690
+instance Illuminant 'FL11 where
+  type Temperature 'FL11 = 4000
+  whitePoint = WhitePoint 0.38050 0.37690
 
 -- | @[x=0.43700, y=0.40420]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL12 where whitePoint = WhitePoint 0.43700 0.40420
+instance Illuminant 'FL12 where
+  type Temperature 'FL12 = 3000
+  whitePoint = WhitePoint 0.43700 0.40420
 
 
 -- | @[x=0.44070, y=0.40330]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_1 where whitePoint = WhitePoint 0.44070 0.40330
+instance Illuminant 'FL3_1 where
+  type Temperature 'FL3_1 = 2932
+  whitePoint = WhitePoint 0.44070 0.40330
 
 -- | @[x=0.38080, y=0.37340]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_2 where whitePoint = WhitePoint 0.38080 0.37340
+instance Illuminant 'FL3_2 where
+  type Temperature 'FL3_2 = 3965
+  whitePoint = WhitePoint 0.38080 0.37340
 
 -- | @[x=0.31530, y=0.34390]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_3 where whitePoint = WhitePoint 0.31530 0.34390
+instance Illuminant 'FL3_3 where
+  type Temperature 'FL3_3 = 6280
+  whitePoint = WhitePoint 0.31530 0.34390
 
 -- | @[x=0.44290, y=0.40430]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_4 where whitePoint = WhitePoint 0.44290 0.40430
+instance Illuminant 'FL3_4 where
+  type Temperature 'FL3_4 = 2904
+  whitePoint = WhitePoint 0.44290 0.40430
 
 -- | @[x=0.37490, y=0.36720]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_5 where whitePoint = WhitePoint 0.37490 0.36720
+instance Illuminant 'FL3_5 where
+  type Temperature 'FL3_5 = 4086
+  whitePoint = WhitePoint 0.37490 0.36720
 
 -- | @[x=0.34880, y=0.36000]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_6 where whitePoint = WhitePoint 0.34880 0.36000
+instance Illuminant 'FL3_6 where
+  type Temperature 'FL3_6 = 4894
+  whitePoint = WhitePoint 0.34880 0.36000
 
 -- | @[x=0.43840, y=0.40450]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_7 where whitePoint = WhitePoint 0.43840 0.40450
+instance Illuminant 'FL3_7 where
+  type Temperature 'FL3_7 = 2979
+  whitePoint = WhitePoint 0.43840 0.40450
 
 -- | @[x=0.38200, y=0.38320]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_8 where whitePoint = WhitePoint 0.38200 0.38320
+instance Illuminant 'FL3_8 where
+  type Temperature 'FL3_8 = 4006
+  whitePoint = WhitePoint 0.38200 0.38320
 
 -- | @[x=0.34990, y=0.35910]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_9 where whitePoint = WhitePoint 0.34990 0.35910
+instance Illuminant 'FL3_9 where
+  type Temperature 'FL3_9 = 4853
+  whitePoint = WhitePoint 0.34990 0.35910
 
 -- | @[x=0.34550, y=0.35600]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_10 where whitePoint = WhitePoint 0.34550 0.35600
+instance Illuminant 'FL3_10 where
+  type Temperature 'FL3_10 = 5000
+  whitePoint = WhitePoint 0.34550 0.35600
 
 -- | @[x=0.32450, y=0.34340]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_11 where whitePoint = WhitePoint 0.32450 0.34340
+instance Illuminant 'FL3_11 where
+  type Temperature 'FL3_11 = 5854
+  whitePoint = WhitePoint 0.32450 0.34340
 
 -- | @[x=0.43770, y=0.40370]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_12 where whitePoint = WhitePoint 0.43770 0.40370
+instance Illuminant 'FL3_12 where
+  type Temperature 'FL3_12 = 2984
+  whitePoint = WhitePoint 0.43770 0.40370
 
 -- | @[x=0.38300, y=0.37240]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_13 where whitePoint = WhitePoint 0.38300 0.37240
+instance Illuminant 'FL3_13 where
+  type Temperature 'FL3_13 = 3896
+  whitePoint = WhitePoint 0.38300 0.37240
 
 -- | @[x=0.34470, y=0.36090]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_14 where whitePoint = WhitePoint 0.34470 0.36090
+instance Illuminant 'FL3_14 where
+  type Temperature 'FL3_14 = 5045
+  whitePoint = WhitePoint 0.34470 0.36090
 
 -- | @[x=0.31270, y=0.32880]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'FL3_15 where whitePoint = WhitePoint 0.31270 0.32880
+instance Illuminant 'FL3_15 where
+  type Temperature 'FL3_15 = 6509
+  whitePoint = WhitePoint 0.31270 0.32880
 
 
 -- | @[x=0.53300, y=0.41500]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'HP1  where whitePoint = WhitePoint 0.53300 0.41500
+instance Illuminant 'HP1  where
+  type Temperature 'HP1 = 1959
+  whitePoint = WhitePoint 0.53300 0.41500
 
 -- | @[x=0.47780, y=0.41580]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'HP2  where whitePoint = WhitePoint 0.47780 0.41580
+instance Illuminant 'HP2  where
+  type Temperature 'HP2 = 2506
+  whitePoint = WhitePoint 0.47780 0.41580
 
 -- | @[x=0.43020, y=0.40750]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'HP3  where whitePoint = WhitePoint 0.43020 0.40750
+instance Illuminant 'HP3  where
+  type Temperature 'HP3 = 3144
+  whitePoint = WhitePoint 0.43020 0.40750
 
 -- | @[x=0.38120, y=0.37970]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'HP4  where whitePoint = WhitePoint 0.38120 0.37970
+instance Illuminant 'HP4  where
+  type Temperature 'HP4 = 4002
+  whitePoint = WhitePoint 0.38120 0.37970
 
 -- | @[x=0.37760, y=0.37130]@ - CIE 1931 2° Observer -
 -- /CIE15: Technical Report: Colorimetry, 3rd edition/
-instance Illuminant 'HP5  where whitePoint = WhitePoint 0.37760 0.37130
+instance Illuminant 'HP5  where
+  type Temperature 'HP5 = 4039
+  whitePoint = WhitePoint 0.37760 0.37130
 
 
 -- | CIE 1931 2° observer illuminants
@@ -284,15 +383,15 @@ data CIE1931
   -- ^ High pressure metal halide lamp
   | HP5
   -- ^ High pressure metal halide lamp
-  deriving (Eq, Show)
+  deriving (Eq, Show, Enum)
 
--- | Academy Color Encoding System
-data ACES =
-  ACES
-  deriving (Eq, Show)
+-- -- | Academy Color Encoding System
+-- data ACES =
+--   ACES
+--   deriving (Eq, Show)
 
-instance Illuminant 'ACES where
-  whitePoint = WhitePoint 0.32168 0.33767
+-- instance Illuminant 'ACES where
+--   whitePoint = WhitePoint 0.32168 0.33767
 
 
 -- Move into it's own module
