@@ -113,10 +113,12 @@ deriving instance Show (Chromaticity cs i)
 --  0.166888, 0.185953, 0.310856)>
 -- >>> srgbFromLinear $ PixelRGB 0.1 0.2 0.3
 -- <XYZ:( 0.166888, 0.185953, 0.310856)>
+-- >>> rgb = PixelRGB 0.1 0.2 0.3 :: Pixel (SRGB 'D65) Float
+-- >>> npmApply npm rgb :: Pixel XYZ Float
+-- <XYZ:( 0.166888, 0.185953, 0.310856)>
 --
 -- Here is a comparison with a non-liner sRGB conversion:
 --
--- >>> rgb = PixelRGB 0.1 0.2 0.3 :: Pixel (SRGB 'D65) Float
 -- >>> npmApply npm (dcctf rgb) :: Pixel XYZ Float {- non-linear transformation -}
 -- <XYZ:( 0.029186, 0.031093, 0.073737)>
 -- >>> toPixelXYZ rgb :: Pixel XYZ Float           {- non-linear transformation -}
