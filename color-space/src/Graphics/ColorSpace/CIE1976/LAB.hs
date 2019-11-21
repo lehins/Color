@@ -8,7 +8,6 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.ColorSpace.CIE1976.LAB
@@ -93,8 +92,8 @@ instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (LAB (i :: k)) e 
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  -- toPixelY = rgbLuminocity . fmap toRealFloat
-  -- {-# INLINE toPixelY #-}
+  toPixelY (PixelLAB l' _ _) = PixelY (ift (scaleLightness l'))
+  {-# INLINE toPixelY #-}
   toPixelXYZ = lab2xyz
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = xyz2lab
@@ -107,11 +106,16 @@ lab2xyz ::
   -> Pixel XYZ a
 lab2xyz (PixelLAB l' a' b') = PixelXYZ x y z
   where
-    !wp = whitePoint :: WhitePoint i
-    !l = (toRealFloat l' + 16) / 116
-    !x = toRealFloat (xWhitePoint wp / yWhitePoint wp) * ift (l + toRealFloat a' / 500)
+    !(Tristimulus (PixelXYZ wx _ wz)) = tristimulus :: Tristimulus i a
+    !l = scaleLightness l'
+    !x = wx * ift (l + toRealFloat a' / 500)
     !y = ift l
-    !z = toRealFloat (zWhitePoint wp / yWhitePoint wp) * ift (l - toRealFloat b' / 200)
+    !z = wz * ift (l - toRealFloat b' / 200)
+{-# INLINE lab2xyz #-}
+
+scaleLightness :: (Elevator e, Elevator a, RealFloat a) => e -> a
+scaleLightness l' = (toRealFloat l' + 16) / 116
+{-# INLINE scaleLightness #-}
 
 ift :: (Fractional a, Ord a) => a -> a
 ift t
@@ -126,19 +130,19 @@ xyz2lab ::
   -> Pixel (LAB (i :: k)) e
 xyz2lab (PixelXYZ x y z) = PixelLAB l' a' b'
   where
-    !wp = whitePoint :: WhitePoint i
-    PixelXYZ wx _ wz = whitePointXYZ wp
-    !fx = ft (toRealFloat x / toRealFloat wx)
+    !(Tristimulus (PixelXYZ wx _ wz)) = tristimulus :: Tristimulus i e
+    !fx = ft (toRealFloat x / wx)
     !fy = ft (toRealFloat y)
-    !fz = ft (toRealFloat z / toRealFloat wz)
+    !fz = ft (toRealFloat z / wz)
     !l' = 116 * fy - 16
     !a' = 500 * (fx - fy)
     !b' = 200 * (fy - fz)
+{-# INLINE xyz2lab #-}
 
 ft :: RealFloat a => a -> a
 ft t
   | t > t0 = t ** (1 / 3)
-  | otherwise = t / m + 4 / 29
+  | otherwise = t * m + 4 / 29
 {-# INLINE ft #-}
 
 m :: RealFloat a => a

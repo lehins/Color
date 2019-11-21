@@ -27,7 +27,6 @@ module Graphics.ColorSpace.RGB.SRGB
   , pattern PixelRGBF
   , pattern PixelRGBD
   , ToRGB(..)
-  , Rec601(..)
   , primaries
   , npmStandard
   , inpmStandard

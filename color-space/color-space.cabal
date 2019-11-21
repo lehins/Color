@@ -113,6 +113,7 @@ test-suite tests
                     , Graphics.ColorModel.RGBSpec
                     , Graphics.ColorSpace.Common
                     , Graphics.ColorSpace.CIE1931.IlluminantSpec
+                    , Graphics.ColorSpace.CIE1976.LABSpec
                     , Graphics.ColorSpace.RGB.SRGBSpec
                     , Graphics.ColorSpace.RGB.Derived.SRGBSpec
                     , Graphics.ColorSpace.RGB.ITU.Rec709Spec
@@ -125,6 +126,7 @@ test-suite tests
                     , colour
                     , hspec
                     , random
+                    , vector
 
   default-language:   Haskell2010
   ghc-options:        -Wall

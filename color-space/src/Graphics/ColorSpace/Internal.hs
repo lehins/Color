@@ -1,15 +1,16 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE AllowAmbiguousTypes #-}
 -- |
 -- Module      : Graphics.ColorSpace.Internal
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
@@ -26,6 +27,8 @@ module Graphics.ColorSpace.Internal
   , primaryXZ
   , primaryXYZ
   , WhitePoint(..)
+  , Tristimulus(..)
+  , tristimulus
   , zWhitePoint
   , whitePointXZ
   , whitePointXYZ
@@ -79,13 +82,23 @@ class ColorModel cs e => ColorSpace cs e where
 -- WhitePoint --
 ----------------
 
-class (Typeable i, Typeable k) => Illuminant (i :: k) where
+class (Typeable i, Typeable k) => Illuminant (i :: k)
+  where
   whitePoint :: WhitePoint i
+
+tristimulus :: forall i e. (Illuminant i, Elevator e, RealFloat e) => Tristimulus i e
+tristimulus = Tristimulus (toRealFloat <$> PixelXYZ (wx / wy) 1 ((1 - wx - wy) / wy))
+  where
+    WhitePoint wx wy = whitePoint :: WhitePoint i
 
 data WhitePoint (i :: k) = WhitePoint
   { xWhitePoint :: {-# UNPACK #-}!Double
   , yWhitePoint :: {-# UNPACK #-}!Double
   } deriving (Eq, Show)
+
+newtype Tristimulus i e = Tristimulus (Pixel XYZ e)
+  deriving (Show, Eq, Ord, Functor, Applicative)
+
 
 zWhitePoint :: WhitePoint i -> Double
 zWhitePoint wp = 1 - xWhitePoint wp - yWhitePoint wp
