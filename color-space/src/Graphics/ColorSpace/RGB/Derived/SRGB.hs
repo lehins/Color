@@ -36,7 +36,6 @@ import Graphics.ColorSpace.CIE1931.Illuminant
 import Graphics.ColorSpace.RGB.Luma
 import qualified Graphics.ColorSpace.RGB.SRGB as SRGB
 
-
 -- | The most common @sRGB@ color space with an arbitrary illuminant
 data SRGB (i :: k)
 

@@ -7,9 +7,9 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace
-  ( module Graphics.ColorSpace.Internal
-  , module Graphics.ColorSpace.RGB.Internal
+  ( module X
   ) where
 
-import Graphics.ColorSpace.Internal
-import Graphics.ColorSpace.RGB.Internal
+import Graphics.ColorModel as X
+import Graphics.ColorSpace.Internal as X
+import Graphics.ColorSpace.RGB.Internal as X

@@ -22,7 +22,7 @@
 module Graphics.ColorSpace.RGB.Alternative.HSV
   ( pattern PixelHSV
   , pattern PixelHSVA
-  , pattern PixelH360SI
+  , pattern PixelH360SV
   , HSV
   , Pixel(HSV)
   , module Graphics.ColorSpace
@@ -75,10 +75,10 @@ pattern PixelHSVA h s i a = Alpha (HSV (CM.PixelHSV h s i)) a
 -- | Constructor for an RGB color space in an alternative HSV color model. Difference from
 -- `PixelHSV` is that the hue is specified in 0 to 360 degree range, rather than 0 to
 -- 1. Note, that this is not checked.
-pattern PixelH360SI :: RealFloat e => e -> e -> e -> Pixel (HSV cs) e
-pattern PixelH360SI h s i <- PixelHSV ((* 360) -> h) s i where
-        PixelH360SI h s i = PixelHSV (h / 360) s i
-{-# COMPLETE PixelH360SI #-}
+pattern PixelH360SV :: RealFloat e => e -> e -> e -> Pixel (HSV cs) e
+pattern PixelH360SV h s i <- PixelHSV ((* 360) -> h) s i where
+        PixelH360SV h s i = PixelHSV (h / 360) s i
+{-# COMPLETE PixelH360SV #-}
 
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel cs e => ColorModel (HSV cs) e where

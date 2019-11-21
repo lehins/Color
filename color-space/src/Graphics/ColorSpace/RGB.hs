@@ -1,3 +1,4 @@
+{-# LANGUAGE PatternSynonyms #-}
 -- |
 -- Module      : Graphics.ColorSpace.RGB
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
@@ -6,10 +7,25 @@
 -- Stability   : experimental
 -- Portability : non-portable
 --
+
 module Graphics.ColorSpace.RGB
-  ( module Graphics.ColorSpace.RGB.SRGB
-  , module Graphics.ColorSpace.RGB.Internal
+  ( -- * Default sRGB color space
+    pattern PixelRGB8
+  , pattern PixelRGB16
+  , pattern PixelRGB32
+  , pattern PixelRGB64
+  , pattern PixelRGBF
+  , pattern PixelRGBD
+  , SRGB
+  -- * Re-exports
+  , module Graphics.ColorSpace
+  , module Graphics.ColorSpace.RGB.Alternative
+  , module Graphics.ColorSpace.RGB.Luma
   ) where
 
-import Graphics.ColorSpace.RGB.SRGB
-import Graphics.ColorSpace.RGB.Internal
+import Graphics.ColorSpace
+import Graphics.ColorSpace.RGB.Alternative
+import Graphics.ColorSpace.RGB.Luma
+import Graphics.ColorSpace.RGB.SRGB (pattern PixelRGB16, pattern PixelRGB32,
+                                     pattern PixelRGB64, pattern PixelRGB8,
+                                     pattern PixelRGBD, pattern PixelRGBF, SRGB)

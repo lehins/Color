@@ -1,5 +1,3 @@
-{-# LANGUAGE BangPatterns #-}
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -9,6 +7,7 @@
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.ColorSpace.RGB.ITU.Rec709
@@ -31,7 +30,8 @@ import Foreign.Storable
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace
-import Graphics.ColorSpace.RGB.ITU.Rec601 as Rec601 (Rec601(..), transfer, itransfer)
+import Graphics.ColorSpace.RGB.ITU.Rec601 as Rec601 (Rec601(..), itransfer,
+                                                     transfer)
 import Graphics.ColorSpace.RGB.Luma
 
 -- | ITU-R BT.709 color space

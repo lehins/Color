@@ -1,4 +1,3 @@
-{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
@@ -28,9 +27,9 @@ module Graphics.ColorSpace.RGB.ITU.Rec470
   ) where
 
 import Foreign.Storable
-import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace
+import Graphics.ColorModel.Internal
 
 -- | International Telecommunication Union - Radiocommunication Sector (ITU-R)
 data Rec470

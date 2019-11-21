@@ -1,4 +1,3 @@
-{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -6,8 +5,10 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.ColorSpace.CIE1976.LAB
@@ -118,6 +119,7 @@ ift t
   | otherwise = (108 / 841) * (t - 4 / 29)
 
 
+
 xyz2lab ::
      forall i a e. (Illuminant i, Elevator a, Elevator e, RealFloat e)
   => Pixel XYZ a
@@ -125,9 +127,10 @@ xyz2lab ::
 xyz2lab (PixelXYZ x y z) = PixelLAB l' a' b'
   where
     !wp = whitePoint :: WhitePoint i
-    !fx = ft (toRealFloat x / toRealFloat (xWhitePoint wp / yWhitePoint wp))
+    PixelXYZ wx _ wz = whitePointXYZ wp
+    !fx = ft (toRealFloat x / toRealFloat wx)
     !fy = ft (toRealFloat y)
-    !fz = ft (toRealFloat z / toRealFloat (zWhitePoint wp / yWhitePoint wp))
+    !fz = ft (toRealFloat z / toRealFloat wz)
     !l' = 116 * fy - 16
     !a' = 500 * (fx - fy)
     !b' = 200 * (fy - fz)
