@@ -19,9 +19,9 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace.RGB.ITU.Rec601
-  ( Rec601(..)
-  , BT601_525
+  ( BT601_525
   , BT601_625
+  , D65
   , primaries525
   , primaries625
   , transfer
@@ -36,16 +36,14 @@ import Graphics.ColorSpace
 import Graphics.ColorSpace.RGB.ITU.Rec470 (primaries625)
 import Graphics.ColorSpace.RGB.Luma
 
--- | International Telecommunication Union - Radiocommunication Sector (ITU-R)
-data Rec601 =
-  D65
-  -- ^ Whitepoint D65 that is so commonly used for sRGB and other color spaces defined by
-  -- ITU: Rec.601 (525 and 625) and Rec.709 standards. It is slightly different than the
-  -- one defined by CIE1931, thus a separate daclaration in here.
+-- | Whitepoint D65 that is so commonly used for sRGB and other color spaces defined by
+-- ITU: Rec.601 (525 and 625) and Rec.709 standards. It is slightly different than the
+-- one defined by CIE1931, thus a separate daclaration in here.
+data D65
 
 -- | @[x=0.3127, y=0.3290]@ - /Rec. ITU-R BT.601-7/, /Rec. ITU-R BT.709-6/, /IEC 61966-2-1:1999/
-instance Illuminant 'D65 where
-  type Temperature 'D65 = 6504
+instance Illuminant D65 where
+  type Temperature D65 = 6504
   whitePoint = WhitePoint 0.3127 0.3290
 
 
@@ -100,7 +98,7 @@ instance Elevator e => ColorSpace BT601_525 e where
   showsColorSpaceName _ = ("BT.601 Standard" ++)
 
 -- | ITU-R BT.601 (525) color space
-instance RedGreenBlue BT601_525 'D65 where
+instance RedGreenBlue BT601_525 D65 where
   chromaticity = primaries525
   ecctf = fmap transfer
   {-# INLINE ecctf #-}
@@ -159,7 +157,7 @@ instance Elevator e => ColorSpace BT601_625 e where
   showsColorSpaceName _ = ("BT.601 Standard" ++)
 
 -- | ITU-R BT.601 (625) color space
-instance RedGreenBlue BT601_625 'D65 where
+instance RedGreenBlue BT601_625 D65 where
   chromaticity = primaries625
   ecctf = fmap transfer
   {-# INLINE ecctf #-}

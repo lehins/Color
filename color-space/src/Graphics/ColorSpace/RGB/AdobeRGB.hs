@@ -19,7 +19,7 @@
 --
 module Graphics.ColorSpace.RGB.AdobeRGB
   ( AdobeRGB
-  , Rec601(..)
+  , D65
   , primaries
   , npmStandard
   , inpmStandard
@@ -34,7 +34,7 @@ import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace
-import Graphics.ColorSpace.RGB.ITU.Rec601 (Rec601(..))
+import Graphics.ColorSpace.RGB.ITU.Rec601 (D65)
 
 
 -- | A very common @AdobeRGB@ color space with the default `D65` illuminant
@@ -87,7 +87,7 @@ instance Elevator e => ColorSpace AdobeRGB e where
 
 
 -- | Adobe`RGB` color space
-instance RedGreenBlue AdobeRGB 'D65 where
+instance RedGreenBlue AdobeRGB D65 where
   chromaticity = primaries
   npm = npmStandard
   inpm = inpmStandard
@@ -100,13 +100,13 @@ instance RedGreenBlue AdobeRGB 'D65 where
 --
 -- >>> :set -XDataKinds
 -- >>> import Graphics.ColorSpace.RGB.AdobeRGB
--- >>> npmStandard :: NPM AdobeRGB 'D65 Float
+-- >>> npmStandard :: NPM AdobeRGB D65 Float
 -- [ [ 0.576670, 0.185560, 0.188230 ]
 -- , [ 0.297340, 0.627360, 0.075290 ]
 -- , [ 0.027030, 0.070690, 0.991340 ] ]
 --
 -- @since 0.1.0
-npmStandard :: RealFloat a => NPM AdobeRGB 'D65 a
+npmStandard :: RealFloat a => NPM AdobeRGB D65 a
 npmStandard = NPM $ M3x3 (V3 0.57667 0.18556 0.18823)
                          (V3 0.29734 0.62736 0.07529)
                          (V3 0.02703 0.07069 0.99134)
@@ -116,13 +116,13 @@ npmStandard = NPM $ M3x3 (V3 0.57667 0.18556 0.18823)
 --
 -- >>> :set -XDataKinds
 -- >>> import Graphics.ColorSpace.RGB.AdobeRGB
--- >>> inpmStandard :: INPM AdobeRGB 'D65 Float
+-- >>> inpmStandard :: INPM AdobeRGB D65 Float
 -- [ [ 2.041590,-0.565010,-0.344730 ]
 -- , [-0.969240, 1.875970, 0.041560 ]
 -- , [ 0.013440,-0.118360, 1.015170 ] ]
 --
 -- @since 0.1.0
-inpmStandard :: RealFloat a => INPM AdobeRGB 'D65 a
+inpmStandard :: RealFloat a => INPM AdobeRGB D65 a
 inpmStandard = INPM $ M3x3 (V3  2.04159 -0.56501 -0.34473)
                            (V3 -0.96924  1.87597  0.04156)
                            (V3  0.01344 -0.11836  1.01517)

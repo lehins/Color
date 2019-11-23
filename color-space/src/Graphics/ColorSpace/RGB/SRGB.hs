@@ -19,6 +19,8 @@
 --
 module Graphics.ColorSpace.RGB.SRGB
   ( SRGB
+  , D50
+  , D65
   , pattern PixelRGB8
   , pattern PixelRGB16
   , pattern PixelRGB32
@@ -42,11 +44,21 @@ import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RGB.Internal
 import Graphics.ColorSpace.RGB.Luma
-import Graphics.ColorSpace.RGB.ITU.Rec709 (Rec601(..), primaries)
-
+import Graphics.ColorSpace.RGB.ITU.Rec709 (D65, primaries)
 
 -- | The most common @sRGB@ color space with the default `D65` illuminant
 data SRGB
+
+-- | This is an approximation of CIE1931 `Graphics.ColorSpace.CIE1931.Illuminant.'D50`
+-- white point defined in ICC PCS. Useful for chromatic adaptation.
+data D50
+
+-- | Tristimulus @[X=0.9642, Y=1.0000, Z=0.8249]@ - /IEC 61966-2-1:1999/, /ICC PCS/
+instance Illuminant D50 where
+  type Temperature D50 = 5003
+  whitePoint = WhitePoint 0.345702914919 0.358538596680
+
+
 
 newtype instance Pixel SRGB e = SRGB (Pixel CM.RGB e)
 
@@ -125,7 +137,7 @@ instance Elevator e => ColorSpace SRGB e where
   showsColorSpaceName _ = ("sRGB Standard" ++)
 
 -- | s`RGB` color space
-instance RedGreenBlue SRGB 'D65 where
+instance RedGreenBlue SRGB D65 where
   chromaticity = primaries
   npm = npmStandard
   inpm = inpmStandard
@@ -144,13 +156,13 @@ instance Luma SRGB where
 --
 -- >>> :set -XDataKinds
 -- >>> import Graphics.ColorSpace.RGB
--- >>> npmStandard :: NPM SRGB 'D65 Float
+-- >>> npmStandard :: NPM SRGB D65 Float
 -- [ [ 0.412400, 0.357600, 0.180500 ]
 -- , [ 0.212600, 0.715200, 0.072200 ]
 -- , [ 0.019300, 0.119200, 0.950500 ] ]
 --
 -- @since 0.1.0
-npmStandard :: RealFloat a => NPM SRGB 'D65 a
+npmStandard :: RealFloat a => NPM SRGB D65 a
 npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
                          (V3 0.2126 0.7152 0.0722)
                          (V3 0.0193 0.1192 0.9505)
@@ -160,13 +172,13 @@ npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
 --
 -- >>> :set -XDataKinds
 -- >>> import Graphics.ColorSpace.RGB
--- >>> inpmStandard :: INPM SRGB 'D65 Float
+-- >>> inpmStandard :: INPM SRGB D65 Float
 -- [ [ 3.240600,-1.537200,-0.498600 ]
 -- , [-0.968900, 1.875800, 0.041500 ]
 -- , [ 0.055700,-0.204000, 1.057000 ] ]
 --
 -- @since 0.1.0
-inpmStandard :: RealFloat a => INPM SRGB 'D65 a
+inpmStandard :: RealFloat a => INPM SRGB D65 a
 inpmStandard = INPM $ M3x3 (V3  3.2406 -1.5372 -0.4986)
                            (V3 -0.9689  1.8758  0.0415)
                            (V3  0.0557 -0.2040  1.0570)

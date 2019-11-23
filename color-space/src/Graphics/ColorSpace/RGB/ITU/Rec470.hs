@@ -18,9 +18,10 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace.RGB.ITU.Rec470
-  ( Rec470(..)
-  , BT470_525
+  ( BT470_525
+  , C
   , BT470_625
+  , D65
   , primaries525
   , primaries625
   , module Graphics.ColorSpace
@@ -31,31 +32,22 @@ import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace
 import Graphics.ColorModel.Internal
 
--- | International Telecommunication Union - Radiocommunication Sector (ITU-R)
-data Rec470
-  = C
-  -- ^ Whitepoint C that is used for ITU: Rec.470 (525). It is slightly different than
-  -- the one defined by CIE1931, thus a separate daclaration in here.
-  | D65
-  -- ^ Whitepoint D65 that is used for ITU: Rec.470 (625). It is slightly different than
-  -- the one defined by CIE1931 and the one in Rec.601, thus a separate daclaration in here.
-
--- | @[x=0.310, y=0.316]@ - /Rec. ITU-R BT.470-7/
-instance Illuminant 'C where
-  type Temperature 'C = 6774
-  whitePoint = WhitePoint 0.310 0.316
-
--- | @[x=0.313, y=0.329]@ - /Rec. ITU-R BT.470-7/
-instance Illuminant 'D65 where
-  type Temperature 'D65 = 6504
-  whitePoint = WhitePoint 0.313 0.329
-
 ------------------------------------
 -- ITU-R BT.470 (525) --------------
 ------------------------------------
 
+-- | Whitepoint C that is used for ITU: Rec.470 (525). It is slightly different than the
+-- one defined by CIE1931, thus a separate daclaration in here.
+data C
+
 -- | ITU-R BT.470 (525) color space. Used in NTSC
 data BT470_525
+
+-- | @[x=0.310, y=0.316]@ - /Rec. ITU-R BT.470-7/
+instance Illuminant C where
+  type Temperature C = 6774
+  whitePoint = WhitePoint 0.310 0.316
+
 
 newtype instance Pixel BT470_525 e = BT470_525 (Pixel CM.RGB e)
 
@@ -101,7 +93,7 @@ instance Elevator e => ColorSpace BT470_525 e where
   showsColorSpaceName _ = ("BT.470 Standard" ++)
 
 -- | ITU-R BT.470 (525) color space
-instance RedGreenBlue BT470_525 'C where
+instance RedGreenBlue BT470_525 C where
   chromaticity = primaries525
   ecctf = fmap (gamma 2.2)
   {-# INLINE ecctf #-}
@@ -112,9 +104,17 @@ instance RedGreenBlue BT470_525 'C where
 -- ITU-R BT.470 (625) --------------
 ------------------------------------
 
+-- ^ Whitepoint D65 that is used for ITU: Rec.470 (625). It is slightly different than the
+-- one defined by CIE1931 and the one in Rec.601, thus a separate declaration in here.
+data D65
 
 -- | ITU-R BT.470 (625) color space. Used in PAL/SECAM
 data BT470_625
+
+-- | @[x=0.313, y=0.329]@ - /Rec. ITU-R BT.470-7/
+instance Illuminant D65 where
+  type Temperature D65 = 6504
+  whitePoint = WhitePoint 0.313 0.329
 
 newtype instance Pixel BT470_625 e = BT470_625 (Pixel CM.RGB e)
 
@@ -160,7 +160,7 @@ instance Elevator e => ColorSpace BT470_625 e where
   showsColorSpaceName _ = ("BT.470 Standard" ++)
 
 -- | ITU-R BT.470 (625) color space
-instance RedGreenBlue BT470_625 'D65 where
+instance RedGreenBlue BT470_625 D65 where
   chromaticity = primaries625
   ecctf = fmap (gamma 2.8)
   {-# INLINE ecctf #-}

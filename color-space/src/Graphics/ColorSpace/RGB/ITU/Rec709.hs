@@ -18,8 +18,8 @@
 -- Portability : non-portable
 --
 module Graphics.ColorSpace.RGB.ITU.Rec709
-  ( Rec601(..)
-  , BT709
+  ( BT709
+  , D65
   , primaries
   , Rec601.transfer
   , Rec601.itransfer
@@ -30,8 +30,7 @@ import Foreign.Storable
 import Graphics.ColorModel.Internal
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace
-import Graphics.ColorSpace.RGB.ITU.Rec601 as Rec601 (Rec601(..), itransfer,
-                                                     transfer)
+import Graphics.ColorSpace.RGB.ITU.Rec601 as Rec601 (D65, itransfer, transfer)
 import Graphics.ColorSpace.RGB.Luma
 
 -- | ITU-R BT.709 color space
@@ -81,7 +80,7 @@ instance Elevator e => ColorSpace BT709 e where
   showsColorSpaceName _ = ("sBT709 Standard" ++)
 
 -- | ITU-R BT.709 color space
-instance RedGreenBlue BT709 'D65 where
+instance RedGreenBlue BT709 D65 where
   chromaticity = primaries
   ecctf = fmap Rec601.transfer
   {-# INLINE ecctf #-}
