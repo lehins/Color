@@ -1,4 +1,3 @@
-{-# LANGUAGE PatternSynonyms #-}
 -- |
 -- Module      : Graphics.ColorSpace.CIE1931.XYZ
 -- Copyright   : (c) Alexey Kuleshevich 2019

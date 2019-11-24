@@ -1,6 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -35,9 +36,11 @@ module Graphics.ColorSpace.Internal
   , Illuminant(..)
   , CCT(..)
   , XYZ
-  , module GHC.TypeNats
   , pattern PixelXYZ
   , pattern PixelXYZA
+  , CIExyY
+  , pattern PixelxyY
+  , module GHC.TypeNats
   ) where
 
 import Foreign.Storable
@@ -270,3 +273,72 @@ instance Storable e => Storable (Pixel XYZ e) where
   {-# INLINE peek #-}
   poke p (PixelXYZ x y z) = poke3 p x y z
   {-# INLINE poke #-}
+
+
+
+-----------
+--- XYZ ---
+-----------
+
+-- | The original color space CIE 1931 XYZ color space
+data CIExyY
+
+-- | CIE1931 `XYZ` color space
+newtype instance Pixel CIExyY e = CIExyY (V2 e)
+
+-- | Constructor for the most common @XYZ@ color space
+pattern PixelxyY :: e -> e -> Pixel CIExyY e
+pattern PixelxyY x y = CIExyY (V2 x y)
+{-# COMPLETE PixelxyY #-}
+
+
+-- | CIE xyY color space
+deriving instance Eq e => Eq (Pixel CIExyY e)
+
+-- | CIE xyY color space
+deriving instance Ord e => Ord (Pixel CIExyY e)
+
+
+-- | CIE xyY color space
+deriving instance Functor (Pixel CIExyY)
+
+-- | CIE xyY color space
+deriving instance Applicative (Pixel CIExyY)
+
+-- | CIE xyY color space
+deriving instance Foldable (Pixel CIExyY)
+
+-- | CIE xyY color space
+deriving instance Traversable (Pixel CIExyY)
+
+-- | CIE xyY color space
+deriving instance Storable e => Storable (Pixel CIExyY e)
+
+-- | CIE xyY color space
+instance Elevator e => Show (Pixel CIExyY e) where
+  showsPrec _ = showsColorModel
+
+-- | CIE xyY color space
+instance Elevator e => ColorModel CIExyY e where
+  type Components CIExyY e = (e, e)
+  toComponents (CIExyY (V2 x y)) = (x, y)
+  {-# INLINE toComponents #-}
+  fromComponents (x, y) = CIExyY (V2 x y)
+  {-# INLINE fromComponents #-}
+
+-- | CIE xyY color space
+instance Elevator e => ColorSpace CIExyY e where
+  type BaseColorSpace CIExyY = CIExyY
+  toBaseColorSpace = id
+  fromBaseColorSpace = id
+  showsColorSpaceName _ = ("CIExyY" ++)
+  toPixelY _ = PixelY 1
+  {-# INLINE toPixelY #-}
+  toPixelXYZ xy = PixelXYZ (x / y) ((1 - x - y) / y) 1
+    where PixelxyY x y = toRealFloat <$> xy
+  {-# INLINE toPixelXYZ #-}
+  fromPixelXYZ xyz = fromRealFloat <$> PixelxyY (x / s) (y / s)
+    where
+      PixelXYZ x y z = xyz
+      !s = x + y + z
+  {-# INLINE fromPixelXYZ #-}

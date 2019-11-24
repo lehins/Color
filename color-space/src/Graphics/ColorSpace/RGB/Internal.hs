@@ -232,17 +232,15 @@ npmDerive ::
   => Chromaticity cs i
   -> NPM cs i a
 npmDerive (Chromaticity r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
-    -- transposed matrix with xyz primaries
   where
     !primaries' =
       toRealFloat <$>
+      -- transposed matrix with xyz primaries
       M3x3
         (V3 (xPrimary r) (xPrimary g) (xPrimary b))
         (V3 (yPrimary r) (yPrimary g) (yPrimary b))
         (V3 (zPrimary r) (zPrimary g) (zPrimary b))
-    !coeff =
-      invertM3x3 primaries' `multM3x3byV3`
-      fmap fromDouble (coerce (whitePointXYZ (whitePoint :: WhitePoint i)))
+    !coeff = invertM3x3 primaries' `multM3x3byV3` coerce (normalTristimulus :: Tristimulus i a)
 {-# INLINE npmDerive #-}
 
 -- | Derive an `INPM` form chromaticities and a white point
