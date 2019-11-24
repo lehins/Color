@@ -33,7 +33,6 @@ import Graphics.ColorModel.RGB as CM
 import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Y
 import Graphics.ColorSpace.RGB.Internal
-import Graphics.ColorSpace.Algebra
 
 -------------
 --- Luma ----

@@ -215,7 +215,7 @@ itransfer e
 -- | Primaries for ITU-R BT.601 (525).
 --
 -- @since 0.1.0
-primaries525 :: Illuminant i => Chromaticity rgb i
+primaries525 :: (Illuminant i, RealFloat e) => Chromaticity rgb i e
 primaries525 = Chromaticity (Primary 0.630 0.340)
                             (Primary 0.310 0.595)
                             (Primary 0.155 0.070)

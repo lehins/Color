@@ -37,6 +37,7 @@ module Graphics.ColorSpace.RGB.Internal
   , pixelChromaticity
   , pixelWhitePoint
   , chromaticityWhitePoint
+  , module Graphics.ColorSpace.Algebra
   ) where
 
 import qualified Graphics.ColorModel.RGB as CM
@@ -51,7 +52,7 @@ import Data.Coerce
 class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
   -- | RGB primaries that are defined for the RGB color space, while point is defined by
   -- the __@i@__ type parameter
-  chromaticity :: Chromaticity cs i
+  chromaticity :: RealFloat e => Chromaticity cs i e
 
   -- | Encoding color component transfer function (inverse). Also known as opto-electronic
   -- transfer function (OETF / OECF) or gamma function.
@@ -83,14 +84,14 @@ class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
   unPixelRGB = coerce
 
 
-data Chromaticity cs i where
+data Chromaticity cs i e where
   Chromaticity :: Illuminant i =>
-    { chromaRed   :: {-# UNPACK #-}!Primary
-    , chromaGreen :: {-# UNPACK #-}!Primary
-    , chromaBlue  :: {-# UNPACK #-}!Primary
-    } -> Chromaticity cs i
-deriving instance Eq (Chromaticity cs i)
-deriving instance Show (Chromaticity cs i)
+    { chromaRed   :: !(Primary e)
+    , chromaGreen :: !(Primary e)
+    , chromaBlue  :: !(Primary e)
+    } -> Chromaticity cs i e
+deriving instance Eq e => Eq (Chromaticity cs i e)
+deriving instance Elevator e => Show (Chromaticity cs i e) -- TODO: better show with whitepoint
 
 -- | Linear transformation of a pixel in a linear RGB color space into XYZ color space
 --
@@ -126,7 +127,7 @@ deriving instance Show (Chromaticity cs i)
 --
 --
 -- @since 0.1.0
-npmApply :: (RedGreenBlue cs i, Elevator a) => NPM cs i a -> Pixel cs a -> Pixel XYZ a
+npmApply :: (RedGreenBlue cs i, Elevator e) => NPM cs i e -> Pixel cs e -> Pixel XYZ e
 npmApply (NPM npm') = coerce . multM3x3byV3 npm' . coerce . unPixelRGB
 {-# INLINE npmApply #-}
 
@@ -134,18 +135,18 @@ npmApply (NPM npm') = coerce . multM3x3byV3 npm' . coerce . unPixelRGB
 --
 -- @since 0.1.0
 inpmApply ::
-     (RedGreenBlue cs i, Elevator a) => INPM cs i a -> Pixel XYZ a -> Pixel cs a
+     (RedGreenBlue cs i, Elevator e) => INPM cs i e -> Pixel XYZ e -> Pixel cs e
 inpmApply (INPM inpm') = mkPixelRGB . coerce . multM3x3byV3 inpm' . coerce
 {-# INLINE inpmApply #-}
 
 -- | Linear transformation of a pixel in a linear luminocity, i.e. the Y component of
 -- XYZ color space
 npmApplyLuminocity ::
-     forall cs i a. (RedGreenBlue cs i, Elevator a, RealFloat a)
-  => Pixel cs a
-  -> Pixel Y a
+     forall cs i e. (RedGreenBlue cs i, Elevator e, RealFloat e)
+  => Pixel cs e
+  -> Pixel Y e
 npmApplyLuminocity px =
-  coerce (m3x3row1 (unNPM (npm :: NPM cs i a)) `dotProduct` coerce (unPixelRGB px))
+  coerce (m3x3row1 (unNPM (npm :: NPM cs i e)) `dotProduct` coerce (unPixelRGB px))
 {-# INLINE npmApplyLuminocity #-}
 
 
@@ -204,11 +205,11 @@ pattern PixelRGBA r g b a <- Alpha (unPixelRGB -> CM.PixelRGB r g b) a where
 -- into `Graphics.ColorSpace.CIE1931.XYZ.XYZ` color space.
 --
 -- @since 0.1.0
-newtype NPM cs (i :: k) a = NPM
-  { unNPM :: M3x3 a
+newtype NPM cs (i :: k) e = NPM
+  { unNPM :: M3x3 e
   } deriving (Eq, Functor, Applicative, Foldable, Traversable)
 
-instance Elevator a => Show (NPM cs i a) where
+instance Elevator e => Show (NPM cs i e) where
   show = show . unNPM
 
 -- | Inverse normalized primary matrix (iNPM), which is used to tranform linear
@@ -216,11 +217,11 @@ instance Elevator a => Show (NPM cs i a) where
 -- literally a inverse matrix of `NPM`
 --
 -- @since 0.1.0
-newtype INPM cs (i :: k) a = INPM
-  { unINPM :: M3x3 a
+newtype INPM cs (i :: k) e = INPM
+  { unINPM :: M3x3 e
   } deriving (Eq, Functor, Applicative, Foldable, Traversable)
 
-instance Elevator a => Show (INPM cs i a) where
+instance Elevator e => Show (INPM cs i e) where
   show = show . unINPM
 
 
@@ -228,9 +229,9 @@ instance Elevator a => Show (INPM cs i a) where
 --
 -- @since 0.1.0
 npmDerive ::
-     forall cs i a. (Elevator a, RealFloat a, Illuminant i)
-  => Chromaticity cs i
-  -> NPM cs i a
+     forall cs i e. (Elevator e, RealFloat e, Illuminant i)
+  => Chromaticity cs i e
+  -> NPM cs i e
 npmDerive (Chromaticity r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
   where
     !primaries' =
@@ -240,16 +241,16 @@ npmDerive (Chromaticity r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
         (V3 (xPrimary r) (xPrimary g) (xPrimary b))
         (V3 (yPrimary r) (yPrimary g) (yPrimary b))
         (V3 (zPrimary r) (zPrimary g) (zPrimary b))
-    !coeff = invertM3x3 primaries' `multM3x3byV3` coerce (normalTristimulus :: Tristimulus i a)
+    !coeff = invertM3x3 primaries' `multM3x3byV3` coerce (normalTristimulus :: Tristimulus i e)
 {-# INLINE npmDerive #-}
 
 -- | Derive an `INPM` form chromaticities and a white point
 --
 -- @since 0.1.0
 inpmDerive ::
-     forall cs i a. (Elevator a, RealFloat a, Illuminant i)
-  => Chromaticity cs i
-  -> INPM cs i a
+     forall cs i e. (Elevator e, RealFloat e, Illuminant i)
+  => Chromaticity cs i e
+  -> INPM cs i e
 inpmDerive = INPM . invertM3x3 . unNPM . npmDerive
 {-# INLINE inpmDerive #-}
 
@@ -258,7 +259,7 @@ inpmDerive = INPM . invertM3x3 . unNPM . npmDerive
 -- its type carries enough information for this operation.
 --
 -- @since 0.1.0
-chromaticityWhitePoint :: RedGreenBlue cs i => Chromaticity cs i -> WhitePoint i
+chromaticityWhitePoint :: (RedGreenBlue cs i, RealFloat e) => Chromaticity cs i e -> WhitePoint i e
 chromaticityWhitePoint _ = whitePoint
 {-# INLINE chromaticityWhitePoint #-}
 
@@ -266,7 +267,7 @@ chromaticityWhitePoint _ = whitePoint
 -- evaluated, its type carries enough information for this operation.
 --
 -- @since 0.1.0
-pixelChromaticity :: RedGreenBlue cs i => Pixel cs e -> Chromaticity cs i
+pixelChromaticity :: (RedGreenBlue cs i, RealFloat e) => Pixel cs a -> Chromaticity cs i e
 pixelChromaticity _ = chromaticity
 {-# INLINE pixelChromaticity #-}
 
@@ -276,10 +277,10 @@ pixelChromaticity _ = chromaticity
 --
 -- >>> import Graphics.ColorSpace.RGB
 -- >>> pixelWhitePoint (PixelRGB8 1 2 3)
--- WhitePoint {xWhitePoint = 0.3127, yWhitePoint = 0.329}
+-- WhitePointChroma <CIExyY:( 0.312700000000, 0.329000000000)>
 --
 -- @since 0.1.0
-pixelWhitePoint :: RedGreenBlue cs i => Pixel cs e -> WhitePoint i
+pixelWhitePoint :: (RedGreenBlue cs i, RealFloat e) => Pixel cs a -> WhitePoint i e
 pixelWhitePoint _ = whitePoint
 {-# INLINE pixelWhitePoint #-}
 

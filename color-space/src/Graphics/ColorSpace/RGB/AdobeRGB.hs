@@ -106,7 +106,7 @@ instance RedGreenBlue AdobeRGB D65 where
 -- , [ 0.027030, 0.070690, 0.991340 ] ]
 --
 -- @since 0.1.0
-npmStandard :: RealFloat a => NPM AdobeRGB D65 a
+npmStandard :: RealFloat e => NPM AdobeRGB D65 e
 npmStandard = NPM $ M3x3 (V3 0.57667 0.18556 0.18823)
                          (V3 0.29734 0.62736 0.07529)
                          (V3 0.02703 0.07069 0.99134)
@@ -122,7 +122,7 @@ npmStandard = NPM $ M3x3 (V3 0.57667 0.18556 0.18823)
 -- , [ 0.013440,-0.118360, 1.015170 ] ]
 --
 -- @since 0.1.0
-inpmStandard :: RealFloat a => INPM AdobeRGB D65 a
+inpmStandard :: RealFloat e => INPM AdobeRGB D65 e
 inpmStandard = INPM $ M3x3 (V3  2.04159 -0.56501 -0.34473)
                            (V3 -0.96924  1.87597  0.04156)
                            (V3  0.01344 -0.11836  1.01517)
@@ -152,7 +152,7 @@ itransfer :: Floating a => a -> a
 itransfer u = u ** 2.19921875 -- in rational form 563/256
 {-# INLINE itransfer #-}
 
-primaries :: Illuminant i => Chromaticity rgb i
+primaries :: (Illuminant i, RealFloat e) => Chromaticity rgb i e
 primaries = Chromaticity (Primary 0.64 0.33)
                          (Primary 0.21 0.71)
                          (Primary 0.15 0.06)

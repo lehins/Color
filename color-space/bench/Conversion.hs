@@ -12,7 +12,6 @@ import System.Random as R
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorModel
 import Graphics.ColorSpace
-import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.RGB
 import Graphics.ColorSpace.CIE1931.Illuminant
 import Graphics.ColorSpace.CIE1976.LAB

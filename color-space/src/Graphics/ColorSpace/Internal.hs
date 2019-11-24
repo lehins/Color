@@ -1,3 +1,4 @@
+{-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DataKinds #-}
@@ -23,13 +24,17 @@
 module Graphics.ColorSpace.Internal
   ( Pixel(..)
   , ColorSpace(..)
-  , Primary(..)
+  , Primary(.., Primary)
+  , xPrimary
+  , yPrimary
   , zPrimary
   , primaryXZ
   , primaryXYZ
-  , WhitePoint(..)
+  , WhitePoint(.., WhitePoint)
   , Tristimulus(..)
   , normalTristimulus
+  , xWhitePoint
+  , yWhitePoint
   , zWhitePoint
   , whitePointXZ
   , whitePointXYZ
@@ -39,6 +44,7 @@ module Graphics.ColorSpace.Internal
   , pattern PixelXYZ
   , pattern PixelXYZA
   , CIExyY
+  , pattern Pixelxy
   , pattern PixelxyY
   , module GHC.TypeNats
   ) where
@@ -49,6 +55,7 @@ import Graphics.ColorModel.Internal
 import Graphics.ColorModel.Y
 import Graphics.ColorSpace.Algebra
 import Data.Typeable
+import Data.Coerce
 import GHC.TypeNats
 
 class ColorModel cs e => ColorSpace cs e where
@@ -95,27 +102,41 @@ newtype CCT (i :: k) = CCT
 
 class (Typeable i, Typeable k, KnownNat (Temperature i)) => Illuminant (i :: k) where
   type Temperature i :: n
-  whitePoint :: WhitePoint i
+  whitePoint :: RealFloat e => WhitePoint i e
 
   colorTemperature :: CCT i
   colorTemperature = CCT (fromIntegral (natVal (Proxy :: Proxy (Temperature i))))
 
-
+-- | XYZ tristimulus of the illuminant @i@, where @Y=1@
+--
+-- @since 0.1.0
 normalTristimulus :: forall i e. (Illuminant i, Elevator e, RealFloat e) => Tristimulus i e
-normalTristimulus = Tristimulus (toRealFloat <$> PixelXYZ (wx / wy) 1 ((1 - wx - wy) / wy))
-  where
-    WhitePoint wx wy = whitePoint :: WhitePoint i
+normalTristimulus = Tristimulus (whitePointXYZ (whitePoint :: WhitePoint i e))
 
-data WhitePoint (i :: k) = WhitePoint
-  { xWhitePoint :: {-# UNPACK #-}!Double
-  , yWhitePoint :: {-# UNPACK #-}!Double
-  } deriving (Eq, Show)
+newtype WhitePoint (i :: k) e = WhitePointChroma (Pixel CIExyY e)
+ deriving (Eq, Show)
+
+-- | Constructor for the most common @XYZ@ color space
+pattern WhitePoint :: e -> e -> WhitePoint i e
+pattern WhitePoint x y <- (coerce -> (V2 x y)) where
+  WhitePoint x y = coerce (V2 x y)
+{-# COMPLETE WhitePoint #-}
+
 
 newtype Tristimulus i e = Tristimulus (Pixel XYZ e)
   deriving (Show, Eq, Ord, Functor, Applicative)
 
 
-zWhitePoint :: WhitePoint i -> Double
+xWhitePoint :: WhitePoint i e -> e
+xWhitePoint (coerce -> V2 x _) = x
+{-# INLINE xWhitePoint #-}
+
+yWhitePoint :: WhitePoint i e -> e
+yWhitePoint (coerce -> V2 _ y) = y
+{-# INLINE yWhitePoint #-}
+
+-- | Compute @z = 1 - x - y@ of a `WhitePoint`.
+zWhitePoint :: Num e => WhitePoint i e -> e
 zWhitePoint wp = 1 - xWhitePoint wp - yWhitePoint wp
 {-# INLINE zWhitePoint #-}
 
@@ -123,22 +144,25 @@ zWhitePoint wp = 1 - xWhitePoint wp - yWhitePoint wp
 --
 -- @since 0.1.0
 whitePointXYZ ::
-     WhitePoint i
+     (RealFloat e, Elevator e)
+  => WhitePoint i e
      -- ^ White point that specifies @x@ and @y@
-  -> Pixel XYZ Double
-whitePointXYZ = whitePointXZ 1
+  -> Pixel XYZ e
+whitePointXYZ (WhitePointChroma xyY) = toPixelXYZ xyY
 {-# INLINE whitePointXYZ #-}
 
 
 -- | Compute @XYZ@ tristimulus of a white point.
 --
 -- @since 0.1.0
-whitePointXZ :: Double
-              -- ^ @Y@ value, which is usually set to @1@
-              -> WhitePoint i
-              -- ^ White point that specifies @x@ and @y@
-              -> Pixel XYZ Double
-whitePointXZ vY (WhitePoint x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
+whitePointXZ ::
+     Fractional e
+  => e
+     -- ^ @Y@ value, which is usually set to @1@
+  -> WhitePoint i e
+     -- ^ White point that specifies @x@ and @y@
+  -> Pixel XYZ e
+whitePointXZ vY (coerce -> V2 x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
   where !vYy = vY / y
 {-# INLINE whitePointXZ #-}
 
@@ -146,14 +170,28 @@ whitePointXZ vY (WhitePoint x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
 -- Primary --
 -------------
 
-data Primary = Primary
-  { xPrimary :: {-# UNPACK #-}!Double
-  , yPrimary :: {-# UNPACK #-}!Double
-  } deriving (Eq, Show)
+newtype Primary e =
+  PrimaryChroma (Pixel CIExyY e)
+  deriving (Eq, Show)
 
+-- | Constructor for the most common @XYZ@ color space
+pattern Primary :: e -> e -> Primary e
+pattern Primary x y <- (coerce -> V2 x y) where
+  Primary x y = coerce (V2 x y)
+{-# COMPLETE Primary #-}
+
+
+
+xPrimary :: Primary e -> e
+xPrimary (coerce -> V2 x _) = x
+{-# INLINE xPrimary #-}
+
+yPrimary :: Primary e -> e
+yPrimary (coerce -> V2 _ y) = y
+{-# INLINE yPrimary #-}
 
 -- | Compute @z = 1 - x - y@ of a `Primary`.
-zPrimary :: Primary -> Double
+zPrimary :: Num e => Primary e -> e
 zPrimary p = 1 - xPrimary p - yPrimary p
 {-# INLINE zPrimary #-}
 
@@ -164,21 +202,23 @@ zPrimary p = 1 - xPrimary p - yPrimary p
 --
 -- @since 0.1.0
 primaryXYZ ::
-     Primary
+     (RealFloat e, Elevator e)
+  => Primary e
      -- ^ Primary that specifies @x@ and @y@
-  -> Pixel XYZ Double
-primaryXYZ = primaryXZ 1
+  -> Pixel XYZ e
+primaryXYZ (PrimaryChroma xy) = toPixelXYZ xy
 {-# INLINE primaryXYZ #-}
 
 -- | Compute `XYZ` tristimulus of a `Primary`.
 --
 -- @since 0.1.0
 primaryXZ ::
-     Double
+     Fractional e =>
+     e
      -- ^ @Y@ value, which is usually set to @1@
-  -> Primary
+  -> Primary e
      -- ^ Primary that specifies @x@ and @y@
-  -> Pixel XYZ Double
+  -> Pixel XYZ e
 primaryXZ vY (Primary x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
   where !vYy = vY / y
 {-# INLINE primaryXZ #-}
@@ -276,9 +316,9 @@ instance Storable e => Storable (Pixel XYZ e) where
 
 
 
------------
---- XYZ ---
------------
+---------------
+--- CIE xyY ---
+---------------
 
 -- | The original color space CIE 1931 XYZ color space
 data CIExyY
@@ -286,11 +326,19 @@ data CIExyY
 -- | CIE1931 `XYZ` color space
 newtype instance Pixel CIExyY e = CIExyY (V2 e)
 
--- | Constructor for the most common @XYZ@ color space
-pattern PixelxyY :: e -> e -> Pixel CIExyY e
-pattern PixelxyY x y = CIExyY (V2 x y)
-{-# COMPLETE PixelxyY #-}
+-- | Constructor @CIE xyY@ color space. It only requires @x@ and @y@, then @Y@ part will
+-- always be equal to 1.
+pattern Pixelxy :: e -> e -> Pixel CIExyY e
+pattern Pixelxy x y = CIExyY (V2 x y)
+{-# COMPLETE Pixelxy #-}
 
+-- | Patttern match on the @CIE xyY@, 3rd argument @Y@ is always set to @1@
+pattern PixelxyY :: Num e => e -> e -> e -> Pixel CIExyY e
+pattern PixelxyY x y y' <- (addY -> V3 x y y')
+
+addY :: Num e => Pixel CIExyY e -> V3 e
+addY (CIExyY (V2 x y)) = V3 x y 1
+{-# INLINE addY #-}
 
 -- | CIE xyY color space
 deriving instance Eq e => Eq (Pixel CIExyY e)
@@ -334,10 +382,10 @@ instance Elevator e => ColorSpace CIExyY e where
   showsColorSpaceName _ = ("CIExyY" ++)
   toPixelY _ = PixelY 1
   {-# INLINE toPixelY #-}
-  toPixelXYZ xy = PixelXYZ (x / y) ((1 - x - y) / y) 1
-    where PixelxyY x y = toRealFloat <$> xy
+  toPixelXYZ xy = PixelXYZ (x / y) 1 ((1 - x - y) / y)
+    where Pixelxy x y = toRealFloat <$> xy
   {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ xyz = fromRealFloat <$> PixelxyY (x / s) (y / s)
+  fromPixelXYZ xyz = fromRealFloat <$> Pixelxy (x / s) (y / s)
     where
       PixelXYZ x y z = xyz
       !s = x + y + z

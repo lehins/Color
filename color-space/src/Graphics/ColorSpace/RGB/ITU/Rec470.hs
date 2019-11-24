@@ -179,7 +179,7 @@ igamma p v = v ** (1 / p)
 -- | Primaries for ITU-R BT.470 (525).
 --
 -- @since 0.1.0
-primaries525 :: Illuminant i => Chromaticity rgb i
+primaries525 :: (Illuminant i, RealFloat e) => Chromaticity rgb i e
 primaries525 = Chromaticity (Primary 0.67 0.33)
                             (Primary 0.21 0.71)
                             (Primary 0.14 0.08)
@@ -188,7 +188,7 @@ primaries525 = Chromaticity (Primary 0.67 0.33)
 -- | Primaries for ITU-R BT.470 and BT.601 (625).
 --
 -- @since 0.1.0
-primaries625 :: Illuminant i => Chromaticity rgb i
+primaries625 :: (Illuminant i, RealFloat e) => Chromaticity rgb i e
 primaries625 = Chromaticity (Primary 0.64 0.33)
                             (Primary 0.29 0.60)
                             (Primary 0.15 0.06)

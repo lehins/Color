@@ -8,6 +8,7 @@ module Graphics.ColorSpace.RGB.Derived.SRGBSpec (spec) where
 import Graphics.ColorSpace.Common
 import Graphics.ColorSpace.CIE1931.Illuminant
 import Graphics.ColorSpace.RGB.Derived.SRGB
+import Graphics.ColorSpace.RGB.SRGB (D65)
 
 instance (Elevator e, Random e, Illuminant i) => Arbitrary (Pixel (SRGB (i :: k)) e) where
   arbitrary = PixelRGB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator

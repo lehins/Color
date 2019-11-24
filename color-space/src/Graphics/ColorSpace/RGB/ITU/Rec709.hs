@@ -91,7 +91,7 @@ instance RedGreenBlue BT709 D65 where
 -- | Primaries for ITU-R BT.709, which are also the primaries for sRGB color space.
 --
 -- @since 0.1.0
-primaries :: Illuminant i => Chromaticity rgb i
+primaries :: (Illuminant i, RealFloat e) => Chromaticity rgb i e
 primaries = Chromaticity (Primary 0.64 0.33)
                          (Primary 0.30 0.60)
                          (Primary 0.15 0.06)
