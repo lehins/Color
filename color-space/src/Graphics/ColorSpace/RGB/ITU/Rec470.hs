@@ -30,7 +30,6 @@ module Graphics.ColorSpace.RGB.ITU.Rec470
 import Foreign.Storable
 import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorSpace
-import Graphics.ColorModel.Internal
 
 ------------------------------------
 -- ITU-R BT.470 (525) --------------

@@ -23,6 +23,7 @@ module Graphics.ColorSpace.Algebra
   , invertM3x3
   , multM3x3byV3
   , multM3x3byM3x3
+  , multM3x3byV3d
   , transposeM3x3
   ) where
 
@@ -314,6 +315,20 @@ multM3x3byM3x3 m1 m2 =
          (V3 d2 e2 f2)
          (V3 g2 h2 i2) = m2
 {-# INLINE multM3x3byM3x3 #-}
+
+-- | Multiply a 3x3 matrix by another 3x3 diagonal matrix represented by a 1x3 vector
+multM3x3byV3d :: Num a => M3x3 a -> V3 a -> M3x3 a
+multM3x3byV3d m1 m2 =
+  M3x3
+  (V3 (a1 * a2) (b1 * e2) (c1 * i2))
+  (V3 (d1 * a2) (e1 * e2) (f1 * i2))
+  (V3 (g1 * a2) (h1 * e2) (i1 * i2))
+  where
+    M3x3 (V3 a1 b1 c1)
+         (V3 d1 e1 f1)
+         (V3 g1 h1 i1) = m1
+    V3 a2 e2 i2 = m2
+{-# INLINE multM3x3byV3d #-}
 
 
 -- | Invert a 3x3 matrix.

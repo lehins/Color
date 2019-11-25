@@ -47,6 +47,7 @@ module Graphics.ColorSpace.Internal
   , pattern Pixelxy
   , pattern PixelxyY
   , module GHC.TypeNats
+  , module Graphics.ColorModel.Internal
   ) where
 
 import Foreign.Storable
