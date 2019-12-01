@@ -23,6 +23,7 @@ module Graphics.ColorSpace.Adaptation
 import Data.Coerce
 import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.CIE1931.Illuminant
+import Graphics.ColorSpace.CIE1976.LAB
 import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.RGB.Internal
 import Graphics.ColorSpace.RGB.SRGB
@@ -42,14 +43,14 @@ icat :: forall t e . (VonKriesTransform t, RealFloat e) => ICAT t e
 icat = ICAT (invertM3x3 m3x3)
   where CAT m3x3 = cat :: CAT t e
 
-data CIECAM02
+data CIECAM02 = CIECAM02
 
 instance VonKriesTransform CIECAM02 where
   cat = CAT (M3x3 (V3  0.7328  0.4296 -0.1624)
                   (V3 -0.7036  1.6975  0.0061)
                   (V3  0.003   0.0136  0.9834))
 
-data Bradford
+data Bradford = Bradford
 
 instance VonKriesTransform Bradford where
   cat = CAT (M3x3 (V3  0.8951  0.2664 -0.1614)
@@ -84,19 +85,67 @@ vonKriesAdaptationMatrix =
     wpRef = coerce (normalTristimulus :: Tristimulus ir e)
 
 
--- chromaticAdaptation ::
---      forall ir cs it e t. (Illuminant ir, Illuminant it, ColorSpace cs e, RealFloat e)
---   => Chromaticity cs it e
---   -> CAT t e
---   -> Chromaticity cs ir e
--- chromaticAdaptation c cat = Chromaticity redPrimary greenPrimary bluePrimary
---   where
---     wpTest = normalTristimulus :: Tristimulus i e
---     wpReference = normalTristimulus :: Tristimulus i' e
---     redPrimary = vonKriesAdaptation (chromaRed c) wpTest wpReference cat
---     greenPrimary = vonKriesAdaptation (chromaGreen c) wpTest wpReference cat
---     bluePrimary = vonKriesAdaptation (chromaBlue c) wpTest wpReference cat
---   -- Primary $ fromPixelXYZ $ PixelXYZ $ mutM3x3 m3x3 $ coerce $ primaryXYZ primary
+chromaticityAdaptation ::
+     forall ir cs it e t.
+     (VonKriesTransform t, Illuminant it, Illuminant ir, ColorSpace cs e, RealFloat e)
+  => t
+  -> Chromaticity cs it e
+  -> Chromaticity cs ir e
+chromaticityAdaptation _ c = Chromaticity redPrimary greenPrimary bluePrimary
+  where
+    VonKriesAdaptationMatrix m3x3 = vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix t it ir e
+    applyMatrix chroma =
+      PrimaryChroma (fromPixelXYZ (XYZ (multM3x3byV3 m3x3 (coerce (primaryXYZ chroma)))))
+    redPrimary = applyMatrix (chromaRed c)
+    greenPrimary = applyMatrix (chromaGreen c)
+    bluePrimary = applyMatrix (chromaBlue c)
 
--- class ColorAppearanceModel cam where
---   adoptationMatrix :: CAM t
+
+
+chromaticAdaptationXYZ ::
+     forall ir it e t. (VonKriesTransform t, Illuminant it, Illuminant ir, RealFloat e)
+  => VonKriesAdaptationMatrix t it ir e
+  -> Pixel XYZ e
+  -> Pixel XYZ e
+chromaticAdaptationXYZ (VonKriesAdaptationMatrix m3x3) px = coerce (multM3x3byV3 m3x3 (coerce px))
+
+
+
+chromaticAdaptation ::
+     forall csr ir cs it e t.
+     ( VonKriesTransform t
+     , Illuminant it
+     , Illuminant ir
+     , ColorSpace cs e
+     , ColorSpace csr e
+     , RealFloat e
+     , RedGreenBlue cs it
+     , RedGreenBlue csr ir
+     )
+  => t
+  -> Pixel cs e
+  -> Pixel csr e
+chromaticAdaptation _ px =
+  fromPixelXYZ (XYZ (multM3x3byV3 m3x3 (coerce (toPixelXYZ px :: Pixel XYZ e))))
+  where
+    VonKriesAdaptationMatrix m3x3 = vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix t it ir e
+
+srgbVonKries :: VonKriesAdaptationMatrix t it ir Double
+srgbVonKries = VonKriesAdaptationMatrix $ M3x3
+      (V3 1.047844353856414 0.022898981050086 0.050206647741605)
+      (V3 0.029549007606644 0.990508028941971 0.017074711360960)
+      (V3 0.009250984365223 0.015072338237051 0.751717835079977)
+
+-- RAL adopted: Daffodil yellow
+-- toWord8 <$> (fromPixelXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Float) (toPixelXYZ (PixelLAB 66.5 27.308 80.402 :: Pixel (LAB D50a) Float) :: Pixel XYZ Float)) :: Pixel SRGB Float)
+-- <RGB:(226,141,  0)>
+
+
+-- 
+-- toWord8 <$> (fromPixelXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Double) (toPixelXYZ (PixelLAB 83.353 3.462 75.829 :: Pixel (LAB D50a) Double) :: Pixel XYZ Double)) :: Pixel SRGB Double)
+-- <RGB:(242,203, 46)>
+
+
+-- -- Green beige
+-- toWord8 <$> (fromPixelXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Double) (toPixelXYZ (PixelLAB 76.022 (-0.366) 27.636 :: Pixel (LAB D50a) Double) :: Pixel XYZ Double)) :: Pixel SRGB Double)
+-- <RGB:(201,187,136)>

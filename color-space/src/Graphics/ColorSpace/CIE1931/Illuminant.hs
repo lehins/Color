@@ -17,7 +17,7 @@ module Graphics.ColorSpace.CIE1931.Illuminant
   ) where
 
 import Graphics.ColorSpace.Algebra
-import Graphics.ColorSpace.Internal (Illuminant(..), WhitePoint(..), CCT(..))
+import Graphics.ColorSpace.Internal --(Illuminant(..), WhitePoint(..), CCT(..))
 
 rectifyColorTemperature ::
      Int
