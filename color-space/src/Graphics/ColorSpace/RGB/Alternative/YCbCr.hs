@@ -73,7 +73,7 @@ pattern PixelYCbCrA y cb cr a = Alpha (YCbCr (CM.PixelYCbCr y cb cr)) a
 {-# COMPLETE PixelYCbCrA #-}
 
 
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
+-- | `YCbCr` color model
 instance ColorModel cs e => ColorModel (YCbCr cs) e where
   type Components (YCbCr cs) e = (e, e, e)
   toComponents (PixelYCbCr y cb cr) = (y, cb, cr)
@@ -82,8 +82,8 @@ instance ColorModel cs e => ColorModel (YCbCr cs) e where
   {-# INLINE fromComponents #-}
   showsColorModelName _ = ("YCbCr" ++)
 
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-instance Elevator e => ColorSpace (YCbCr SRGB) e where
+-- | `YCbCr` representation for `SRGB` color space
+instance Elevator e => ColorSpace (YCbCr SRGB) D65 e where
   type BaseColorSpace (YCbCr SRGB) = SRGB
   toBaseColorSpace = fmap fromRealFloat . ycbcr2rgb . fmap toFloat
   {-# INLINE toBaseColorSpace #-}
@@ -96,8 +96,8 @@ instance Elevator e => ColorSpace (YCbCr SRGB) e where
   showsColorSpaceName _ = ("YCbCr " ++) . showsColorSpaceName (pure 0 :: Pixel SRGB e)
 
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-instance (Luma (cs i), ColorSpace (cs i) e, RedGreenBlue (cs i) i) =>
-         ColorSpace (YCbCr (cs i)) e where
+instance (Luma (cs i), ColorSpace (cs i) i e, RedGreenBlue (cs i) i) =>
+         ColorSpace (YCbCr (cs i)) i e where
   type BaseColorSpace (YCbCr (cs i)) = cs i
   toBaseColorSpace = fmap fromDouble . fromPixelYCbCr
   {-# INLINE toBaseColorSpace #-}

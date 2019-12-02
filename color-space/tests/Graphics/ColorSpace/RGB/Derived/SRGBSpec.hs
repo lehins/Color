@@ -1,7 +1,8 @@
-{-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 module Graphics.ColorSpace.RGB.Derived.SRGBSpec (spec) where
 
@@ -17,5 +18,5 @@ instance (Elevator e, Random e, Illuminant i) => Arbitrary (Pixel (SRGB (i :: k)
 spec :: Spec
 spec = describe "SRGB" $ do
   colorModelSpec @(SRGB 'D65) @Word
-  prop "toFromPixelXYZ" $ prop_toFromPixelXYZ @(SRGB 'D65) @Double
-  prop "toFromColorSpace" $ prop_toFromColorSpace @(SRGB 'D65) @Double
+  prop "toFromPixelXYZ" (prop_toFromPixelXYZ :: Pixel (SRGB 'D65) Double -> Property)
+  prop "toFromColorSpace" (prop_toFromColorSpace :: Pixel (SRGB 'D65) Double -> Property)

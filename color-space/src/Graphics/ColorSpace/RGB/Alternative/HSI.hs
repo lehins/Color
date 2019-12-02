@@ -91,7 +91,7 @@ instance ColorModel cs e => ColorModel (HSI cs) e where
 
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
-instance (Typeable cs, ColorSpace cs e, RedGreenBlue cs i) => ColorSpace (HSI cs) e where
+instance (Typeable cs, ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (HSI cs) i e where
   type BaseColorSpace (HSI cs) = cs
   toBaseColorSpace = mkPixelRGB . fmap fromDouble . CM.hsi2rgb . fmap toDouble . coerce
   {-# INLINE toBaseColorSpace #-}

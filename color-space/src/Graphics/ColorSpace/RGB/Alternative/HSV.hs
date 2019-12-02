@@ -29,7 +29,6 @@ module Graphics.ColorSpace.RGB.Alternative.HSV
   ) where
 
 import Data.Coerce
-import Data.Typeable
 import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import qualified Graphics.ColorModel.HSV as CM
@@ -91,8 +90,7 @@ instance ColorModel cs e => ColorModel (HSV cs) e where
 
 
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
-instance (Typeable cs, ColorSpace cs e, RedGreenBlue cs i) =>
-         ColorSpace (HSV cs) e where
+instance (ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (HSV cs) i e where
   type BaseColorSpace (HSV cs) = cs
   toBaseColorSpace = mkPixelRGB . fmap fromDouble . CM.hsv2rgb . fmap toDouble . coerce
   {-# INLINE toBaseColorSpace #-}

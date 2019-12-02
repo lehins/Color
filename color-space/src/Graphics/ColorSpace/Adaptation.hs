@@ -1,8 +1,9 @@
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE NegativeLiterals #-}
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.ColorSpace.CIE1931
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
@@ -25,8 +26,9 @@ import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.CIE1931.Illuminant
 import Graphics.ColorSpace.CIE1976.LAB
 import Graphics.ColorSpace.Internal
-import Graphics.ColorSpace.RGB.Internal
-import Graphics.ColorSpace.RGB.SRGB
+-- import Graphics.ColorSpace.RGB.Internal
+-- import Graphics.ColorSpace.RGB.Derived.AdobeRGB as Der
+-- import Graphics.ColorSpace.RGB.AdobeRGB as Std
 
 
 -- | Chromatic adaptation transformation matrix
@@ -85,48 +87,46 @@ vonKriesAdaptationMatrix =
     wpRef = coerce (normalTristimulus :: Tristimulus ir e)
 
 
-chromaticityAdaptation ::
-     forall ir cs it e t.
-     (VonKriesTransform t, Illuminant it, Illuminant ir, ColorSpace cs e, RealFloat e)
-  => t
-  -> Chromaticity cs it e
-  -> Chromaticity cs ir e
-chromaticityAdaptation _ c = Chromaticity redPrimary greenPrimary bluePrimary
-  where
-    VonKriesAdaptationMatrix m3x3 = vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix t it ir e
-    applyMatrix chroma =
-      PrimaryChroma (fromPixelXYZ (XYZ (multM3x3byV3 m3x3 (coerce (primaryXYZ chroma)))))
-    redPrimary = applyMatrix (chromaRed c)
-    greenPrimary = applyMatrix (chromaGreen c)
-    bluePrimary = applyMatrix (chromaBlue c)
+-- chromaticityAdaptation ::
+--      forall ir csr it cs e t.
+--      (VonKriesTransform t, Illuminant it, Illuminant ir, ColorSpace cs e, ColorSpace csr e, RealFloat e)
+--   => t
+--   -> Chromaticity cs it e
+--   -> Chromaticity csr ir e
+-- chromaticityAdaptation _ c = Chromaticity redPrimary greenPrimary bluePrimary
+--   where
+--     VonKriesAdaptationMatrix m3x3 = vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix t it ir e
+--     applyMatrix chroma =
+--       PrimaryChroma (fromPixelXYZ (XYZ (multM3x3byV3 m3x3 (coerce (primaryXYZ chroma)))))
+--     redPrimary = applyMatrix (chromaRed c)
+--     greenPrimary = applyMatrix (chromaGreen c)
+--     bluePrimary = applyMatrix (chromaBlue c)
 
 
 
 chromaticAdaptationXYZ ::
      forall ir it e t. (VonKriesTransform t, Illuminant it, Illuminant ir, RealFloat e)
   => VonKriesAdaptationMatrix t it ir e
-  -> Pixel XYZ e
-  -> Pixel XYZ e
+  -> Pixel (XYZ it) e
+  -> Pixel (XYZ ir) e
 chromaticAdaptationXYZ (VonKriesAdaptationMatrix m3x3) px = coerce (multM3x3byV3 m3x3 (coerce px))
 
 
 
 chromaticAdaptation ::
-     forall csr ir cs it e t.
+     forall csr ir cst it e t.
      ( VonKriesTransform t
      , Illuminant it
      , Illuminant ir
-     , ColorSpace cs e
-     , ColorSpace csr e
+     , ColorSpace cst it e
+     , ColorSpace csr ir e
      , RealFloat e
-     , RedGreenBlue cs it
-     , RedGreenBlue csr ir
      )
   => t
-  -> Pixel cs e
+  -> Pixel cst e
   -> Pixel csr e
 chromaticAdaptation _ px =
-  fromPixelXYZ (XYZ (multM3x3byV3 m3x3 (coerce (toPixelXYZ px :: Pixel XYZ e))))
+  fromPixelXYZ (XYZ (multM3x3byV3 m3x3 (coerce (toPixelXYZ px :: Pixel (XYZ it) e))))
   where
     VonKriesAdaptationMatrix m3x3 = vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix t it ir e
 
@@ -141,7 +141,7 @@ srgbVonKries = VonKriesAdaptationMatrix $ M3x3
 -- <RGB:(226,141,  0)>
 
 
--- 
+--
 -- toWord8 <$> (fromPixelXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Double) (toPixelXYZ (PixelLAB 83.353 3.462 75.829 :: Pixel (LAB D50a) Double) :: Pixel XYZ Double)) :: Pixel SRGB Double)
 -- <RGB:(242,203, 46)>
 

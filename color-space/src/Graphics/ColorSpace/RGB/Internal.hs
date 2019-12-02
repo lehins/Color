@@ -1,16 +1,17 @@
-{-# LANGUAGE PatternSynonyms #-}
-{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE DefaultSignatures #-}
+{-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.ColorSpace.RGB.Internal
@@ -40,13 +41,13 @@ module Graphics.ColorSpace.RGB.Internal
   , module Graphics.ColorSpace.Algebra
   ) where
 
-import qualified Graphics.ColorModel.RGB as CM
+import Data.Coerce
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
+import qualified Graphics.ColorModel.RGB as CM
 import Graphics.ColorModel.Y
-import Graphics.ColorSpace.Internal
 import Graphics.ColorSpace.Algebra
-import Data.Coerce
+import Graphics.ColorSpace.Internal
 
 
 class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
@@ -63,12 +64,12 @@ class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
 
   -- | Normalized primary matrix for this RGB color space. Default implementation derives
   -- it from `chromaticity`
-  npm :: (Elevator a, RealFloat a) => NPM cs i a
+  npm :: (ColorSpace cs i a, RealFloat a) => NPM cs a
   npm = npmDerive chromaticity
 
   -- | Inverse normalized primary matrix for this RGB color space. Default implementation
   -- derives it from `chromaticity`
-  inpm :: (Elevator a, RealFloat a) => INPM cs i a
+  inpm :: (ColorSpace cs i a, RealFloat a) => INPM cs a
   inpm = inpmDerive chromaticity
 
   -- | Lift RGB color model into a RGB color space
@@ -84,14 +85,13 @@ class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
   unPixelRGB = coerce
 
 
-data Chromaticity cs i e where
-  Chromaticity :: Illuminant i =>
-    { chromaRed   :: !(Primary e)
-    , chromaGreen :: !(Primary e)
-    , chromaBlue  :: !(Primary e)
-    } -> Chromaticity cs i e
+data Chromaticity cs i e = Chromaticity
+  { chromaRed   :: !(Primary i e)
+  , chromaGreen :: !(Primary i e)
+  , chromaBlue  :: !(Primary i e)
+  }
 deriving instance Eq e => Eq (Chromaticity cs i e)
-deriving instance Elevator e => Show (Chromaticity cs i e) -- TODO: better show with whitepoint
+deriving instance ColorSpace cs i e => Show (Chromaticity cs i e) -- TODO: better show with whitepoint
 
 -- | Linear transformation of a pixel in a linear RGB color space into XYZ color space
 --
@@ -104,30 +104,30 @@ deriving instance Elevator e => Show (Chromaticity cs i e) -- TODO: better show 
 -- >>> import Debug.Trace
 -- >>> import Graphics.ColorSpace.RGB.Derived.SRGB
 -- >>> :{
--- srgbFromLinear :: Pixel (SRGB 'D65) Float -> Pixel XYZ Float
+-- srgbFromLinear :: Pixel (SRGB 'D65) Float -> Pixel (XYZ 'D65) Float
 -- srgbFromLinear = npmApply npm'
---   where npm' = trace "Evaluated only once!!!" npm :: NPM (SRGB 'D65) 'D65 Float
+--   where npm' = trace "Evaluated only once!!!" npm :: NPM (SRGB 'D65) Float
 -- :}
--- 
+--
 -- >>> srgbFromLinear $ PixelRGB 0.1 0.2 0.3
--- <XYZ:(Evaluated only once!!!
+-- <XYZ CIE1931 'D65:(Evaluated only once!!!
 --  0.166888, 0.185953, 0.310856)>
 -- >>> srgbFromLinear $ PixelRGB 0.1 0.2 0.3
--- <XYZ:( 0.166888, 0.185953, 0.310856)>
+-- <XYZ CIE1931 'D65:( 0.166888, 0.185953, 0.310856)>
 -- >>> rgb = PixelRGB 0.1 0.2 0.3 :: Pixel (SRGB 'D65) Float
--- >>> npmApply npm rgb :: Pixel XYZ Float
--- <XYZ:( 0.166888, 0.185953, 0.310856)>
+-- >>> npmApply npm rgb :: Pixel (XYZ 'D65) Float
+-- <XYZ CIE1931 'D65:( 0.166888, 0.185953, 0.310856)>
 --
 -- Here is a comparison with a non-liner sRGB conversion:
 --
--- >>> npmApply npm (dcctf rgb) :: Pixel XYZ Float {- non-linear transformation -}
--- <XYZ:( 0.029186, 0.031093, 0.073737)>
--- >>> toPixelXYZ rgb :: Pixel XYZ Float           {- non-linear transformation -}
--- <XYZ:( 0.029186, 0.031093, 0.073737)>
+-- >>> npmApply npm (dcctf rgb) :: Pixel (XYZ 'D65) Float {- non-linear transformation -}
+-- <XYZ CIE1931 'D65:( 0.029186, 0.031093, 0.073737)>
+-- >>> toPixelXYZ rgb :: Pixel (XYZ 'D65) Float           {- non-linear transformation -}
+-- <XYZ CIE1931 'D65:( 0.029186, 0.031093, 0.073737)>
 --
 --
 -- @since 0.1.0
-npmApply :: (RedGreenBlue cs i, Elevator e) => NPM cs i e -> Pixel cs e -> Pixel XYZ e
+npmApply :: (RedGreenBlue cs i, Elevator e) => NPM cs e -> Pixel cs e -> Pixel (XYZ i) e
 npmApply (NPM npm') = coerce . multM3x3byV3 npm' . coerce . unPixelRGB
 {-# INLINE npmApply #-}
 
@@ -135,33 +135,35 @@ npmApply (NPM npm') = coerce . multM3x3byV3 npm' . coerce . unPixelRGB
 --
 -- @since 0.1.0
 inpmApply ::
-     (RedGreenBlue cs i, Elevator e) => INPM cs i e -> Pixel XYZ e -> Pixel cs e
+     (RedGreenBlue cs i, Elevator e) => INPM cs e -> Pixel (XYZ i) e -> Pixel cs e
 inpmApply (INPM inpm') = mkPixelRGB . coerce . multM3x3byV3 inpm' . coerce
 {-# INLINE inpmApply #-}
 
 -- | Linear transformation of a pixel in a linear luminocity, i.e. the Y component of
 -- XYZ color space
 npmApplyLuminocity ::
-     forall cs i e. (RedGreenBlue cs i, Elevator e, RealFloat e)
+     forall cs i e. (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e)
   => Pixel cs e
   -> Pixel Y e
 npmApplyLuminocity px =
-  coerce (m3x3row1 (unNPM (npm :: NPM cs i e)) `dotProduct` coerce (unPixelRGB px))
+  coerce (m3x3row1 (unNPM (npm :: NPM cs e)) `dotProduct` coerce (unPixelRGB px))
 {-# INLINE npmApplyLuminocity #-}
 
 
-rgbLuminocity :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel cs e -> Pixel Y e
+rgbLuminocity :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Pixel cs e -> Pixel Y e
 rgbLuminocity = npmApplyLuminocity . dcctf
 {-# INLINE rgbLuminocity #-}
 
-rgb2xyz :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel cs e -> Pixel XYZ e
+rgb2xyz :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Pixel cs e -> Pixel (XYZ i) e
 rgb2xyz = npmApply npm . dcctf
 {-# INLINE rgb2xyz #-}
 
-xyz2rgb :: (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel XYZ e -> Pixel cs e
+xyz2rgb ::
+     (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e)
+  => Pixel (XYZ i) e
+  -> Pixel cs e
 xyz2rgb = ecctf . inpmApply inpm
 {-# INLINE xyz2rgb #-}
-
 
 -- | Constructor for an RGB color space.
 pattern PixelRGB :: RedGreenBlue cs i => e -> e -> e -> Pixel cs e
@@ -205,11 +207,11 @@ pattern PixelRGBA r g b a <- Alpha (unPixelRGB -> CM.PixelRGB r g b) a where
 -- into `Graphics.ColorSpace.CIE1931.XYZ.XYZ` color space.
 --
 -- @since 0.1.0
-newtype NPM cs (i :: k) e = NPM
+newtype NPM cs e = NPM
   { unNPM :: M3x3 e
   } deriving (Eq, Functor, Applicative, Foldable, Traversable)
 
-instance Elevator e => Show (NPM cs i e) where
+instance ColorSpace cs i e => Show (NPM cs e) where
   show = show . unNPM
 
 -- | Inverse normalized primary matrix (iNPM), which is used to tranform linear
@@ -217,11 +219,11 @@ instance Elevator e => Show (NPM cs i e) where
 -- literally a inverse matrix of `NPM`
 --
 -- @since 0.1.0
-newtype INPM cs (i :: k) e = INPM
+newtype INPM cs e = INPM
   { unINPM :: M3x3 e
   } deriving (Eq, Functor, Applicative, Foldable, Traversable)
 
-instance Elevator e => Show (INPM cs i e) where
+instance Elevator e => Show (INPM cs e) where
   show = show . unINPM
 
 
@@ -229,9 +231,9 @@ instance Elevator e => Show (INPM cs i e) where
 --
 -- @since 0.1.0
 npmDerive ::
-     forall cs i e. (Elevator e, RealFloat e, Illuminant i)
+     forall cs i e. (ColorSpace cs i e, RealFloat e)
   => Chromaticity cs i e
-  -> NPM cs i e
+  -> NPM cs e
 npmDerive (Chromaticity r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
   where
     !primaries' =
@@ -248,9 +250,9 @@ npmDerive (Chromaticity r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
 --
 -- @since 0.1.0
 inpmDerive ::
-     forall cs i e. (Elevator e, RealFloat e, Illuminant i)
+     forall cs i e. (ColorSpace cs i e, RealFloat e)
   => Chromaticity cs i e
-  -> INPM cs i e
+  -> INPM cs e
 inpmDerive = INPM . invertM3x3 . unNPM . npmDerive
 {-# INLINE inpmDerive #-}
 

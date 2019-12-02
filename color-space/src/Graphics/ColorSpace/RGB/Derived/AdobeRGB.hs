@@ -71,7 +71,7 @@ instance (Illuminant i, Elevator e) => ColorModel (AdobeRGB (i :: k)) e where
   showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | `AdobeRGB` color space (derived)
-instance (Illuminant i, Elevator e) => ColorSpace (AdobeRGB (i :: k)) e where
+instance (Illuminant i, Elevator e) => ColorSpace (AdobeRGB i) i e where
   type BaseColorSpace (AdobeRGB i) = AdobeRGB i
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}

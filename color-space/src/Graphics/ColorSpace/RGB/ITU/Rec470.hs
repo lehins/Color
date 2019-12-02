@@ -79,7 +79,7 @@ instance Elevator e => ColorModel BT470_525 e where
   showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | ITU-R BT.470 (525) color space
-instance Elevator e => ColorSpace BT470_525 e where
+instance Elevator e => ColorSpace BT470_525 C e where
   type BaseColorSpace BT470_525 = BT470_525
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
@@ -146,7 +146,7 @@ instance Elevator e => ColorModel BT470_625 e where
   showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | ITU-R BT.470 (625) color space
-instance Elevator e => ColorSpace BT470_625 e where
+instance Elevator e => ColorSpace BT470_625 D65 e where
   type BaseColorSpace BT470_625 = BT470_625
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
@@ -166,7 +166,6 @@ instance RedGreenBlue BT470_625 D65 where
   dcctf = fmap (igamma 2.8)
   {-# INLINE dcctf #-}
 
-
 gamma :: Floating a => a -> a -> a
 gamma p v = v ** p
 {-# INLINE gamma #-}
@@ -178,7 +177,7 @@ igamma p v = v ** (1 / p)
 -- | Primaries for ITU-R BT.470 (525).
 --
 -- @since 0.1.0
-primaries525 :: (Illuminant i, RealFloat e) => Chromaticity rgb i e
+primaries525 :: RealFloat e => Chromaticity rgb i e
 primaries525 = Chromaticity (Primary 0.67 0.33)
                             (Primary 0.21 0.71)
                             (Primary 0.14 0.08)
@@ -187,7 +186,7 @@ primaries525 = Chromaticity (Primary 0.67 0.33)
 -- | Primaries for ITU-R BT.470 and BT.601 (625).
 --
 -- @since 0.1.0
-primaries625 :: (Illuminant i, RealFloat e) => Chromaticity rgb i e
+primaries625 :: RealFloat e => Chromaticity rgb i e
 primaries625 = Chromaticity (Primary 0.64 0.33)
                             (Primary 0.29 0.60)
                             (Primary 0.15 0.06)

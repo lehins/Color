@@ -86,7 +86,7 @@ instance (Illuminant i, Elevator e) => ColorModel (LAB i) e where
   fromComponents (l', a', b') = PixelLAB l' a' b'
   {-# INLINE fromComponents #-}
 
-instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (LAB (i :: k)) e where
+instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (LAB (i :: k)) i e where
   type BaseColorSpace (LAB i) = LAB i
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
@@ -101,9 +101,9 @@ instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (LAB (i :: k)) e 
   showsColorSpaceName _ = showsType (Proxy :: Proxy (LAB i))
 
 lab2xyz ::
-     forall i a e. (Illuminant i, Elevator a, Elevator e, RealFloat a)
-  => Pixel (LAB (i :: k)) e
-  -> Pixel XYZ a
+     forall i a e. (Illuminant i, Elevator e, Elevator a, RealFloat a)
+  => Pixel (LAB i) e
+  -> Pixel (XYZ i) a
 lab2xyz (PixelLAB l' a' b') = PixelXYZ x y z
   where
     !(Tristimulus (PixelXYZ wx _ wz)) = normalTristimulus :: Tristimulus i a
@@ -126,8 +126,8 @@ ift t
 
 xyz2lab ::
      forall i a e. (Illuminant i, Elevator a, Elevator e, RealFloat e)
-  => Pixel XYZ a
-  -> Pixel (LAB (i :: k)) e
+  => Pixel (XYZ i) a
+  -> Pixel (LAB i) e
 xyz2lab (PixelXYZ x y z) = PixelLAB l' a' b'
   where
     !(Tristimulus (PixelXYZ wx _ wz)) = normalTristimulus :: Tristimulus i e

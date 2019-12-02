@@ -60,6 +60,7 @@ class ( Functor (Pixel cs)
       , Show (Pixel cs e)
       , VU.Unbox (Components cs e)
       , VS.Storable (Pixel cs e)
+      , Typeable cs
       , Elevator e
       ) =>
       ColorModel cs e where
@@ -74,7 +75,6 @@ class ( Functor (Pixel cs)
   --
   -- @since 0.1.0
   showsColorModelName :: Pixel cs e -> ShowS
-  default showsColorModelName :: Typeable cs => Pixel cs e -> ShowS
   showsColorModelName _ = showsType (Proxy :: Proxy cs)
 
 instance ColorModel cs e => Default (Pixel cs e) where

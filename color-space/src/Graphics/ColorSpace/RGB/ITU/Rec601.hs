@@ -85,7 +85,7 @@ instance Elevator e => ColorModel BT601_525 e where
   showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | ITU-R BT.601 (525) color space
-instance Elevator e => ColorSpace BT601_525 e where
+instance Elevator e => ColorSpace BT601_525 D65 e where
   type BaseColorSpace BT601_525 = BT601_525
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
@@ -144,7 +144,7 @@ instance Elevator e => ColorModel BT601_625 e where
   showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | ITU-R BT.601 (625) color space
-instance Elevator e => ColorSpace BT601_625 e where
+instance Elevator e => ColorSpace BT601_625 D65 e where
   type BaseColorSpace BT601_625 = BT601_625
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
@@ -215,7 +215,7 @@ itransfer e
 -- | Primaries for ITU-R BT.601 (525).
 --
 -- @since 0.1.0
-primaries525 :: (Illuminant i, RealFloat e) => Chromaticity rgb i e
+primaries525 :: RealFloat e => Chromaticity rgb i e
 primaries525 = Chromaticity (Primary 0.630 0.340)
                             (Primary 0.310 0.595)
                             (Primary 0.155 0.070)
