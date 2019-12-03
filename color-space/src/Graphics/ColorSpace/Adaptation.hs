@@ -26,7 +26,7 @@ import Graphics.ColorSpace.Algebra
 import Graphics.ColorSpace.CIE1931.Illuminant
 import Graphics.ColorSpace.CIE1976.LAB
 import Graphics.ColorSpace.Internal
--- import Graphics.ColorSpace.RGB.Internal
+import Graphics.ColorSpace.RGB.Internal
 -- import Graphics.ColorSpace.RGB.Derived.AdobeRGB as Der
 -- import Graphics.ColorSpace.RGB.AdobeRGB as Std
 
@@ -87,20 +87,20 @@ vonKriesAdaptationMatrix =
     wpRef = coerce (normalTristimulus :: Tristimulus ir e)
 
 
--- chromaticityAdaptation ::
---      forall ir csr it cs e t.
---      (VonKriesTransform t, Illuminant it, Illuminant ir, ColorSpace cs e, ColorSpace csr e, RealFloat e)
---   => t
---   -> Chromaticity cs it e
---   -> Chromaticity csr ir e
--- chromaticityAdaptation _ c = Chromaticity redPrimary greenPrimary bluePrimary
---   where
---     VonKriesAdaptationMatrix m3x3 = vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix t it ir e
---     applyMatrix chroma =
---       PrimaryChroma (fromPixelXYZ (XYZ (multM3x3byV3 m3x3 (coerce (primaryXYZ chroma)))))
---     redPrimary = applyMatrix (chromaRed c)
---     greenPrimary = applyMatrix (chromaGreen c)
---     bluePrimary = applyMatrix (chromaBlue c)
+chromaticityAdaptation ::
+     forall ir csr it cst e t.
+     (VonKriesTransform t, ColorSpace cst it e, ColorSpace csr ir e, RealFloat e)
+  => t
+  -> Chromaticity cst it e
+  -> Chromaticity csr ir e
+chromaticityAdaptation _ c = Chromaticity redPrimary greenPrimary bluePrimary
+  where
+    VonKriesAdaptationMatrix m3x3 = vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix t it ir e
+    applyMatrix chroma =
+      PrimaryChroma (fromPixelXYZ (XYZ (multM3x3byV3 m3x3 (coerce (primaryXYZ chroma)))))
+    redPrimary = applyMatrix (chromaRed c)
+    greenPrimary = applyMatrix (chromaGreen c)
+    bluePrimary = applyMatrix (chromaBlue c)
 
 
 

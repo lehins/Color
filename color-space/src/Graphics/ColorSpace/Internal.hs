@@ -13,6 +13,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeInType #-}
 {-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.ColorSpace.Internal
@@ -59,10 +60,11 @@ import Graphics.ColorSpace.Algebra
 import Data.Typeable
 import Data.Coerce
 import GHC.TypeNats
+import Data.Kind
 
 class (Illuminant i, ColorModel cs e) => ColorSpace cs (i :: k) e | cs -> i where
 
-  type BaseColorSpace cs :: *
+  type BaseColorSpace cs :: Type
   type BaseColorSpace cs = cs
 
   toBaseColorSpace :: Pixel cs e -> Pixel (BaseColorSpace cs) e
@@ -377,7 +379,7 @@ instance (Typeable i, Typeable k, Elevator e) => ColorModel (CIExyY (i :: k)) e 
   {-# INLINE fromComponents #-}
 
 -- | CIE xyY color space
-instance (Illuminant i, Elevator e) => ColorSpace (CIExyY i) i e where
+instance (Illuminant i, Typeable k, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
   toBaseColorSpace = id
   fromBaseColorSpace = id
   showsColorSpaceName _ = ("CIExyY" ++)

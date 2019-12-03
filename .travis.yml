@@ -141,10 +141,14 @@ script:
      stack --stack-yaml $COVERALLS_STACK_YAML hpc report --all
      travis_retry curl -L https://github.com/lehins/stack-hpc-coveralls/releases/download/0.0.5.0/shc.tar.gz | tar xz shc
      STACK_YAML="$COVERALLS_STACK_YAML" ./shc --repo-token=$COVERALLS_REPO_TOKEN combined custom
+     if [ -z "$DOCTESTS_DISABLED" ]; then
+       stack $ARGS $DOCTEST_ARGS test color-space:doctests
+     fi
   else
-    stack $ARGS $DOCTEST_ARGS test color-space:tests
     if [ -z "$DOCTESTS_DISABLED" ]; then
-      stack $ARGS $DOCTEST_ARGS test color-space:doctests
+      stack $ARGS $DOCTEST_ARGS test --bench --no-run-benchmarks
+    else
+      stack $ARGS $DOCTEST_ARGS test color-space:tests
     fi
   fi
   set +ex

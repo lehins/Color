@@ -17,6 +17,7 @@ module Graphics.ColorSpace.RGB
   , pattern PixelRGBF
   , pattern PixelRGBD
   , SRGB
+  , D65
   -- * Re-exports
   , module Graphics.ColorSpace
   , module Graphics.ColorSpace.RGB.Alternative
@@ -28,4 +29,4 @@ import Graphics.ColorSpace.RGB.Alternative
 import Graphics.ColorSpace.RGB.Luma
 import Graphics.ColorSpace.RGB.SRGB (pattern PixelRGB16, pattern PixelRGB32,
                                      pattern PixelRGB64, pattern PixelRGB8,
-                                     pattern PixelRGBD, pattern PixelRGBF, SRGB)
+                                     pattern PixelRGBD, pattern PixelRGBF, SRGB, D65)

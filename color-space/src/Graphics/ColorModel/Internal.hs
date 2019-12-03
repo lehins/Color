@@ -47,10 +47,10 @@ import qualified Data.Vector.Unboxed as VU
 import Foreign.Ptr
 import Foreign.Storable
 import Graphics.ColorModel.Elevator
-
+import Data.Kind
 
 -- | A Pixel family with a color space and a precision of elements.
-data family Pixel cs e :: *
+data family Pixel cs e :: Type
 
 class ( Functor (Pixel cs)
       , Applicative (Pixel cs)
@@ -64,7 +64,7 @@ class ( Functor (Pixel cs)
       , Elevator e
       ) =>
       ColorModel cs e where
-  type Components cs e
+  type Components cs e :: Type
   -- | Convert a Pixel to a representation suitable for storage as an unboxed
   -- element, usually a tuple of channels.
   toComponents :: Pixel cs e -> Components cs e
