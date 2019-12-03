@@ -280,7 +280,7 @@ pixelChromaticity _ = chromaticity
 -- >>> import Graphics.ColorSpace.RGB
 -- >>> :set -XTypeApplications
 -- >>> pixelWhitePoint @Float (PixelRGB8 1 2 3)
--- WhitePointChroma <CIExyY:( 0.312700, 0.329000)>
+-- WhitePointChroma <CIExyY * D65:( 0.312700, 0.329000)>
 --
 -- @since 0.1.0
 pixelWhitePoint ::
