@@ -119,11 +119,9 @@ instance Elevator e => ColorModel SRGB e where
   {-# INLINE toComponents #-}
   fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | s`RGB` color space
 instance Elevator e => ColorSpace SRGB D65 e where
-  type BaseColorSpace SRGB = SRGB
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
@@ -134,7 +132,6 @@ instance Elevator e => ColorSpace SRGB D65 e where
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = ("sRGB Standard" ++)
 
 -- | s`RGB` color space
 instance RedGreenBlue SRGB D65 where

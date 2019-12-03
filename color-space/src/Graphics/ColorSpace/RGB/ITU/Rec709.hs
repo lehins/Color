@@ -64,11 +64,9 @@ instance Elevator e => ColorModel BT709 e where
   {-# INLINE toComponents #-}
   fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | ITU-R BT.709 color space
 instance Elevator e => ColorSpace BT709 D65 e where
-  type BaseColorSpace BT709 = BT709
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
@@ -77,7 +75,6 @@ instance Elevator e => ColorSpace BT709 D65 e where
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = ("sBT709 Standard" ++)
 
 -- | ITU-R BT.709 color space
 instance RedGreenBlue BT709 D65 where

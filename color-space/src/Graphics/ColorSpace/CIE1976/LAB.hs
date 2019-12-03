@@ -26,7 +26,6 @@ module Graphics.ColorSpace.CIE1976.LAB
   , Pixel
   ) where
 
-import Data.Proxy
 import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
@@ -98,7 +97,6 @@ instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (LAB (i :: k)) i 
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = xyz2lab
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = showsType (Proxy :: Proxy (LAB i))
 
 lab2xyz ::
      forall i a e. (Illuminant i, Elevator e, Elevator a, RealFloat a)

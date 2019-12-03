@@ -26,7 +26,6 @@ module Graphics.ColorSpace.RGB.Derived.SRGB
   , module Graphics.ColorSpace.CIE1931.Illuminant
   ) where
 
-import Data.Proxy
 import Foreign.Storable
 import Graphics.ColorModel.Alpha
 import Graphics.ColorModel.Internal
@@ -69,11 +68,9 @@ instance (Illuminant i, Elevator e) => ColorModel (SRGB (i :: k)) e where
   {-# INLINE toComponents #-}
   fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | `SRGB` color space (derived)
 instance (Illuminant i, Elevator e) => ColorSpace (SRGB i) i e where
-  type BaseColorSpace (SRGB i) = SRGB i
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
@@ -84,7 +81,6 @@ instance (Illuminant i, Elevator e) => ColorSpace (SRGB i) i e where
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = showsType (Proxy :: Proxy (SRGB i))
 
 -- | `SRGB` color space (derived)
 instance Illuminant i => RedGreenBlue (SRGB i) i where

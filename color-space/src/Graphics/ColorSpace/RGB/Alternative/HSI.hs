@@ -36,6 +36,7 @@ import qualified Graphics.ColorModel.HSI as CM
 import Graphics.ColorModel.Internal
 import Graphics.ColorSpace
 
+
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
 data HSI cs
 
@@ -87,7 +88,7 @@ instance ColorModel cs e => ColorModel (HSI cs) e where
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = ("HSI" ++)
+  showsColorModelName _ = ("HSI-" ++) . showsColorModelName (pure 0 :: Pixel cs e)
 
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
@@ -97,4 +98,3 @@ instance (Typeable cs, ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (HSI 
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = coerce . fmap fromDouble . CM.rgb2hsi . fmap toDouble . unPixelRGB
   {-# INLINE fromBaseColorSpace #-}
-  showsColorSpaceName _ = showsColorSpaceName (pure 0 :: Pixel cs e)

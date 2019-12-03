@@ -66,11 +66,13 @@ class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
   -- it from `chromaticity`
   npm :: (ColorSpace cs i a, RealFloat a) => NPM cs a
   npm = npmDerive chromaticity
+  {-# INLINE npm #-}
 
   -- | Inverse normalized primary matrix for this RGB color space. Default implementation
   -- derives it from `chromaticity`
   inpm :: (ColorSpace cs i a, RealFloat a) => INPM cs a
   inpm = inpmDerive chromaticity
+  {-# INLINE inpm #-}
 
   -- | Lift RGB color model into a RGB color space
   mkPixelRGB :: Pixel CM.RGB e -> Pixel cs e

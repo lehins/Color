@@ -82,11 +82,9 @@ instance Elevator e => ColorModel BT601_525 e where
   {-# INLINE toComponents #-}
   fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | ITU-R BT.601 (525) color space
 instance Elevator e => ColorSpace BT601_525 D65 e where
-  type BaseColorSpace BT601_525 = BT601_525
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
@@ -95,7 +93,6 @@ instance Elevator e => ColorSpace BT601_525 D65 e where
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = ("BT.601 Standard" ++)
 
 -- | ITU-R BT.601 (525) color space
 instance RedGreenBlue BT601_525 D65 where
@@ -141,11 +138,9 @@ instance Elevator e => ColorModel BT601_625 e where
   {-# INLINE toComponents #-}
   fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | ITU-R BT.601 (625) color space
 instance Elevator e => ColorSpace BT601_625 D65 e where
-  type BaseColorSpace BT601_625 = BT601_625
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
@@ -154,7 +149,6 @@ instance Elevator e => ColorSpace BT601_625 D65 e where
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = ("BT.601 Standard" ++)
 
 -- | ITU-R BT.601 (625) color space
 instance RedGreenBlue BT601_625 D65 where

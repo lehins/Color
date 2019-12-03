@@ -86,7 +86,7 @@ instance ColorModel cs e => ColorModel (HSV cs) e where
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = ("HSV" ++)
+  showsColorModelName _ = ("HSV-" ++) . showsColorModelName (pure 0 :: Pixel cs e)
 
 
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
@@ -96,4 +96,3 @@ instance (ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (HSV cs) i e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = coerce . fmap fromDouble . CM.rgb2hsv . fmap toDouble . unPixelRGB
   {-# INLINE fromBaseColorSpace #-}
-  showsColorSpaceName _ = showsColorSpaceName (pure 0 :: Pixel cs e)

@@ -87,7 +87,7 @@ instance ColorModel cs e => ColorModel (HSL cs) e where
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = ("HSL" ++)
+  showsColorModelName _ = ("HSL-" ++) . showsColorModelName (pure 0 :: Pixel cs e)
 
 
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
@@ -97,4 +97,3 @@ instance (Typeable cs, ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (HSL 
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = coerce . fmap fromDouble . CM.rgb2hsl . fmap toDouble . unPixelRGB
   {-# INLINE fromBaseColorSpace #-}
-  showsColorSpaceName _ = showsColorSpaceName (pure 0 :: Pixel cs e)

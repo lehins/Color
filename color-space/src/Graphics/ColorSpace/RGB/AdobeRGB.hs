@@ -68,11 +68,9 @@ instance Elevator e => ColorModel AdobeRGB e where
   {-# INLINE toComponents #-}
   fromComponents = mkPixelRGB . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName = showsColorModelName . unPixelRGB
 
 -- | Adobe`RGB` color space
 instance Elevator e => ColorSpace AdobeRGB D65 e where
-  type BaseColorSpace AdobeRGB = AdobeRGB
   toBaseColorSpace = id
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
@@ -83,7 +81,6 @@ instance Elevator e => ColorSpace AdobeRGB D65 e where
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = ("AdobeRGB 1998 Standard" ++)
 
 
 -- | Adobe`RGB` color space

@@ -1,4 +1,3 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DefaultSignatures #-}
@@ -13,7 +12,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeInType #-}
 {-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.ColorSpace.Internal
@@ -69,12 +67,6 @@ class (Illuminant i, ColorModel cs e) => ColorSpace cs (i :: k) e | cs -> i wher
 
   toBaseColorSpace :: Pixel cs e -> Pixel (BaseColorSpace cs) e
   fromBaseColorSpace :: Pixel (BaseColorSpace cs) e -> Pixel cs e
-
-  -- | Display the official color space name with any extra parameters. Pixel itself will
-  -- not be evaluated.
-  --
-  -- @since 0.1.0
-  showsColorSpaceName :: Pixel cs e -> ShowS
 
   -- | Get pixel luminocity
   --
@@ -258,11 +250,11 @@ deriving instance Eq e => Eq (Pixel (XYZ i) e)
 deriving instance Ord e => Ord (Pixel (XYZ i) e)
 
 -- | CIE1931 `XYZ` color space
-instance (Typeable i, Typeable k, Elevator e) => Show (Pixel (XYZ (i :: k)) e) where
+instance (Illuminant i, Elevator e) => Show (Pixel (XYZ (i :: k)) e) where
   showsPrec _ = showsColorModel
 
 -- | CIE1931 `XYZ` color space
-instance (Typeable i, Typeable k, Elevator e) => ColorModel (XYZ (i :: k)) e where
+instance (Illuminant i, Elevator e) => ColorModel (XYZ (i :: k)) e where
   type Components (XYZ i) e = (e, e, e)
   toComponents (PixelXYZ x y z) = (x, y, z)
   {-# INLINE toComponents #-}
@@ -273,7 +265,6 @@ instance (Typeable i, Typeable k, Elevator e) => ColorModel (XYZ (i :: k)) e whe
 instance (Illuminant i, Elevator e) => ColorSpace (XYZ i) i e where
   toBaseColorSpace = id
   fromBaseColorSpace = id
-  showsColorSpaceName _ = ("CIE1931 XYZ" ++)
   toPixelY (PixelXYZ _ y _) = PixelY (toRealFloat y)
   {-# INLINE toPixelY #-}
   toPixelXYZ (PixelXYZ x y z) = PixelXYZ (toRealFloat x) (toRealFloat y) (toRealFloat z)
@@ -326,7 +317,7 @@ instance Storable e => Storable (Pixel (XYZ i) e) where
 ---------------
 
 -- | Alternative representation of the CIE 1931 XYZ color space
-data CIExyY i
+data CIExyY (i :: k)
 
 -- | CIE1931 `CIExyY` color space
 newtype instance Pixel (CIExyY i) e = CIExyY (V2 e)
@@ -347,42 +338,36 @@ addY (CIExyY (V2 x y)) = V3 x y 1
 
 -- | CIE xyY color space
 deriving instance Eq e => Eq (Pixel (CIExyY i) e)
-
 -- | CIE xyY color space
 deriving instance Ord e => Ord (Pixel (CIExyY i) e)
-
 -- | CIE xyY color space
 deriving instance Functor (Pixel (CIExyY i))
-
 -- | CIE xyY color space
 deriving instance Applicative (Pixel (CIExyY i))
-
 -- | CIE xyY color space
 deriving instance Foldable (Pixel (CIExyY i))
-
 -- | CIE xyY color space
 deriving instance Traversable (Pixel (CIExyY i))
-
 -- | CIE xyY color space
 deriving instance Storable e => Storable (Pixel (CIExyY i) e)
 
 -- | CIE xyY color space
-instance (Typeable i, Typeable k, Elevator e) => Show (Pixel (CIExyY (i :: k)) e) where
+instance (Illuminant i, Elevator e) => Show (Pixel (CIExyY (i :: k)) e) where
   showsPrec _ = showsColorModel
 
 -- | CIE xyY color space
-instance (Typeable i, Typeable k, Elevator e) => ColorModel (CIExyY (i :: k)) e where
+instance (Illuminant i, Elevator e) => ColorModel (CIExyY (i :: k)) e where
   type Components (CIExyY i) e = (e, e)
   toComponents (CIExyY (V2 x y)) = (x, y)
   {-# INLINE toComponents #-}
   fromComponents (x, y) = CIExyY (V2 x y)
   {-# INLINE fromComponents #-}
+  showsColorModelName _ = showsType (Proxy :: Proxy (CIExyY i))
 
 -- | CIE xyY color space
-instance (Illuminant i, Typeable k, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
+instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
   toBaseColorSpace = id
   fromBaseColorSpace = id
-  showsColorSpaceName _ = ("CIExyY" ++)
   toPixelY _ = PixelY 1
   {-# INLINE toPixelY #-}
   toPixelXYZ xy = PixelXYZ (x / y) 1 ((1 - x - y) / y)

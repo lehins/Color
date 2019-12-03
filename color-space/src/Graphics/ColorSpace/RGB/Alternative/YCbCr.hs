@@ -80,7 +80,7 @@ instance ColorModel cs e => ColorModel (YCbCr cs) e where
   {-# INLINE toComponents #-}
   fromComponents (y, cb, cr) = PixelYCbCr y cb cr
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = ("YCbCr" ++)
+  showsColorModelName _ = ("YCbCr-" ++) . showsColorModelName (pure 0 :: Pixel cs e)
 
 -- | `YCbCr` representation for `SRGB` color space
 instance Elevator e => ColorSpace (YCbCr SRGB) D65 e where
@@ -93,7 +93,6 @@ instance Elevator e => ColorSpace (YCbCr SRGB) D65 e where
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = ("YCbCr " ++) . showsColorSpaceName (pure 0 :: Pixel SRGB e)
 
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
 instance (Luma (cs i), ColorSpace (cs i) i e, RedGreenBlue (cs i) i) =>
@@ -107,7 +106,6 @@ instance (Luma (cs i), ColorSpace (cs i) i e, RedGreenBlue (cs i) i) =>
   {-# INLINE toPixelXYZ #-}
   fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
   {-# INLINE fromPixelXYZ #-}
-  showsColorSpaceName _ = ("YCbCr " ++) . showsColorSpaceName (pure 0 :: Pixel (cs i) e)
 
 
 
