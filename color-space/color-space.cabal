@@ -28,7 +28,13 @@ custom-setup
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Graphics.ColorModel
+  exposed-modules:     Graphics.ColorAdaptation.Internal
+                     , Graphics.ColorAdaptation.VonKries
+                     -- Graphics.ColorAdaptation
+                     -- , Graphics.ColorAdaptation.CIE1994
+                     -- , Graphics.ColorAdaptation.CMCCAT2000
+                     -- , Graphics.ColorAdaptation.Fairchild
+                     , Graphics.ColorModel
                      , Graphics.ColorModel.Binary
                      , Graphics.ColorModel.Complex
                      , Graphics.ColorModel.CMYK
@@ -46,11 +52,10 @@ library
                      -- , Graphics.ColorSpace.CIE1931.RGB
                      , Graphics.ColorSpace.CIE1931.XYZ
                      , Graphics.ColorSpace.CIE1931.Illuminant
-                     -- , Graphics.ColorSpace.CIE1976.LUV
-                     -- , Graphics.ColorSpace.CIE1976.LAB.LCH
                      , Graphics.ColorSpace.CIE1976.LAB
+                     -- , Graphics.ColorSpace.CIE1976.LAB.LCH
                      -- , Graphics.ColorSpace.CIE1976.LAB.HLC
-                     -- , Graphics.ColorSpace.CIE1976.Illuminants
+                     -- , Graphics.ColorSpace.CIE1976.LUV
                      , Graphics.ColorSpace.RGB
                      , Graphics.ColorSpace.RGB.SRGB
                      , Graphics.ColorSpace.RGB.AdobeRGB

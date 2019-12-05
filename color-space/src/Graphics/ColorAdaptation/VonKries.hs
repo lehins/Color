@@ -5,14 +5,14 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
--- Module      : Graphics.ColorSpace.CIE1931
+-- Module      : Graphics.ColorAdaptation.VonKries
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.Adaptation
+module Graphics.ColorAdaptation.VonKries
   ( VonKriesTransform(..)
   , VonKriesAdaptationMatrix(..)
   , vonKriesAdaptationMatrix
