@@ -18,6 +18,7 @@
 --
 module Graphics.ColorAdaptation.Internal
   ( ColorAdaptation(..)
+  , convert
   ) where
 
 import Data.Proxy
@@ -78,11 +79,14 @@ chromaticityAdaptation param c = Chromaticity redPrimary greenPrimary bluePrimar
 --   -> Pixel cs' e
 --   -> Pixel cs e
 convertColorSpace ::
-     (ColorAdaptation t it i a, ColorSpace cs1 i e1, ColorSpace cs2 it e2)
-  => AdaptationParam t it i a
+     (ColorAdaptation t i2 i1 a, ColorSpace cs1 i1 e1, ColorSpace cs2 i2 e2)
+  => AdaptationParam t i2 i1 a
   -> Pixel cs2 e2
   -> Pixel cs1 e1
 convertColorSpace param = fromPixelXYZ . adaptPixelXYZ param . toPixelXYZ
+
+convert :: (ColorSpace cs2 i2 e2, ColorSpace cs1 i1 e1) => Pixel cs2 e2 -> Pixel cs1 e1
+convert = convertColorSpace (adaptationMatrix @'Bradford @_ @_ @Double)
 
 -- | Chromatic adaptation transformation matrix
 newtype CAT t e =
@@ -121,11 +125,5 @@ bradfordAdaptation = adaptationMatrix
 ciecam02Adaptation :: ColorAdaptation 'CIECAM02 it ir e => AdaptationParam 'CIECAM02 it ir e
 ciecam02Adaptation = adaptationMatrix
 
-
-data D50a
-
-instance Illuminant D50a where
-  type Temperature D50a = 5003
-  whitePoint = WhitePoint 0.3457 0.3585
 
 -- toWord8 <$> (fromPixelXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Double) (toPixelXYZ (PixelLAB 76.022 (-0.366) 27.636 :: Pixel (LAB D50a) Double) :: Pixel XYZ Double)) :: Pixel SRGB Double)

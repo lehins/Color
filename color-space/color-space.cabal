@@ -80,7 +80,7 @@ library
 
                      -- , Graphics.ColorSpace.LMS
                      -- , Graphics.ColorSpace.DCI_P3
-                     -- , Graphics.ColorStandard.RAL -- https://en.wikipedia.org/wiki/List_of_RAL_colors
+                     , Graphics.ColorStandard.RAL
 
                      -- , Graphics.ColorSpace.CMYK
 
