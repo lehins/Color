@@ -2,7 +2,7 @@ resolver: lts-13.9
 packages:
 - color-space
 extra-deps:
-- ihaskell-0.10.0.0@sha256:69f439c76fc8b76e843de244952fafa130c016f859f35c0143c9f614ddb4e51d,6587
+- ihaskell-0.10.0.2@sha256:e6717b3e1cefbe3620029832a38aee2f1ab2fd6c2d06184f2631ddb06f6225fe,6486
 - ghc-parser-0.2.1.0@sha256:f52725ceaf25fc595ad61df86329065b039dd27ac3f88ba6f9df5f181e9e33a6,1092
 - hvega-0.4.1.1@sha256:525728a30c4e6de6340dbb1203b4fbf716b8716fa2c70634d03000b143f18488,8313
 - github: DougBurke/hvega # using the repo because of: https://github.com/DougBurke/hvega/issues/95
