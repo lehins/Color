@@ -6,7 +6,6 @@
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.ColorStandard.RAL
@@ -234,12 +233,11 @@ module Graphics.ColorStandard.RAL
   , pearlDarkGrey
   ) where
 
-import GHC.TypeLits
 import Graphics.ColorSpace
 import Graphics.ColorSpace.CIE1976.LAB
 import Graphics.ColorAdaptation.Internal
 
--- TODO: xsFind a home somewhere for this common illuminant
+-- TODO: Find a home somewhere for this common illuminant
 data D50
 
 instance Illuminant D50 where

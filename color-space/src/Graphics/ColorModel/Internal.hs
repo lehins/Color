@@ -214,7 +214,7 @@ showsColorModelOpen px = t . (":(" ++) . channels . (')' :)
         [] -> id
         (x:xs) -> foldl' (\facc y -> facc . (channelSeparator :) . toShowS y) (toShowS x) xs
 
-showsType :: Typeable t => Proxy t -> ShowS
+showsType :: Typeable t => proxy t -> ShowS
 showsType = showsTypeRep . typeRep
 
 -- Foldable helpers
