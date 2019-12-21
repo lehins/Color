@@ -235,7 +235,7 @@ module Graphics.ColorStandard.RAL
 
 import Graphics.ColorSpace
 import Graphics.ColorSpace.CIE1976.LAB
-import Graphics.ColorAdaptation.Internal
+import Graphics.ColorAdaptation.VonKries
 
 -- TODO: Find a home somewhere for this common illuminant
 data D50
