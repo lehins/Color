@@ -95,7 +95,7 @@ data VonKries
   -- , [-0.009628,-0.005698, 1.015326 ] ]
 
 -- | Chromatic adaptation transformation matrix matrix
-newtype CAT t e =
+newtype CAT (t :: k) e =
   CAT (M3x3 e)
   deriving (Eq)
 
@@ -103,7 +103,7 @@ instance (Typeable t, Typeable k, Elevator e) => Show (CAT (t :: k) e) where
   show m@(CAT m3x3) = asProxy m showsType "\n" ++ show m3x3
 
 -- | Inverse of chromatic adaptation transformation matrix
-newtype ICAT t e =
+newtype ICAT (t :: k) e =
   ICAT (M3x3 e)
   deriving (Eq)
 
