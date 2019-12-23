@@ -36,6 +36,7 @@ library
                      -- , Graphics.Color.Adaptation.CMCCAT2000
                      -- , Graphics.Color.Adaptation.Fairchild
                      , Graphics.Color.Illuminant.CIE1931
+                     , Graphics.Color.Illuminant.CIE1964
                      , Graphics.Color.Illuminant.ICC.PCS
                      , Graphics.Color.Illuminant.ITU.Rec470
                      , Graphics.Color.Illuminant.ITU.Rec601

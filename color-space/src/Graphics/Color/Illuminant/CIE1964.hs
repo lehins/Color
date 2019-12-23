@@ -2,19 +2,19 @@
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
--- Module      : Graphics.ColorSpace.Illuminant.CIE1964
+-- Module      : Graphics.Color.Illuminant.CIE1964
 -- Copyright   : (c) Alexey Kuleshevich 2019
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
-module Graphics.ColorSpace.Illuminant.CIE1964
+module Graphics.Color.Illuminant.CIE1964
   ( CIE1964(..)
   ) where
 
-import Graphics.ColorSpace.Internal (Illuminant(..), WhitePoint(..))
-import qualified Graphics.ColorSpace.Illuminant.CIE1931 as I2
+import Graphics.Color.Space.Internal (Illuminant(..), WhitePoint(..))
+import qualified Graphics.Color.Illuminant.CIE1931 as I2
 
 
 -- | @[x=0.45117, y=0.40594]@ - CIE 1964 10° Observer -
@@ -155,7 +155,6 @@ instance Illuminant 'FL12 where
 -- References:
 --
 -- * [CIE15: Technical Report: Colorimetry, 3rd edition](https://web.archive.org/web/20190510201823/https://www.cdvplus.cz/file/3-publikace-cie15-2004/)
--- * [HunterLab: Equivalent White Light Sources and CIE Illuminants](https://web.archive.org/web/20050523033826/http://www.hunterlab.com:80/appnotes/an05_05.pdf)
 
 data CIE1964
   = A
