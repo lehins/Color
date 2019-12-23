@@ -1,3 +1,4 @@
+{-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE PatternSynonyms #-}
 -- |
 -- Module      : Graphics.Color.Pixel
@@ -12,6 +13,10 @@ module Graphics.Color.Pixel
   , convertPixel
   -- * sRGB color space
   , SRGB
+  , pattern PixelSRGB
+  , pattern PixelSRGBA
+  -- * Any RGB color space
+  , AdobeRGB
   , pattern PixelRGB
   , pattern PixelRGBA
   , pattern PixelHSI
@@ -28,29 +33,47 @@ import Graphics.Color.Model.Alpha
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space
 import Graphics.Color.Space.RGB.SRGB
+import Graphics.Color.Space.RGB.AdobeRGB
 import Graphics.Color.Space.RGB.Alternative
 
--- | One of the most common places for color to be used is in imaging, where each pixel
+-- | Imaging is one of the most common places for a color to be used in.  where each pixel
 -- has a specific color. This is a zero cost newtype wrapper around a `Color`.
+--
+-- @since 0.1.0
 newtype Pixel cs e = Pixel
   { pixelColor :: Color cs e
   }
 
+-- | Convert a pixel from one color space to any other.
+--
+-- @since 0.1.0
 convertPixel :: (ColorSpace cs' i' e', ColorSpace cs i e) => Pixel cs' e' -> Pixel cs e
 convertPixel = Pixel . convert . pixelColor
 {-# INLINE convertPixel #-}
 
 
 -- | Constructor for a pixel in @sRGB@ color space
-pattern PixelRGB :: e -> e -> e -> Pixel SRGB e
-pattern PixelRGB r g b = Pixel (SRGB (CM.ColorRGB r g b))
-{-# COMPLETE PixelRGB #-}
+pattern PixelSRGB :: e -> e -> e -> Pixel SRGB e
+pattern PixelSRGB r g b = Pixel (SRGB (CM.ColorRGB r g b))
+{-# COMPLETE PixelSRGB #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with Alpha channel
-pattern PixelRGBA :: e -> e -> e -> e -> Pixel (Alpha SRGB) e
-pattern PixelRGBA r g b a = Pixel (Alpha (SRGB (CM.ColorRGB r g b)) a)
-{-# COMPLETE PixelRGBA #-}
+pattern PixelSRGBA :: e -> e -> e -> e -> Pixel (Alpha SRGB) e
+pattern PixelSRGBA r g b a = Pixel (Alpha (SRGB (CM.ColorRGB r g b)) a)
+{-# COMPLETE PixelSRGBA #-}
 
+
+-- | Constructor for a pixel in RGB color space.
+pattern PixelRGB :: RedGreenBlue cs i => e -> e -> e -> Pixel cs e
+pattern PixelRGB r g b <- (unColorRGB . pixelColor -> CM.ColorRGB r g b) where
+        PixelRGB r g b = Pixel (mkColorRGB (CM.ColorRGB r g b))
+{-# COMPLETE PixelRGB #-}
+
+-- | Constructor for a pixel in RGB color space with Alpha channel
+pattern PixelRGBA :: RedGreenBlue cs i => e -> e -> e -> e -> Pixel (Alpha cs) e
+pattern PixelRGBA r g b a <- (pixelColor -> Alpha (unColorRGB -> CM.ColorRGB r g b) a) where
+        PixelRGBA r g b a = Pixel (Alpha (mkColorRGB (CM.ColorRGB r g b)) a)
+{-# COMPLETE PixelRGBA #-}
 
 -- | Constructor for @HSI@.
 pattern PixelHSI :: e -> e -> e -> Pixel (HSI cs) e
@@ -62,7 +85,6 @@ pattern PixelHSI h s i = Pixel (ColorHSI h s i)
 pattern PixelHSIA :: e -> e -> e -> e -> Pixel (Alpha (HSI cs)) e
 pattern PixelHSIA h s i a = Pixel (ColorHSIA h s i a)
 {-# COMPLETE PixelHSIA #-}
-
 
 
 -- | Constructor for @YCbCr@.
