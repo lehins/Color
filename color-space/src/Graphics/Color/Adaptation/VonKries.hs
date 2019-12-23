@@ -8,6 +8,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeInType #-}
 -- |
 -- Module      : Graphics.Color.Adaptation.VonKries
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
