@@ -82,7 +82,7 @@ instance (Illuminant i, Elevator e) => ColorSpace (SRGB i) i e where
 
 -- | `SRGB` color space (derived)
 instance Illuminant i => RedGreenBlue (SRGB i) i where
-  chromaticity = SRGB.primaries
+  gamut = SRGB.primaries
   ecctf = fmap SRGB.transfer
   {-# INLINE ecctf #-}
   dcctf = fmap SRGB.itransfer

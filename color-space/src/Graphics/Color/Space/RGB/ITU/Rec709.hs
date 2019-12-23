@@ -78,7 +78,7 @@ instance Elevator e => ColorSpace BT709 D65 e where
 
 -- | ITU-R BT.709 color space
 instance RedGreenBlue BT709 D65 where
-  chromaticity = primaries
+  gamut = primaries
   ecctf = fmap Rec601.transfer
   {-# INLINE ecctf #-}
   dcctf = fmap Rec601.itransfer
@@ -88,10 +88,10 @@ instance RedGreenBlue BT709 D65 where
 -- | Primaries for ITU-R BT.709, which are also the primaries for sRGB color space.
 --
 -- @since 0.1.0
-primaries :: RealFloat e => Chromaticity rgb i e
-primaries = Chromaticity (Primary 0.64 0.33)
-                         (Primary 0.30 0.60)
-                         (Primary 0.15 0.06)
+primaries :: RealFloat e => Gamut rgb i e
+primaries = Gamut (Primary 0.64 0.33)
+                  (Primary 0.30 0.60)
+                  (Primary 0.15 0.06)
 
 
 instance Luma BT709 where

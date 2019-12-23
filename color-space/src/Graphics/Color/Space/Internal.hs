@@ -24,21 +24,21 @@
 module Graphics.Color.Space.Internal
   ( Pixel(..)
   , ColorSpace(..)
+  , Chromaticity(..)
   , Primary(.., Primary)
   , xPrimary
   , yPrimary
   , zPrimary
   , primaryXZ
-  , primaryXYZ
+  , primaryTristimulus
   , Illuminant(..)
   , WhitePoint(.., WhitePoint)
   , Tristimulus(..)
-  , normalTristimulus
   , xWhitePoint
   , yWhitePoint
   , zWhitePoint
   , whitePointXZ
-  , whitePointXYZ
+  , whitePointTristimulus
   , CCT(..)
   , XYZ
   , pattern PixelXYZ
@@ -90,6 +90,12 @@ class (Illuminant i, ColorModel cs e) => ColorSpace cs (i :: k) e | cs -> i wher
   fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
   {-# INLINE fromPixelXYZ #-}
 
+-- | This is a data type that encodes a data point on the chromaticity diagram
+newtype Chromaticity i e =
+  Chromaticity (Pixel (CIExyY i) e)
+  deriving (Eq, Show)
+
+
 ----------------
 -- WhitePoint --
 ----------------
@@ -106,13 +112,8 @@ class (Typeable i, Typeable k, KnownNat (Temperature i)) => Illuminant (i :: k) 
   colorTemperature :: CCT i
   colorTemperature = CCT (fromIntegral (natVal (Proxy :: Proxy (Temperature i))))
 
--- | XYZ tristimulus of the Illuminant @i@, where @Y=1@
---
--- @since 0.1.0
-normalTristimulus :: forall i e. (Illuminant i, Elevator e, RealFloat e) => Tristimulus i e
-normalTristimulus = Tristimulus (whitePointXYZ (whitePoint :: WhitePoint i e))
 
-newtype WhitePoint (i :: k) e = WhitePointChroma (Pixel (CIExyY i) e)
+newtype WhitePoint (i :: k) e = WhitePointChromaticity (Chromaticity i e)
  deriving (Eq, Show)
 
 -- | Constructor for the most common @XYZ@ color space
@@ -125,30 +126,35 @@ pattern WhitePoint x y <- (coerce -> (V2 x y)) where
 newtype Tristimulus i e = Tristimulus (Pixel (XYZ i) e)
   deriving (Show, Eq, Ord, Functor, Applicative)
 
-
+-- | @x@ value of a `WhitePoint`
+--
+-- @since 0.1.0
 xWhitePoint :: WhitePoint i e -> e
 xWhitePoint (coerce -> V2 x _) = x
 {-# INLINE xWhitePoint #-}
 
+-- | @y@ value of a `WhitePoint`
+--
+-- @since 0.1.0
 yWhitePoint :: WhitePoint i e -> e
 yWhitePoint (coerce -> V2 _ y) = y
 {-# INLINE yWhitePoint #-}
 
--- | Compute @z = 1 - x - y@ of a `WhitePoint`.
+-- | Compute @z@ value of a `WhitePoint`: @z = 1 - x - y@
+--
+-- @since 0.1.0
 zWhitePoint :: Num e => WhitePoint i e -> e
 zWhitePoint wp = 1 - xWhitePoint wp - yWhitePoint wp
 {-# INLINE zWhitePoint #-}
 
--- | Compute @XYZ@ tristimulus of a white point, where @Y = 1@
+-- | Compute a normalized @XYZ@ tristimulus of a white point, where @Y = 1@
 --
 -- @since 0.1.0
-whitePointXYZ ::
-     (Illuminant i, RealFloat e, Elevator e)
-  => WhitePoint i e
-     -- ^ White point that specifies @x@ and @y@
-  -> Pixel (XYZ i) e
-whitePointXYZ (WhitePointChroma xyY) = toPixelXYZ xyY
-{-# INLINE whitePointXYZ #-}
+whitePointTristimulus ::
+     forall i e. (Illuminant i, RealFloat e, Elevator e)
+  => Pixel (XYZ i) e
+whitePointTristimulus = toPixelXYZ (coerce (whitePoint :: WhitePoint i e) :: Pixel (CIExyY i) e)
+{-# INLINE whitePointTristimulus #-}
 
 
 -- | Compute @XYZ@ tristimulus of a white point.
@@ -169,9 +175,9 @@ whitePointXZ vY (coerce -> V2 x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
 -- Primary --
 -------------
 
-newtype Primary i e =
-  PrimaryChroma (Pixel (CIExyY i) e)
-  deriving (Eq, Show)
+newtype Primary (i :: k) e = PrimaryChromaticity (Chromaticity i e)
+ deriving (Eq, Show)
+
 
 -- | Constructor for the most common @XYZ@ color space
 pattern Primary :: e -> e -> Primary i e
@@ -197,16 +203,16 @@ zPrimary p = 1 - xPrimary p - yPrimary p
 
 
 
--- | Compute `XYZ` tristimulus of a `Primary`, where @Y = 1@
+-- | Compute normalized `XYZ` tristimulus of a `Primary`, where @Y = 1@
 --
 -- @since 0.1.0
-primaryXYZ ::
-     (Illuminant i, RealFloat e, Elevator e)
+primaryTristimulus ::
+     forall i e. (Illuminant i, RealFloat e, Elevator e)
   => Primary i e
      -- ^ Primary that specifies @x@ and @y@
   -> Pixel (XYZ i) e
-primaryXYZ (PrimaryChroma xy) = toPixelXYZ xy
-{-# INLINE primaryXYZ #-}
+primaryTristimulus xy = toPixelXYZ (coerce xy :: Pixel (CIExyY i) e)
+{-# INLINE primaryTristimulus #-}
 
 -- | Compute `XYZ` tristimulus of a `Primary`.
 --

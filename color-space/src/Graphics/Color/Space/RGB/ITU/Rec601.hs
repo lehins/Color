@@ -88,7 +88,7 @@ instance Elevator e => ColorSpace BT601_525 D65 e where
 
 -- | ITU-R BT.601 (525) color space
 instance RedGreenBlue BT601_525 D65 where
-  chromaticity = primaries525
+  gamut = primaries525
   ecctf = fmap transfer
   {-# INLINE ecctf #-}
   dcctf = fmap itransfer
@@ -144,7 +144,7 @@ instance Elevator e => ColorSpace BT601_625 D65 e where
 
 -- | ITU-R BT.601 (625) color space
 instance RedGreenBlue BT601_625 D65 where
-  chromaticity = primaries625
+  gamut = primaries625
   ecctf = fmap transfer
   {-# INLINE ecctf #-}
   dcctf = fmap itransfer
@@ -201,8 +201,8 @@ itransfer e
 -- | Primaries for ITU-R BT.601 (525).
 --
 -- @since 0.1.0
-primaries525 :: RealFloat e => Chromaticity rgb i e
-primaries525 = Chromaticity (Primary 0.630 0.340)
-                            (Primary 0.310 0.595)
-                            (Primary 0.155 0.070)
+primaries525 :: RealFloat e => Gamut rgb i e
+primaries525 = Gamut (Primary 0.630 0.340)
+                     (Primary 0.310 0.595)
+                     (Primary 0.155 0.070)
 

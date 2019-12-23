@@ -81,7 +81,7 @@ instance Elevator e => ColorSpace BT470_525 C e where
 
 -- | ITU-R BT.470 (525) color space
 instance RedGreenBlue BT470_525 C where
-  chromaticity = primaries525
+  gamut = primaries525
   ecctf = fmap (gamma 2.2)
   {-# INLINE ecctf #-}
   dcctf = fmap (igamma 2.2)
@@ -136,7 +136,7 @@ instance Elevator e => ColorSpace BT470_625 D65 e where
 
 -- | ITU-R BT.470 (625) color space
 instance RedGreenBlue BT470_625 D65 where
-  chromaticity = primaries625
+  gamut = primaries625
   ecctf = fmap (gamma 2.8)
   {-# INLINE ecctf #-}
   dcctf = fmap (igamma 2.8)
@@ -153,17 +153,17 @@ igamma p v = v ** (1 / p)
 -- | Primaries for ITU-R BT.470 (525).
 --
 -- @since 0.1.0
-primaries525 :: RealFloat e => Chromaticity rgb i e
-primaries525 = Chromaticity (Primary 0.67 0.33)
-                            (Primary 0.21 0.71)
-                            (Primary 0.14 0.08)
+primaries525 :: RealFloat e => Gamut rgb i e
+primaries525 = Gamut (Primary 0.67 0.33)
+                     (Primary 0.21 0.71)
+                     (Primary 0.14 0.08)
 
 
 -- | Primaries for ITU-R BT.470 and BT.601 (625).
 --
 -- @since 0.1.0
-primaries625 :: RealFloat e => Chromaticity rgb i e
-primaries625 = Chromaticity (Primary 0.64 0.33)
-                            (Primary 0.29 0.60)
-                            (Primary 0.15 0.06)
+primaries625 :: RealFloat e => Gamut rgb i e
+primaries625 = Gamut (Primary 0.64 0.33)
+                     (Primary 0.29 0.60)
+                     (Primary 0.15 0.06)
 

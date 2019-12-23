@@ -125,7 +125,7 @@ instance Elevator e => ColorSpace SRGB D65 e where
 
 -- | s`RGB` color space
 instance RedGreenBlue SRGB D65 where
-  chromaticity = primaries
+  gamut = primaries
   npm = npmStandard
   inpm = inpmStandard
   ecctf = fmap transfer

@@ -12,9 +12,10 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Adaptation.Internal
-  ( ColorAdaptation(..)
-  , chromaticityAdaptation
-  , convertColorSpace
+  ( ChromaticAdaptation(..)
+  , chromaticAdaptation
+  , convertColor
+  , convertColorStrict
   ) where
 
 import Graphics.Color.Space.Internal
@@ -23,30 +24,40 @@ import Data.Kind
 
 
 class (Illuminant it, Illuminant ir, Elevator e, RealFloat e) =>
-      ColorAdaptation (t :: k) (it :: kt) (ir :: kr) e
+      ChromaticAdaptation (t :: k) (it :: kt) (ir :: kr) e
   where
   data Adaptation t it ir e :: Type
   adaptPixelXYZ :: Adaptation t it ir e -> Pixel (XYZ it) e -> Pixel (XYZ ir) e
 
 
-chromaticityAdaptation ::
-     ColorAdaptation t it ir e
+chromaticAdaptation ::
+     ChromaticAdaptation t it ir e
   => Adaptation t it ir e
-  -> Chromaticity cst it e
-  -> Chromaticity csr ir e
-chromaticityAdaptation param c = Chromaticity redPrimary greenPrimary bluePrimary
+  -> Gamut cst it e
+  -> Gamut csr ir e
+chromaticAdaptation param g = Gamut redPrimary greenPrimary bluePrimary
   where
-    applyMatrix chroma = PrimaryChroma (fromPixelXYZ (adaptPixelXYZ param (primaryXYZ chroma)))
-    redPrimary = applyMatrix (chromaRed c)
-    greenPrimary = applyMatrix (chromaGreen c)
-    bluePrimary = applyMatrix (chromaBlue c)
+    applyMatrix primary =
+      PrimaryChromaticity
+        (Chromaticity (fromPixelXYZ (convertColorStrict param (primaryTristimulus primary))))
+    redPrimary = applyMatrix (gamutRedPrimary g)
+    greenPrimary = applyMatrix (gamutGreenPrimary g)
+    bluePrimary = applyMatrix (gamutBluePrimary g)
 
-convertColorSpace ::
-     (ColorAdaptation t i2 i1 a, ColorSpace cs1 i1 e1, ColorSpace cs2 i2 e2)
+convertColor ::
+     (ChromaticAdaptation t i2 i1 a, ColorSpace cs1 i1 e1, ColorSpace cs2 i2 e2)
   => Adaptation t i2 i1 a
   -> Pixel cs2 e2
   -> Pixel cs1 e1
-convertColorSpace param = fromPixelXYZ . adaptPixelXYZ param . toPixelXYZ
+convertColor param = fromPixelXYZ . adaptPixelXYZ param . toPixelXYZ
+
+
+convertColorStrict ::
+     (ChromaticAdaptation t i2 i1 e, ColorSpace cs1 i1 e, ColorSpace cs2 i2 e)
+  => Adaptation t i2 i1 e
+  -> Pixel cs2 e
+  -> Pixel cs1 e
+convertColorStrict param = fromPixelXYZ . adaptPixelXYZ param . toPixelXYZ
 
 
 

@@ -84,7 +84,7 @@ instance Elevator e => ColorSpace AdobeRGB D65 e where
 
 -- | Adobe`RGB` color space
 instance RedGreenBlue AdobeRGB D65 where
-  chromaticity = primaries
+  gamut = primaries
   npm = npmStandard
   inpm = inpmStandard
   ecctf = fmap transfer
@@ -148,7 +148,7 @@ itransfer :: Floating a => a -> a
 itransfer u = u ** 2.19921875 -- in rational form 563/256
 {-# INLINE itransfer #-}
 
-primaries :: RealFloat e => Chromaticity rgb i e
-primaries = Chromaticity (Primary 0.64 0.33)
-                         (Primary 0.21 0.71)
-                         (Primary 0.15 0.06)
+primaries :: RealFloat e => Gamut rgb i e
+primaries = Gamut (Primary 0.64 0.33)
+                  (Primary 0.21 0.71)
+                  (Primary 0.15 0.06)

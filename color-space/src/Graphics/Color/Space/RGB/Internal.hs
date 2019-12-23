@@ -25,7 +25,7 @@ module Graphics.Color.Space.RGB.Internal
   ( RedGreenBlue(..)
   , pattern PixelRGB
   , pattern PixelRGBA
-  , Chromaticity(..)
+  , Gamut(..)
   , rgb2xyz
   , xyz2rgb
   , rgbLuminocity
@@ -35,9 +35,9 @@ module Graphics.Color.Space.RGB.Internal
   , INPM(..)
   , inpmApply
   , inpmDerive
-  , pixelChromaticity
+  , rgbColorGamut
   , pixelWhitePoint
-  , chromaticityWhitePoint
+  , gamutWhitePoint
   , module Graphics.Color.Algebra
   ) where
 
@@ -52,7 +52,7 @@ import Graphics.Color.Space.Internal
 class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
   -- | RGB primaries that are defined for the RGB color space, while point is defined by
   -- the __@i@__ type parameter
-  chromaticity :: RealFloat e => Chromaticity cs i e
+  gamut :: RealFloat e => Gamut cs i e
 
   -- | Encoding color component transfer function (inverse). Also known as opto-electronic
   -- transfer function (OETF / OECF) or gamma function.
@@ -64,13 +64,13 @@ class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
   -- | Normalized primary matrix for this RGB color space. Default implementation derives
   -- it from `chromaticity`
   npm :: (ColorSpace cs i a, RealFloat a) => NPM cs a
-  npm = npmDerive chromaticity
+  npm = npmDerive gamut
   {-# INLINE npm #-}
 
   -- | Inverse normalized primary matrix for this RGB color space. Default implementation
   -- derives it from `chromaticity`
   inpm :: (ColorSpace cs i a, RealFloat a) => INPM cs a
-  inpm = inpmDerive chromaticity
+  inpm = inpmDerive gamut
   {-# INLINE inpm #-}
 
   -- | Lift RGB color model into a RGB color space
@@ -79,20 +79,29 @@ class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
     Coercible (Pixel CM.RGB e) (Pixel cs e) => Pixel CM.RGB e -> Pixel cs e
   mkPixelRGB = coerce
 
-  -- | Drop RGB color space into the RGB color model
+  -- | Drop RGB color space down to the RGB color model
   unPixelRGB :: Pixel cs e -> Pixel CM.RGB e
   default unPixelRGB ::
     Coercible (Pixel cs e) (Pixel CM.RGB e) => Pixel cs e -> Pixel CM.RGB e
   unPixelRGB = coerce
 
 
-data Chromaticity cs i e = Chromaticity
-  { chromaRed   :: !(Primary i e)
-  , chromaGreen :: !(Primary i e)
-  , chromaBlue  :: !(Primary i e)
+data Gamut cs i e = Gamut
+  { gamutRedPrimary   :: !(Primary i e)
+  , gamutGreenPrimary :: !(Primary i e)
+  , gamutBluePrimary  :: !(Primary i e)
   }
-deriving instance Eq e => Eq (Chromaticity cs i e)
-deriving instance ColorSpace cs i e => Show (Chromaticity cs i e) -- TODO: better show with whitepoint
+deriving instance Eq e => Eq (Gamut cs i e)
+deriving instance ColorSpace cs i e => Show (Gamut cs i e) -- TODO: better show with whitepoint
+
+-- | Get the `WhitePoint` of chromaticity. `Chromaticity` itself isn't actually evaluated,
+-- its type carries enough information for this operation.
+--
+-- @since 0.1.0
+gamutWhitePoint :: (RedGreenBlue cs i, RealFloat e) => Gamut cs i e -> WhitePoint i e
+gamutWhitePoint _ = whitePoint
+{-# INLINE gamutWhitePoint #-}
+
 
 -- | Linear transformation of a pixel in a linear RGB color space into XYZ color space
 --
@@ -234,9 +243,9 @@ instance Elevator e => Show (INPM cs e) where
 -- @since 0.1.0
 npmDerive ::
      forall cs i e. (ColorSpace cs i e, RealFloat e)
-  => Chromaticity cs i e
+  => Gamut cs i e
   -> NPM cs e
-npmDerive (Chromaticity r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
+npmDerive (Gamut r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
   where
     !primaries' =
       toRealFloat <$>
@@ -245,7 +254,7 @@ npmDerive (Chromaticity r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
         (V3 (xPrimary r) (xPrimary g) (xPrimary b))
         (V3 (yPrimary r) (yPrimary g) (yPrimary b))
         (V3 (zPrimary r) (zPrimary g) (zPrimary b))
-    !coeff = invertM3x3 primaries' `multM3x3byV3` coerce (normalTristimulus :: Tristimulus i e)
+    !coeff = invertM3x3 primaries' `multM3x3byV3` coerce (whitePointTristimulus :: Pixel (XYZ i) e)
 {-# INLINE npmDerive #-}
 
 -- | Derive an `INPM` form chromaticities and a white point
@@ -253,27 +262,20 @@ npmDerive (Chromaticity r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
 -- @since 0.1.0
 inpmDerive ::
      forall cs i e. (ColorSpace cs i e, RealFloat e)
-  => Chromaticity cs i e
+  => Gamut cs i e
   -> INPM cs e
 inpmDerive = INPM . invertM3x3 . unNPM . npmDerive
 {-# INLINE inpmDerive #-}
 
 
--- | Get the `WhitePoint` of chromaticity. `Chromaticity` itself isn't actually evaluated,
--- its type carries enough information for this operation.
---
--- @since 0.1.0
-chromaticityWhitePoint :: (RedGreenBlue cs i, RealFloat e) => Chromaticity cs i e -> WhitePoint i e
-chromaticityWhitePoint _ = whitePoint
-{-# INLINE chromaticityWhitePoint #-}
 
 -- | Get the `Chromaticity` of a pixel in RGB color space. Pixel itself isn't actually
 -- evaluated, its type carries enough information for this operation.
 --
 -- @since 0.1.0
-pixelChromaticity :: (RedGreenBlue cs i, RealFloat e) => Pixel cs a -> Chromaticity cs i e
-pixelChromaticity _ = chromaticity
-{-# INLINE pixelChromaticity #-}
+rgbColorGamut :: (RedGreenBlue cs i, RealFloat e) => Pixel cs a -> Gamut cs i e
+rgbColorGamut _ = gamut
+{-# INLINE rgbColorGamut #-}
 
 
 -- | Get the white point of any RGB pixel. Pixel itself isn't evaluated, since its type
@@ -282,7 +284,7 @@ pixelChromaticity _ = chromaticity
 -- >>> import Graphics.Color.Space.RGB
 -- >>> :set -XTypeApplications
 -- >>> pixelWhitePoint @Float (PixelRGB8 1 2 3)
--- WhitePointChroma <CIExyY * D65:( 0.312700, 0.329000)>
+-- WhitePointChromaticity (Chromaticity <CIExyY * D65:( 0.312700, 0.329000)>)
 --
 -- @since 0.1.0
 pixelWhitePoint ::

@@ -104,7 +104,7 @@ lab2xyz ::
   -> Pixel (XYZ i) a
 lab2xyz (PixelLAB l' a' b') = PixelXYZ x y z
   where
-    !(Tristimulus (PixelXYZ wx _ wz)) = normalTristimulus :: Tristimulus i a
+    !(PixelXYZ wx _ wz) = whitePointTristimulus :: Pixel (XYZ i) a
     !l = scaleLightness l'
     !x = wx * ift (l + toRealFloat a' / 500)
     !y = ift l
@@ -128,7 +128,7 @@ xyz2lab ::
   -> Pixel (LAB i) e
 xyz2lab (PixelXYZ x y z) = PixelLAB l' a' b'
   where
-    !(Tristimulus (PixelXYZ wx _ wz)) = normalTristimulus :: Tristimulus i e
+    !(PixelXYZ wx _ wz) = whitePointTristimulus :: Pixel (XYZ i) e
     !fx = ft (toRealFloat x / wx)
     !fy = ft (toRealFloat y)
     !fz = ft (toRealFloat z / wz)

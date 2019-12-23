@@ -21,7 +21,7 @@ module Graphics.Color.Adaptation.VonKries
   , convert
   , CAT(..)
   , ICAT(..)
-  , ColorAdaptationTransform
+  , ChromaticAdaptationTransform
   , cat
   , icat
   , vonKriesAdaptation
@@ -55,36 +55,36 @@ newtype ICAT t e =
   ICAT (M3x3 e)
   deriving (Eq, Show)
 
-icat :: forall t e . (ColorAdaptationTransform t, RealFloat e) => ICAT t e
+icat :: forall t e . (ChromaticAdaptationTransform t, RealFloat e) => ICAT t e
 icat = ICAT (invertM3x3 m3x3)
   where CAT m3x3 = cat :: CAT t e
 
-class ColorAdaptationTransform (t :: VonKries) where
+class ChromaticAdaptationTransform (t :: VonKries) where
   cat :: RealFloat e => CAT t e
 
-instance ColorAdaptationTransform 'VonKries where
+instance ChromaticAdaptationTransform 'VonKries where
   cat = CAT (M3x3 (V3  0.40024 0.70760 -0.08081)
                   (V3 -0.22630 1.16532  0.04570)
                   (V3  0.00000 0.00000  0.91822))
 
-instance ColorAdaptationTransform 'Bradford where
+instance ChromaticAdaptationTransform 'Bradford where
   cat = CAT (M3x3 (V3  0.8951  0.2664 -0.1614)
                   (V3 -0.7502  1.7135  0.0367)
                   (V3  0.0389 -0.0685  1.0296))
 
-instance ColorAdaptationTransform 'Fairchild where
+instance ChromaticAdaptationTransform 'Fairchild where
   cat = CAT (M3x3 (V3  0.8562  0.3372 -0.1934)
                   (V3 -0.8360  1.8327  0.0033)
                   (V3  0.0357 -0.0469  1.0112))
 
 
-instance ColorAdaptationTransform 'CIECAM02 where
+instance ChromaticAdaptationTransform 'CIECAM02 where
   cat = CAT (M3x3 (V3  0.7328  0.4296 -0.1624)
                   (V3 -0.7036  1.6975  0.0061)
                   (V3  0.0030  0.0136  0.9834))
 
 instance (Illuminant it, Illuminant ir, Elevator e, RealFloat e) =>
-         ColorAdaptation (t :: VonKries) (it :: kt) (ir :: kr) e where
+         ChromaticAdaptation (t :: VonKries) (it :: kt) (ir :: kr) e where
   newtype Adaptation (t :: VonKries) (it :: kt) (ir :: kr) e =
     AdaptationMatrix (M3x3 e) deriving (Eq)
   adaptPixelXYZ (AdaptationMatrix m3x3) px = coerce (multM3x3byV3 m3x3 (coerce px))
@@ -100,7 +100,7 @@ instance (Illuminant it, Illuminant ir, Elevator e) =>
     (") (" ++) . showsType (Proxy :: Proxy (I (ir :: kr))) . (")\n" ++) . shows m3x3
 
 adaptationMatrix ::
-     forall t it ir e. (ColorAdaptationTransform t, ColorAdaptation t it ir e)
+     forall t it ir e. (ChromaticAdaptationTransform t, ChromaticAdaptation t it ir e)
   => Adaptation (t :: VonKries) it ir e
 adaptationMatrix =
   AdaptationMatrix (multM3x3byM3x3 (multM3x3byV3d im3x3 diag) m3x3)
@@ -108,24 +108,24 @@ adaptationMatrix =
     diag = multM3x3byV3 m3x3 wpRef / multM3x3byV3 m3x3 wpTest
     CAT m3x3 = cat :: CAT t e
     ICAT im3x3 = icat :: ICAT t e
-    wpTest = coerce (normalTristimulus :: Tristimulus it e)
-    wpRef = coerce (normalTristimulus :: Tristimulus ir e)
+    wpTest = coerce (whitePointTristimulus :: Pixel (XYZ it) e)
+    wpRef = coerce (whitePointTristimulus :: Pixel (XYZ ir) e)
 
-vonKriesAdaptation :: ColorAdaptation 'VonKries it ir e => Adaptation 'VonKries it ir e
+vonKriesAdaptation :: ChromaticAdaptation 'VonKries it ir e => Adaptation 'VonKries it ir e
 vonKriesAdaptation = adaptationMatrix
 
-fairchildAdaptation :: ColorAdaptation 'Fairchild it ir e => Adaptation 'Fairchild it ir e
+fairchildAdaptation :: ChromaticAdaptation 'Fairchild it ir e => Adaptation 'Fairchild it ir e
 fairchildAdaptation = adaptationMatrix
 
-bradfordAdaptation :: ColorAdaptation 'Bradford it ir e => Adaptation 'Bradford it ir e
+bradfordAdaptation :: ChromaticAdaptation 'Bradford it ir e => Adaptation 'Bradford it ir e
 bradfordAdaptation = adaptationMatrix
 
-ciecam02Adaptation :: ColorAdaptation 'CIECAM02 it ir e => Adaptation 'CIECAM02 it ir e
+ciecam02Adaptation :: ChromaticAdaptation 'CIECAM02 it ir e => Adaptation 'CIECAM02 it ir e
 ciecam02Adaptation = adaptationMatrix
 
 
 convert :: (ColorSpace cs2 i2 e2, ColorSpace cs1 i1 e1) => Pixel cs2 e2 -> Pixel cs1 e1
-convert = convertColorSpace (adaptationMatrix @'Bradford @_ @_ @Double)
+convert = convertColor (adaptationMatrix @'Bradford @_ @_ @Double)
 
 
 

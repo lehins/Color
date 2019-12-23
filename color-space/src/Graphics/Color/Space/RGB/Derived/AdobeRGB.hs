@@ -81,7 +81,7 @@ instance (Illuminant i, Elevator e) => ColorSpace (AdobeRGB i) i e where
 
 -- | `AdobeRGB` color space (derived)
 instance Illuminant i => RedGreenBlue (AdobeRGB i) i where
-  chromaticity = AdobeRGB.primaries
+  gamut = AdobeRGB.primaries
   ecctf = fmap AdobeRGB.transfer
   {-# INLINE ecctf #-}
   dcctf = fmap AdobeRGB.itransfer
