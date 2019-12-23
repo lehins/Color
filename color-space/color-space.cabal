@@ -50,6 +50,7 @@ library
                      , Graphics.Color.Model.HSV
                      , Graphics.Color.Model.Y
                      , Graphics.Color.Model.YCbCr
+                     , Graphics.Color.Pixel
                      , Graphics.Color.Space
                      -- , Graphics.Color.Space.CIE1931
                      -- , Graphics.Color.Space.CIE1931.RGB

@@ -1,6 +1,8 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -40,7 +42,13 @@ import Graphics.Color.Model.RGB
 data HSI
 
 -- | `HSI` color model
-data instance Color HSI e = ColorHSI !e !e !e
+newtype instance Color HSI e = HSI (V3 e)
+
+-- | Constructor for @HSI@.
+pattern ColorHSI :: e -> e -> e -> Color HSI e
+pattern ColorHSI h s i = HSI (V3 h s i)
+{-# COMPLETE ColorHSI #-}
+
 
 -- | Constructor for @HSI@ with alpha channel.
 pattern ColorHSIA :: e -> e -> e -> e -> Color (Alpha HSI) e
@@ -60,6 +68,16 @@ pattern ColorH360SI h s i <- ColorHSI ((* 360) -> h) s i where
 deriving instance Eq e => Eq (Color HSI e)
 -- | `HSI` color model
 deriving instance Ord e => Ord (Color HSI e)
+-- | `HSI` color model
+deriving instance Functor (Color HSI)
+-- | `HSI` color model
+deriving instance Applicative (Color HSI)
+-- | `HSI` color model
+deriving instance Foldable (Color HSI)
+-- | `HSI` color model
+deriving instance Traversable (Color HSI)
+-- | `HSI` color model
+deriving instance Storable e => Storable (Color HSI e)
 
 -- | `HSI` color model
 instance Elevator e => Show (Color HSI e) where
@@ -72,39 +90,6 @@ instance Elevator e => ColorModel HSI e where
   {-# INLINE toComponents #-}
   fromComponents (h, s, i) = ColorHSI h s i
   {-# INLINE fromComponents #-}
-
--- | `HSI` color model
-instance Functor (Color HSI) where
-  fmap f (ColorHSI h s i) = ColorHSI (f h) (f s) (f i)
-  {-# INLINE fmap #-}
-
--- | `HSI` color model
-instance Applicative (Color HSI) where
-  pure !e = ColorHSI e e e
-  {-# INLINE pure #-}
-  (ColorHSI fh fs fi) <*> (ColorHSI h s i) = ColorHSI (fh h) (fs s) (fi i)
-  {-# INLINE (<*>) #-}
-
--- | `HSI` color model
-instance Foldable (Color HSI) where
-  foldr f !z (ColorHSI h s i) = f h (f s (f i z))
-  {-# INLINE foldr #-}
-
--- | `HSI` color model
-instance Traversable (Color HSI) where
-  traverse f (ColorHSI h s i) = ColorHSI <$> f h <*> f s <*> f i
-  {-# INLINE traverse #-}
-
--- | `HSI` color model
-instance Storable e => Storable (Color HSI e) where
-  sizeOf = sizeOfN 3
-  {-# INLINE sizeOf #-}
-  alignment = alignmentN 3
-  {-# INLINE alignment #-}
-  peek = peek3 ColorHSI
-  {-# INLINE peek #-}
-  poke p (ColorHSI h s i) = poke3 p h s i
-  {-# INLINE poke #-}
 
 
 hsi2rgb :: (Ord e, Floating e) => Color HSI e -> Color RGB e

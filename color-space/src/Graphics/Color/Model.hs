@@ -10,6 +10,13 @@ module Graphics.Color.Model
   ( ColorModel(..)
   , Elevator(..)
   , Color
+  , Alpha
+  , Opaque
+  , addAlpha
+  , getAlpha
+  , setAlpha
+  , dropAlpha
+  , modifyOpaque
   ) where
 
 import Graphics.Color.Model.Alpha

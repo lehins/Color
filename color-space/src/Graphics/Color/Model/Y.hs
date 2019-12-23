@@ -30,7 +30,6 @@ import Foreign.Storable
 import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
-import Graphics.Color.Algebra
 
 -------------
 --- Y ---

@@ -21,6 +21,7 @@ module Graphics.Color.Space.RGB.SRGB
   ( SRGB
   , D50
   , D65
+  , Color(..)
   , pattern ColorRGB8
   , pattern ColorRGB16
   , pattern ColorRGB32
@@ -52,32 +53,32 @@ data SRGB
 
 newtype instance Color SRGB e = SRGB (Color CM.RGB e)
 
--- | Constructor for a pixel in @sRGB@ color space with 8-bits per channel
+-- | Constructor for a color in @sRGB@ color space with 8-bits per channel
 pattern ColorRGB8 :: Word8 -> Word8 -> Word8 -> Color SRGB Word8
 pattern ColorRGB8 r g b = SRGB (CM.ColorRGB r g b)
 {-# COMPLETE ColorRGB8 #-}
 
--- | Constructor for a pixel in @sRGB@ color space with 16-bits per channel
+-- | Constructor for a color in @sRGB@ color space with 16-bits per channel
 pattern ColorRGB16 :: Word16 -> Word16 -> Word16 -> Color SRGB Word16
 pattern ColorRGB16 r g b = SRGB (CM.ColorRGB r g b)
 {-# COMPLETE ColorRGB16 #-}
 
--- | Constructor for a pixel in @sRGB@ color space with 32-bits per channel
+-- | Constructor for a color in @sRGB@ color space with 32-bits per channel
 pattern ColorRGB32 :: Word32 -> Word32 -> Word32 -> Color SRGB Word32
 pattern ColorRGB32 r g b = SRGB (CM.ColorRGB r g b)
 {-# COMPLETE ColorRGB32 #-}
 
--- | Constructor for a pixel in @sRGB@ color space with 64-bits per channel
+-- | Constructor for a color in @sRGB@ color space with 64-bits per channel
 pattern ColorRGB64 :: Word64 -> Word64 -> Word64 -> Color SRGB Word64
 pattern ColorRGB64 r g b = SRGB (CM.ColorRGB r g b)
 {-# COMPLETE ColorRGB64 #-}
 
--- | Constructor for a pixel in @sRGB@ color space with 32-bit floating point value per channel
+-- | Constructor for a color in @sRGB@ color space with 32-bit floating point value per channel
 pattern ColorRGBF :: Float -> Float -> Float -> Color SRGB Float
 pattern ColorRGBF r g b = SRGB (CM.ColorRGB r g b)
 {-# COMPLETE ColorRGBF #-}
 
--- | Constructor for a pixel in @sRGB@ color space with 32-bit floating point value per channel
+-- | Constructor for a color in @sRGB@ color space with 32-bit floating point value per channel
 pattern ColorRGBD :: Double -> Double -> Double -> Color SRGB Double
 pattern ColorRGBD r g b = SRGB (CM.ColorRGB r g b)
 {-# COMPLETE ColorRGBD #-}

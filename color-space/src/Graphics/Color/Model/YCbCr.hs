@@ -35,7 +35,6 @@ import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
 import Graphics.Color.Model.Y
-import Graphics.Color.Algebra
 
 -- | `YCbCr` color model
 data YCbCr

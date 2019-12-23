@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -41,7 +43,13 @@ import Graphics.Color.Model.RGB
 data HSV
 
 -- | `HSV` color model
-data instance Color HSV e = ColorHSV !e !e !e
+newtype instance Color HSV e = HSV (V3 e)
+
+-- | Constructor for @HSV@.
+pattern ColorHSV :: e -> e -> e -> Color HSV e
+pattern ColorHSV h s v = HSV (V3 h s v)
+{-# COMPLETE ColorHSV #-}
+
 
 -- | Constructor for @HSV@ with alpha channel.
 pattern ColorHSVA :: e -> e -> e -> e -> Color (Alpha HSV) e
@@ -60,6 +68,16 @@ pattern ColorH360SV h s v <- ColorHSV ((* 360) -> h) s v where
 deriving instance Eq e => Eq (Color HSV e)
 -- | `HSV` color model
 deriving instance Ord e => Ord (Color HSV e)
+-- | `HSV` color model
+deriving instance Functor (Color HSV)
+-- | `HSV` color model
+deriving instance Applicative (Color HSV)
+-- | `HSV` color model
+deriving instance Foldable (Color HSV)
+-- | `HSV` color model
+deriving instance Traversable (Color HSV)
+-- | `HSV` color model
+deriving instance Storable e => Storable (Color HSV e)
 
 -- | `HSV` color model
 instance Elevator e => Show (Color HSV e) where
@@ -72,39 +90,6 @@ instance Elevator e => ColorModel HSV e where
   {-# INLINE toComponents #-}
   fromComponents (h, s, v) = ColorHSV h s v
   {-# INLINE fromComponents #-}
-
--- | `HSV` color model
-instance Functor (Color HSV) where
-  fmap f (ColorHSV h s v) = ColorHSV (f h) (f s) (f v)
-  {-# INLINE fmap #-}
-
--- | `HSV` color model
-instance Applicative (Color HSV) where
-  pure !e = ColorHSV e e e
-  {-# INLINE pure #-}
-  (ColorHSV fh fs fv) <*> (ColorHSV h s v) = ColorHSV (fh h) (fs s) (fv v)
-  {-# INLINE (<*>) #-}
-
--- | `HSV` color model
-instance Foldable (Color HSV) where
-  foldr f !z (ColorHSV h s v) = f h (f s (f v z))
-  {-# INLINE foldr #-}
-
--- | `HSV` color model
-instance Traversable (Color HSV) where
-  traverse f (ColorHSV h s v) = ColorHSV <$> f h <*> f s <*> f v
-  {-# INLINE traverse #-}
-
--- | `HSV` color model
-instance Storable e => Storable (Color HSV e) where
-  sizeOf = sizeOfN 3
-  {-# INLINE sizeOf #-}
-  alignment = alignmentN 3
-  {-# INLINE alignment #-}
-  peek = peek3 ColorHSV
-  {-# INLINE peek #-}
-  poke p (ColorHSV h s v) = poke3 p h s v
-  {-# INLINE poke #-}
 
 hc2rgb :: RealFrac e => e -> e -> Color RGB e
 hc2rgb h c

@@ -17,10 +17,11 @@
 module Graphics.Color.Model.Internal
   ( Color
   , ColorModel(..)
-  , module Graphics.Color.Algebra.Elevator
+  , module Graphics.Color.Algebra
   , showsColorModel
   , showsColorModelOpen
   , showsType
+  , asProxy
   , foldr3
   , foldr4
   , traverse3
@@ -45,7 +46,7 @@ import qualified Data.Vector.Storable as VS
 import qualified Data.Vector.Unboxed as VU
 import Foreign.Ptr
 import Foreign.Storable
-import Graphics.Color.Algebra.Elevator
+import Graphics.Color.Algebra
 import Data.Kind
 
 -- | A Color family with a color space and a precision of elements.
@@ -215,6 +216,9 @@ showsColorModelOpen px = t . (":(" ++) . channels . (')' :)
 
 showsType :: Typeable t => proxy t -> ShowS
 showsType = showsTypeRep . typeRep
+
+asProxy :: p -> (Proxy p -> t) -> t
+asProxy _ f = f (Proxy :: Proxy a)
 
 -- Foldable helpers
 

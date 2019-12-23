@@ -1,6 +1,8 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -30,9 +32,9 @@ module Graphics.Color.Model.HSL
 
 import Foreign.Storable
 import Graphics.Color.Model.Alpha
+import Graphics.Color.Model.HSV (hc2rgb)
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
-import Graphics.Color.Model.HSV (hc2rgb)
 
 -----------
 --- HSL ---
@@ -42,7 +44,13 @@ import Graphics.Color.Model.HSV (hc2rgb)
 data HSL
 
 -- | `HSL` color model
-data instance Color HSL e = ColorHSL !e !e !e
+newtype instance Color HSL e = HSL (V3 e)
+
+-- | Constructor for @HSL@.
+pattern ColorHSL :: e -> e -> e -> Color HSL e
+pattern ColorHSL h s l = HSL (V3 h s l)
+{-# COMPLETE ColorHSL #-}
+
 
 -- | Constructor for @HSL@ with alpha channel.
 pattern ColorHSLA :: e -> e -> e -> e -> Color (Alpha HSL) e
@@ -61,6 +69,16 @@ pattern ColorH360SL h s l <- ColorHSL ((* 360) -> h) s l where
 deriving instance Eq e => Eq (Color HSL e)
 -- | `HSL` color model
 deriving instance Ord e => Ord (Color HSL e)
+-- | `HSL` color model
+deriving instance Functor (Color HSL)
+-- | `HSL` color model
+deriving instance Applicative (Color HSL)
+-- | `HSL` color model
+deriving instance Foldable (Color HSL)
+-- | `HSL` color model
+deriving instance Traversable (Color HSL)
+-- | `HSL` color model
+deriving instance Storable e => Storable (Color HSL e)
 
 -- | `HSL` color model
 instance Elevator e => Show (Color HSL e) where
@@ -73,39 +91,6 @@ instance Elevator e => ColorModel HSL e where
   {-# INLINE toComponents #-}
   fromComponents (h, s, l) = ColorHSL h s l
   {-# INLINE fromComponents #-}
-
--- | `HSL` color model
-instance Functor (Color HSL) where
-  fmap f (ColorHSL h s l) = ColorHSL (f h) (f s) (f l)
-  {-# INLINE fmap #-}
-
--- | `HSL` color model
-instance Applicative (Color HSL) where
-  pure !e = ColorHSL e e e
-  {-# INLINE pure #-}
-  (ColorHSL fh fs fv) <*> (ColorHSL h s l) = ColorHSL (fh h) (fs s) (fv l)
-  {-# INLINE (<*>) #-}
-
--- | `HSL` color model
-instance Foldable (Color HSL) where
-  foldr f !z (ColorHSL h s l) = f h (f s (f l z))
-  {-# INLINE foldr #-}
-
--- | `HSL` color model
-instance Traversable (Color HSL) where
-  traverse f (ColorHSL h s l) = ColorHSL <$> f h <*> f s <*> f l
-  {-# INLINE traverse #-}
-
--- | `HSL` color model
-instance Storable e => Storable (Color HSL e) where
-  sizeOf = sizeOfN 3
-  {-# INLINE sizeOf #-}
-  alignment = alignmentN 3
-  {-# INLINE alignment #-}
-  peek = peek3 ColorHSL
-  {-# INLINE peek #-}
-  poke p (ColorHSL h s l) = poke3 p h s l
-  {-# INLINE poke #-}
 
 hsl2rgb :: RealFrac e => Color HSL e -> Color RGB e
 hsl2rgb (ColorHSL h s l) = (+ m) <$> hc2rgb h c
