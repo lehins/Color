@@ -29,7 +29,7 @@ custom-setup
 library
   hs-source-dirs:      src
   exposed-modules:     Graphics.Color.Algebra
-                     , Graphics.Color.Adaptation.Internal
+                     , Graphics.Color.Adaptation
                      , Graphics.Color.Adaptation.VonKries
                      -- Graphics.Color.Adaptation
                      -- , Graphics.Color.Adaptation.CIE1994
@@ -93,7 +93,8 @@ library
                      -- , Graphics.Color.Space.YCbCr
                      -- , Graphics.Color.Space.RGB
 
-  other-modules:       Graphics.Color.Algebra.Elevator
+  other-modules:       Graphics.Color.Adaptation.Internal
+                     , Graphics.Color.Algebra.Elevator
                      , Graphics.Color.Space.Internal
                      , Graphics.Color.Space.RGB.Internal
   build-depends:       base            >= 4.11 && < 5
