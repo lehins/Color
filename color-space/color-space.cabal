@@ -63,6 +63,7 @@ library
                      , Graphics.Color.Space.RGB.SRGB
                      , Graphics.Color.Space.RGB.AdobeRGB
                      , Graphics.Color.Space.RGB.Alternative
+                     , Graphics.Color.Space.RGB.Alternative.CMYK
                      , Graphics.Color.Space.RGB.Alternative.HSI
                      , Graphics.Color.Space.RGB.Alternative.HSV
                      , Graphics.Color.Space.RGB.Alternative.HSL
