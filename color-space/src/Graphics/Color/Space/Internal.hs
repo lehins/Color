@@ -12,6 +12,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.Color.Space.Internal
@@ -89,6 +90,13 @@ class (Illuminant i, ColorModel cs e) => ColorSpace cs (i :: k) e | cs -> i wher
     (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Color (XYZ i) a -> Color cs e
   fromColorXYZ = fromBaseColorSpace . fromColorXYZ
   {-# INLINE fromColorXYZ #-}
+
+instance (ColorSpace cs i e, Opaque (Alpha cs) ~ cs) => ColorSpace (Alpha cs) i e where
+  type BaseColorSpace (Alpha cs) = cs
+  toBaseColorSpace = dropAlpha
+  {-# INLINE toBaseColorSpace #-}
+  fromBaseColorSpace c = Alpha c maxValue
+  {-# INLINE fromBaseColorSpace #-}
 
 -- | This is a data type that encodes a data point on the chromaticity diagram
 newtype Chromaticity i e =

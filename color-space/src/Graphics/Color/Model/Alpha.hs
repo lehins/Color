@@ -20,6 +20,7 @@ module Graphics.Color.Model.Alpha
   , getAlpha
   , setAlpha
   , dropAlpha
+  , modifyAlpha
   , modifyOpaque
   , Color(Alpha)
   , ColorModel(..)
@@ -29,6 +30,7 @@ import Foreign.Ptr
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import GHC.TypeLits
+import Data.Proxy
 
 data Alpha cs
 
@@ -65,6 +67,13 @@ setAlpha :: Color (Alpha cs) e -> e -> Color (Alpha cs) e
 setAlpha px a = px { _alpha = a }
 {-# INLINE setAlpha #-}
 
+-- | Change the alpha channel value for the pixel
+--
+-- @since 0.1.0
+modifyAlpha :: (e -> e) -> Color (Alpha cs) e -> Color (Alpha cs) e
+modifyAlpha f px = px { _alpha = f (_alpha px) }
+{-# INLINE modifyAlpha #-}
+
 -- | Change the opaque pixel value, while leaving alpha channel intact.
 --
 -- @since 0.1.0
@@ -89,7 +98,7 @@ instance (ColorModel cs e, Opaque (Alpha cs) ~ cs) => ColorModel (Alpha cs) e wh
   {-# INLINE toComponents #-}
   fromComponents (pxc, a) = Alpha (fromComponents pxc) a
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = showsColorModelName (pure 0 :: Color cs e) . ('A':)
+  showsColorModelName _ = showsColorModelName (Proxy :: Proxy (Color cs e)) . ('A':)
 
 
 instance Functor (Color cs) => Functor (Color (Alpha cs)) where

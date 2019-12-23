@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -10,6 +9,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Alternative.CMYK
 -- Copyright   : (c) Alexey Kuleshevich 2019
@@ -27,6 +27,7 @@ module Graphics.Color.Space.RGB.Alternative.CMYK
   ) where
 
 import Data.Coerce
+import Data.Proxy
 import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Alpha
@@ -76,7 +77,7 @@ instance ColorModel cs e => ColorModel (CMYK cs) e where
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = ("CMYK-" ++) . showsColorModelName (pure 0 :: Color cs e)
+  showsColorModelName _ = ("CMYK-" ++) . showsColorModelName (Proxy :: Proxy (Color cs e))
 
 
 -- | `CMYK` representation for some (@`RedGreenBlue` cs i@) color space

@@ -28,6 +28,7 @@ module Graphics.Color.Space.RGB.Alternative.YCbCr
   ) where
 
 import Data.Coerce
+import Data.Proxy
 import Foreign.Storable
 import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
@@ -80,7 +81,7 @@ instance ColorModel cs e => ColorModel (YCbCr cs) e where
   {-# INLINE toComponents #-}
   fromComponents (y, cb, cr) = ColorYCbCr y cb cr
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = ("YCbCr-" ++) . showsColorModelName (pure 0 :: Color cs e)
+  showsColorModelName _ = ("YCbCr-" ++) . showsColorModelName (Proxy :: Proxy (Color cs e))
 
 -- | `YCbCr` representation for `SRGB` color space
 instance Elevator e => ColorSpace (YCbCr SRGB) D65 e where

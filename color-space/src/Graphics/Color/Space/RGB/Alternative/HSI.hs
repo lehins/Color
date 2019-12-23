@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -10,6 +9,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Alternative.HSI
@@ -29,6 +29,7 @@ module Graphics.Color.Space.RGB.Alternative.HSI
   ) where
 
 import Data.Coerce
+import Data.Proxy
 import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Alpha
@@ -88,7 +89,7 @@ instance ColorModel cs e => ColorModel (HSI cs) e where
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = ("HSI-" ++) . showsColorModelName (pure 0 :: Color cs e)
+  showsColorModelName _ = ("HSI-" ++) . showsColorModelName (Proxy :: Proxy (Color cs e))
 
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space

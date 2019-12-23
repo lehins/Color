@@ -74,7 +74,7 @@ class ( Functor (Color cs)
   -- | Display the @cs@ portion of the pixel. Color itself will not be evaluated.
   --
   -- @since 0.1.0
-  showsColorModelName :: Color cs e -> ShowS
+  showsColorModelName :: Proxy (Color cs e) -> ShowS
   showsColorModelName _ = showsType (Proxy :: Proxy cs)
 
 instance ColorModel cs e => Default (Color cs e) where
@@ -208,7 +208,7 @@ showsColorModel px = ('<' :) . showsColorModelOpen px . ('>' :)
 showsColorModelOpen :: ColorModel cs e => Color cs e -> ShowS
 showsColorModelOpen px = t . (":(" ++) . channels . (')' :)
   where
-    t = showsColorModelName px
+    t = asProxy px showsColorModelName
     channels =
       case toList px of
         [] -> id
