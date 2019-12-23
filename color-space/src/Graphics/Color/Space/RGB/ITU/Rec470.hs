@@ -39,33 +39,33 @@ import Graphics.Color.Illuminant.ITU.Rec470
 -- | ITU-R BT.470 (525) color space. Used in NTSC
 data BT470_525
 
-newtype instance Pixel BT470_525 e = BT470_525 (Pixel CM.RGB e)
+newtype instance Color BT470_525 e = BT470_525 (Color CM.RGB e)
 
 -- | ITU-R BT.470 (525) color space
-deriving instance Eq e => Eq (Pixel BT470_525 e)
+deriving instance Eq e => Eq (Color BT470_525 e)
 -- | ITU-R BT.470 (525) color space
-deriving instance Ord e => Ord (Pixel BT470_525 e)
+deriving instance Ord e => Ord (Color BT470_525 e)
 -- | ITU-R BT.470 (525) color space
-deriving instance Functor (Pixel BT470_525)
+deriving instance Functor (Color BT470_525)
 -- | ITU-R BT.470 (525) color space
-deriving instance Applicative (Pixel BT470_525)
+deriving instance Applicative (Color BT470_525)
 -- | ITU-R BT.470 (525) color space
-deriving instance Foldable (Pixel BT470_525)
+deriving instance Foldable (Color BT470_525)
 -- | ITU-R BT.470 (525) color space
-deriving instance Traversable (Pixel BT470_525)
+deriving instance Traversable (Color BT470_525)
 -- | ITU-R BT.470 (525) color space
-deriving instance Storable e => Storable (Pixel BT470_525 e)
+deriving instance Storable e => Storable (Color BT470_525 e)
 
 -- | ITU-R BT.470 (525) color space
-instance Elevator e => Show (Pixel BT470_525 e) where
+instance Elevator e => Show (Color BT470_525 e) where
   showsPrec _ = showsColorModel
 
 -- | ITU-R BT.470 (525) color space
 instance Elevator e => ColorModel BT470_525 e where
   type Components BT470_525 e = (e, e, e)
-  toComponents = toComponents . unPixelRGB
+  toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
-  fromComponents = mkPixelRGB . fromComponents
+  fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
 -- | ITU-R BT.470 (525) color space
@@ -74,10 +74,10 @@ instance Elevator e => ColorSpace BT470_525 C e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelXYZ = rgb2xyz . fmap toRealFloat
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = fmap fromRealFloat . xyz2rgb
-  {-# INLINE fromPixelXYZ #-}
+  toColorXYZ = rgb2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgb
+  {-# INLINE fromColorXYZ #-}
 
 -- | ITU-R BT.470 (525) color space
 instance RedGreenBlue BT470_525 C where
@@ -94,33 +94,33 @@ instance RedGreenBlue BT470_525 C where
 -- | ITU-R BT.470 (625) color space. Used in PAL/SECAM
 data BT470_625
 
-newtype instance Pixel BT470_625 e = BT470_625 (Pixel CM.RGB e)
+newtype instance Color BT470_625 e = BT470_625 (Color CM.RGB e)
 
 -- | ITU-R BT.470 (625) color space
-deriving instance Eq e => Eq (Pixel BT470_625 e)
+deriving instance Eq e => Eq (Color BT470_625 e)
 -- | ITU-R BT.470 (625) color space
-deriving instance Ord e => Ord (Pixel BT470_625 e)
+deriving instance Ord e => Ord (Color BT470_625 e)
 -- | ITU-R BT.470 (625) color space
-deriving instance Functor (Pixel BT470_625)
+deriving instance Functor (Color BT470_625)
 -- | ITU-R BT.470 (625) color space
-deriving instance Applicative (Pixel BT470_625)
+deriving instance Applicative (Color BT470_625)
 -- | ITU-R BT.470 (625) color space
-deriving instance Foldable (Pixel BT470_625)
+deriving instance Foldable (Color BT470_625)
 -- | ITU-R BT.470 (625) color space
-deriving instance Traversable (Pixel BT470_625)
+deriving instance Traversable (Color BT470_625)
 -- | ITU-R BT.470 (625) color space
-deriving instance Storable e => Storable (Pixel BT470_625 e)
+deriving instance Storable e => Storable (Color BT470_625 e)
 
 -- | ITU-R BT.470 (625) color space
-instance Elevator e => Show (Pixel BT470_625 e) where
+instance Elevator e => Show (Color BT470_625 e) where
   showsPrec _ = showsColorModel
 
 -- | ITU-R BT.470 (625) color space
 instance Elevator e => ColorModel BT470_625 e where
   type Components BT470_625 e = (e, e, e)
-  toComponents = toComponents . unPixelRGB
+  toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
-  fromComponents = mkPixelRGB . fromComponents
+  fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
 -- | ITU-R BT.470 (625) color space
@@ -129,10 +129,10 @@ instance Elevator e => ColorSpace BT470_625 D65 e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelXYZ = rgb2xyz . fmap toRealFloat
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = fmap fromRealFloat . xyz2rgb
-  {-# INLINE fromPixelXYZ #-}
+  toColorXYZ = rgb2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgb
+  {-# INLINE fromColorXYZ #-}
 
 -- | ITU-R BT.470 (625) color space
 instance RedGreenBlue BT470_625 D65 where

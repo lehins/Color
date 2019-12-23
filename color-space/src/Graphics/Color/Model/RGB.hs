@@ -20,10 +20,10 @@
 module Graphics.Color.Model.RGB
   ( RGB
   -- * Constructors for an RGB color model.
-  , pattern PixelRGB
-  , pattern PixelRGBA
+  , pattern ColorRGB
+  , pattern ColorRGBA
   , pattern RGB
-  , Pixel
+  , Color
   , ColorModel(..)
   ) where
 
@@ -37,41 +37,41 @@ data RGB
 
 
 -- | `RGB` color model
-newtype instance Pixel RGB e = RGB (V3 e)
+newtype instance Color RGB e = RGB (V3 e)
 
 -- | Constructor for @RGB@ with alpha channel.
-pattern PixelRGB :: e -> e -> e -> Pixel RGB e
-pattern PixelRGB r g b = RGB (V3 r g b)
-{-# COMPLETE PixelRGB #-}
+pattern ColorRGB :: e -> e -> e -> Color RGB e
+pattern ColorRGB r g b = RGB (V3 r g b)
+{-# COMPLETE ColorRGB #-}
 
 -- | Constructor for @RGB@ with alpha channel.
-pattern PixelRGBA :: e -> e -> e -> e -> Pixel (Alpha RGB) e
-pattern PixelRGBA r g b a = Alpha (RGB (V3 r g b)) a
-{-# COMPLETE PixelRGBA #-}
+pattern ColorRGBA :: e -> e -> e -> e -> Color (Alpha RGB) e
+pattern ColorRGBA r g b a = Alpha (RGB (V3 r g b)) a
+{-# COMPLETE ColorRGBA #-}
 
 -- | `RGB` color model
-deriving instance Eq e => Eq (Pixel RGB e)
+deriving instance Eq e => Eq (Color RGB e)
 -- | `RGB` color model
-deriving instance Ord e => Ord (Pixel RGB e)
+deriving instance Ord e => Ord (Color RGB e)
 -- | `RGB` color model
-instance Elevator e => Show (Pixel RGB e) where
+instance Elevator e => Show (Color RGB e) where
   showsPrec _ = showsColorModel
 
 -- | `RGB` color model
 instance Elevator e => ColorModel RGB e where
   type Components RGB e = (e, e, e)
-  toComponents (PixelRGB r g b) = (r, g, b)
+  toComponents (ColorRGB r g b) = (r, g, b)
   {-# INLINE toComponents #-}
-  fromComponents (r, g, b) = PixelRGB r g b
+  fromComponents (r, g, b) = ColorRGB r g b
   {-# INLINE fromComponents #-}
 
 -- | `RGB` color model
-deriving instance Functor (Pixel RGB)
+deriving instance Functor (Color RGB)
 -- | `RGB` color model
-deriving instance Applicative (Pixel RGB)
+deriving instance Applicative (Color RGB)
 -- | `RGB` color model
-deriving instance Foldable (Pixel RGB)
+deriving instance Foldable (Color RGB)
 -- | `RGB` color model
-deriving instance Traversable (Pixel RGB)
+deriving instance Traversable (Color RGB)
 -- | `RGB` color model
-deriving instance Storable e => Storable (Pixel RGB e)
+deriving instance Storable e => Storable (Color RGB e)

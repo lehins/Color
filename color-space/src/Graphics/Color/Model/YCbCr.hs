@@ -20,10 +20,10 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Model.YCbCr
-  ( pattern PixelYCbCr
-  , pattern PixelYCbCrA
+  ( pattern ColorYCbCr
+  , pattern ColorYCbCrA
   , YCbCr
-  , Pixel(YCbCr)
+  , Color(YCbCr)
   , rgb2ycbcr
   , ycbcr2rgb
   , module Graphics.Color.Model
@@ -41,62 +41,62 @@ import Graphics.Color.Algebra
 data YCbCr
 
 -- | `YCbCr` color model
-newtype instance Pixel YCbCr e = YCbCr (V3 e)
+newtype instance Color YCbCr e = YCbCr (V3 e)
 
 -- | `YCbCr` color model
-deriving instance Eq e => Eq (Pixel YCbCr e)
+deriving instance Eq e => Eq (Color YCbCr e)
 -- | `YCbCr` color model
-deriving instance Ord e => Ord (Pixel YCbCr e)
+deriving instance Ord e => Ord (Color YCbCr e)
 -- | `YCbCr` color model
-deriving instance Functor (Pixel YCbCr)
+deriving instance Functor (Color YCbCr)
 -- | `YCbCr` color model
-deriving instance Applicative (Pixel YCbCr)
+deriving instance Applicative (Color YCbCr)
 -- | `YCbCr` color model
-deriving instance Foldable (Pixel YCbCr)
+deriving instance Foldable (Color YCbCr)
 -- | `YCbCr` color model
-deriving instance Traversable (Pixel YCbCr)
+deriving instance Traversable (Color YCbCr)
 -- | `YCbCr` color model
-deriving instance Storable e => Storable (Pixel YCbCr e)
+deriving instance Storable e => Storable (Color YCbCr e)
 
 -- | `YCbCr` color model
-instance Elevator e => Show (Pixel YCbCr e) where
+instance Elevator e => Show (Color YCbCr e) where
   showsPrec _ = showsColorModel
 
 -- | Constructor for an RGB color model in an alternative YCbCr color model
-pattern PixelYCbCr :: e -> e -> e -> Pixel YCbCr e
-pattern PixelYCbCr y cb cr = YCbCr (V3 y cb cr)
-{-# COMPLETE PixelYCbCr #-}
+pattern ColorYCbCr :: e -> e -> e -> Color YCbCr e
+pattern ColorYCbCr y cb cr = YCbCr (V3 y cb cr)
+{-# COMPLETE ColorYCbCr #-}
 
 -- | Constructor for @YCbCr@ with alpha channel.
-pattern PixelYCbCrA :: e -> e -> e -> e -> Pixel (Alpha YCbCr) e
-pattern PixelYCbCrA y cb cr a = Alpha (YCbCr (V3 y cb cr)) a
-{-# COMPLETE PixelYCbCrA #-}
+pattern ColorYCbCrA :: e -> e -> e -> e -> Color (Alpha YCbCr) e
+pattern ColorYCbCrA y cb cr a = Alpha (YCbCr (V3 y cb cr)) a
+{-# COMPLETE ColorYCbCrA #-}
 
 
 -- | `YCbCr` color model
 instance Elevator e => ColorModel YCbCr e where
   type Components YCbCr e = (e, e, e)
-  toComponents (PixelYCbCr y cb cr) = (y, cb, cr)
+  toComponents (ColorYCbCr y cb cr) = (y, cb, cr)
   {-# INLINE toComponents #-}
-  fromComponents (y, cb, cr) = PixelYCbCr y cb cr
+  fromComponents (y, cb, cr) = ColorYCbCr y cb cr
   {-# INLINE fromComponents #-}
   showsColorModelName _ = ("YCbCr" ++)
 
 
-rgb2ycbcr :: (Elevator e', Elevator e, RealFloat e) => Pixel RGB e' -> Weights e -> Pixel YCbCr e
-rgb2ycbcr rgb' weights@(Weights (V3 kr _ kb)) = PixelYCbCr y cb cr
+rgb2ycbcr :: (Elevator e', Elevator e, RealFloat e) => Color RGB e' -> Weights e -> Color YCbCr e
+rgb2ycbcr rgb' weights@(Weights (V3 kr _ kb)) = ColorYCbCr y cb cr
   where
-    rgb@(PixelRGB r _ b) = toRealFloat <$> rgb'
-    PixelY y = rgb2y rgb weights
+    rgb@(ColorRGB r _ b) = toRealFloat <$> rgb'
+    ColorY y = rgb2y rgb weights
     !cb = 0.5 + 0.5 * (b - y) / (1 - kb)
     !cr = 0.5 + 0.5 * (r - y) / (1 - kr)
 {-# INLINE rgb2ycbcr #-}
 
 
-ycbcr2rgb :: (Elevator e', Elevator e, RealFloat e) => Pixel YCbCr e' -> Weights e -> Pixel RGB e
-ycbcr2rgb ycbcr (Weights (V3 kr kg kb)) = PixelRGB r g b
+ycbcr2rgb :: (Elevator e', Elevator e, RealFloat e) => Color YCbCr e' -> Weights e -> Color RGB e
+ycbcr2rgb ycbcr (Weights (V3 kr kg kb)) = ColorRGB r g b
   where
-    PixelYCbCr y cb cr = toRealFloat <$> ycbcr
+    ColorYCbCr y cb cr = toRealFloat <$> ycbcr
     !r = y + (2 - 2 * kr) * cr
     !b = y + (2 - 2 * kb) * cb
     !g = (y - kr * r - kb * b) / kg

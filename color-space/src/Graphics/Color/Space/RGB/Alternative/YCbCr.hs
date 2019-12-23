@@ -20,10 +20,10 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.RGB.Alternative.YCbCr
-  ( pattern PixelYCbCr
-  , pattern PixelYCbCrA
+  ( pattern ColorYCbCr
+  , pattern ColorYCbCrA
   , YCbCr
-  , Pixel(YCbCr)
+  , Color(YCbCr)
   , module Graphics.Color.Space
   ) where
 
@@ -41,46 +41,46 @@ import Graphics.Color.Space.RGB.Luma
 data YCbCr cs
 
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-newtype instance Pixel (YCbCr cs) e = YCbCr (Pixel CM.YCbCr e)
+newtype instance Color (YCbCr cs) e = YCbCr (Color CM.YCbCr e)
 
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Eq e => Eq (Pixel (YCbCr cs) e)
+deriving instance Eq e => Eq (Color (YCbCr cs) e)
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Ord e => Ord (Pixel (YCbCr cs) e)
+deriving instance Ord e => Ord (Color (YCbCr cs) e)
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Functor (Pixel (YCbCr cs))
+deriving instance Functor (Color (YCbCr cs))
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Applicative (Pixel (YCbCr cs))
+deriving instance Applicative (Color (YCbCr cs))
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Foldable (Pixel (YCbCr cs))
+deriving instance Foldable (Color (YCbCr cs))
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Traversable (Pixel (YCbCr cs))
+deriving instance Traversable (Color (YCbCr cs))
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Storable e => Storable (Pixel (YCbCr cs) e)
+deriving instance Storable e => Storable (Color (YCbCr cs) e)
 
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-instance ColorModel cs e => Show (Pixel (YCbCr cs) e) where
+instance ColorModel cs e => Show (Color (YCbCr cs) e) where
   showsPrec _ = showsColorModel
 
 -- | Constructor for an RGB color space in an alternative YCbCr color model
-pattern PixelYCbCr :: e -> e -> e -> Pixel (YCbCr cs) e
-pattern PixelYCbCr y cb cr = YCbCr (CM.PixelYCbCr y cb cr)
-{-# COMPLETE PixelYCbCr #-}
+pattern ColorYCbCr :: e -> e -> e -> Color (YCbCr cs) e
+pattern ColorYCbCr y cb cr = YCbCr (CM.ColorYCbCr y cb cr)
+{-# COMPLETE ColorYCbCr #-}
 
 -- | Constructor for @YCbCr@ with alpha channel.
-pattern PixelYCbCrA :: e -> e -> e -> e -> Pixel (Alpha (YCbCr cs)) e
-pattern PixelYCbCrA y cb cr a = Alpha (YCbCr (CM.PixelYCbCr y cb cr)) a
-{-# COMPLETE PixelYCbCrA #-}
+pattern ColorYCbCrA :: e -> e -> e -> e -> Color (Alpha (YCbCr cs)) e
+pattern ColorYCbCrA y cb cr a = Alpha (YCbCr (CM.ColorYCbCr y cb cr)) a
+{-# COMPLETE ColorYCbCrA #-}
 
 
 -- | `YCbCr` color model
 instance ColorModel cs e => ColorModel (YCbCr cs) e where
   type Components (YCbCr cs) e = (e, e, e)
-  toComponents (PixelYCbCr y cb cr) = (y, cb, cr)
+  toComponents (ColorYCbCr y cb cr) = (y, cb, cr)
   {-# INLINE toComponents #-}
-  fromComponents (y, cb, cr) = PixelYCbCr y cb cr
+  fromComponents (y, cb, cr) = ColorYCbCr y cb cr
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = ("YCbCr-" ++) . showsColorModelName (pure 0 :: Pixel cs e)
+  showsColorModelName _ = ("YCbCr-" ++) . showsColorModelName (pure 0 :: Color cs e)
 
 -- | `YCbCr` representation for `SRGB` color space
 instance Elevator e => ColorSpace (YCbCr SRGB) D65 e where
@@ -89,30 +89,30 @@ instance Elevator e => ColorSpace (YCbCr SRGB) D65 e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = fmap fromRealFloat . rgb2ycbcr . fmap toFloat
   {-# INLINE fromBaseColorSpace #-}
-  toPixelXYZ = toPixelXYZ . toBaseColorSpace
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
-  {-# INLINE fromPixelXYZ #-}
+  toColorXYZ = toColorXYZ . toBaseColorSpace
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fromBaseColorSpace . fromColorXYZ
+  {-# INLINE fromColorXYZ #-}
 
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
 instance (Luma (cs i), ColorSpace (cs i) i e, RedGreenBlue (cs i) i) =>
          ColorSpace (YCbCr (cs i)) i e where
   type BaseColorSpace (YCbCr (cs i)) = cs i
-  toBaseColorSpace = fmap fromDouble . fromPixelYCbCr
+  toBaseColorSpace = fmap fromDouble . fromColorYCbCr
   {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = fmap fromDouble . toPixelYCbCr
+  fromBaseColorSpace = fmap fromDouble . toColorYCbCr
   {-# INLINE fromBaseColorSpace #-}
-  toPixelXYZ = toPixelXYZ . toBaseColorSpace
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
-  {-# INLINE fromPixelXYZ #-}
+  toColorXYZ = toColorXYZ . toBaseColorSpace
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fromBaseColorSpace . fromColorXYZ
+  {-# INLINE fromColorXYZ #-}
 
 
 
 
 -- | Source: ITU-T Rec. T.871
-ycbcr2rgb :: (RedGreenBlue cs i, Ord e, Floating e) => Pixel (YCbCr cs) e -> Pixel cs e
-ycbcr2rgb (PixelYCbCr y cb cr) = PixelRGB r g b
+ycbcr2rgb :: (RedGreenBlue cs i, Ord e, Floating e) => Color (YCbCr cs) e -> Color cs e
+ycbcr2rgb (ColorYCbCr y cb cr) = ColorRGB r g b
   where
     !cb05 = cb - 0.5
     !cr05 = cr - 0.5
@@ -122,8 +122,8 @@ ycbcr2rgb (PixelYCbCr y cb cr) = PixelRGB r g b
 {-# INLINE ycbcr2rgb #-}
 
 -- | Source: ITU-T Rec. T.871
-rgb2ycbcr :: (RedGreenBlue cs i, Floating e) => Pixel cs e -> Pixel (YCbCr cs) e
-rgb2ycbcr (PixelRGB r g b) = PixelYCbCr y cb cr
+rgb2ycbcr :: (RedGreenBlue cs i, Floating e) => Color cs e -> Color (YCbCr cs) e
+rgb2ycbcr (ColorRGB r g b) = ColorYCbCr y cb cr
   where
     !y  =          0.299 * r +    0.587 * g +    0.114 * b
     !cb = 0.5 - 0.168736 * r - 0.331264 * g +      0.5 * b
@@ -131,21 +131,21 @@ rgb2ycbcr (PixelRGB r g b) = PixelYCbCr y cb cr
 {-# INLINE rgb2ycbcr #-}
 
 
-toPixelYCbCr ::
+toColorYCbCr ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
-  => Pixel cs e'
-  -> Pixel (YCbCr cs) e
-toPixelYCbCr rgb = YCbCr (CM.rgb2ycbcr (unPixelRGB rgb) weights)
+  => Color cs e'
+  -> Color (YCbCr cs) e
+toColorYCbCr rgb = YCbCr (CM.rgb2ycbcr (unColorRGB rgb) weights)
   where
     !weights = rgbLumaWeights rgb
-{-# INLINE toPixelYCbCr #-}
+{-# INLINE toColorYCbCr #-}
 
-fromPixelYCbCr ::
+fromColorYCbCr ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
-  => Pixel (YCbCr cs) e'
-  -> Pixel cs e
-fromPixelYCbCr ycbcr = rgb
+  => Color (YCbCr cs) e'
+  -> Color cs e
+fromColorYCbCr ycbcr = rgb
   where
-    !rgb = mkPixelRGB (CM.ycbcr2rgb (coerce ycbcr :: Pixel CM.YCbCr e') weights)
+    !rgb = mkColorRGB (CM.ycbcr2rgb (coerce ycbcr :: Color CM.YCbCr e') weights)
     !weights = rgbLumaWeights rgb
-{-# INLINE fromPixelYCbCr #-}
+{-# INLINE fromColorYCbCr #-}

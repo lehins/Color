@@ -20,11 +20,11 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.RGB.Alternative.HSL
-  ( pattern PixelHSL
-  , pattern PixelHSLA
-  , pattern PixelH360SL
+  ( pattern ColorHSL
+  , pattern ColorHSLA
+  , pattern ColorH360SL
   , HSL
-  , Pixel(HSL)
+  , Color(HSL)
   , module Graphics.Color.Space
   ) where
 
@@ -40,45 +40,45 @@ import Graphics.Color.Space
 data HSL cs
 
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
-newtype instance Pixel (HSL cs) e = HSL (Pixel CM.HSL e)
+newtype instance Color (HSL cs) e = HSL (Color CM.HSL e)
 
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Eq e => Eq (Pixel (HSL cs) e)
+deriving instance Eq e => Eq (Color (HSL cs) e)
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Ord e => Ord (Pixel (HSL cs) e)
+deriving instance Ord e => Ord (Color (HSL cs) e)
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Functor (Pixel (HSL cs))
+deriving instance Functor (Color (HSL cs))
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Applicative (Pixel (HSL cs))
+deriving instance Applicative (Color (HSL cs))
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Foldable (Pixel (HSL cs))
+deriving instance Foldable (Color (HSL cs))
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Traversable (Pixel (HSL cs))
+deriving instance Traversable (Color (HSL cs))
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Storable e => Storable (Pixel (HSL cs) e)
+deriving instance Storable e => Storable (Color (HSL cs) e)
 
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
-instance ColorModel cs e => Show (Pixel (HSL cs) e) where
+instance ColorModel cs e => Show (Color (HSL cs) e) where
   showsPrec _ = showsColorModel
 
 -- | Constructor for an RGB color space in an alternative HSL color model
-pattern PixelHSL :: e -> e -> e -> Pixel (HSL cs) e
-pattern PixelHSL h s i = HSL (CM.PixelHSL h s i)
-{-# COMPLETE PixelHSL #-}
+pattern ColorHSL :: e -> e -> e -> Color (HSL cs) e
+pattern ColorHSL h s i = HSL (CM.ColorHSL h s i)
+{-# COMPLETE ColorHSL #-}
 
 -- | Constructor for @HSL@ with alpha channel.
-pattern PixelHSLA :: e -> e -> e -> e -> Pixel (Alpha (HSL cs)) e
-pattern PixelHSLA h s i a = Alpha (HSL (CM.PixelHSL h s i)) a
-{-# COMPLETE PixelHSLA #-}
+pattern ColorHSLA :: e -> e -> e -> e -> Color (Alpha (HSL cs)) e
+pattern ColorHSLA h s i a = Alpha (HSL (CM.ColorHSL h s i)) a
+{-# COMPLETE ColorHSLA #-}
 
 
 -- | Constructor for an RGB color space in an alternative HSL color model. Difference from
--- `PixelHSL` is that the hue is specified in 0 to 360 degree range, rather than 0 to
+-- `ColorHSL` is that the hue is specified in 0 to 360 degree range, rather than 0 to
 -- 1. Note, that this is not checked.
-pattern PixelH360SL :: RealFloat e => e -> e -> e -> Pixel (HSL cs) e
-pattern PixelH360SL h s i <- PixelHSL ((* 360) -> h) s i where
-        PixelH360SL h s i = PixelHSL (h / 360) s i
-{-# COMPLETE PixelH360SL #-}
+pattern ColorH360SL :: RealFloat e => e -> e -> e -> Color (HSL cs) e
+pattern ColorH360SL h s i <- ColorHSL ((* 360) -> h) s i where
+        ColorH360SL h s i = ColorHSL (h / 360) s i
+{-# COMPLETE ColorH360SL #-}
 
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel cs e => ColorModel (HSL cs) e where
@@ -87,13 +87,13 @@ instance ColorModel cs e => ColorModel (HSL cs) e where
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = ("HSL-" ++) . showsColorModelName (pure 0 :: Pixel cs e)
+  showsColorModelName _ = ("HSL-" ++) . showsColorModelName (pure 0 :: Color cs e)
 
 
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
 instance (Typeable cs, ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (HSL cs) i e where
   type BaseColorSpace (HSL cs) = cs
-  toBaseColorSpace = mkPixelRGB . fmap fromDouble . CM.hsl2rgb . fmap toDouble . coerce
+  toBaseColorSpace = mkColorRGB . fmap fromDouble . CM.hsl2rgb . fmap toDouble . coerce
   {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = coerce . fmap fromDouble . CM.rgb2hsl . fmap toDouble . unPixelRGB
+  fromBaseColorSpace = coerce . fmap fromDouble . CM.rgb2hsl . fmap toDouble . unColorRGB
   {-# INLINE fromBaseColorSpace #-}

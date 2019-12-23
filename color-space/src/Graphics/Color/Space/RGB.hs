@@ -10,12 +10,12 @@
 
 module Graphics.Color.Space.RGB
   ( -- * Default sRGB color space
-    pattern PixelRGB8
-  , pattern PixelRGB16
-  , pattern PixelRGB32
-  , pattern PixelRGB64
-  , pattern PixelRGBF
-  , pattern PixelRGBD
+    pattern ColorRGB8
+  , pattern ColorRGB16
+  , pattern ColorRGB32
+  , pattern ColorRGB64
+  , pattern ColorRGBF
+  , pattern ColorRGBD
   , SRGB
   , D65
   -- * Re-exports
@@ -27,6 +27,6 @@ module Graphics.Color.Space.RGB
 import Graphics.Color.Space
 import Graphics.Color.Space.RGB.Alternative
 import Graphics.Color.Space.RGB.Luma
-import Graphics.Color.Space.RGB.SRGB (pattern PixelRGB16, pattern PixelRGB32,
-                                      pattern PixelRGB64, pattern PixelRGB8,
-                                      pattern PixelRGBD, pattern PixelRGBF, SRGB, D65)
+import Graphics.Color.Space.RGB.SRGB (pattern ColorRGB16, pattern ColorRGB32,
+                                      pattern ColorRGB64, pattern ColorRGB8,
+                                      pattern ColorRGBD, pattern ColorRGBF, SRGB, D65)

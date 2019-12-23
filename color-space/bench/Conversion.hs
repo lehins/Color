@@ -40,17 +40,17 @@ randomV3 g0 = (V3 v0 v1 v2, g3)
     (v1, g2) = randomR (minValue, maxValue) g1
     (v2, g3) = randomR (minValue, maxValue) g2
 
-makeRandomPixel :: forall cs i a g . (ColorSpace cs i a, RandomGen g) => g -> (Pixel cs a, g)
-makeRandomPixel gen =
+makeRandomColor :: forall cs i a g . (ColorSpace cs i a, RandomGen g) => g -> (Color cs a, g)
+makeRandomColor gen =
   case randomV3 gen of
-    (V3 x y z, gen') -> (fromPixelXYZ (PixelXYZ x y z :: Pixel (XYZ i) Double), gen')
+    (V3 x y z, gen') -> (fromColorXYZ (ColorXYZ x y z :: Color (XYZ i) Double), gen')
 
 
 makeRandomRGB ::
-     (RedGreenBlue cs (i :: k), RandomGen g, Random a, Elevator a) => g -> (Pixel cs a, g)
+     (RedGreenBlue cs (i :: k), RandomGen g, Random a, Elevator a) => g -> (Color cs a, g)
 makeRandomRGB gen =
   case randomV3 gen of
-    (V3 r g b, gen') -> (mkPixelRGB (CM.PixelRGB r g b), gen')
+    (V3 r g b, gen') -> (mkColorRGB (CM.ColorRGB r g b), gen')
 
 makeRandomColour ::
      (RandomGen b1, Random b2, Elevator b2, Ord b2, Floating b2) => b1 -> (Colour.Colour b2, b1)
@@ -69,23 +69,23 @@ mkBenchmarks ::
   -> g
   -> (Benchmark, g)
 mkBenchmarks _ tyName g0 =
-  let !(srgb :: Pixel SRGB f, g1) = makeRandomRGB g0
-      !(srgbDerived :: Pixel (Derived.SRGB 'D65) f, g2) = makeRandomRGB g1
-      !(xyz :: Pixel (XYZ D65) f) = toPixelXYZ srgb
-      !(xyzDerived :: Pixel (XYZ 'D65) f) = toPixelXYZ srgbDerived
+  let !(srgb :: Color SRGB f, g1) = makeRandomRGB g0
+      !(srgbDerived :: Color (Derived.SRGB 'D65) f, g2) = makeRandomRGB g1
+      !(xyz :: Color (XYZ D65) f) = toColorXYZ srgb
+      !(xyzDerived :: Color (XYZ 'D65) f) = toColorXYZ srgbDerived
       !(srgbColour :: Colour.Colour f, g3) = makeRandomColour g2
       xyzColour@(!_, !_, !_) = Colour.cieXYZView srgbColour
    in ( bgroup
           ("sRGB " <> tyName)
           [ bgroup
               "Standard"
-              [ bench "toPixelXYZ" $ nf (sameAs xyz toPixelXYZ) srgb
-              , bench "fromPixelXYZ" $ nf (sameAs srgb fromPixelXYZ) xyz
+              [ bench "toColorXYZ" $ nf (sameAs xyz toColorXYZ) srgb
+              , bench "fromColorXYZ" $ nf (sameAs srgb fromColorXYZ) xyz
               ]
           , bgroup
               "Derived"
-              [ bench "toPixelXYZ" $ nf (sameAs xyzDerived toPixelXYZ) srgbDerived
-              , bench "fromPixelXYZ" $ nf (sameAs srgbDerived fromPixelXYZ) xyzDerived
+              [ bench "toColorXYZ" $ nf (sameAs xyzDerived toColorXYZ) srgbDerived
+              , bench "fromColorXYZ" $ nf (sameAs srgbDerived fromColorXYZ) xyzDerived
               ]
           , bgroup
               "Colour"
@@ -103,14 +103,14 @@ mkBenchmarksLAB ::
   -> g
   -> (Benchmark, g)
 mkBenchmarksLAB _ tyName g0 =
-  let !(lab :: Pixel (LAB 'D65) f, g1) = makeRandomPixel g0
-      !(xyz :: Pixel (XYZ 'D65) f) = toPixelXYZ lab
+  let !(lab :: Color (LAB 'D65) f, g1) = makeRandomColor g0
+      !(xyz :: Color (XYZ 'D65) f) = toColorXYZ lab
    in ( bgroup
           ("LAB " <> tyName)
           [ bgroup
               "Standard"
-              [ bench "toPixelXYZ" $ nf (sameAs xyz toPixelXYZ) lab
-              , bench "fromPixelXYZ" $ nf (sameAs lab fromPixelXYZ) xyz
+              [ bench "toColorXYZ" $ nf (sameAs xyz toColorXYZ) lab
+              , bench "fromColorXYZ" $ nf (sameAs lab fromColorXYZ) xyz
               ]
           ]
       , g1)

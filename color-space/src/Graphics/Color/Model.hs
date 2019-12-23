@@ -9,7 +9,7 @@
 module Graphics.Color.Model
   ( ColorModel(..)
   , Elevator(..)
-  , Pixel
+  , Color
   ) where
 
 import Graphics.Color.Model.Alpha

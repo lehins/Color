@@ -38,33 +38,33 @@ import qualified Graphics.Color.Space.RGB.SRGB as SRGB
 data SRGB (i :: k)
 
 -- | `SRGB` color space (derived)
-newtype instance Pixel (SRGB i) e = SRGB (Pixel CM.RGB e)
+newtype instance Color (SRGB i) e = SRGB (Color CM.RGB e)
 
 -- | `SRGB` color space (derived)
-deriving instance Eq e => Eq (Pixel (SRGB i) e)
+deriving instance Eq e => Eq (Color (SRGB i) e)
 -- | `SRGB` color space (derived)
-deriving instance Ord e => Ord (Pixel (SRGB i) e)
+deriving instance Ord e => Ord (Color (SRGB i) e)
 -- | `SRGB` color space (derived)
-deriving instance Functor (Pixel (SRGB i))
+deriving instance Functor (Color (SRGB i))
 -- | `SRGB` color space (derived)
-deriving instance Applicative (Pixel (SRGB i))
+deriving instance Applicative (Color (SRGB i))
 -- | `SRGB` color space (derived)
-deriving instance Foldable (Pixel (SRGB i))
+deriving instance Foldable (Color (SRGB i))
 -- | `SRGB` color space (derived)
-deriving instance Traversable (Pixel (SRGB i))
+deriving instance Traversable (Color (SRGB i))
 -- | `SRGB` color space (derived)
-deriving instance Storable e => Storable (Pixel (SRGB i) e)
+deriving instance Storable e => Storable (Color (SRGB i) e)
 
 -- | `SRGB` color space (derived)
-instance (Illuminant i, Elevator e) => Show (Pixel (SRGB (i :: k)) e) where
+instance (Illuminant i, Elevator e) => Show (Color (SRGB (i :: k)) e) where
   showsPrec _ = showsColorModel
 
 -- | `SRGB` color space (derived)
 instance (Illuminant i, Elevator e) => ColorModel (SRGB (i :: k)) e where
   type Components (SRGB i) e = (e, e, e)
-  toComponents = toComponents . unPixelRGB
+  toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
-  fromComponents = mkPixelRGB . fromComponents
+  fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
 -- | `SRGB` color space (derived)
@@ -73,12 +73,12 @@ instance (Illuminant i, Elevator e) => ColorSpace (SRGB i) i e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelY = rgbLuminocity . fmap toRealFloat
-  {-# INLINE toPixelY #-}
-  toPixelXYZ = rgb2xyz . fmap toRealFloat
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = fmap fromRealFloat . xyz2rgb
-  {-# INLINE fromPixelXYZ #-}
+  toColorY = rgbLuminocity . fmap toRealFloat
+  {-# INLINE toColorY #-}
+  toColorXYZ = rgb2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgb
+  {-# INLINE fromColorXYZ #-}
 
 -- | `SRGB` color space (derived)
 instance Illuminant i => RedGreenBlue (SRGB i) i where

@@ -15,7 +15,7 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Model.Internal
-  ( Pixel
+  ( Color
   , ColorModel(..)
   , module Graphics.Color.Algebra.Elevator
   , showsColorModel
@@ -48,40 +48,40 @@ import Foreign.Storable
 import Graphics.Color.Algebra.Elevator
 import Data.Kind
 
--- | A Pixel family with a color space and a precision of elements.
-data family Pixel cs e :: Type
+-- | A Color family with a color space and a precision of elements.
+data family Color cs e :: Type
 
-class ( Functor (Pixel cs)
-      , Applicative (Pixel cs)
-      , Foldable (Pixel cs)
-      , Traversable (Pixel cs)
-      , Eq (Pixel cs e)
-      , Show (Pixel cs e)
+class ( Functor (Color cs)
+      , Applicative (Color cs)
+      , Foldable (Color cs)
+      , Traversable (Color cs)
+      , Eq (Color cs e)
+      , Show (Color cs e)
       , VU.Unbox (Components cs e)
-      , VS.Storable (Pixel cs e)
+      , VS.Storable (Color cs e)
       , Typeable cs
       , Elevator e
       ) =>
       ColorModel cs e where
   type Components cs e :: Type
-  -- | Convert a Pixel to a representation suitable for storage as an unboxed
+  -- | Convert a Color to a representation suitable for storage as an unboxed
   -- element, usually a tuple of channels.
-  toComponents :: Pixel cs e -> Components cs e
-  -- | Convert from an elemnt representation back to a Pixel.
-  fromComponents :: Components cs e -> Pixel cs e
+  toComponents :: Color cs e -> Components cs e
+  -- | Convert from an elemnt representation back to a Color.
+  fromComponents :: Components cs e -> Color cs e
 
-  -- | Display the @cs@ portion of the pixel. Pixel itself will not be evaluated.
+  -- | Display the @cs@ portion of the pixel. Color itself will not be evaluated.
   --
   -- @since 0.1.0
-  showsColorModelName :: Pixel cs e -> ShowS
+  showsColorModelName :: Color cs e -> ShowS
   showsColorModelName _ = showsType (Proxy :: Proxy cs)
 
-instance ColorModel cs e => Default (Pixel cs e) where
+instance ColorModel cs e => Default (Color cs e) where
   def = pure 0
   {-# INLINE def #-}
 
 
-instance ColorModel cs e => Num (Pixel cs e) where
+instance ColorModel cs e => Num (Color cs e) where
   (+)         = liftA2 (+)
   {-# INLINE (+) #-}
   (-)         = liftA2 (-)
@@ -96,7 +96,7 @@ instance ColorModel cs e => Num (Pixel cs e) where
   {-# INLINE fromInteger #-}
 
 
-instance (ColorModel cs e, Fractional e) => Fractional (Pixel cs e) where
+instance (ColorModel cs e, Fractional e) => Fractional (Color cs e) where
   (/)          = liftA2 (/)
   {-# INLINE (/) #-}
   recip        = fmap recip
@@ -105,7 +105,7 @@ instance (ColorModel cs e, Fractional e) => Fractional (Pixel cs e) where
   {-# INLINE fromRational #-}
 
 
-instance (ColorModel cs e, Floating e) => Floating (Pixel cs e) where
+instance (ColorModel cs e, Floating e) => Floating (Color cs e) where
   pi      = pure pi
   {-# INLINE pi #-}
   exp     = fmap exp
@@ -133,78 +133,78 @@ instance (ColorModel cs e, Floating e) => Floating (Pixel cs e) where
   acosh   = fmap acosh
   {-# INLINE acosh #-}
 
-instance ColorModel cs e => Bounded (Pixel cs e) where
+instance ColorModel cs e => Bounded (Color cs e) where
   maxBound = pure maxValue
   {-# INLINE maxBound #-}
   minBound = pure minValue
   {-# INLINE minBound #-}
 
-instance (ColorModel cs e, NFData e) => NFData (Pixel cs e) where
+instance (ColorModel cs e, NFData e) => NFData (Color cs e) where
   rnf = foldr' deepseq ()
   {-# INLINE rnf #-}
 
 
--- | Unboxing of a `Pixel`.
-instance ColorModel cs e => VU.Unbox (Pixel cs e)
+-- | Unboxing of a `Color`.
+instance ColorModel cs e => VU.Unbox (Color cs e)
 
-newtype instance VU.MVector s (Pixel cs e) = MV_Pixel (VU.MVector s (Components cs e))
+newtype instance VU.MVector s (Color cs e) = MV_Color (VU.MVector s (Components cs e))
 
-instance ColorModel cs e => VM.MVector VU.MVector (Pixel cs e) where
-  basicLength (MV_Pixel mvec) = VM.basicLength mvec
+instance ColorModel cs e => VM.MVector VU.MVector (Color cs e) where
+  basicLength (MV_Color mvec) = VM.basicLength mvec
   {-# INLINE basicLength #-}
-  basicUnsafeSlice idx len (MV_Pixel mvec) = MV_Pixel (VM.basicUnsafeSlice idx len mvec)
+  basicUnsafeSlice idx len (MV_Color mvec) = MV_Color (VM.basicUnsafeSlice idx len mvec)
   {-# INLINE basicUnsafeSlice #-}
-  basicOverlaps (MV_Pixel mvec) (MV_Pixel mvec') = VM.basicOverlaps mvec mvec'
+  basicOverlaps (MV_Color mvec) (MV_Color mvec') = VM.basicOverlaps mvec mvec'
   {-# INLINE basicOverlaps #-}
-  basicUnsafeNew len = MV_Pixel `liftM` VM.basicUnsafeNew len
+  basicUnsafeNew len = MV_Color `liftM` VM.basicUnsafeNew len
   {-# INLINE basicUnsafeNew #-}
-  basicUnsafeReplicate len val = MV_Pixel `liftM` VM.basicUnsafeReplicate len (toComponents val)
+  basicUnsafeReplicate len val = MV_Color `liftM` VM.basicUnsafeReplicate len (toComponents val)
   {-# INLINE basicUnsafeReplicate #-}
-  basicUnsafeRead (MV_Pixel mvec) idx = fromComponents `liftM` VM.basicUnsafeRead mvec idx
+  basicUnsafeRead (MV_Color mvec) idx = fromComponents `liftM` VM.basicUnsafeRead mvec idx
   {-# INLINE basicUnsafeRead #-}
-  basicUnsafeWrite (MV_Pixel mvec) idx val = VM.basicUnsafeWrite mvec idx (toComponents val)
+  basicUnsafeWrite (MV_Color mvec) idx val = VM.basicUnsafeWrite mvec idx (toComponents val)
   {-# INLINE basicUnsafeWrite #-}
-  basicClear (MV_Pixel mvec) = VM.basicClear mvec
+  basicClear (MV_Color mvec) = VM.basicClear mvec
   {-# INLINE basicClear #-}
-  basicSet (MV_Pixel mvec) val = VM.basicSet mvec (toComponents val)
+  basicSet (MV_Color mvec) val = VM.basicSet mvec (toComponents val)
   {-# INLINE basicSet #-}
-  basicUnsafeCopy (MV_Pixel mvec) (MV_Pixel mvec') = VM.basicUnsafeCopy mvec mvec'
+  basicUnsafeCopy (MV_Color mvec) (MV_Color mvec') = VM.basicUnsafeCopy mvec mvec'
   {-# INLINE basicUnsafeCopy #-}
-  basicUnsafeMove (MV_Pixel mvec) (MV_Pixel mvec') = VM.basicUnsafeMove mvec mvec'
+  basicUnsafeMove (MV_Color mvec) (MV_Color mvec') = VM.basicUnsafeMove mvec mvec'
   {-# INLINE basicUnsafeMove #-}
-  basicUnsafeGrow (MV_Pixel mvec) len = MV_Pixel `liftM` VM.basicUnsafeGrow mvec len
+  basicUnsafeGrow (MV_Color mvec) len = MV_Color `liftM` VM.basicUnsafeGrow mvec len
   {-# INLINE basicUnsafeGrow #-}
 #if MIN_VERSION_vector(0,11,0)
-  basicInitialize (MV_Pixel mvec) = VM.basicInitialize mvec
+  basicInitialize (MV_Color mvec) = VM.basicInitialize mvec
   {-# INLINE basicInitialize #-}
 #endif
 
 
-newtype instance VU.Vector (Pixel cs e) = V_Pixel (VU.Vector (Components cs e))
+newtype instance VU.Vector (Color cs e) = V_Color (VU.Vector (Components cs e))
 
-instance (ColorModel cs e) => V.Vector VU.Vector (Pixel cs e) where
-  basicUnsafeFreeze (MV_Pixel mvec) = V_Pixel `liftM` V.basicUnsafeFreeze mvec
+instance (ColorModel cs e) => V.Vector VU.Vector (Color cs e) where
+  basicUnsafeFreeze (MV_Color mvec) = V_Color `liftM` V.basicUnsafeFreeze mvec
   {-# INLINE basicUnsafeFreeze #-}
-  basicUnsafeThaw (V_Pixel vec) = MV_Pixel `liftM` V.basicUnsafeThaw vec
+  basicUnsafeThaw (V_Color vec) = MV_Color `liftM` V.basicUnsafeThaw vec
   {-# INLINE basicUnsafeThaw #-}
-  basicLength (V_Pixel vec) = V.basicLength vec
+  basicLength (V_Color vec) = V.basicLength vec
   {-# INLINE basicLength #-}
-  basicUnsafeSlice idx len (V_Pixel vec) = V_Pixel (V.basicUnsafeSlice idx len vec)
+  basicUnsafeSlice idx len (V_Color vec) = V_Color (V.basicUnsafeSlice idx len vec)
   {-# INLINE basicUnsafeSlice #-}
-  basicUnsafeIndexM (V_Pixel vec) idx = fromComponents `liftM` V.basicUnsafeIndexM vec idx
+  basicUnsafeIndexM (V_Color vec) idx = fromComponents `liftM` V.basicUnsafeIndexM vec idx
   {-# INLINE basicUnsafeIndexM #-}
-  basicUnsafeCopy (MV_Pixel mvec) (V_Pixel vec) = V.basicUnsafeCopy mvec vec
+  basicUnsafeCopy (MV_Color mvec) (V_Color vec) = V.basicUnsafeCopy mvec vec
   {-# INLINE basicUnsafeCopy #-}
-  elemseq (V_Pixel vec) val = V.elemseq vec (toComponents val)
+  elemseq (V_Color vec) val = V.elemseq vec (toComponents val)
   {-# INLINE elemseq #-}
 
 channelSeparator :: Char
 channelSeparator = ','
 
-showsColorModel :: ColorModel cs e => Pixel cs e -> ShowS
+showsColorModel :: ColorModel cs e => Color cs e -> ShowS
 showsColorModel px = ('<' :) . showsColorModelOpen px . ('>' :)
 
-showsColorModelOpen :: ColorModel cs e => Pixel cs e -> ShowS
+showsColorModelOpen :: ColorModel cs e => Color cs e -> ShowS
 showsColorModelOpen px = t . (":(" ++) . channels . (')' :)
   where
     t = showsColorModelName px
@@ -236,15 +236,15 @@ traverse4 g f c0 c1 c2 c3 = g <$> f c0 <*> f c1 <*> f c2 <*> f c3
 
 -- Storable helpers
 
-sizeOfN :: forall cs e . Storable e => Int -> Pixel cs e -> Int
+sizeOfN :: forall cs e . Storable e => Int -> Color cs e -> Int
 sizeOfN n _ = n * sizeOf (undefined :: e)
 {-# INLINE sizeOfN #-}
 
-alignmentN :: forall cs e . Storable e => Int -> Pixel cs e -> Int
+alignmentN :: forall cs e . Storable e => Int -> Color cs e -> Int
 alignmentN _ _ = alignment (undefined :: e)
 {-# INLINE alignmentN #-}
 
-peek3 :: Storable e => (e -> e -> e -> Pixel cs e) -> Ptr (Pixel cs e) -> IO (Pixel cs e)
+peek3 :: Storable e => (e -> e -> e -> Color cs e) -> Ptr (Color cs e) -> IO (Color cs e)
 peek3 f p = do
   let q = castPtr p
   c0 <- peek q
@@ -253,7 +253,7 @@ peek3 f p = do
   return $! f c0 c1 c2
 {-# INLINE peek3 #-}
 
-poke3 :: Storable e => Ptr (Pixel cs e) -> e -> e -> e -> IO ()
+poke3 :: Storable e => Ptr (Color cs e) -> e -> e -> e -> IO ()
 poke3 p c0 c1 c2 = do
   let q = castPtr p
   poke q c0
@@ -263,15 +263,15 @@ poke3 p c0 c1 c2 = do
 
 peek4 ::
      forall cs e. Storable e
-  => (e -> e -> e -> e -> Pixel cs e)
-  -> Ptr (Pixel cs e)
-  -> IO (Pixel cs e)
+  => (e -> e -> e -> e -> Color cs e)
+  -> Ptr (Color cs e)
+  -> IO (Color cs e)
 peek4 f p = do
   c0 <- peek (castPtr p)
   peek3 (f c0) (p `plusPtr` sizeOf (undefined :: e))
 {-# INLINE peek4 #-}
 
-poke4 :: forall cs e . Storable e => Ptr (Pixel cs e) -> e -> e -> e -> e -> IO ()
+poke4 :: forall cs e . Storable e => Ptr (Color cs e) -> e -> e -> e -> e -> IO ()
 poke4 p c0 c1 c2 c3 = do
   poke (castPtr p) c0
   poke3 (p `plusPtr` sizeOf (undefined :: e)) c1 c2 c3

@@ -87,7 +87,7 @@ instance (Illuminant it, Illuminant ir, Elevator e, RealFloat e) =>
          ChromaticAdaptation (t :: VonKries) (it :: kt) (ir :: kr) e where
   newtype Adaptation (t :: VonKries) (it :: kt) (ir :: kr) e =
     AdaptationMatrix (M3x3 e) deriving (Eq)
-  adaptPixelXYZ (AdaptationMatrix m3x3) px = coerce (multM3x3byV3 m3x3 (coerce px))
+  adaptColorXYZ (AdaptationMatrix m3x3) px = coerce (multM3x3byV3 m3x3 (coerce px))
 
 -- | Helper show type for the poly kinded illuminant
 data I (i :: k) = I deriving Show
@@ -108,8 +108,8 @@ adaptationMatrix =
     diag = multM3x3byV3 m3x3 wpRef / multM3x3byV3 m3x3 wpTest
     CAT m3x3 = cat :: CAT t e
     ICAT im3x3 = icat :: ICAT t e
-    wpTest = coerce (whitePointTristimulus :: Pixel (XYZ it) e)
-    wpRef = coerce (whitePointTristimulus :: Pixel (XYZ ir) e)
+    wpTest = coerce (whitePointTristimulus :: Color (XYZ it) e)
+    wpRef = coerce (whitePointTristimulus :: Color (XYZ ir) e)
 
 vonKriesAdaptation :: ChromaticAdaptation 'VonKries it ir e => Adaptation 'VonKries it ir e
 vonKriesAdaptation = adaptationMatrix
@@ -124,23 +124,23 @@ ciecam02Adaptation :: ChromaticAdaptation 'CIECAM02 it ir e => Adaptation 'CIECA
 ciecam02Adaptation = adaptationMatrix
 
 
-convert :: (ColorSpace cs2 i2 e2, ColorSpace cs1 i1 e1) => Pixel cs2 e2 -> Pixel cs1 e1
+convert :: (ColorSpace cs2 i2 e2, ColorSpace cs1 i1 e1) => Color cs2 e2 -> Color cs1 e1
 convert = convertColor (adaptationMatrix @'Bradford @_ @_ @Double)
 
 
 
 -- RAL adopted: Daffodil yellow
--- toWord8 <$> (fromPixelXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Float) (toPixelXYZ (PixelLAB 66.5 27.308 80.402 :: Pixel (LAB D50a) Float) :: Pixel XYZ Float)) :: Pixel SRGB Float)
+-- toWord8 <$> (fromColorXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Float) (toColorXYZ (ColorLAB 66.5 27.308 80.402 :: Color (LAB D50a) Float) :: Color XYZ Float)) :: Color SRGB Float)
 -- <RGB:(226,141,  0)>
 
 
 --
--- toWord8 <$> (fromPixelXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Double) (toPixelXYZ (PixelLAB 83.353 3.462 75.829 :: Pixel (LAB D50a) Double) :: Pixel XYZ Double)) :: Pixel SRGB Double)
+-- toWord8 <$> (fromColorXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Double) (toColorXYZ (ColorLAB 83.353 3.462 75.829 :: Color (LAB D50a) Double) :: Color XYZ Double)) :: Color SRGB Double)
 -- <RGB:(242,203, 46)>
 
 
 -- -- Green beige
--- toWord8 <$> (fromPixelXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Double) (toPixelXYZ (PixelLAB 76.022 (-0.366) 27.636 :: Pixel (LAB D50a) Double) :: Pixel XYZ Double)) :: Pixel SRGB Double)
+-- toWord8 <$> (fromColorXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Double) (toColorXYZ (ColorLAB 76.022 (-0.366) 27.636 :: Color (LAB D50a) Double) :: Color XYZ Double)) :: Color SRGB Double)
 -- <RGB:(201,187,136)>
 
 data D50

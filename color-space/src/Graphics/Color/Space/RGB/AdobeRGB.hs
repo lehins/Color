@@ -39,33 +39,33 @@ import Graphics.Color.Space.RGB.ITU.Rec601 (D65)
 -- | A very common @AdobeRGB@ color space with the default `D65` illuminant
 data AdobeRGB
 
-newtype instance Pixel AdobeRGB e = AdobeRGB (Pixel CM.RGB e)
+newtype instance Color AdobeRGB e = AdobeRGB (Color CM.RGB e)
 
 -- | Adobe`RGB` color space
-deriving instance Eq e => Eq (Pixel AdobeRGB e)
+deriving instance Eq e => Eq (Color AdobeRGB e)
 -- | Adobe`RGB` color space
-deriving instance Ord e => Ord (Pixel AdobeRGB e)
+deriving instance Ord e => Ord (Color AdobeRGB e)
 -- | Adobe`RGB` color space
-deriving instance Functor (Pixel AdobeRGB)
+deriving instance Functor (Color AdobeRGB)
 -- | Adobe`RGB` color space
-deriving instance Applicative (Pixel AdobeRGB)
+deriving instance Applicative (Color AdobeRGB)
 -- | Adobe`RGB` color space
-deriving instance Foldable (Pixel AdobeRGB)
+deriving instance Foldable (Color AdobeRGB)
 -- | Adobe`RGB` color space
-deriving instance Traversable (Pixel AdobeRGB)
+deriving instance Traversable (Color AdobeRGB)
 -- | Adobe`RGB` color space
-deriving instance Storable e => Storable (Pixel AdobeRGB e)
+deriving instance Storable e => Storable (Color AdobeRGB e)
 
 -- | Adobe`RGB` color space
-instance Elevator e => Show (Pixel AdobeRGB e) where
+instance Elevator e => Show (Color AdobeRGB e) where
   showsPrec _ = showsColorModel
 
 -- | Adobe`RGB` color space
 instance Elevator e => ColorModel AdobeRGB e where
   type Components AdobeRGB e = (e, e, e)
-  toComponents = toComponents . unPixelRGB
+  toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
-  fromComponents = mkPixelRGB . fromComponents
+  fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
 -- | Adobe`RGB` color space
@@ -74,12 +74,12 @@ instance Elevator e => ColorSpace AdobeRGB D65 e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelY = rgbLuminocity . fmap toRealFloat
-  {-# INLINE toPixelY #-}
-  toPixelXYZ = rgb2xyz . fmap toRealFloat
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = fmap fromRealFloat . xyz2rgb
-  {-# INLINE fromPixelXYZ #-}
+  toColorY = rgbLuminocity . fmap toRealFloat
+  {-# INLINE toColorY #-}
+  toColorXYZ = rgb2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgb
+  {-# INLINE fromColorXYZ #-}
 
 
 -- | Adobe`RGB` color space

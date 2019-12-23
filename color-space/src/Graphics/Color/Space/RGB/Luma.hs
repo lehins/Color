@@ -18,8 +18,8 @@
 module Graphics.Color.Space.RGB.Luma
   ( Y'
   -- * Constructors for Luma.
-  , pattern PixelY'
-  , Pixel
+  , pattern ColorY'
+  , Color
   , Luma(..)
   , Weight(..)
   , rgbLuma
@@ -42,48 +42,48 @@ import Graphics.Color.Space.RGB.Internal
 data Y'
 
 -- | Constructor for Luma.
-newtype instance Pixel Y' e = PixelY' e
+newtype instance Color Y' e = ColorY' e
 
 -- | `Y'` color model
-deriving instance Eq e => Eq (Pixel Y' e)
+deriving instance Eq e => Eq (Color Y' e)
 -- | `Y'` color model
-deriving instance Ord e => Ord (Pixel Y' e)
+deriving instance Ord e => Ord (Color Y' e)
 -- | `Y'` color model
-deriving instance Storable e => Storable (Pixel Y' e)
+deriving instance Storable e => Storable (Color Y' e)
 
 
 -- | `Y'` color model
-instance Elevator e => Show (Pixel Y' e) where
+instance Elevator e => Show (Color Y' e) where
   showsPrec _ = showsColorModel
 
 -- | `Y'` color model
 instance Elevator e => ColorModel Y' e where
   type Components Y' e = e
-  toComponents (PixelY' y) = y
+  toComponents (ColorY' y) = y
   {-# INLINE toComponents #-}
-  fromComponents = PixelY'
+  fromComponents = ColorY'
   {-# INLINE fromComponents #-}
 
 -- | `Y'` color model
-instance Functor (Pixel Y') where
-  fmap f (PixelY' y) = PixelY' (f y)
+instance Functor (Color Y') where
+  fmap f (ColorY' y) = ColorY' (f y)
   {-# INLINE fmap #-}
 
 -- | `Y'` color model
-instance Applicative (Pixel Y') where
-  pure = PixelY'
+instance Applicative (Color Y') where
+  pure = ColorY'
   {-# INLINE pure #-}
-  (PixelY' fy) <*> (PixelY' y) = PixelY' (fy y)
+  (ColorY' fy) <*> (ColorY' y) = ColorY' (fy y)
   {-# INLINE (<*>) #-}
 
 -- | `Y'` color model
-instance Foldable (Pixel Y') where
-  foldr f !z (PixelY' y) = f y z
+instance Foldable (Color Y') where
+  foldr f !z (ColorY' y) = f y z
   {-# INLINE foldr #-}
 
 -- | `Y'` color model
-instance Traversable (Pixel Y') where
-  traverse f (PixelY' y) = PixelY' <$> f y
+instance Traversable (Color Y') where
+  traverse f (ColorY' y) = ColorY' <$> f y
   {-# INLINE traverse #-}
 
 
@@ -113,7 +113,7 @@ newtype Weight cs = Weight
 
 rgbLumaWeights ::
      forall cs e' e. (Luma cs, Elevator e, RealFloat e)
-  => Pixel cs e'
+  => Color cs e'
   -> Weights e
 rgbLumaWeights _ =
   Weights (V3 (toRealFloat (coerce (rWeight :: Weight cs) :: Double))
@@ -124,10 +124,10 @@ rgbLumaWeights _ =
 -- | Convert a non-linear RGB pixel to a luma pixel
 rgbLuma ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
-  => Pixel cs e'
-  -> Pixel Y' e
-rgbLuma rgb' = PixelY' (coerce (fmap toRealFloat rgb :: Pixel CM.RGB e) `dotProduct` coerce weights)
+  => Color cs e'
+  -> Color Y' e
+rgbLuma rgb' = ColorY' (coerce (fmap toRealFloat rgb :: Color CM.RGB e) `dotProduct` coerce weights)
   where
-    !rgb = unPixelRGB rgb'
+    !rgb = unColorRGB rgb'
     !weights = rgbLumaWeights rgb' :: Weights e
 {-# INLINE rgbLuma #-}

@@ -23,8 +23,8 @@
 --
 module Graphics.Color.Space.RGB.Internal
   ( RedGreenBlue(..)
-  , pattern PixelRGB
-  , pattern PixelRGBA
+  , pattern ColorRGB
+  , pattern ColorRGBA
   , Gamut(..)
   , rgb2xyz
   , xyz2rgb
@@ -56,10 +56,10 @@ class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
 
   -- | Encoding color component transfer function (inverse). Also known as opto-electronic
   -- transfer function (OETF / OECF) or gamma function.
-  ecctf :: (RealFloat a, Elevator a) => Pixel cs a -> Pixel cs a
+  ecctf :: (RealFloat a, Elevator a) => Color cs a -> Color cs a
 
   -- | Decoding color component transfer function (forward)
-  dcctf :: (RealFloat a, Elevator a) => Pixel cs a -> Pixel cs a
+  dcctf :: (RealFloat a, Elevator a) => Color cs a -> Color cs a
 
   -- | Normalized primary matrix for this RGB color space. Default implementation derives
   -- it from `chromaticity`
@@ -74,16 +74,16 @@ class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
   {-# INLINE inpm #-}
 
   -- | Lift RGB color model into a RGB color space
-  mkPixelRGB :: Pixel CM.RGB e -> Pixel cs e
-  default mkPixelRGB ::
-    Coercible (Pixel CM.RGB e) (Pixel cs e) => Pixel CM.RGB e -> Pixel cs e
-  mkPixelRGB = coerce
+  mkColorRGB :: Color CM.RGB e -> Color cs e
+  default mkColorRGB ::
+    Coercible (Color CM.RGB e) (Color cs e) => Color CM.RGB e -> Color cs e
+  mkColorRGB = coerce
 
   -- | Drop RGB color space down to the RGB color model
-  unPixelRGB :: Pixel cs e -> Pixel CM.RGB e
-  default unPixelRGB ::
-    Coercible (Pixel cs e) (Pixel CM.RGB e) => Pixel cs e -> Pixel CM.RGB e
-  unPixelRGB = coerce
+  unColorRGB :: Color cs e -> Color CM.RGB e
+  default unColorRGB ::
+    Coercible (Color cs e) (Color CM.RGB e) => Color cs e -> Color CM.RGB e
+  unColorRGB = coerce
 
 
 data Gamut cs i e = Gamut
@@ -115,78 +115,78 @@ gamutWhitePoint _ = whitePoint
 -- >>> import Graphics.Color.Illuminant.CIE1931
 -- >>> import Graphics.Color.Space.RGB.Derived.SRGB
 -- >>> :{
--- srgbFromLinear :: Pixel (SRGB 'D65) Float -> Pixel (XYZ 'D65) Float
+-- srgbFromLinear :: Color (SRGB 'D65) Float -> Color (XYZ 'D65) Float
 -- srgbFromLinear = npmApply npm'
 --   where npm' = trace "Evaluated only once!!!" npm :: NPM (SRGB 'D65) Float
 -- :}
 --
--- >>> srgbFromLinear $ PixelRGB 0.1 0.2 0.3
+-- >>> srgbFromLinear $ ColorRGB 0.1 0.2 0.3
 -- <XYZ CIE1931 'D65:(Evaluated only once!!!
 --  0.166888, 0.185953, 0.310856)>
--- >>> srgbFromLinear $ PixelRGB 0.1 0.2 0.3
+-- >>> srgbFromLinear $ ColorRGB 0.1 0.2 0.3
 -- <XYZ CIE1931 'D65:( 0.166888, 0.185953, 0.310856)>
--- >>> rgb = PixelRGB 0.1 0.2 0.3 :: Pixel (SRGB 'D65) Float
--- >>> npmApply npm rgb :: Pixel (XYZ 'D65) Float
+-- >>> rgb = ColorRGB 0.1 0.2 0.3 :: Color (SRGB 'D65) Float
+-- >>> npmApply npm rgb :: Color (XYZ 'D65) Float
 -- <XYZ CIE1931 'D65:( 0.166888, 0.185953, 0.310856)>
 --
 -- Here is a comparison with a non-liner sRGB conversion:
 --
--- >>> npmApply npm (dcctf rgb) :: Pixel (XYZ 'D65) Float {- non-linear transformation -}
+-- >>> npmApply npm (dcctf rgb) :: Color (XYZ 'D65) Float {- non-linear transformation -}
 -- <XYZ CIE1931 'D65:( 0.029186, 0.031093, 0.073737)>
--- >>> toPixelXYZ rgb :: Pixel (XYZ 'D65) Float           {- non-linear transformation -}
+-- >>> toColorXYZ rgb :: Color (XYZ 'D65) Float           {- non-linear transformation -}
 -- <XYZ CIE1931 'D65:( 0.029186, 0.031093, 0.073737)>
 --
 --
 -- @since 0.1.0
-npmApply :: (RedGreenBlue cs i, Elevator e) => NPM cs e -> Pixel cs e -> Pixel (XYZ i) e
-npmApply (NPM npm') = coerce . multM3x3byV3 npm' . coerce . unPixelRGB
+npmApply :: (RedGreenBlue cs i, Elevator e) => NPM cs e -> Color cs e -> Color (XYZ i) e
+npmApply (NPM npm') = coerce . multM3x3byV3 npm' . coerce . unColorRGB
 {-# INLINE npmApply #-}
 
 -- | Linear transformation of a pixel in XYZ color space into a linear RGB color space
 --
 -- @since 0.1.0
 inpmApply ::
-     (RedGreenBlue cs i, Elevator e) => INPM cs e -> Pixel (XYZ i) e -> Pixel cs e
-inpmApply (INPM inpm') = mkPixelRGB . coerce . multM3x3byV3 inpm' . coerce
+     (RedGreenBlue cs i, Elevator e) => INPM cs e -> Color (XYZ i) e -> Color cs e
+inpmApply (INPM inpm') = mkColorRGB . coerce . multM3x3byV3 inpm' . coerce
 {-# INLINE inpmApply #-}
 
 -- | Linear transformation of a pixel in a linear luminocity, i.e. the Y component of
 -- XYZ color space
 npmApplyLuminocity ::
      forall cs i e. (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e)
-  => Pixel cs e
-  -> Pixel Y e
+  => Color cs e
+  -> Color Y e
 npmApplyLuminocity px =
-  coerce (m3x3row1 (unNPM (npm :: NPM cs e)) `dotProduct` coerce (unPixelRGB px))
+  coerce (m3x3row1 (unNPM (npm :: NPM cs e)) `dotProduct` coerce (unColorRGB px))
 {-# INLINE npmApplyLuminocity #-}
 
 
-rgbLuminocity :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Pixel cs e -> Pixel Y e
+rgbLuminocity :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Color cs e -> Color Y e
 rgbLuminocity = npmApplyLuminocity . dcctf
 {-# INLINE rgbLuminocity #-}
 
-rgb2xyz :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Pixel cs e -> Pixel (XYZ i) e
+rgb2xyz :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Color cs e -> Color (XYZ i) e
 rgb2xyz = npmApply npm . dcctf
 {-# INLINE rgb2xyz #-}
 
 xyz2rgb ::
      (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e)
-  => Pixel (XYZ i) e
-  -> Pixel cs e
+  => Color (XYZ i) e
+  -> Color cs e
 xyz2rgb = ecctf . inpmApply inpm
 {-# INLINE xyz2rgb #-}
 
 -- | Constructor for an RGB color space.
-pattern PixelRGB :: RedGreenBlue cs i => e -> e -> e -> Pixel cs e
-pattern PixelRGB r g b <- (unPixelRGB -> CM.PixelRGB r g b) where
-        PixelRGB r g b = mkPixelRGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelRGB #-}
+pattern ColorRGB :: RedGreenBlue cs i => e -> e -> e -> Color cs e
+pattern ColorRGB r g b <- (unColorRGB -> CM.ColorRGB r g b) where
+        ColorRGB r g b = mkColorRGB (CM.ColorRGB r g b)
+{-# COMPLETE ColorRGB #-}
 
 -- | Constructor for an RGB color space with Alpha channel
-pattern PixelRGBA :: RedGreenBlue cs i => e -> e -> e -> e -> Pixel (Alpha cs) e
-pattern PixelRGBA r g b a <- Alpha (unPixelRGB -> CM.PixelRGB r g b) a where
-        PixelRGBA r g b a = Alpha (mkPixelRGB (CM.PixelRGB r g b)) a
-{-# COMPLETE PixelRGBA #-}
+pattern ColorRGBA :: RedGreenBlue cs i => e -> e -> e -> e -> Color (Alpha cs) e
+pattern ColorRGBA r g b a <- Alpha (unColorRGB -> CM.ColorRGB r g b) a where
+        ColorRGBA r g b a = Alpha (mkColorRGB (CM.ColorRGB r g b)) a
+{-# COMPLETE ColorRGBA #-}
 
 
 -- newtype ConversionMatrix cs' cs = ConversionMatrix M3x3
@@ -207,12 +207,12 @@ pattern PixelRGBA r g b a <- Alpha (unPixelRGB -> CM.PixelRGB r g b) a where
 -- applyConversionMatrix ::
 --      (RedGreenBlue cs1 i1, RedGreenBlue cs2 i2, Elevator e2, Elevator e1)
 --   => ConversionMatrix (cs1 i1) (cs2 i2)
---   -> Pixel (cs1 i1) e1
---   -> Pixel (cs2 i2) e2
+--   -> Color (cs1 i1) e1
+--   -> Color (cs2 i2) e2
 -- applyConversionMatrix (ConversionMatrix m) px =
---   mkPixelRGB $ fromV3 CM.PixelRGB $ multM3x3byV3 m (toV3 r g b)
+--   mkColorRGB $ fromV3 CM.ColorRGB $ multM3x3byV3 m (toV3 r g b)
 --   where
---     CM.PixelRGB r g b = unPixelRGB px
+--     CM.ColorRGB r g b = unColorRGB px
 
 -- | Normalized primary matrix (NPM), which is used to tranform linear RGB color space
 -- into `Graphics.Color.Space.CIE1931.XYZ.XYZ` color space.
@@ -254,7 +254,7 @@ npmDerive (Gamut r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
         (V3 (xPrimary r) (xPrimary g) (xPrimary b))
         (V3 (yPrimary r) (yPrimary g) (yPrimary b))
         (V3 (zPrimary r) (zPrimary g) (zPrimary b))
-    !coeff = invertM3x3 primaries' `multM3x3byV3` coerce (whitePointTristimulus :: Pixel (XYZ i) e)
+    !coeff = invertM3x3 primaries' `multM3x3byV3` coerce (whitePointTristimulus :: Color (XYZ i) e)
 {-# INLINE npmDerive #-}
 
 -- | Derive an `INPM` form chromaticities and a white point
@@ -269,27 +269,27 @@ inpmDerive = INPM . invertM3x3 . unNPM . npmDerive
 
 
 
--- | Get the `Chromaticity` of a pixel in RGB color space. Pixel itself isn't actually
+-- | Get the `Chromaticity` of a pixel in RGB color space. Color itself isn't actually
 -- evaluated, its type carries enough information for this operation.
 --
 -- @since 0.1.0
-rgbColorGamut :: (RedGreenBlue cs i, RealFloat e) => Pixel cs a -> Gamut cs i e
+rgbColorGamut :: (RedGreenBlue cs i, RealFloat e) => Color cs a -> Gamut cs i e
 rgbColorGamut _ = gamut
 {-# INLINE rgbColorGamut #-}
 
 
--- | Get the white point of any RGB pixel. Pixel itself isn't evaluated, since its type
+-- | Get the white point of any RGB pixel. Color itself isn't evaluated, since its type
 -- carries enough information for getting the white point.
 --
 -- >>> import Graphics.Color.Space.RGB
 -- >>> :set -XTypeApplications
--- >>> pixelWhitePoint @Float (PixelRGB8 1 2 3)
+-- >>> pixelWhitePoint @Float (ColorRGB8 1 2 3)
 -- WhitePointChromaticity (Chromaticity <CIExyY * D65:( 0.312700, 0.329000)>)
 --
 -- @since 0.1.0
 pixelWhitePoint ::
      forall e cs a i. (RedGreenBlue cs i, RealFloat e)
-  => Pixel cs a
+  => Color cs a
   -> WhitePoint i e
 pixelWhitePoint _ = whitePoint
 {-# INLINE pixelWhitePoint #-}

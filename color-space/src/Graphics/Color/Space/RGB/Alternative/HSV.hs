@@ -20,11 +20,11 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.RGB.Alternative.HSV
-  ( pattern PixelHSV
-  , pattern PixelHSVA
-  , pattern PixelH360SV
+  ( pattern ColorHSV
+  , pattern ColorHSVA
+  , pattern ColorH360SV
   , HSV
-  , Pixel(HSV)
+  , Color(HSV)
   , module Graphics.Color.Space
   ) where
 
@@ -39,45 +39,45 @@ import Graphics.Color.Space
 data HSV cs
 
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
-newtype instance Pixel (HSV cs) e = HSV (Pixel CM.HSV e)
+newtype instance Color (HSV cs) e = HSV (Color CM.HSV e)
 
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Eq e => Eq (Pixel (HSV cs) e)
+deriving instance Eq e => Eq (Color (HSV cs) e)
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Ord e => Ord (Pixel (HSV cs) e)
+deriving instance Ord e => Ord (Color (HSV cs) e)
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Functor (Pixel (HSV cs))
+deriving instance Functor (Color (HSV cs))
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Applicative (Pixel (HSV cs))
+deriving instance Applicative (Color (HSV cs))
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Foldable (Pixel (HSV cs))
+deriving instance Foldable (Color (HSV cs))
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Traversable (Pixel (HSV cs))
+deriving instance Traversable (Color (HSV cs))
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Storable e => Storable (Pixel (HSV cs) e)
+deriving instance Storable e => Storable (Color (HSV cs) e)
 
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
-instance ColorModel cs e => Show (Pixel (HSV cs) e) where
+instance ColorModel cs e => Show (Color (HSV cs) e) where
   showsPrec _ = showsColorModel
 
 -- | Constructor for an RGB color space in an alternative HSV color model
-pattern PixelHSV :: e -> e -> e -> Pixel (HSV cs) e
-pattern PixelHSV h s i = HSV (CM.PixelHSV h s i)
-{-# COMPLETE PixelHSV #-}
+pattern ColorHSV :: e -> e -> e -> Color (HSV cs) e
+pattern ColorHSV h s i = HSV (CM.ColorHSV h s i)
+{-# COMPLETE ColorHSV #-}
 
 -- | Constructor for @HSV@ with alpha channel.
-pattern PixelHSVA :: e -> e -> e -> e -> Pixel (Alpha (HSV cs)) e
-pattern PixelHSVA h s i a = Alpha (HSV (CM.PixelHSV h s i)) a
-{-# COMPLETE PixelHSVA #-}
+pattern ColorHSVA :: e -> e -> e -> e -> Color (Alpha (HSV cs)) e
+pattern ColorHSVA h s i a = Alpha (HSV (CM.ColorHSV h s i)) a
+{-# COMPLETE ColorHSVA #-}
 
 
 -- | Constructor for an RGB color space in an alternative HSV color model. Difference from
--- `PixelHSV` is that the hue is specified in 0 to 360 degree range, rather than 0 to
+-- `ColorHSV` is that the hue is specified in 0 to 360 degree range, rather than 0 to
 -- 1. Note, that this is not checked.
-pattern PixelH360SV :: RealFloat e => e -> e -> e -> Pixel (HSV cs) e
-pattern PixelH360SV h s i <- PixelHSV ((* 360) -> h) s i where
-        PixelH360SV h s i = PixelHSV (h / 360) s i
-{-# COMPLETE PixelH360SV #-}
+pattern ColorH360SV :: RealFloat e => e -> e -> e -> Color (HSV cs) e
+pattern ColorH360SV h s i <- ColorHSV ((* 360) -> h) s i where
+        ColorH360SV h s i = ColorHSV (h / 360) s i
+{-# COMPLETE ColorH360SV #-}
 
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel cs e => ColorModel (HSV cs) e where
@@ -86,13 +86,13 @@ instance ColorModel cs e => ColorModel (HSV cs) e where
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = ("HSV-" ++) . showsColorModelName (pure 0 :: Pixel cs e)
+  showsColorModelName _ = ("HSV-" ++) . showsColorModelName (pure 0 :: Color cs e)
 
 
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
 instance (ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (HSV cs) i e where
   type BaseColorSpace (HSV cs) = cs
-  toBaseColorSpace = mkPixelRGB . fmap fromDouble . CM.hsv2rgb . fmap toDouble . coerce
+  toBaseColorSpace = mkColorRGB . fmap fromDouble . CM.hsv2rgb . fmap toDouble . coerce
   {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = coerce . fmap fromDouble . CM.rgb2hsv . fmap toDouble . unPixelRGB
+  fromBaseColorSpace = coerce . fmap fromDouble . CM.rgb2hsv . fmap toDouble . unColorRGB
   {-# INLINE fromBaseColorSpace #-}

@@ -21,7 +21,7 @@ module Graphics.Color.Model.Alpha
   , setAlpha
   , dropAlpha
   , modifyOpaque
-  , Pixel(Alpha)
+  , Color(Alpha)
   , ColorModel(..)
   ) where
 
@@ -32,51 +32,51 @@ import GHC.TypeLits
 
 data Alpha cs
 
-data instance Pixel (Alpha cs) e = Alpha
-  { _opaque :: !(Pixel cs e)
+data instance Color (Alpha cs) e = Alpha
+  { _opaque :: !(Color cs e)
   , _alpha :: !e
   }
 
 -- | Get the alpha channel value for the pixel
 --
 -- @since 0.1.0
-getAlpha :: Pixel (Alpha cs) e -> e
+getAlpha :: Color (Alpha cs) e -> e
 getAlpha = _alpha
 {-# INLINE getAlpha #-}
 
 -- | Get the opaque pixel value, while leaving alpha channel intact.
 --
 -- @since 0.1.0
-dropAlpha :: Pixel (Alpha cs) e -> Pixel cs e
+dropAlpha :: Color (Alpha cs) e -> Color cs e
 dropAlpha = _opaque
 {-# INLINE dropAlpha #-}
 
 -- | Add an alpha channel value to an opaque pixel
 --
 -- @since 0.1.0
-addAlpha :: Pixel cs e -> e -> Pixel (Alpha cs) e
+addAlpha :: Color cs e -> e -> Color (Alpha cs) e
 addAlpha = Alpha
 {-# INLINE addAlpha #-}
 
 -- | Change the alpha channel value for the pixel
 --
 -- @since 0.1.0
-setAlpha :: Pixel (Alpha cs) e -> e -> Pixel (Alpha cs) e
+setAlpha :: Color (Alpha cs) e -> e -> Color (Alpha cs) e
 setAlpha px a = px { _alpha = a }
 {-# INLINE setAlpha #-}
 
 -- | Change the opaque pixel value, while leaving alpha channel intact.
 --
 -- @since 0.1.0
-modifyOpaque :: (Pixel cs e -> Pixel cs' e) -> Pixel (Alpha cs) e -> Pixel (Alpha cs') e
+modifyOpaque :: (Color cs e -> Color cs' e) -> Color (Alpha cs) e -> Color (Alpha cs') e
 modifyOpaque fpx pxa = pxa { _opaque = fpx (_opaque pxa) }
 {-# INLINE modifyOpaque #-}
 
-instance (Eq (Pixel cs e), Eq e) => Eq (Pixel (Alpha cs) e) where
+instance (Eq (Color cs e), Eq e) => Eq (Color (Alpha cs) e) where
   (==) (Alpha px1 a1) (Alpha px2 a2) = px1 == px2 && a1 == a2
   {-# INLINE (==) #-}
 
-instance (ColorModel cs e, Opaque (Alpha cs) ~ cs) => Show (Pixel (Alpha cs) e) where
+instance (ColorModel cs e, Opaque (Alpha cs) ~ cs) => Show (Color (Alpha cs) e) where
   showsPrec _ = showsColorModel
 
 type family Opaque cs where
@@ -89,31 +89,31 @@ instance (ColorModel cs e, Opaque (Alpha cs) ~ cs) => ColorModel (Alpha cs) e wh
   {-# INLINE toComponents #-}
   fromComponents (pxc, a) = Alpha (fromComponents pxc) a
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = showsColorModelName (pure 0 :: Pixel cs e) . ('A':)
+  showsColorModelName _ = showsColorModelName (pure 0 :: Color cs e) . ('A':)
 
 
-instance Functor (Pixel cs) => Functor (Pixel (Alpha cs)) where
+instance Functor (Color cs) => Functor (Color (Alpha cs)) where
   fmap f (Alpha px a) = Alpha (fmap f px) (f a)
   {-# INLINE fmap #-}
 
-instance Applicative (Pixel cs) => Applicative (Pixel (Alpha cs)) where
+instance Applicative (Color cs) => Applicative (Color (Alpha cs)) where
   pure e = Alpha (pure e) e
   {-# INLINE pure #-}
   (Alpha fpx fa) <*> (Alpha px a) = Alpha (fpx <*> px) (fa a)
   {-# INLINE (<*>) #-}
 
-instance Foldable (Pixel cs) => Foldable (Pixel (Alpha cs)) where
+instance Foldable (Color cs) => Foldable (Color (Alpha cs)) where
   foldr f acc (Alpha px a) = foldr f (f a acc) px
   {-# INLINE foldr #-}
   foldr1 f (Alpha px a) = foldr f a px
   {-# INLINE foldr1 #-}
 
-instance Traversable (Pixel cs) => Traversable (Pixel (Alpha cs)) where
+instance Traversable (Color cs) => Traversable (Color (Alpha cs)) where
   traverse f (Alpha px a) = Alpha <$> traverse f px <*> f a
   {-# INLINE traverse #-}
 
-instance (Storable (Pixel cs e), Storable e) => Storable (Pixel (Alpha cs) e) where
-  sizeOf _ = sizeOf (undefined :: Pixel cs e) + sizeOf (undefined :: e)
+instance (Storable (Color cs e), Storable e) => Storable (Color (Alpha cs) e) where
+  sizeOf _ = sizeOf (undefined :: Color cs e) + sizeOf (undefined :: e)
   {-# INLINE sizeOf #-}
   alignment _ = alignment (undefined :: e)
   {-# INLINE alignment #-}

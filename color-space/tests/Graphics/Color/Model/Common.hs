@@ -9,12 +9,12 @@ module Graphics.Color.Model.Common
   , toFromComponentsSpec
   , izipWithM_
   , epsilonExpect
-  , epsilonPixelExpect
-  , epsilonPixelIxSpec
+  , epsilonColorExpect
+  , epsilonColorIxSpec
   , epsilonEq
-  , epsilonEqPixel
-  , epsilonEqPixelTol
-  , epsilonEqPixelTolIx
+  , epsilonEqColor
+  , epsilonEqColorTol
+  , epsilonEqColorTolIx
   , arbitraryElevator
   , module Test.Hspec
   , module Test.Hspec.QuickCheck
@@ -54,18 +54,18 @@ epsilonExpect epsilon x y
     n = epsilon * (1 + max absx absy)
     diff = abs (y - x)
 
-epsilonPixelExpect ::
-     (HasCallStack, ColorModel cs e, RealFloat e) => e -> Pixel cs e -> Pixel cs e -> Expectation
-epsilonPixelExpect epsilon x y = zipWithM_ (epsilonExpect epsilon) (F.toList x) (F.toList y)
+epsilonColorExpect ::
+     (HasCallStack, ColorModel cs e, RealFloat e) => e -> Color cs e -> Color cs e -> Expectation
+epsilonColorExpect epsilon x y = zipWithM_ (epsilonExpect epsilon) (F.toList x) (F.toList y)
 
-epsilonPixelIxSpec ::
+epsilonColorIxSpec ::
      (HasCallStack, ColorModel cs e, RealFloat e)
   => e
   -> Int
-  -> Pixel cs e
-  -> Pixel cs e
+  -> Color cs e
+  -> Color cs e
   -> Spec
-epsilonPixelIxSpec epsilon ix x y =
+epsilonColorIxSpec epsilon ix x y =
   it ("Index: " ++ show ix) $ zipWithM_ (epsilonExpect epsilon) (F.toList x) (F.toList y)
 
 
@@ -77,31 +77,31 @@ epsilonEq ::
   -> Property
 epsilonEq epsilon x y = once $ epsilonExpect epsilon x y
 
-epsilonEqPixel :: (ColorModel cs e, RealFloat e) => Pixel cs e -> Pixel cs e -> Property
-epsilonEqPixel = epsilonEqPixelTol epsilon
+epsilonEqColor :: (ColorModel cs e, RealFloat e) => Color cs e -> Color cs e -> Property
+epsilonEqColor = epsilonEqColorTol epsilon
   where
     epsilon = 1e-11
 
-epsilonEqPixelTol :: (ColorModel cs e, RealFloat e) => e -> Pixel cs e -> Pixel cs e -> Property
-epsilonEqPixelTol epsilon x y = conjoin $ F.toList $ liftA2 (epsilonEq epsilon) x y
+epsilonEqColorTol :: (ColorModel cs e, RealFloat e) => e -> Color cs e -> Color cs e -> Property
+epsilonEqColorTol epsilon x y = conjoin $ F.toList $ liftA2 (epsilonEq epsilon) x y
 
--- | Same as `epsilonEqPixelTol` but with indexed counterexample.
-epsilonEqPixelTolIx ::
-     (ColorModel cs e, RealFloat e) => e -> Int -> Pixel cs e -> Pixel cs e -> Property
-epsilonEqPixelTolIx tol ix expected actual =
-  counterexample ("Index: " ++ show ix) $ epsilonEqPixelTol tol expected actual
+-- | Same as `epsilonEqColorTol` but with indexed counterexample.
+epsilonEqColorTolIx ::
+     (ColorModel cs e, RealFloat e) => e -> Int -> Color cs e -> Color cs e -> Property
+epsilonEqColorTolIx tol ix expected actual =
+  counterexample ("Index: " ++ show ix) $ epsilonEqColorTol tol expected actual
 
 prop_ToFromComponents ::
      forall cs e. ColorModel cs e
-  => Pixel cs e
+  => Color cs e
   -> Property
 prop_ToFromComponents px = px === fromComponents (toComponents px)
 
-toFromComponentsSpec :: forall cs e . (ColorModel cs e, Arbitrary (Pixel cs e)) => Spec
+toFromComponentsSpec :: forall cs e . (ColorModel cs e, Arbitrary (Color cs e)) => Spec
 toFromComponentsSpec = prop "fromComponents . toComponents" $ prop_ToFromComponents @cs @e
 
 
-colorModelSpec :: forall cs e . (ColorModel cs e, Arbitrary (Pixel cs e)) => Spec
+colorModelSpec :: forall cs e . (ColorModel cs e, Arbitrary (Color cs e)) => Spec
 colorModelSpec =
   describe "ColorModel" $
     toFromComponentsSpec @cs @e

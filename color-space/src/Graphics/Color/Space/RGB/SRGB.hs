@@ -21,12 +21,12 @@ module Graphics.Color.Space.RGB.SRGB
   ( SRGB
   , D50
   , D65
-  , pattern PixelRGB8
-  , pattern PixelRGB16
-  , pattern PixelRGB32
-  , pattern PixelRGB64
-  , pattern PixelRGBF
-  , pattern PixelRGBD
+  , pattern ColorRGB8
+  , pattern ColorRGB16
+  , pattern ColorRGB32
+  , pattern ColorRGB64
+  , pattern ColorRGBF
+  , pattern ColorRGBD
   , primaries
   , npmStandard
   , inpmStandard
@@ -50,64 +50,64 @@ import Graphics.Color.Space.RGB.ITU.Rec709 (D65, primaries)
 data SRGB
 
 
-newtype instance Pixel SRGB e = SRGB (Pixel CM.RGB e)
+newtype instance Color SRGB e = SRGB (Color CM.RGB e)
 
 -- | Constructor for a pixel in @sRGB@ color space with 8-bits per channel
-pattern PixelRGB8 :: Word8 -> Word8 -> Word8 -> Pixel SRGB Word8
-pattern PixelRGB8 r g b = SRGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelRGB8 #-}
+pattern ColorRGB8 :: Word8 -> Word8 -> Word8 -> Color SRGB Word8
+pattern ColorRGB8 r g b = SRGB (CM.ColorRGB r g b)
+{-# COMPLETE ColorRGB8 #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with 16-bits per channel
-pattern PixelRGB16 :: Word16 -> Word16 -> Word16 -> Pixel SRGB Word16
-pattern PixelRGB16 r g b = SRGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelRGB16 #-}
+pattern ColorRGB16 :: Word16 -> Word16 -> Word16 -> Color SRGB Word16
+pattern ColorRGB16 r g b = SRGB (CM.ColorRGB r g b)
+{-# COMPLETE ColorRGB16 #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with 32-bits per channel
-pattern PixelRGB32 :: Word32 -> Word32 -> Word32 -> Pixel SRGB Word32
-pattern PixelRGB32 r g b = SRGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelRGB32 #-}
+pattern ColorRGB32 :: Word32 -> Word32 -> Word32 -> Color SRGB Word32
+pattern ColorRGB32 r g b = SRGB (CM.ColorRGB r g b)
+{-# COMPLETE ColorRGB32 #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with 64-bits per channel
-pattern PixelRGB64 :: Word64 -> Word64 -> Word64 -> Pixel SRGB Word64
-pattern PixelRGB64 r g b = SRGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelRGB64 #-}
+pattern ColorRGB64 :: Word64 -> Word64 -> Word64 -> Color SRGB Word64
+pattern ColorRGB64 r g b = SRGB (CM.ColorRGB r g b)
+{-# COMPLETE ColorRGB64 #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with 32-bit floating point value per channel
-pattern PixelRGBF :: Float -> Float -> Float -> Pixel SRGB Float
-pattern PixelRGBF r g b = SRGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelRGBF #-}
+pattern ColorRGBF :: Float -> Float -> Float -> Color SRGB Float
+pattern ColorRGBF r g b = SRGB (CM.ColorRGB r g b)
+{-# COMPLETE ColorRGBF #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with 32-bit floating point value per channel
-pattern PixelRGBD :: Double -> Double -> Double -> Pixel SRGB Double
-pattern PixelRGBD r g b = SRGB (CM.PixelRGB r g b)
-{-# COMPLETE PixelRGBD #-}
+pattern ColorRGBD :: Double -> Double -> Double -> Color SRGB Double
+pattern ColorRGBD r g b = SRGB (CM.ColorRGB r g b)
+{-# COMPLETE ColorRGBD #-}
 
 
 -- | s`RGB` color space
-deriving instance Eq e => Eq (Pixel SRGB e)
+deriving instance Eq e => Eq (Color SRGB e)
 -- | s`RGB` color space
-deriving instance Ord e => Ord (Pixel SRGB e)
+deriving instance Ord e => Ord (Color SRGB e)
 -- | s`RGB` color space
-deriving instance Functor (Pixel SRGB)
+deriving instance Functor (Color SRGB)
 -- | s`RGB` color space
-deriving instance Applicative (Pixel SRGB)
+deriving instance Applicative (Color SRGB)
 -- | s`RGB` color space
-deriving instance Foldable (Pixel SRGB)
+deriving instance Foldable (Color SRGB)
 -- | s`RGB` color space
-deriving instance Traversable (Pixel SRGB)
+deriving instance Traversable (Color SRGB)
 -- | s`RGB` color space
-deriving instance Storable e => Storable (Pixel SRGB e)
+deriving instance Storable e => Storable (Color SRGB e)
 
 -- | s`RGB` color space
-instance Elevator e => Show (Pixel SRGB e) where
+instance Elevator e => Show (Color SRGB e) where
   showsPrec _ = showsColorModel
 
 -- | s`RGB` color space
 instance Elevator e => ColorModel SRGB e where
   type Components SRGB e = (e, e, e)
-  toComponents = toComponents . unPixelRGB
+  toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
-  fromComponents = mkPixelRGB . fromComponents
+  fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
 -- | s`RGB` color space
@@ -116,12 +116,12 @@ instance Elevator e => ColorSpace SRGB D65 e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelY = rgbLuminocity . fmap toRealFloat
-  {-# INLINE toPixelY #-}
-  toPixelXYZ = rgb2xyz . fmap toRealFloat
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = fmap fromRealFloat . xyz2rgb
-  {-# INLINE fromPixelXYZ #-}
+  toColorY = rgbLuminocity . fmap toRealFloat
+  {-# INLINE toColorY #-}
+  toColorXYZ = rgb2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgb
+  {-# INLINE fromColorXYZ #-}
 
 -- | s`RGB` color space
 instance RedGreenBlue SRGB D65 where

@@ -37,33 +37,33 @@ import qualified Graphics.Color.Space.RGB.AdobeRGB as AdobeRGB
 data AdobeRGB (i :: k)
 
 -- | `AdobeRGB` color space (derived)
-newtype instance Pixel (AdobeRGB i) e = AdobeRGB (Pixel CM.RGB e)
+newtype instance Color (AdobeRGB i) e = AdobeRGB (Color CM.RGB e)
 
 -- | `AdobeRGB` color space (derived)
-deriving instance Eq e => Eq (Pixel (AdobeRGB i) e)
+deriving instance Eq e => Eq (Color (AdobeRGB i) e)
 -- | `AdobeRGB` color space (derived)
-deriving instance Ord e => Ord (Pixel (AdobeRGB i) e)
+deriving instance Ord e => Ord (Color (AdobeRGB i) e)
 -- | `AdobeRGB` color space (derived)
-deriving instance Functor (Pixel (AdobeRGB i))
+deriving instance Functor (Color (AdobeRGB i))
 -- | `AdobeRGB` color space (derived)
-deriving instance Applicative (Pixel (AdobeRGB i))
+deriving instance Applicative (Color (AdobeRGB i))
 -- | `AdobeRGB` color space (derived)
-deriving instance Foldable (Pixel (AdobeRGB i))
+deriving instance Foldable (Color (AdobeRGB i))
 -- | `AdobeRGB` color space (derived)
-deriving instance Traversable (Pixel (AdobeRGB i))
+deriving instance Traversable (Color (AdobeRGB i))
 -- | `AdobeRGB` color space (derived)
-deriving instance Storable e => Storable (Pixel (AdobeRGB i) e)
+deriving instance Storable e => Storable (Color (AdobeRGB i) e)
 
 -- | `AdobeRGB` color space (derived)
-instance (Illuminant i, Elevator e) => Show (Pixel (AdobeRGB (i :: k)) e) where
+instance (Illuminant i, Elevator e) => Show (Color (AdobeRGB (i :: k)) e) where
   showsPrec _ = showsColorModel
 
 -- | `AdobeRGB` color space (derived)
 instance (Illuminant i, Elevator e) => ColorModel (AdobeRGB (i :: k)) e where
   type Components (AdobeRGB i) e = (e, e, e)
-  toComponents = toComponents . unPixelRGB
+  toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
-  fromComponents = mkPixelRGB . fromComponents
+  fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
 -- | `AdobeRGB` color space (derived)
@@ -72,12 +72,12 @@ instance (Illuminant i, Elevator e) => ColorSpace (AdobeRGB i) i e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelY = rgbLuminocity . fmap toRealFloat
-  {-# INLINE toPixelY #-}
-  toPixelXYZ = rgb2xyz . fmap toRealFloat
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = fmap fromRealFloat . xyz2rgb
-  {-# INLINE fromPixelXYZ #-}
+  toColorY = rgbLuminocity . fmap toRealFloat
+  {-# INLINE toColorY #-}
+  toColorXYZ = rgb2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgb
+  {-# INLINE fromColorXYZ #-}
 
 -- | `AdobeRGB` color space (derived)
 instance Illuminant i => RedGreenBlue (AdobeRGB i) i where

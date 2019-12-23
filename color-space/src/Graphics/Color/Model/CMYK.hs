@@ -17,9 +17,9 @@
 module Graphics.Color.Model.CMYK
   ( CMYK
     -- * Constructors for an CMYK color model.
-  , pattern PixelCMYK
-  , pattern PixelCMYKA
-  , Pixel
+  , pattern ColorCMYK
+  , pattern ColorCMYKA
+  , Color
   , ColorModel(..)
   , cmyk2rgb
   , rgb2cmyk
@@ -37,65 +37,65 @@ import Graphics.Color.Model.RGB
 data CMYK
 
 -- | `CMYK` color model
-data instance Pixel CMYK e = PixelCMYK !e !e !e !e
+data instance Color CMYK e = ColorCMYK !e !e !e !e
 
 -- | Constructor for @CMYK@ with alpha channel.
-pattern PixelCMYKA :: e -> e -> e -> e -> e -> Pixel (Alpha CMYK) e
-pattern PixelCMYKA c m y k a = Alpha (PixelCMYK c m y k) a
-{-# COMPLETE PixelCMYKA #-}
+pattern ColorCMYKA :: e -> e -> e -> e -> e -> Color (Alpha CMYK) e
+pattern ColorCMYKA c m y k a = Alpha (ColorCMYK c m y k) a
+{-# COMPLETE ColorCMYKA #-}
 
 -- | `CMYK` color model
-deriving instance Eq e => Eq (Pixel CMYK e)
+deriving instance Eq e => Eq (Color CMYK e)
 -- | `CMYK` color model
-deriving instance Ord e => Ord (Pixel CMYK e)
+deriving instance Ord e => Ord (Color CMYK e)
 
 -- | `CMYK` color model
-instance Elevator e => Show (Pixel CMYK e) where
+instance Elevator e => Show (Color CMYK e) where
   showsPrec _ = showsColorModel
 
 -- | `CMYK` color model
 instance Elevator e => ColorModel CMYK e where
   type Components CMYK e = (e, e, e, e)
-  toComponents (PixelCMYK c m y k) = (c, m, y, k)
+  toComponents (ColorCMYK c m y k) = (c, m, y, k)
   {-# INLINE toComponents #-}
-  fromComponents (c, m, y, k) = PixelCMYK c m y k
+  fromComponents (c, m, y, k) = ColorCMYK c m y k
   {-# INLINE fromComponents #-}
 
 -- | `CMYK` color model
-instance Functor (Pixel CMYK) where
-  fmap f (PixelCMYK c m y k) = PixelCMYK (f c) (f m) (f y) (f k)
+instance Functor (Color CMYK) where
+  fmap f (ColorCMYK c m y k) = ColorCMYK (f c) (f m) (f y) (f k)
   {-# INLINE fmap #-}
 
 -- | `CMYK` color model
-instance Applicative (Pixel CMYK) where
-  pure !e = PixelCMYK e e e e
+instance Applicative (Color CMYK) where
+  pure !e = ColorCMYK e e e e
   {-# INLINE pure #-}
-  (PixelCMYK fc fm fy fk) <*> (PixelCMYK c m y k) = PixelCMYK (fc c) (fm m) (fy y) (fk k)
+  (ColorCMYK fc fm fy fk) <*> (ColorCMYK c m y k) = ColorCMYK (fc c) (fm m) (fy y) (fk k)
   {-# INLINE (<*>) #-}
 
 -- | `CMYK` color model
-instance Foldable (Pixel CMYK) where
-  foldr f !z (PixelCMYK c m y k) = f c (f m (f y (f k z)))
+instance Foldable (Color CMYK) where
+  foldr f !z (ColorCMYK c m y k) = f c (f m (f y (f k z)))
   {-# INLINE foldr #-}
 
 -- | `CMYK` color model
-instance Traversable (Pixel CMYK) where
-  traverse f (PixelCMYK c m y k) = PixelCMYK <$> f c <*> f m <*> f y <*> f k
+instance Traversable (Color CMYK) where
+  traverse f (ColorCMYK c m y k) = ColorCMYK <$> f c <*> f m <*> f y <*> f k
   {-# INLINE traverse #-}
 
 -- | `CMYK` color model
-instance Storable e => Storable (Pixel CMYK e) where
+instance Storable e => Storable (Color CMYK e) where
   sizeOf = sizeOfN 4
   {-# INLINE sizeOf #-}
   alignment = alignmentN 4
   {-# INLINE alignment #-}
-  peek = peek4 PixelCMYK
+  peek = peek4 ColorCMYK
   {-# INLINE peek #-}
-  poke p (PixelCMYK c m y k) = poke4 p c m y k
+  poke p (ColorCMYK c m y k) = poke4 p c m y k
   {-# INLINE poke #-}
 
-cmyk2rgb :: Num e => Pixel CMYK e -> Pixel RGB e
-cmyk2rgb (PixelCMYK c m y k) = PixelRGB r g b
+cmyk2rgb :: Num e => Color CMYK e -> Color RGB e
+cmyk2rgb (ColorCMYK c m y k) = ColorRGB r g b
   where
     !r = (1 - c) * (1 - k)
     !g = (1 - m) * (1 - k)
@@ -103,8 +103,8 @@ cmyk2rgb (PixelCMYK c m y k) = PixelRGB r g b
 {-# INLINE cmyk2rgb #-}
 
 
-rgb2cmyk :: (Ord e, Fractional e) => Pixel RGB e -> Pixel CMYK e
-rgb2cmyk (PixelRGB r g b) = PixelCMYK c m y k
+rgb2cmyk :: (Ord e, Fractional e) => Color RGB e -> Color CMYK e
+rgb2cmyk (ColorRGB r g b) = ColorCMYK c m y k
   where
     !c = (k' - r) / k'
     !m = (k' - g) / k'

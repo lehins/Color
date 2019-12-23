@@ -21,9 +21,9 @@ module Graphics.Color.Space.CIE1976.LAB
   ( LAB
   -- * Constructors for an CIE L*a*b* color space.
   , pattern LAB
-  , pattern PixelLAB
-  , pattern PixelLABA
-  , Pixel
+  , pattern ColorLAB
+  , pattern ColorLABA
+  , Color
   ) where
 
 import Foreign.Storable
@@ -39,50 +39,50 @@ import Graphics.Color.Space.Internal
 -- | CIE L*a*b* color space
 data LAB (i :: k)
 
--- | Pixel in CIE L*a*b* color space
-newtype instance Pixel (LAB i) e = LAB (V3 e)
+-- | Color in CIE L*a*b* color space
+newtype instance Color (LAB i) e = LAB (V3 e)
 
 
-pattern PixelLAB :: e -> e -> e -> Pixel (LAB i) e
-pattern PixelLAB l' a' b' = LAB (V3 l' a' b')
-{-# COMPLETE PixelLAB #-}
+pattern ColorLAB :: e -> e -> e -> Color (LAB i) e
+pattern ColorLAB l' a' b' = LAB (V3 l' a' b')
+{-# COMPLETE ColorLAB #-}
 
 -- | Constructor for @LAB@ with alpha channel.
-pattern PixelLABA :: e -> e -> e -> e -> Pixel (Alpha (LAB i)) e
-pattern PixelLABA l' a' b' a = Alpha (LAB (V3 l' a' b')) a
-{-# COMPLETE PixelLABA #-}
+pattern ColorLABA :: e -> e -> e -> e -> Color (Alpha (LAB i)) e
+pattern ColorLABA l' a' b' a = Alpha (LAB (V3 l' a' b')) a
+{-# COMPLETE ColorLABA #-}
 
 -- | CIE1976 `LAB` color space
-deriving instance Eq e => Eq (Pixel (LAB i) e)
+deriving instance Eq e => Eq (Color (LAB i) e)
 
 -- | CIE1976 `LAB` color space
-deriving instance Ord e => Ord (Pixel (LAB i) e)
+deriving instance Ord e => Ord (Color (LAB i) e)
 
 -- | CIE1976 `LAB` color space
-deriving instance Functor (Pixel (LAB i))
+deriving instance Functor (Color (LAB i))
 
 -- | CIE1976 `LAB` color space
-deriving instance Applicative (Pixel (LAB i))
+deriving instance Applicative (Color (LAB i))
 
 -- | CIE1976 `LAB` color space
-deriving instance Foldable (Pixel (LAB i))
+deriving instance Foldable (Color (LAB i))
 
 -- | CIE1976 `LAB` color space
-deriving instance Traversable (Pixel (LAB i))
+deriving instance Traversable (Color (LAB i))
 
 -- | CIE1976 `LAB` color space
-deriving instance Storable e => Storable (Pixel (LAB i) e)
+deriving instance Storable e => Storable (Color (LAB i) e)
 
 -- | CIE1976 `LAB` color space
-instance (Illuminant i, Elevator e) => Show (Pixel (LAB i) e) where
+instance (Illuminant i, Elevator e) => Show (Color (LAB i) e) where
   showsPrec _ = showsColorModel
 
 -- | CIE1976 `LAB` color space
 instance (Illuminant i, Elevator e) => ColorModel (LAB i) e where
   type Components (LAB i) e = (e, e, e)
-  toComponents (PixelLAB l' a' b') = (l', a', b')
+  toComponents (ColorLAB l' a' b') = (l', a', b')
   {-# INLINE toComponents #-}
-  fromComponents (l', a', b') = PixelLAB l' a' b'
+  fromComponents (l', a', b') = ColorLAB l' a' b'
   {-# INLINE fromComponents #-}
 
 instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (LAB (i :: k)) i e where
@@ -91,20 +91,20 @@ instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (LAB (i :: k)) i 
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelY (PixelLAB l' _ _) = PixelY (ift (scaleLightness l'))
-  {-# INLINE toPixelY #-}
-  toPixelXYZ = lab2xyz
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = xyz2lab
-  {-# INLINE fromPixelXYZ #-}
+  toColorY (ColorLAB l' _ _) = ColorY (ift (scaleLightness l'))
+  {-# INLINE toColorY #-}
+  toColorXYZ = lab2xyz
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = xyz2lab
+  {-# INLINE fromColorXYZ #-}
 
 lab2xyz ::
      forall i a e. (Illuminant i, Elevator e, Elevator a, RealFloat a)
-  => Pixel (LAB i) e
-  -> Pixel (XYZ i) a
-lab2xyz (PixelLAB l' a' b') = PixelXYZ x y z
+  => Color (LAB i) e
+  -> Color (XYZ i) a
+lab2xyz (ColorLAB l' a' b') = ColorXYZ x y z
   where
-    !(PixelXYZ wx _ wz) = whitePointTristimulus :: Pixel (XYZ i) a
+    !(ColorXYZ wx _ wz) = whitePointTristimulus :: Color (XYZ i) a
     !l = scaleLightness l'
     !x = wx * ift (l + toRealFloat a' / 500)
     !y = ift l
@@ -124,11 +124,11 @@ ift t
 
 xyz2lab ::
      forall i a e. (Illuminant i, Elevator a, Elevator e, RealFloat e)
-  => Pixel (XYZ i) a
-  -> Pixel (LAB i) e
-xyz2lab (PixelXYZ x y z) = PixelLAB l' a' b'
+  => Color (XYZ i) a
+  -> Color (LAB i) e
+xyz2lab (ColorXYZ x y z) = ColorLAB l' a' b'
   where
-    !(PixelXYZ wx _ wz) = whitePointTristimulus :: Pixel (XYZ i) e
+    !(ColorXYZ wx _ wz) = whitePointTristimulus :: Color (XYZ i) e
     !fx = ft (toRealFloat x / wx)
     !fy = ft (toRealFloat y)
     !fz = ft (toRealFloat z / wz)

@@ -22,7 +22,7 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.Internal
-  ( Pixel(..)
+  ( Color(..)
   , ColorSpace(..)
   , Chromaticity(..)
   , Primary(.., Primary)
@@ -41,11 +41,11 @@ module Graphics.Color.Space.Internal
   , whitePointTristimulus
   , CCT(..)
   , XYZ
-  , pattern PixelXYZ
-  , pattern PixelXYZA
+  , pattern ColorXYZ
+  , pattern ColorXYZA
   , CIExyY
-  , pattern Pixelxy
-  , pattern PixelxyY
+  , pattern Colorxy
+  , pattern ColorxyY
   , module GHC.TypeNats
   , module Graphics.Color.Algebra
   , module Graphics.Color.Model.Internal
@@ -66,33 +66,33 @@ class (Illuminant i, ColorModel cs e) => ColorSpace cs (i :: k) e | cs -> i wher
   type BaseColorSpace cs :: Type
   type BaseColorSpace cs = cs
 
-  toBaseColorSpace :: Pixel cs e -> Pixel (BaseColorSpace cs) e
-  fromBaseColorSpace :: Pixel (BaseColorSpace cs) e -> Pixel cs e
+  toBaseColorSpace :: Color cs e -> Color (BaseColorSpace cs) e
+  fromBaseColorSpace :: Color (BaseColorSpace cs) e -> Color cs e
 
   -- | Get pixel luminocity
   --
   -- @since 0.1.0
-  toPixelY :: (Elevator a, RealFloat a) => Pixel cs e -> Pixel Y a
-  default toPixelY ::
-    (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Pixel cs e -> Pixel Y a
-  toPixelY = toPixelY . toBaseColorSpace
-  {-# INLINE toPixelY #-}
+  toColorY :: (Elevator a, RealFloat a) => Color cs e -> Color Y a
+  default toColorY ::
+    (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Color cs e -> Color Y a
+  toColorY = toColorY . toBaseColorSpace
+  {-# INLINE toColorY #-}
 
-  toPixelXYZ :: (Elevator a, RealFloat a) => Pixel cs e -> Pixel (XYZ i) a
-  default toPixelXYZ ::
-    (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Pixel cs e -> Pixel (XYZ i) a
-  toPixelXYZ = toPixelXYZ . toBaseColorSpace
-  {-# INLINE toPixelXYZ #-}
+  toColorXYZ :: (Elevator a, RealFloat a) => Color cs e -> Color (XYZ i) a
+  default toColorXYZ ::
+    (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Color cs e -> Color (XYZ i) a
+  toColorXYZ = toColorXYZ . toBaseColorSpace
+  {-# INLINE toColorXYZ #-}
 
-  fromPixelXYZ :: (Elevator a, RealFloat a) => Pixel (XYZ i) a -> Pixel cs e
-  default fromPixelXYZ ::
-    (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Pixel (XYZ i) a -> Pixel cs e
-  fromPixelXYZ = fromBaseColorSpace . fromPixelXYZ
-  {-# INLINE fromPixelXYZ #-}
+  fromColorXYZ :: (Elevator a, RealFloat a) => Color (XYZ i) a -> Color cs e
+  default fromColorXYZ ::
+    (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Color (XYZ i) a -> Color cs e
+  fromColorXYZ = fromBaseColorSpace . fromColorXYZ
+  {-# INLINE fromColorXYZ #-}
 
 -- | This is a data type that encodes a data point on the chromaticity diagram
 newtype Chromaticity i e =
-  Chromaticity (Pixel (CIExyY i) e)
+  Chromaticity (Color (CIExyY i) e)
   deriving (Eq, Show)
 
 
@@ -123,7 +123,7 @@ pattern WhitePoint x y <- (coerce -> (V2 x y)) where
 {-# COMPLETE WhitePoint #-}
 
 
-newtype Tristimulus i e = Tristimulus (Pixel (XYZ i) e)
+newtype Tristimulus i e = Tristimulus (Color (XYZ i) e)
   deriving (Show, Eq, Ord, Functor, Applicative)
 
 -- | @x@ value of a `WhitePoint`
@@ -152,8 +152,8 @@ zWhitePoint wp = 1 - xWhitePoint wp - yWhitePoint wp
 -- @since 0.1.0
 whitePointTristimulus ::
      forall i e. (Illuminant i, RealFloat e, Elevator e)
-  => Pixel (XYZ i) e
-whitePointTristimulus = toPixelXYZ (coerce (whitePoint :: WhitePoint i e) :: Pixel (CIExyY i) e)
+  => Color (XYZ i) e
+whitePointTristimulus = toColorXYZ (coerce (whitePoint :: WhitePoint i e) :: Color (CIExyY i) e)
 {-# INLINE whitePointTristimulus #-}
 
 
@@ -166,8 +166,8 @@ whitePointXZ ::
      -- ^ @Y@ value, which is usually set to @1@
   -> WhitePoint i e
      -- ^ White point that specifies @x@ and @y@
-  -> Pixel (XYZ i) e
-whitePointXZ vY (coerce -> V2 x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
+  -> Color (XYZ i) e
+whitePointXZ vY (coerce -> V2 x y) = ColorXYZ (vYy * x) vY (vYy * (1 - x - y))
   where !vYy = vY / y
 {-# INLINE whitePointXZ #-}
 
@@ -210,8 +210,8 @@ primaryTristimulus ::
      forall i e. (Illuminant i, RealFloat e, Elevator e)
   => Primary i e
      -- ^ Primary that specifies @x@ and @y@
-  -> Pixel (XYZ i) e
-primaryTristimulus xy = toPixelXYZ (coerce xy :: Pixel (CIExyY i) e)
+  -> Color (XYZ i) e
+primaryTristimulus xy = toColorXYZ (coerce xy :: Color (CIExyY i) e)
 {-# INLINE primaryTristimulus #-}
 
 -- | Compute `XYZ` tristimulus of a `Primary`.
@@ -223,8 +223,8 @@ primaryXZ ::
      -- ^ @Y@ value, which is usually set to @1@
   -> Primary i e
      -- ^ Primary that specifies @x@ and @y@
-  -> Pixel (XYZ i) e
-primaryXZ vY (Primary x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
+  -> Color (XYZ i) e
+primaryXZ vY (Primary x y) = ColorXYZ (vYy * x) vY (vYy * (1 - x - y))
   where !vYy = vY / y
 {-# INLINE primaryXZ #-}
 
@@ -237,84 +237,84 @@ primaryXZ vY (Primary x y) = PixelXYZ (vYy * x) vY (vYy * (1 - x - y))
 data XYZ i
 
 -- | CIE1931 `XYZ` color space
-newtype instance Pixel (XYZ i) e = XYZ (V3 e)
+newtype instance Color (XYZ i) e = XYZ (V3 e)
 
 -- | Constructor for the most common @XYZ@ color space
-pattern PixelXYZ :: e -> e -> e -> Pixel (XYZ i) e
-pattern PixelXYZ x y z = XYZ (V3 x y z)
-{-# COMPLETE PixelXYZ #-}
+pattern ColorXYZ :: e -> e -> e -> Color (XYZ i) e
+pattern ColorXYZ x y z = XYZ (V3 x y z)
+{-# COMPLETE ColorXYZ #-}
 
 -- | Constructor for @XYZ@ with alpha channel.
-pattern PixelXYZA :: e -> e -> e -> e -> Pixel (Alpha (XYZ i)) e
-pattern PixelXYZA x y z a = Alpha (XYZ (V3 x y z)) a
-{-# COMPLETE PixelXYZA #-}
+pattern ColorXYZA :: e -> e -> e -> e -> Color (Alpha (XYZ i)) e
+pattern ColorXYZA x y z a = Alpha (XYZ (V3 x y z)) a
+{-# COMPLETE ColorXYZA #-}
 
 
 -- | CIE1931 `XYZ` color space
-deriving instance Eq e => Eq (Pixel (XYZ i) e)
+deriving instance Eq e => Eq (Color (XYZ i) e)
 
 -- | CIE1931 `XYZ` color space
-deriving instance Ord e => Ord (Pixel (XYZ i) e)
+deriving instance Ord e => Ord (Color (XYZ i) e)
 
 -- | CIE1931 `XYZ` color space
-instance (Illuminant i, Elevator e) => Show (Pixel (XYZ (i :: k)) e) where
+instance (Illuminant i, Elevator e) => Show (Color (XYZ (i :: k)) e) where
   showsPrec _ = showsColorModel
 
 -- | CIE1931 `XYZ` color space
 instance (Illuminant i, Elevator e) => ColorModel (XYZ (i :: k)) e where
   type Components (XYZ i) e = (e, e, e)
-  toComponents (PixelXYZ x y z) = (x, y, z)
+  toComponents (ColorXYZ x y z) = (x, y, z)
   {-# INLINE toComponents #-}
-  fromComponents (x, y, z) = PixelXYZ x y z
+  fromComponents (x, y, z) = ColorXYZ x y z
   {-# INLINE fromComponents #-}
 
 -- | CIE1931 `XYZ` color space
 instance (Illuminant i, Elevator e) => ColorSpace (XYZ i) i e where
   toBaseColorSpace = id
   fromBaseColorSpace = id
-  toPixelY (PixelXYZ _ y _) = PixelY (toRealFloat y)
-  {-# INLINE toPixelY #-}
-  toPixelXYZ (PixelXYZ x y z) = PixelXYZ (toRealFloat x) (toRealFloat y) (toRealFloat z)
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ (PixelXYZ x y z) = PixelXYZ (fromRealFloat x) (fromRealFloat y) (fromRealFloat z)
-  {-# INLINE fromPixelXYZ #-}
+  toColorY (ColorXYZ _ y _) = ColorY (toRealFloat y)
+  {-# INLINE toColorY #-}
+  toColorXYZ (ColorXYZ x y z) = ColorXYZ (toRealFloat x) (toRealFloat y) (toRealFloat z)
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ (ColorXYZ x y z) = ColorXYZ (fromRealFloat x) (fromRealFloat y) (fromRealFloat z)
+  {-# INLINE fromColorXYZ #-}
 
 {-# RULES
-"toPixelXYZ   :: RealFloat a => Pixel XYZ a -> Pixel XYZ a"   toPixelXYZ = id
-"fromPixelXYZ :: RealFloat a => Pixel XYZ a -> Pixel XYZ a" fromPixelXYZ = id
+"toColorXYZ   :: RealFloat a => Color XYZ a -> Color XYZ a"   toColorXYZ = id
+"fromColorXYZ :: RealFloat a => Color XYZ a -> Color XYZ a" fromColorXYZ = id
  #-}
 
 -- | CIE1931 `XYZ` color space
-instance Functor (Pixel (XYZ i)) where
-  fmap f (PixelXYZ x y z) = PixelXYZ (f x) (f y) (f z)
+instance Functor (Color (XYZ i)) where
+  fmap f (ColorXYZ x y z) = ColorXYZ (f x) (f y) (f z)
   {-# INLINE fmap #-}
 
 -- | CIE1931 `XYZ` color space
-instance Applicative (Pixel (XYZ i)) where
-  pure e = PixelXYZ e e e
+instance Applicative (Color (XYZ i)) where
+  pure e = ColorXYZ e e e
   {-# INLINE pure #-}
-  (PixelXYZ fx fy fz) <*> (PixelXYZ x y z) = PixelXYZ (fx x) (fy y) (fz z)
+  (ColorXYZ fx fy fz) <*> (ColorXYZ x y z) = ColorXYZ (fx x) (fy y) (fz z)
   {-# INLINE (<*>) #-}
 
 -- | CIE1931 `XYZ` color space
-instance Foldable (Pixel (XYZ i)) where
-  foldr f acc (PixelXYZ x y z) = foldr3 f acc x y z
+instance Foldable (Color (XYZ i)) where
+  foldr f acc (ColorXYZ x y z) = foldr3 f acc x y z
   {-# INLINE foldr #-}
 
 -- | CIE1931 `XYZ` color space
-instance Traversable (Pixel (XYZ i)) where
-  traverse f (PixelXYZ x y z) = traverse3 PixelXYZ f x y z
+instance Traversable (Color (XYZ i)) where
+  traverse f (ColorXYZ x y z) = traverse3 ColorXYZ f x y z
   {-# INLINE traverse #-}
 
 -- | CIE1931 `XYZ` color space
-instance Storable e => Storable (Pixel (XYZ i) e) where
+instance Storable e => Storable (Color (XYZ i) e) where
   sizeOf = sizeOfN 3
   {-# INLINE sizeOf #-}
   alignment = alignmentN 3
   {-# INLINE alignment #-}
-  peek = peek3 PixelXYZ
+  peek = peek3 ColorXYZ
   {-# INLINE peek #-}
-  poke p (PixelXYZ x y z) = poke3 p x y z
+  poke p (ColorXYZ x y z) = poke3 p x y z
   {-# INLINE poke #-}
 
 
@@ -327,39 +327,39 @@ instance Storable e => Storable (Pixel (XYZ i) e) where
 data CIExyY (i :: k)
 
 -- | CIE1931 `CIExyY` color space
-newtype instance Pixel (CIExyY i) e = CIExyY (V2 e)
+newtype instance Color (CIExyY i) e = CIExyY (V2 e)
 
 -- | Constructor @CIE xyY@ color space. It only requires @x@ and @y@, then @Y@ part will
 -- always be equal to 1.
-pattern Pixelxy :: e -> e -> Pixel (CIExyY i) e
-pattern Pixelxy x y = CIExyY (V2 x y)
-{-# COMPLETE Pixelxy #-}
+pattern Colorxy :: e -> e -> Color (CIExyY i) e
+pattern Colorxy x y = CIExyY (V2 x y)
+{-# COMPLETE Colorxy #-}
 
 -- | Patttern match on the @CIE xyY@, 3rd argument @Y@ is always set to @1@
-pattern PixelxyY :: Num e => e -> e -> e -> Pixel (CIExyY i) e
-pattern PixelxyY x y y' <- (addY -> V3 x y y')
+pattern ColorxyY :: Num e => e -> e -> e -> Color (CIExyY i) e
+pattern ColorxyY x y y' <- (addY -> V3 x y y')
 
-addY :: Num e => Pixel (CIExyY i) e -> V3 e
+addY :: Num e => Color (CIExyY i) e -> V3 e
 addY (CIExyY (V2 x y)) = V3 x y 1
 {-# INLINE addY #-}
 
 -- | CIE xyY color space
-deriving instance Eq e => Eq (Pixel (CIExyY i) e)
+deriving instance Eq e => Eq (Color (CIExyY i) e)
 -- | CIE xyY color space
-deriving instance Ord e => Ord (Pixel (CIExyY i) e)
+deriving instance Ord e => Ord (Color (CIExyY i) e)
 -- | CIE xyY color space
-deriving instance Functor (Pixel (CIExyY i))
+deriving instance Functor (Color (CIExyY i))
 -- | CIE xyY color space
-deriving instance Applicative (Pixel (CIExyY i))
+deriving instance Applicative (Color (CIExyY i))
 -- | CIE xyY color space
-deriving instance Foldable (Pixel (CIExyY i))
+deriving instance Foldable (Color (CIExyY i))
 -- | CIE xyY color space
-deriving instance Traversable (Pixel (CIExyY i))
+deriving instance Traversable (Color (CIExyY i))
 -- | CIE xyY color space
-deriving instance Storable e => Storable (Pixel (CIExyY i) e)
+deriving instance Storable e => Storable (Color (CIExyY i) e)
 
 -- | CIE xyY color space
-instance (Illuminant i, Elevator e) => Show (Pixel (CIExyY (i :: k)) e) where
+instance (Illuminant i, Elevator e) => Show (Color (CIExyY (i :: k)) e) where
   showsPrec _ = showsColorModel
 
 -- | CIE xyY color space
@@ -375,13 +375,13 @@ instance (Illuminant i, Elevator e) => ColorModel (CIExyY (i :: k)) e where
 instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
   toBaseColorSpace = id
   fromBaseColorSpace = id
-  toPixelY _ = PixelY 1
-  {-# INLINE toPixelY #-}
-  toPixelXYZ xy = PixelXYZ (x / y) 1 ((1 - x - y) / y)
-    where Pixelxy x y = toRealFloat <$> xy
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ xyz = fromRealFloat <$> Pixelxy (x / s) (y / s)
+  toColorY _ = ColorY 1
+  {-# INLINE toColorY #-}
+  toColorXYZ xy = ColorXYZ (x / y) 1 ((1 - x - y) / y)
+    where Colorxy x y = toRealFloat <$> xy
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ xyz = fromRealFloat <$> Colorxy (x / s) (y / s)
     where
-      PixelXYZ x y z = xyz
+      ColorXYZ x y z = xyz
       !s = x + y + z
-  {-# INLINE fromPixelXYZ #-}
+  {-# INLINE fromColorXYZ #-}

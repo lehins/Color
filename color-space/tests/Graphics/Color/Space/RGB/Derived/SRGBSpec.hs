@@ -10,12 +10,12 @@ import Graphics.Color.Space.Common
 import Graphics.Color.Illuminant.CIE1931
 import Graphics.Color.Space.RGB.Derived.SRGB
 
-instance (Elevator e, Random e, Illuminant i) => Arbitrary (Pixel (SRGB (i :: k)) e) where
-  arbitrary = PixelRGB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
+instance (Elevator e, Random e, Illuminant i) => Arbitrary (Color (SRGB (i :: k)) e) where
+  arbitrary = ColorRGB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
 
 
 spec :: Spec
 spec = describe "SRGB" $ do
   colorModelSpec @(SRGB 'D65) @Word
-  prop "toFromPixelXYZ" (prop_toFromPixelXYZ :: Pixel (SRGB 'D65) Double -> Property)
-  prop "toFromColorSpace" (prop_toFromColorSpace :: Pixel (SRGB 'D65) Double -> Property)
+  prop "toFromColorXYZ" (prop_toFromColorXYZ :: Color (SRGB 'D65) Double -> Property)
+  prop "toFromColorSpace" (prop_toFromColorSpace :: Color (SRGB 'D65) Double -> Property)

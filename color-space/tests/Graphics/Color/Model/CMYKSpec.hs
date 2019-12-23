@@ -9,9 +9,9 @@ import Graphics.Color.Model.CMYK
 import Graphics.Color.Model.RGB
 import Graphics.Color.Model.RGBSpec ()
 
-instance (Elevator e, Random e) => Arbitrary (Pixel CMYK e) where
+instance (Elevator e, Random e) => Arbitrary (Color CMYK e) where
   arbitrary =
-    PixelCMYK <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator <*>
+    ColorCMYK <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator <*>
     arbitraryElevator
 
 
@@ -19,5 +19,5 @@ spec :: Spec
 spec =
   describe "CMYK" $ do
     colorModelSpec @CMYK @Word
-    prop "rgb2cmyk . cmyk2rgb" $ \(rgb :: Pixel RGB Double) ->
-      rgb `epsilonEqPixel` cmyk2rgb (rgb2cmyk rgb)
+    prop "rgb2cmyk . cmyk2rgb" $ \(rgb :: Color RGB Double) ->
+      rgb `epsilonEqColor` cmyk2rgb (rgb2cmyk rgb)

@@ -18,9 +18,9 @@
 module Graphics.Color.Model.Y
   ( Y
   -- * Constructors for Y color model.
-  , pattern PixelY
-  , pattern PixelYA
-  , Pixel
+  , pattern ColorY
+  , pattern ColorYA
+  , Color
   , Weights(..)
   , rgb2y
   ) where
@@ -40,63 +40,63 @@ import Graphics.Color.Algebra
 data Y
 
 -- | Luminance `Y`
-newtype instance Pixel Y e = PixelY e
+newtype instance Color Y e = ColorY e
 
 -- | Constructor for @Y@ with alpha channel.
-pattern PixelYA :: e -> e -> Pixel (Alpha Y) e
-pattern PixelYA y a = Alpha (PixelY y) a
-{-# COMPLETE PixelYA #-}
+pattern ColorYA :: e -> e -> Color (Alpha Y) e
+pattern ColorYA y a = Alpha (ColorY y) a
+{-# COMPLETE ColorYA #-}
 
 -- | `Y` color model
-deriving instance Eq e => Eq (Pixel Y e)
+deriving instance Eq e => Eq (Color Y e)
 -- | `Y` color model
-deriving instance Ord e => Ord (Pixel Y e)
+deriving instance Ord e => Ord (Color Y e)
 -- | `Y` color model
-deriving instance Storable e => Storable (Pixel Y e)
+deriving instance Storable e => Storable (Color Y e)
 
 
 -- | `Y` color model
-instance Elevator e => Show (Pixel Y e) where
+instance Elevator e => Show (Color Y e) where
   showsPrec _ = showsColorModel
 
 -- | `Y` color model
 instance Elevator e => ColorModel Y e where
   type Components Y e = e
-  toComponents (PixelY y) = y
+  toComponents (ColorY y) = y
   {-# INLINE toComponents #-}
-  fromComponents = PixelY
+  fromComponents = ColorY
   {-# INLINE fromComponents #-}
 
 -- | `Y` color model
-instance Functor (Pixel Y) where
-  fmap f (PixelY y) = PixelY (f y)
+instance Functor (Color Y) where
+  fmap f (ColorY y) = ColorY (f y)
   {-# INLINE fmap #-}
 
 -- | `Y` color model
-instance Applicative (Pixel Y) where
-  pure = PixelY
+instance Applicative (Color Y) where
+  pure = ColorY
   {-# INLINE pure #-}
-  (PixelY fy) <*> (PixelY y) = PixelY (fy y)
+  (ColorY fy) <*> (ColorY y) = ColorY (fy y)
   {-# INLINE (<*>) #-}
 
 -- | `Y` color model
-instance Foldable (Pixel Y) where
-  foldr f !z (PixelY y) = f y z
+instance Foldable (Color Y) where
+  foldr f !z (ColorY y) = f y z
   {-# INLINE foldr #-}
 
 -- | `Y` color model
-instance Traversable (Pixel Y) where
-  traverse f (PixelY y) = PixelY <$> f y
+instance Traversable (Color Y) where
+  traverse f (ColorY y) = ColorY <$> f y
   {-# INLINE traverse #-}
 
 
 rgb2y ::
      forall e e'. (Elevator e', Elevator e, RealFloat e)
-  => Pixel RGB e'
+  => Color RGB e'
   -> Weights e
-  -> Pixel Y e
+  -> Color Y e
 rgb2y rgb weights =
-  PixelY (coerce (fmap toRealFloat rgb :: Pixel RGB e) `dotProduct` coerce weights)
+  ColorY (coerce (fmap toRealFloat rgb :: Color RGB e) `dotProduct` coerce weights)
 {-# INLINE rgb2y #-}
 
 

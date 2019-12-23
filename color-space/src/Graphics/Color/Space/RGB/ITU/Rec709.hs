@@ -36,33 +36,33 @@ import Graphics.Color.Space.RGB.Luma
 -- | ITU-R BT.709 color space
 data BT709
 
-newtype instance Pixel BT709 e = BT709 (Pixel CM.RGB e)
+newtype instance Color BT709 e = BT709 (Color CM.RGB e)
 
 -- | ITU-R BT.709 color space
-deriving instance Eq e => Eq (Pixel BT709 e)
+deriving instance Eq e => Eq (Color BT709 e)
 -- | ITU-R BT.709 color space
-deriving instance Ord e => Ord (Pixel BT709 e)
+deriving instance Ord e => Ord (Color BT709 e)
 -- | ITU-R BT.709 color space
-deriving instance Functor (Pixel BT709)
+deriving instance Functor (Color BT709)
 -- | ITU-R BT.709 color space
-deriving instance Applicative (Pixel BT709)
+deriving instance Applicative (Color BT709)
 -- | ITU-R BT.709 color space
-deriving instance Foldable (Pixel BT709)
+deriving instance Foldable (Color BT709)
 -- | ITU-R BT.709 color space
-deriving instance Traversable (Pixel BT709)
+deriving instance Traversable (Color BT709)
 -- | ITU-R BT.709 color space
-deriving instance Storable e => Storable (Pixel BT709 e)
+deriving instance Storable e => Storable (Color BT709 e)
 
 -- | ITU-R BT.709 color space
-instance Elevator e => Show (Pixel BT709 e) where
+instance Elevator e => Show (Color BT709 e) where
   showsPrec _ = showsColorModel
 
 -- | ITU-R BT.709 color space
 instance Elevator e => ColorModel BT709 e where
   type Components BT709 e = (e, e, e)
-  toComponents = toComponents . unPixelRGB
+  toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
-  fromComponents = mkPixelRGB . fromComponents
+  fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
 -- | ITU-R BT.709 color space
@@ -71,10 +71,10 @@ instance Elevator e => ColorSpace BT709 D65 e where
   {-# INLINE toBaseColorSpace #-}
   fromBaseColorSpace = id
   {-# INLINE fromBaseColorSpace #-}
-  toPixelXYZ = rgb2xyz . fmap toRealFloat
-  {-# INLINE toPixelXYZ #-}
-  fromPixelXYZ = fmap fromRealFloat . xyz2rgb
-  {-# INLINE fromPixelXYZ #-}
+  toColorXYZ = rgb2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgb
+  {-# INLINE fromColorXYZ #-}
 
 -- | ITU-R BT.709 color space
 instance RedGreenBlue BT709 D65 where
