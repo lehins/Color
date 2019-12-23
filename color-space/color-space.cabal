@@ -28,73 +28,74 @@ custom-setup
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Graphics.ColorAdaptation.Internal
-                     , Graphics.ColorAdaptation.VonKries
-                     -- Graphics.ColorAdaptation
-                     -- , Graphics.ColorAdaptation.CIE1994
-                     -- , Graphics.ColorAdaptation.CMCCAT2000
-                     -- , Graphics.ColorAdaptation.Fairchild
-                     , Graphics.ColorModel
-                     , Graphics.ColorModel.Binary
-                     , Graphics.ColorModel.Complex
-                     , Graphics.ColorModel.CMYK
-                     , Graphics.ColorModel.Internal
-                     , Graphics.ColorModel.Alpha
-                     , Graphics.ColorModel.RGB
-                     , Graphics.ColorModel.HSI
-                     , Graphics.ColorModel.HSL
-                     , Graphics.ColorModel.HSV
-                     , Graphics.ColorModel.Y
-                     , Graphics.ColorModel.YCbCr
-                     , Graphics.ColorSpace
-                     , Graphics.ColorSpace.Algebra
-                     -- , Graphics.ColorSpace.CIE1931
-                     -- , Graphics.ColorSpace.CIE1931.RGB
-                     , Graphics.ColorSpace.CIE1931.XYZ
-                     , Graphics.ColorSpace.CIE1931.Illuminant
-                     , Graphics.ColorSpace.CIE1976.LAB
-                     -- , Graphics.ColorSpace.CIE1976.LAB.LCH
-                     -- , Graphics.ColorSpace.CIE1976.LAB.HLC
-                     -- , Graphics.ColorSpace.CIE1976.LUV
-                     , Graphics.ColorSpace.RGB
-                     , Graphics.ColorSpace.RGB.SRGB
-                     , Graphics.ColorSpace.RGB.AdobeRGB
-                     , Graphics.ColorSpace.RGB.Alternative
-                     , Graphics.ColorSpace.RGB.Alternative.HSI
-                     , Graphics.ColorSpace.RGB.Alternative.HSV
-                     , Graphics.ColorSpace.RGB.Alternative.HSL
-                     , Graphics.ColorSpace.RGB.Alternative.YCbCr
-                     , Graphics.ColorSpace.RGB.Derived.SRGB
-                     , Graphics.ColorSpace.RGB.Derived.AdobeRGB
-                     , Graphics.ColorSpace.RGB.ITU.Rec470
-                     , Graphics.ColorSpace.RGB.ITU.Rec601
-                     , Graphics.ColorSpace.RGB.ITU.Rec709
-                     , Graphics.ColorSpace.RGB.Luma
-                     -- , Graphics.ColorSpace.RGB.SC
-                     -- , Graphics.ColorSpace.RGB.AdobeWideGamut
-                     -- , Graphics.ColorSpace.RGB.ProPhoto
-                     -- , Graphics.ColorSpace.Common
-                     -- , Graphics.ColorSpace.Y
-                     -- , Graphics.ColorSpace.Binary
-                     -- , Graphics.ColorSpace.Complex
+  exposed-modules:     Graphics.Color.Algebra
+                     , Graphics.Color.Adaptation.Internal
+                     , Graphics.Color.Adaptation.VonKries
+                     -- Graphics.Color.Adaptation
+                     -- , Graphics.Color.Adaptation.CIE1994
+                     -- , Graphics.Color.Adaptation.CMCCAT2000
+                     -- , Graphics.Color.Adaptation.Fairchild
+                     , Graphics.Color.Illuminant.CIE1931
+                     , Graphics.Color.Illuminant.ICC.PCS
+                     , Graphics.Color.Illuminant.ITU.Rec470
+                     , Graphics.Color.Illuminant.ITU.Rec601
+                     , Graphics.Color.Model
+                     , Graphics.Color.Model.CMYK
+                     , Graphics.Color.Model.Internal
+                     , Graphics.Color.Model.Alpha
+                     , Graphics.Color.Model.RGB
+                     , Graphics.Color.Model.HSI
+                     , Graphics.Color.Model.HSL
+                     , Graphics.Color.Model.HSV
+                     , Graphics.Color.Model.Y
+                     , Graphics.Color.Model.YCbCr
+                     , Graphics.Color.Space
+                     -- , Graphics.Color.Space.CIE1931
+                     -- , Graphics.Color.Space.CIE1931.RGB
+                     , Graphics.Color.Space.CIE1931.XYZ
+                     , Graphics.Color.Space.CIE1976.LAB
+                     -- , Graphics.Color.Space.CIE1976.LAB.LCH
+                     -- , Graphics.Color.Space.CIE1976.LAB.HLC
+                     -- , Graphics.Color.Space.CIE1976.LUV
+                     , Graphics.Color.Space.RGB
+                     , Graphics.Color.Space.RGB.SRGB
+                     , Graphics.Color.Space.RGB.AdobeRGB
+                     , Graphics.Color.Space.RGB.Alternative
+                     , Graphics.Color.Space.RGB.Alternative.HSI
+                     , Graphics.Color.Space.RGB.Alternative.HSV
+                     , Graphics.Color.Space.RGB.Alternative.HSL
+                     , Graphics.Color.Space.RGB.Alternative.YCbCr
+                     , Graphics.Color.Space.RGB.Derived.SRGB
+                     , Graphics.Color.Space.RGB.Derived.AdobeRGB
+                     , Graphics.Color.Space.RGB.ITU.Rec470
+                     , Graphics.Color.Space.RGB.ITU.Rec601
+                     , Graphics.Color.Space.RGB.ITU.Rec709
+                     , Graphics.Color.Space.RGB.Luma
+                     -- , Graphics.Color.Space.RGB.SC
+                     -- , Graphics.Color.Space.RGB.AdobeWideGamut
+                     -- , Graphics.Color.Space.RGB.ProPhoto
+                     -- , Graphics.Color.Space.Common
+                     -- , Graphics.Color.Space.Y
+                     -- , Graphics.Color.Space.Binary
+                     -- , Graphics.Color.Space.Complex
 
-                     -- , Graphics.ColorSpace.LMS
-                     -- , Graphics.ColorSpace.DCI_P3
-                     , Graphics.ColorStandard.RAL
+                     -- , Graphics.Color.Space.LMS
+                     -- , Graphics.Color.Space.DCI_P3
+                     , Graphics.Color.Standard.RAL
 
-                     -- , Graphics.ColorSpace.CMYK
+                     -- , Graphics.Color.Space.CMYK
 
 
-                     --   Graphics.ColorSpace
-                     -- , Graphics.ColorSpace.Binary
-                     -- , Graphics.ColorSpace.Complex
-                     -- , Graphics.ColorSpace.Y
-                     -- , Graphics.ColorSpace.YCbCr
-                     -- , Graphics.ColorSpace.RGB
+                     --   Graphics.Color.Space
+                     -- , Graphics.Color.Space.Binary
+                     -- , Graphics.Color.Space.Complex
+                     -- , Graphics.Color.Space.Y
+                     -- , Graphics.Color.Space.YCbCr
+                     -- , Graphics.Color.Space.RGB
 
-  other-modules:       Graphics.ColorModel.Elevator
-                     , Graphics.ColorSpace.Internal
-                     , Graphics.ColorSpace.RGB.Internal
+  other-modules:       Graphics.Color.Algebra.Elevator
+                     , Graphics.Color.Space.Internal
+                     , Graphics.Color.Space.RGB.Internal
   build-depends:       base            >= 4.11 && < 5
                      , deepseq
                      , data-default-class
@@ -110,19 +111,19 @@ test-suite tests
   type:               exitcode-stdio-1.0
   hs-source-dirs:     tests
   main-is:            Main.hs
-  other-modules:      Graphics.ColorModel.Common
-                    , Graphics.ColorModel.CMYKSpec
-                    , Graphics.ColorModel.HSISpec
-                    , Graphics.ColorModel.HSLSpec
-                    , Graphics.ColorModel.HSVSpec
-                    , Graphics.ColorModel.RGBSpec
-                    , Graphics.ColorSpace.Common
-                    , Graphics.ColorSpace.CIE1931.IlluminantSpec
-                    , Graphics.ColorSpace.CIE1976.LABSpec
-                    , Graphics.ColorSpace.RGB.SRGBSpec
-                    , Graphics.ColorSpace.RGB.Derived.SRGBSpec
-                    , Graphics.ColorSpace.RGB.ITU.Rec709Spec
-                    , Graphics.ColorSpace.YUV.YCbCrSpec
+  other-modules:      Graphics.Color.Model.Common
+                    , Graphics.Color.Model.CMYKSpec
+                    , Graphics.Color.Model.HSISpec
+                    , Graphics.Color.Model.HSLSpec
+                    , Graphics.Color.Model.HSVSpec
+                    , Graphics.Color.Model.RGBSpec
+                    , Graphics.Color.Space.Common
+                    , Graphics.Color.Space.CIE1931.IlluminantSpec
+                    , Graphics.Color.Space.CIE1976.LABSpec
+                    , Graphics.Color.Space.RGB.SRGBSpec
+                    , Graphics.Color.Space.RGB.Derived.SRGBSpec
+                    , Graphics.Color.Space.RGB.ITU.Rec709Spec
+                    , Graphics.Color.Space.YUV.YCbCrSpec
                     , Spec
   build-depends:      HUnit
                     , QuickCheck
