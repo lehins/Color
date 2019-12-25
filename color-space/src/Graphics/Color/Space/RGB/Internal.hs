@@ -45,7 +45,6 @@ import Data.Coerce
 import Graphics.Color.Algebra
 import Graphics.Color.Model.Alpha
 import qualified Graphics.Color.Model.RGB as CM
-import Graphics.Color.Model.Y
 import Graphics.Color.Space.Internal
 
 
@@ -150,18 +149,18 @@ inpmApply ::
 inpmApply (INPM inpm') = mkColorRGB . coerce . multM3x3byV3 inpm' . coerce
 {-# INLINE inpmApply #-}
 
--- | Linear transformation of a pixel in a linear luminocity, i.e. the Y component of
+-- | Linear transformation of a color into a linear luminocity, i.e. the Y component of
 -- XYZ color space
 npmApplyLuminocity ::
      forall cs i e. (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e)
   => Color cs e
-  -> Color Y e
+  -> Color (Y i) e
 npmApplyLuminocity px =
-  coerce (m3x3row1 (unNPM (npm :: NPM cs e)) `dotProduct` coerce (unColorRGB px))
+  ColorY (m3x3row1 (unNPM (npm :: NPM cs e)) `dotProduct` coerce (unColorRGB px))
 {-# INLINE npmApplyLuminocity #-}
 
 
-rgbLuminocity :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Color cs e -> Color Y e
+rgbLuminocity :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Color cs e -> Color (Y i) e
 rgbLuminocity = npmApplyLuminocity . dcctf
 {-# INLINE rgbLuminocity #-}
 

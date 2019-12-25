@@ -21,3 +21,5 @@ module Graphics.Color.Model
 
 import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
+
+

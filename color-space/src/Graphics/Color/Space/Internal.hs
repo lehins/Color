@@ -23,7 +23,7 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.Internal
-  ( Color(..)
+  ( Color(Y, XYZ, CIExyY)
   , ColorSpace(..)
   , Chromaticity(..)
   , Primary(.., Primary)
@@ -41,6 +41,9 @@ module Graphics.Color.Space.Internal
   , whitePointXZ
   , whitePointTristimulus
   , CCT(..)
+  , Y
+  , pattern ColorY
+  , pattern ColorYA
   , XYZ
   , pattern ColorXYZ
   , pattern ColorXYZA
@@ -55,7 +58,7 @@ module Graphics.Color.Space.Internal
 import Foreign.Storable
 import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
-import Graphics.Color.Model.Y
+import qualified Graphics.Color.Model.Y as CM
 import Graphics.Color.Algebra
 import Data.Typeable
 import Data.Coerce
@@ -73,9 +76,9 @@ class (Illuminant i, ColorModel cs e) => ColorSpace cs (i :: k) e | cs -> i wher
   -- | Get pixel luminocity
   --
   -- @since 0.1.0
-  toColorY :: (Elevator a, RealFloat a) => Color cs e -> Color Y a
+  toColorY :: (Elevator a, RealFloat a) => Color cs e -> Color (Y i) a
   default toColorY ::
-    (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Color cs e -> Color Y a
+    (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Color cs e -> Color (Y i) a
   toColorY = toColorY . toBaseColorSpace
   {-# INLINE toColorY #-}
 
@@ -90,6 +93,7 @@ class (Illuminant i, ColorModel cs e) => ColorSpace cs (i :: k) e | cs -> i wher
     (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Color (XYZ i) a -> Color cs e
   fromColorXYZ = fromBaseColorSpace . fromColorXYZ
   {-# INLINE fromColorXYZ #-}
+
 
 instance (ColorSpace cs i e, Opaque (Alpha cs) ~ cs) => ColorSpace (Alpha cs) i e where
   type BaseColorSpace (Alpha cs) = cs
@@ -393,3 +397,69 @@ instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
       ColorXYZ x y z = xyz
       !s = x + y + z
   {-# INLINE fromColorXYZ #-}
+
+
+
+-------------
+--- Y ---
+-------------
+
+-- | Luminance of a color
+data Y (i :: k)
+
+-- | Luminance `Y`
+newtype instance Color (Y i) e = Y (CM.Color CM.Y e)
+
+-- | Constructor for @Y@ with alpha channel.
+pattern ColorY :: e-> Color (Y i) e
+pattern ColorY y = Y (CM.ColorY y)
+{-# COMPLETE ColorY #-}
+
+-- | Constructor for @Y@ with alpha channel.
+pattern ColorYA :: e -> e -> Color (Alpha (Y i)) e
+pattern ColorYA y a = Alpha (ColorY y) a
+{-# COMPLETE ColorYA #-}
+
+-- | `Y` - luminocity of a color space
+deriving instance Eq e => Eq (Color (Y i) e)
+-- | `Y` - luminocity of a color space
+deriving instance Ord e => Ord (Color (Y i) e)
+-- | `Y` - luminocity of a color space
+deriving instance Functor (Color (Y i))
+-- | `Y` - luminocity of a color space
+deriving instance Applicative (Color (Y i))
+-- | `Y` - luminocity of a color space
+deriving instance Foldable (Color (Y i))
+-- | `Y` - luminocity of a color space
+deriving instance Traversable (Color (Y i))
+-- | `Y` - luminocity of a color space
+deriving instance Storable e => Storable (Color (Y i) e)
+
+
+-- | `Y` - luminocity of a color space
+instance (Illuminant i, Elevator e) => Show (Color (Y i) e) where
+  showsPrec _ = showsColorModel
+
+-- | `Y` - luminocity of a color space
+instance (Illuminant i, Elevator e) => ColorModel (Y i) e where
+  type Components (Y i) e = e
+  toComponents = coerce
+  {-# INLINE toComponents #-}
+  fromComponents = coerce
+  {-# INLINE fromComponents #-}
+
+
+-- | CIE1931 `XYZ` color space
+instance (Illuminant i, Elevator e) => ColorSpace (Y i) i e where
+  toBaseColorSpace = id
+  fromBaseColorSpace = id
+  toColorY = fmap toRealFloat
+  {-# INLINE toColorY #-}
+  toColorXYZ (ColorY y) = ColorXYZ 0 (toRealFloat y) 0
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ (ColorXYZ _ y _) = ColorY (fromRealFloat y)
+  {-# INLINE fromColorXYZ #-}
+
+{-# RULES
+"toColorY   :: RealFloat a => Color Y a -> Color Y a" toColorY = id
+ #-}

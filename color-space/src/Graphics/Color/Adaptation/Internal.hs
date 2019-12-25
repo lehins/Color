@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -14,6 +15,7 @@
 --
 module Graphics.Color.Adaptation.Internal
   ( ChromaticAdaptation(..)
+  , Adaptation(..)
   , chromaticAdaptation
   , convertWith
   , convertElevatedWith
@@ -31,6 +33,21 @@ class (Illuminant it, Illuminant ir, Elevator e, RealFloat e) =>
   data Adaptation t it ir e :: Type
   adaptColorXYZ :: Adaptation t it ir e -> Color (XYZ it) e -> Color (XYZ ir) e
 
+-- | This performs no adaptation, but only when illuminants are exactly the same
+data ExactNoAdaptation
+
+instance (Illuminant i, Elevator e, RealFloat e) =>
+         ChromaticAdaptation ExactNoAdaptation i i e where
+  data Adaptation ExactNoAdaptation i i e = ExactNoAdaptation
+  adaptColorXYZ _ = id
+
+-- | This performs no adaptation, but only when illuminants are almost the same.
+data ApproximateNoAdaptation
+
+instance (Illuminant it, Illuminant ir, Elevator e, RealFloat e, Temperature it ~ Temperature ir) =>
+         ChromaticAdaptation ApproximateNoAdaptation it ir e where
+  data Adaptation ApproximateNoAdaptation it ir e = ApproximateNoAdaptation
+  adaptColorXYZ _ (ColorXYZ x y z) = ColorXYZ x y z
 
 chromaticAdaptation ::
      ChromaticAdaptation t it ir e
@@ -64,7 +81,7 @@ convertElevatedWith adaptation = fromColorXYZ . adaptColorXYZ adaptation . toCol
 {-# INLINE[2] convertElevatedWith #-}
 
 -- | Convert a color from one color space into another one with the same illuminant, thus
--- not requireing any chromatic adaptation.
+-- not requiring a chromatic adaptation.
 --
 -- @since 0.1.0
 convertNoAdaptation ::

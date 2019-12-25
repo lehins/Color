@@ -94,31 +94,31 @@ instance Traversable (Color Y') where
 
 class Luma cs where
   {-# MINIMAL (rWeight, gWeight)|(rWeight, bWeight)|(gWeight, bWeight) #-}
-  rWeight :: Weight cs
+  rWeight :: RealFloat e => Weight cs e
   rWeight = 1 - bWeight - gWeight
   {-# INLINE rWeight #-}
 
-  gWeight :: Weight cs
+  gWeight :: RealFloat e => Weight cs e
   gWeight = 1 - rWeight - bWeight
   {-# INLINE gWeight #-}
 
-  bWeight :: Weight cs
+  bWeight :: RealFloat e => Weight cs e
   bWeight = 1 - rWeight - gWeight
   {-# INLINE bWeight #-}
 
-newtype Weight cs = Weight
-  { unWeight :: Double
+newtype Weight cs e = Weight
+  { unWeight :: e
   } deriving (Eq, Show, Num, Fractional, Floating)
 
 
 rgbLumaWeights ::
-     forall cs e' e. (Luma cs, Elevator e, RealFloat e)
+     forall cs e' e. (Luma cs, RealFloat e)
   => Color cs e'
   -> Weights e
 rgbLumaWeights _ =
-  Weights (V3 (toRealFloat (coerce (rWeight :: Weight cs) :: Double))
-              (toRealFloat (coerce (gWeight :: Weight cs) :: Double))
-              (toRealFloat (coerce (bWeight :: Weight cs) :: Double)))
+  Weights (V3 (coerce (rWeight :: Weight cs e) :: e)
+              (coerce (gWeight :: Weight cs e) :: e)
+              (coerce (bWeight :: Weight cs e) :: e))
 {-# INLINE rgbLumaWeights #-}
 
 -- | Convert a non-linear RGB pixel to a luma pixel
