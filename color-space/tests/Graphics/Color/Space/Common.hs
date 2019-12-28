@@ -35,5 +35,5 @@ prop_toFromColorSpace ::
      forall cs i e. (ColorSpace cs i e, RealFloat e)
   => Color cs e
   -> Property
-prop_toFromColorSpace px = px `epsilonEqColor` fromBaseColorSpace (toBaseColorSpace px)
+prop_toFromColorSpace px = px `epsilonEqColor` fromBaseSpace (toBaseSpace px)
 

@@ -77,10 +77,11 @@ instance Elevator e => ColorModel BT601_525 e where
 
 -- | ITU-R BT.601 (525) color space
 instance Elevator e => ColorSpace BT601_525 D65 e where
-  toBaseColorSpace = id
-  {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = id
-  {-# INLINE fromBaseColorSpace #-}
+  type BaseModel BT601_525 = CM.RGB
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb
@@ -133,10 +134,11 @@ instance Elevator e => ColorModel BT601_625 e where
 
 -- | ITU-R BT.601 (625) color space
 instance Elevator e => ColorSpace BT601_625 D65 e where
-  toBaseColorSpace = id
-  {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = id
-  {-# INLINE fromBaseColorSpace #-}
+  type BaseModel BT601_625 = CM.RGB
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

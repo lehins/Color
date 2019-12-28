@@ -85,11 +85,12 @@ instance (Illuminant i, Elevator e) => ColorModel (LAB i) e where
   {-# INLINE fromComponents #-}
 
 instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (LAB (i :: k)) i e where
-  type BaseColorSpace (LAB i) = LAB i
-  toBaseColorSpace = id
-  {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = id
-  {-# INLINE fromBaseColorSpace #-}
+  type BaseModel (LAB i) = LAB i
+  type BaseSpace (LAB i) = LAB i
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
   toColorY (ColorLAB l' _ _) = ColorY (ift (scaleLightness l'))
   {-# INLINE toColorY #-}
   toColorXYZ = lab2xyz

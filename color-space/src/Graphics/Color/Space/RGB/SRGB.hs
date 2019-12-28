@@ -113,10 +113,11 @@ instance Elevator e => ColorModel SRGB e where
 
 -- | s`RGB` color space
 instance Elevator e => ColorSpace SRGB D65 e where
-  toBaseColorSpace = id
-  {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = id
-  {-# INLINE fromBaseColorSpace #-}
+  type BaseModel SRGB = CM.RGB
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
   toColorY = rgbLuminocity . fmap toRealFloat
   {-# INLINE toColorY #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat

@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
-module Graphics.Color.Model.RALSpec (spec) where
+module Graphics.Color.Standard.RALSpec (spec) where
 
 import Graphics.Color.Model.Common
 import Graphics.Color.Standard.RAL

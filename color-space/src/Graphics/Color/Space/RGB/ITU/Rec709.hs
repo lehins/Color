@@ -67,10 +67,11 @@ instance Elevator e => ColorModel BT709 e where
 
 -- | ITU-R BT.709 color space
 instance Elevator e => ColorSpace BT709 D65 e where
-  toBaseColorSpace = id
-  {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = id
-  {-# INLINE fromBaseColorSpace #-}
+  type BaseModel BT709 = CM.RGB
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

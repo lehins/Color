@@ -77,6 +77,7 @@ class ( Functor (Color cs)
   showsColorModelName :: Proxy (Color cs e) -> ShowS
   showsColorModelName _ = showsType (Proxy :: Proxy cs)
 
+
 instance ColorModel cs e => Default (Color cs e) where
   def = pure 0
   {-# INLINE def #-}

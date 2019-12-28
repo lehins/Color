@@ -82,8 +82,9 @@ instance ColorModel cs e => ColorModel (CMYK cs) e where
 
 -- | `CMYK` representation for some (@`RedGreenBlue` cs i@) color space
 instance (Typeable cs, ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (CMYK cs) i e where
-  type BaseColorSpace (CMYK cs) = cs
-  toBaseColorSpace = mkColorRGB . fmap fromDouble . CM.cmyk2rgb . fmap toDouble . coerce
-  {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = coerce . fmap fromDouble . CM.rgb2cmyk . fmap toDouble . unColorRGB
-  {-# INLINE fromBaseColorSpace #-}
+  type BaseModel (CMYK cs) = CM.CMYK
+  type BaseSpace (CMYK cs) = cs
+  toBaseSpace = mkColorRGB . fmap fromDouble . CM.cmyk2rgb . fmap toDouble . coerce
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = coerce . fmap fromDouble . CM.rgb2cmyk . fmap toDouble . unColorRGB
+  {-# INLINE fromBaseSpace #-}

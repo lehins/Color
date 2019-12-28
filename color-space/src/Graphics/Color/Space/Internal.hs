@@ -65,42 +65,66 @@ import Data.Coerce
 import GHC.TypeNats
 import Data.Kind
 
-class (Illuminant i, ColorModel cs e) => ColorSpace cs (i :: k) e | cs -> i where
+class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
+  ColorSpace cs (i :: k) e | cs -> i where
 
-  type BaseColorSpace cs :: Type
-  type BaseColorSpace cs = cs
+  type BaseModel cs :: Type
 
-  toBaseColorSpace :: Color cs e -> Color (BaseColorSpace cs) e
-  fromBaseColorSpace :: Color (BaseColorSpace cs) e -> Color cs e
+  type BaseSpace cs :: Type
+  type BaseSpace cs = cs
+
+  -- | Drop color space down to the base color model
+  toBaseModel :: Color cs e -> Color (BaseModel cs) e
+  default toBaseModel ::
+    Coercible (Color cs e) (Color (BaseModel cs) e) => Color cs e -> Color (BaseModel cs) e
+  toBaseModel = coerce
+
+  -- | Promote color model to a color space
+  fromBaseModel :: Color (BaseModel cs) e -> Color cs e
+  default fromBaseModel ::
+    Coercible (Color (BaseModel cs) e) (Color cs e) => Color (BaseModel cs) e -> Color cs e
+  fromBaseModel = coerce
+
+  toBaseSpace :: Color cs e -> Color (BaseSpace cs) e
+  fromBaseSpace :: Color (BaseSpace cs) e -> Color cs e
 
   -- | Get pixel luminocity
   --
   -- @since 0.1.0
   toColorY :: (Elevator a, RealFloat a) => Color cs e -> Color (Y i) a
   default toColorY ::
-    (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Color cs e -> Color (Y i) a
-  toColorY = toColorY . toBaseColorSpace
+    (ColorSpace (BaseSpace cs) i e, Elevator a, RealFloat a) => Color cs e -> Color (Y i) a
+  toColorY = toColorY . toBaseSpace
   {-# INLINE toColorY #-}
 
   toColorXYZ :: (Elevator a, RealFloat a) => Color cs e -> Color (XYZ i) a
   default toColorXYZ ::
-    (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Color cs e -> Color (XYZ i) a
-  toColorXYZ = toColorXYZ . toBaseColorSpace
+    (ColorSpace (BaseSpace cs) i e, Elevator a, RealFloat a) => Color cs e -> Color (XYZ i) a
+  toColorXYZ = toColorXYZ . toBaseSpace
   {-# INLINE toColorXYZ #-}
 
   fromColorXYZ :: (Elevator a, RealFloat a) => Color (XYZ i) a -> Color cs e
   default fromColorXYZ ::
-    (ColorSpace (BaseColorSpace cs) i e, Elevator a, RealFloat a) => Color (XYZ i) a -> Color cs e
-  fromColorXYZ = fromBaseColorSpace . fromColorXYZ
+    (ColorSpace (BaseSpace cs) i e, Elevator a, RealFloat a) => Color (XYZ i) a -> Color cs e
+  fromColorXYZ = fromBaseSpace . fromColorXYZ
   {-# INLINE fromColorXYZ #-}
 
 
-instance (ColorSpace cs i e, Opaque (Alpha cs) ~ cs) => ColorSpace (Alpha cs) i e where
-  type BaseColorSpace (Alpha cs) = cs
-  toBaseColorSpace = dropAlpha
-  {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace c = Alpha c maxValue
-  {-# INLINE fromBaseColorSpace #-}
+instance ( ColorSpace cs i e
+         , Opaque (Alpha cs) ~ cs
+         , Opaque (Alpha (BaseModel cs)) ~ BaseModel cs) =>
+         ColorSpace (Alpha cs) i e where
+  type BaseModel (Alpha cs) = Alpha (BaseModel cs)
+  type BaseSpace (Alpha cs) = cs
+
+  toBaseModel = modifyOpaque toBaseModel
+  {-# INLINE toBaseModel #-}
+  fromBaseModel = modifyOpaque fromBaseModel
+  {-# INLINE fromBaseModel #-}
+  toBaseSpace = dropAlpha
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace c = Alpha c maxValue
+  {-# INLINE fromBaseSpace #-}
 
 -- | This is a data type that encodes a data point on the chromaticity diagram
 newtype Chromaticity i e =
@@ -282,8 +306,11 @@ instance (Illuminant i, Elevator e) => ColorModel (XYZ (i :: k)) e where
 
 -- | CIE1931 `XYZ` color space
 instance (Illuminant i, Elevator e) => ColorSpace (XYZ i) i e where
-  toBaseColorSpace = id
-  fromBaseColorSpace = id
+  type BaseModel (XYZ i) = XYZ i
+  toBaseModel = id
+  fromBaseModel = id
+  toBaseSpace = id
+  fromBaseSpace = id
   toColorY (ColorXYZ _ y _) = ColorY (toRealFloat y)
   {-# INLINE toColorY #-}
   toColorXYZ (ColorXYZ x y z) = ColorXYZ (toRealFloat x) (toRealFloat y) (toRealFloat z)
@@ -385,8 +412,11 @@ instance (Illuminant i, Elevator e) => ColorModel (CIExyY (i :: k)) e where
 
 -- | CIE xyY color space
 instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
-  toBaseColorSpace = id
-  fromBaseColorSpace = id
+  type BaseModel (CIExyY i) = CIExyY i
+  toBaseModel = id
+  fromBaseModel = id
+  toBaseSpace = id
+  fromBaseSpace = id
   toColorY _ = ColorY 1
   {-# INLINE toColorY #-}
   toColorXYZ xy = ColorXYZ (x / y) 1 ((1 - x - y) / y)
@@ -451,8 +481,9 @@ instance (Illuminant i, Elevator e) => ColorModel (Y i) e where
 
 -- | CIE1931 `XYZ` color space
 instance (Illuminant i, Elevator e) => ColorSpace (Y i) i e where
-  toBaseColorSpace = id
-  fromBaseColorSpace = id
+  type BaseModel (Y i) = CM.Y
+  toBaseSpace = id
+  fromBaseSpace = id
   toColorY = fmap toRealFloat
   {-# INLINE toColorY #-}
   toColorXYZ (ColorY y) = ColorXYZ 0 (toRealFloat y) 0

@@ -129,7 +129,7 @@ test-suite tests
                     , Graphics.Color.Space.RGB.Derived.SRGBSpec
                     , Graphics.Color.Space.RGB.ITU.Rec709Spec
                     , Graphics.Color.Space.YUV.YCbCrSpec
-                    , Graphics.Color.Standard.RALSPec
+                    , Graphics.Color.Standard.RALSpec
                     , Spec
   build-depends:      HUnit
                     , QuickCheck

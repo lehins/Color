@@ -85,27 +85,29 @@ instance ColorModel cs e => ColorModel (YCbCr cs) e where
 
 -- | `YCbCr` representation for `SRGB` color space
 instance Elevator e => ColorSpace (YCbCr SRGB) D65 e where
-  type BaseColorSpace (YCbCr SRGB) = SRGB
-  toBaseColorSpace = fmap fromRealFloat . ycbcr2rgb . fmap toFloat
-  {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = fmap fromRealFloat . rgb2ycbcr . fmap toFloat
-  {-# INLINE fromBaseColorSpace #-}
-  toColorXYZ = toColorXYZ . toBaseColorSpace
+  type BaseModel (YCbCr SRGB) = CM.YCbCr
+  type BaseSpace (YCbCr SRGB) = SRGB
+  toBaseSpace = fmap fromRealFloat . ycbcr2rgb . fmap toFloat
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = fmap fromRealFloat . rgb2ycbcr . fmap toFloat
+  {-# INLINE fromBaseSpace #-}
+  toColorXYZ = toColorXYZ . toBaseSpace
   {-# INLINE toColorXYZ #-}
-  fromColorXYZ = fromBaseColorSpace . fromColorXYZ
+  fromColorXYZ = fromBaseSpace . fromColorXYZ
   {-# INLINE fromColorXYZ #-}
 
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
 instance (Luma (cs i), ColorSpace (cs i) i e, RedGreenBlue (cs i) i) =>
          ColorSpace (YCbCr (cs i)) i e where
-  type BaseColorSpace (YCbCr (cs i)) = cs i
-  toBaseColorSpace = fmap fromDouble . fromColorYCbCr
-  {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = fmap fromDouble . toColorYCbCr
-  {-# INLINE fromBaseColorSpace #-}
-  toColorXYZ = toColorXYZ . toBaseColorSpace
+  type BaseModel (YCbCr (cs i)) = CM.YCbCr
+  type BaseSpace (YCbCr (cs i)) = cs i
+  toBaseSpace = fmap fromDouble . fromColorYCbCr
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = fmap fromDouble . toColorYCbCr
+  {-# INLINE fromBaseSpace #-}
+  toColorXYZ = toColorXYZ . toBaseSpace
   {-# INLINE toColorXYZ #-}
-  fromColorXYZ = fromBaseColorSpace . fromColorXYZ
+  fromColorXYZ = fromBaseSpace . fromColorXYZ
   {-# INLINE fromColorXYZ #-}
 
 

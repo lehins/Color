@@ -70,10 +70,11 @@ instance Elevator e => ColorModel AdobeRGB e where
 
 -- | Adobe`RGB` color space
 instance Elevator e => ColorSpace AdobeRGB D65 e where
-  toBaseColorSpace = id
-  {-# INLINE toBaseColorSpace #-}
-  fromBaseColorSpace = id
-  {-# INLINE fromBaseColorSpace #-}
+  type BaseModel AdobeRGB = CM.RGB
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
   toColorY = rgbLuminocity . fmap toRealFloat
   {-# INLINE toColorY #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
