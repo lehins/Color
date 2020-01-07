@@ -14,7 +14,7 @@ instance (Elevator e, Random e) => Arbitrary (Color HSL e) where
 spec :: Spec
 spec =
   describe "HSL" $ do
-    colorModelSpec @HSL @Word
+    colorModelSpec @HSL @Word "HSL"
     prop "rgb2hsl . hsl2rgb" $ \(rgb :: Color RGB Double) ->
       rgb `epsilonEqColor` hsl2rgb (rgb2hsl rgb)
     prop "hsl2rgb . rgb2hsl" $ \(hsl :: Color HSL Double) ->

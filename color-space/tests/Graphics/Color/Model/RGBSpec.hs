@@ -12,7 +12,7 @@ instance (Elevator e, Random e) => Arbitrary (Color RGB e) where
 spec :: Spec
 spec =
   describe "RGB" $
-    colorModelSpec @RGB @Word
+    colorModelSpec @RGB @Word "RGB"
 
 
 rgbs :: [Color RGB Double]

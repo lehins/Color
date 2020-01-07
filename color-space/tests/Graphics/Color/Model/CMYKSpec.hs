@@ -16,6 +16,6 @@ instance (Elevator e, Random e) => Arbitrary (Color CMYK e) where
 spec :: Spec
 spec =
   describe "CMYK" $ do
-    colorModelSpec @CMYK @Word
+    colorModelSpec @CMYK @Word "CMYK"
     prop "rgb2cmyk . cmyk2rgb" $ \(rgb :: Color RGB Double) ->
       rgb `epsilonEqColor` cmyk2rgb (rgb2cmyk rgb)

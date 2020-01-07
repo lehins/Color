@@ -13,7 +13,7 @@ instance (Elevator e, Random e) => Arbitrary (Color HSI e) where
 spec :: Spec
 spec =
   describe "HSI" $ do
-    colorModelSpec @HSI @Word
+    colorModelSpec @HSI @Word "HSI"
     prop "rgb2hsi . hsi2rgb" $ \(rgb :: Color RGB Double) ->
       rgb `epsilonEqColor` hsi2rgb (rgb2hsi rgb)
     prop "hsi2rgb . rgb2hsi" $ \(hsi :: Color HSI Double) ->

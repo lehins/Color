@@ -22,6 +22,7 @@ module Graphics.Color.Model.Common
   ) where
 
 import Control.Applicative
+import Data.Proxy
 import Data.Foldable as F
 import Graphics.Color.Model
 import System.Random
@@ -100,7 +101,8 @@ toFromComponentsSpec :: forall cs e . (ColorModel cs e, Arbitrary (Color cs e)) 
 toFromComponentsSpec = prop "fromComponents . toComponents" $ prop_ToFromComponents @cs @e
 
 
-colorModelSpec :: forall cs e . (ColorModel cs e, Arbitrary (Color cs e)) => Spec
-colorModelSpec =
-  describe "ColorModel" $
+colorModelSpec :: forall cs e . (ColorModel cs e, Arbitrary (Color cs e)) => String -> Spec
+colorModelSpec name =
+  describe "ColorModel" $ do
     toFromComponentsSpec @cs @e
+    it "name" $ showsColorModelName (Proxy :: Proxy (Color cs e)) "" `shouldStartWith` name
