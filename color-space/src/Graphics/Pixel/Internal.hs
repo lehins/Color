@@ -1,6 +1,8 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
@@ -24,8 +26,13 @@ module Graphics.Pixel.Internal
   ) where
 
 import Data.Coerce
+import Control.DeepSeq (NFData)
 import Graphics.Color.Model.Internal
+import Control.Monad (liftM)
 import Foreign.Storable
+import qualified Data.Vector.Generic as V
+import qualified Data.Vector.Generic.Mutable as VM
+import qualified Data.Vector.Unboxed as VU
 
 -- | Digital imaging is one of the most common places for a color to be used in. The
 -- smallest element in any image is a pixel, which is defined by its color.
@@ -38,6 +45,8 @@ newtype Pixel cs e = Pixel
 deriving instance Eq (Color cs e) => Eq (Pixel cs e)
 deriving instance Ord (Color cs e) => Ord (Pixel cs e)
 deriving instance Num (Color cs e) => Num (Pixel cs e)
+deriving instance Bounded (Color cs e) => Bounded (Pixel cs e)
+deriving instance NFData (Color cs e) => NFData (Pixel cs e)
 deriving instance Floating (Color cs e) => Floating (Pixel cs e)
 deriving instance Fractional (Color cs e) => Fractional (Pixel cs e)
 deriving instance Functor (Color cs) => Functor (Pixel cs)
@@ -48,6 +57,60 @@ deriving instance Storable (Color cs e) => Storable (Pixel cs e)
 instance Show (Color cs e) => Show (Pixel cs e) where
   show = show . pixelColor
 
+-- | Unboxing of a `Pixel`.
+instance ColorModel cs e => VU.Unbox (Pixel cs e)
+
+newtype instance VU.MVector s (Pixel cs e) = MV_Pixel (VU.MVector s (Components cs e))
+
+instance ColorModel cs e => VM.MVector VU.MVector (Pixel cs e) where
+  basicLength (MV_Pixel mvec) = VM.basicLength mvec
+  {-# INLINE basicLength #-}
+  basicUnsafeSlice idx len (MV_Pixel mvec) = MV_Pixel (VM.basicUnsafeSlice idx len mvec)
+  {-# INLINE basicUnsafeSlice #-}
+  basicOverlaps (MV_Pixel mvec) (MV_Pixel mvec') = VM.basicOverlaps mvec mvec'
+  {-# INLINE basicOverlaps #-}
+  basicUnsafeNew len = MV_Pixel `liftM` VM.basicUnsafeNew len
+  {-# INLINE basicUnsafeNew #-}
+  basicUnsafeReplicate len val =
+    MV_Pixel `liftM` VM.basicUnsafeReplicate len (toComponents (coerce val))
+  {-# INLINE basicUnsafeReplicate #-}
+  basicUnsafeRead (MV_Pixel mvec) idx = (coerce . fromComponents) `liftM` VM.basicUnsafeRead mvec idx
+  {-# INLINE basicUnsafeRead #-}
+  basicUnsafeWrite (MV_Pixel mvec) idx val = VM.basicUnsafeWrite mvec idx (toComponents (coerce val))
+  {-# INLINE basicUnsafeWrite #-}
+  basicClear (MV_Pixel mvec) = VM.basicClear mvec
+  {-# INLINE basicClear #-}
+  basicSet (MV_Pixel mvec) val = VM.basicSet mvec (toComponents (coerce val))
+  {-# INLINE basicSet #-}
+  basicUnsafeCopy (MV_Pixel mvec) (MV_Pixel mvec') = VM.basicUnsafeCopy mvec mvec'
+  {-# INLINE basicUnsafeCopy #-}
+  basicUnsafeMove (MV_Pixel mvec) (MV_Pixel mvec') = VM.basicUnsafeMove mvec mvec'
+  {-# INLINE basicUnsafeMove #-}
+  basicUnsafeGrow (MV_Pixel mvec) len = MV_Pixel `liftM` VM.basicUnsafeGrow mvec len
+  {-# INLINE basicUnsafeGrow #-}
+#if MIN_VERSION_vector(0,11,0)
+  basicInitialize (MV_Pixel mvec) = VM.basicInitialize mvec
+  {-# INLINE basicInitialize #-}
+#endif
+
+
+newtype instance VU.Vector (Pixel cs e) = V_Pixel (VU.Vector (Components cs e))
+
+instance (ColorModel cs e) => V.Vector VU.Vector (Pixel cs e) where
+  basicUnsafeFreeze (MV_Pixel mvec) = V_Pixel `liftM` V.basicUnsafeFreeze mvec
+  {-# INLINE basicUnsafeFreeze #-}
+  basicUnsafeThaw (V_Pixel vec) = MV_Pixel `liftM` V.basicUnsafeThaw vec
+  {-# INLINE basicUnsafeThaw #-}
+  basicLength (V_Pixel vec) = V.basicLength vec
+  {-# INLINE basicLength #-}
+  basicUnsafeSlice idx len (V_Pixel vec) = V_Pixel (V.basicUnsafeSlice idx len vec)
+  {-# INLINE basicUnsafeSlice #-}
+  basicUnsafeIndexM (V_Pixel vec) idx = (coerce . fromComponents) `liftM` V.basicUnsafeIndexM vec idx
+  {-# INLINE basicUnsafeIndexM #-}
+  basicUnsafeCopy (MV_Pixel mvec) (V_Pixel vec) = V.basicUnsafeCopy mvec vec
+  {-# INLINE basicUnsafeCopy #-}
+  elemseq (V_Pixel vec) val = V.elemseq vec (toComponents (coerce val))
+  {-# INLINE elemseq #-}
 
 -- | Apply a function to `Pixel`'s `Color`
 --

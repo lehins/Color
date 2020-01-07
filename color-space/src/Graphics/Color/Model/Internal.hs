@@ -30,6 +30,8 @@ module Graphics.Color.Model.Internal
   , poke3
   , peek4
   , poke4
+  , VU.MVector(MV_Color)
+  , VU.Vector(V_Color)
   ) where
 
 import Control.Applicative
