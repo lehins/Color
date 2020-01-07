@@ -26,11 +26,9 @@ module Graphics.Color.Model.YCbCr
   , Color(YCbCr)
   , rgb2ycbcr
   , ycbcr2rgb
-  , module Graphics.Color.Model
   ) where
 
 import Foreign.Storable
-import Graphics.Color.Model
 import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB

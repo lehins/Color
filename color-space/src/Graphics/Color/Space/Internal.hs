@@ -65,7 +65,7 @@ import Data.Coerce
 import GHC.TypeNats
 import Data.Kind
 
-class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
+class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e, Typeable (Opaque cs)) =>
   ColorSpace cs (i :: k) e | cs -> i where
 
   type BaseModel cs :: Type
@@ -85,8 +85,8 @@ class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
     Coercible (Color (BaseModel cs) e) (Color cs e) => Color (BaseModel cs) e -> Color cs e
   fromBaseModel = coerce
 
-  toBaseSpace :: Color cs e -> Color (BaseSpace cs) e
-  fromBaseSpace :: Color (BaseSpace cs) e -> Color cs e
+  toBaseSpace :: ColorSpace (BaseSpace cs) i e => Color cs e -> Color (BaseSpace cs) e
+  fromBaseSpace :: ColorSpace (BaseSpace cs) i e => Color (BaseSpace cs) e -> Color cs e
 
   -- | Get pixel luminocity
   --
@@ -442,7 +442,7 @@ newtype instance Color (Y i) e = Y (CM.Color CM.Y e)
 
 -- | Constructor for @Y@ with alpha channel.
 pattern ColorY :: e-> Color (Y i) e
-pattern ColorY y = Y (CM.ColorY y)
+pattern ColorY y = Y (CM.Y y)
 {-# COMPLETE ColorY #-}
 
 -- | Constructor for @Y@ with alpha channel.

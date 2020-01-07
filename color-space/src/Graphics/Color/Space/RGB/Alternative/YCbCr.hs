@@ -32,7 +32,6 @@ import Data.Proxy
 import Foreign.Storable
 import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
-import Graphics.Color.Model.Y
 import qualified Graphics.Color.Model.YCbCr as CM
 import Graphics.Color.Space
 import Graphics.Color.Space.RGB.SRGB

@@ -1,5 +1,6 @@
-{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 module Graphics.Color.Space.Common
@@ -32,7 +33,7 @@ prop_toFromLenientColorXYZ epsilon px =
 
 
 prop_toFromColorSpace ::
-     forall cs i e. (ColorSpace cs i e, RealFloat e)
+     forall cs i e. (ColorSpace cs i e, ColorSpace (BaseSpace cs) i e, RealFloat e)
   => Color cs e
   -> Property
 prop_toFromColorSpace px = px `epsilonEqColor` fromBaseSpace (toBaseSpace px)

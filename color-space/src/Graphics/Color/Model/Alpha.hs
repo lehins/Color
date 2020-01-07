@@ -91,6 +91,7 @@ instance (ColorModel cs e, Opaque (Alpha cs) ~ cs) => Show (Color (Alpha cs) e) 
 type family Opaque cs where
   Opaque (Alpha (Alpha cs)) = TypeError ('Text "Nested alpha channels are not allowed")
   Opaque (Alpha cs) = cs
+  Opaque cs = cs
 
 instance (ColorModel cs e, Opaque (Alpha cs) ~ cs) => ColorModel (Alpha cs) e where
   type Components (Alpha cs) e = (Components cs e, e)

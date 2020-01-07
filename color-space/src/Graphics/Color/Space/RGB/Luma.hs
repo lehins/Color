@@ -38,7 +38,7 @@ import Graphics.Color.Space.RGB.Internal
 --- Luma ----
 -------------
 
--- | Luma.
+-- | [Luma](https://en.wikipedia.org/wiki/Luma_(video\)) of a gamma corrected RGB color space.
 data Y'
 
 -- | Constructor for Luma.

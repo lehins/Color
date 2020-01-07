@@ -15,4 +15,5 @@ module Graphics.Color.Space.RGB.Alternative
 import Graphics.Color.Space.RGB.Alternative.HSI as X
 import Graphics.Color.Space.RGB.Alternative.HSL as X
 import Graphics.Color.Space.RGB.Alternative.HSV as X
+import Graphics.Color.Space.RGB.Alternative.CMYK as X
 import Graphics.Color.Space.RGB.Alternative.YCbCr as X

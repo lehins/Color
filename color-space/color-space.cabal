@@ -42,16 +42,6 @@ library
                      , Graphics.Color.Illuminant.ITU.Rec470
                      , Graphics.Color.Illuminant.ITU.Rec601
                      , Graphics.Color.Model
-                     , Graphics.Color.Model.CMYK
-                     , Graphics.Color.Model.Internal
-                     , Graphics.Color.Model.Alpha
-                     , Graphics.Color.Model.RGB
-                     , Graphics.Color.Model.HSI
-                     , Graphics.Color.Model.HSL
-                     , Graphics.Color.Model.HSV
-                     , Graphics.Color.Model.Y
-                     , Graphics.Color.Model.YCbCr
-                     , Graphics.Color.Pixel
                      , Graphics.Color.Space
                      -- , Graphics.Color.Space.CIE1931
                      -- , Graphics.Color.Space.CIE1931.RGB
@@ -96,11 +86,23 @@ library
                      -- , Graphics.Color.Space.Y
                      -- , Graphics.Color.Space.YCbCr
                      -- , Graphics.Color.Space.RGB
+                     , Graphics.Pixel
+                     , Graphics.Pixel.ColorSpace
 
   other-modules:       Graphics.Color.Adaptation.Internal
                      , Graphics.Color.Algebra.Elevator
+                     , Graphics.Color.Model.CMYK
+                     , Graphics.Color.Model.Internal
+                     , Graphics.Color.Model.Alpha
+                     , Graphics.Color.Model.RGB
+                     , Graphics.Color.Model.HSI
+                     , Graphics.Color.Model.HSL
+                     , Graphics.Color.Model.HSV
+                     , Graphics.Color.Model.Y
+                     , Graphics.Color.Model.YCbCr
                      , Graphics.Color.Space.Internal
                      , Graphics.Color.Space.RGB.Internal
+                     , Graphics.Pixel.Internal
   build-depends:       base            >= 4.11 && < 5
                      , deepseq
                      , data-default-class

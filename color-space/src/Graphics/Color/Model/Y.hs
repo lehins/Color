@@ -20,7 +20,7 @@ module Graphics.Color.Model.Y
   -- * Constructors for Y color model.
   , pattern ColorY
   , pattern ColorYA
-  , Color
+  , Color(Y)
   , Weights(..)
   , rgb2y
   ) where
@@ -39,11 +39,16 @@ import Graphics.Color.Model.RGB
 data Y
 
 -- | Luminance `Y`
-newtype instance Color Y e = ColorY e
+newtype instance Color Y e = Y e
+
+-- | Constructor for @Y@
+pattern ColorY :: e -> Color Y e
+pattern ColorY y = Y y
+{-# COMPLETE ColorY #-}
 
 -- | Constructor for @Y@ with alpha channel.
 pattern ColorYA :: e -> e -> Color (Alpha Y) e
-pattern ColorYA y a = Alpha (ColorY y) a
+pattern ColorYA y a = Alpha (Y y) a
 {-# COMPLETE ColorYA #-}
 
 -- | `Y` color model
@@ -61,31 +66,31 @@ instance Elevator e => Show (Color Y e) where
 -- | `Y` color model
 instance Elevator e => ColorModel Y e where
   type Components Y e = e
-  toComponents (ColorY y) = y
+  toComponents (Y y) = y
   {-# INLINE toComponents #-}
-  fromComponents = ColorY
+  fromComponents = Y
   {-# INLINE fromComponents #-}
 
 -- | `Y` color model
 instance Functor (Color Y) where
-  fmap f (ColorY y) = ColorY (f y)
+  fmap f (Y y) = Y (f y)
   {-# INLINE fmap #-}
 
 -- | `Y` color model
 instance Applicative (Color Y) where
-  pure = ColorY
+  pure = Y
   {-# INLINE pure #-}
-  (ColorY fy) <*> (ColorY y) = ColorY (fy y)
+  (Y fy) <*> (Y y) = Y (fy y)
   {-# INLINE (<*>) #-}
 
 -- | `Y` color model
 instance Foldable (Color Y) where
-  foldr f !z (ColorY y) = f y z
+  foldr f !z (Y y) = f y z
   {-# INLINE foldr #-}
 
 -- | `Y` color model
 instance Traversable (Color Y) where
-  traverse f (ColorY y) = ColorY <$> f y
+  traverse f (Y y) = Y <$> f y
   {-# INLINE traverse #-}
 
 
@@ -95,7 +100,7 @@ rgb2y ::
   -> Weights e
   -> Color Y e
 rgb2y rgb weights =
-  ColorY (coerce (fmap toRealFloat rgb :: Color RGB e) `dotProduct` coerce weights)
+  Y (coerce (fmap toRealFloat rgb :: Color RGB e) `dotProduct` coerce weights)
 {-# INLINE rgb2y #-}
 
 
