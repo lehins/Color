@@ -3,9 +3,8 @@
 {-# LANGUAGE TypeApplications #-}
 module Graphics.Color.Model.HSISpec (spec) where
 
+import Graphics.Color.Model
 import Graphics.Color.Model.Common
-import Graphics.Color.Model.HSI
-import Graphics.Color.Model.RGB
 import Graphics.Color.Model.RGBSpec (rgbs)
 
 instance (Elevator e, Random e) => Arbitrary (Color HSI e) where

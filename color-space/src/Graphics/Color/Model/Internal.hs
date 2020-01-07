@@ -20,8 +20,6 @@ module Graphics.Color.Model.Internal
   , module Graphics.Color.Algebra
   , showsColorModel
   , showsColorModelOpen
-  , showsType
-  , asProxy
   , foldr3
   , foldr4
   , traverse3
@@ -215,13 +213,8 @@ showsColorModelOpen px = t . (":(" ++) . channels . (')' :)
         [] -> id
         (x:xs) -> foldl' (\facc y -> facc . (channelSeparator :) . toShowS y) (toShowS x) xs
 
-showsType :: Typeable t => proxy t -> ShowS
-showsType = showsTypeRep . typeRep
-
-asProxy :: p -> (Proxy p -> t) -> t
-asProxy _ f = f (Proxy :: Proxy a)
-
--- Foldable helpers
+-- TODO: consolidate those helpers inot algebra by means of: V2, V3, V4 and V5.
+-- Foldable helpers.
 
 foldr3 :: (e -> a -> a) -> a -> e -> e -> e -> a
 foldr3 f acc c0 c1 c2 = f c0 (f c1 (f c2 acc))

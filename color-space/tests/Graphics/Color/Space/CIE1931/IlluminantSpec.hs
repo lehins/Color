@@ -8,7 +8,6 @@ module Graphics.Color.Space.CIE1931.IlluminantSpec (spec) where
 import Data.Proxy
 import Graphics.Color.Space.Common
 import Graphics.Color.Illuminant.CIE1931 as CIE1931
-import Graphics.Color.Model.Internal (showsType)
 import qualified Data.Colour.CIE as Colour
 import qualified Data.Colour.CIE.Illuminant as Colour
 

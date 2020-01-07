@@ -2,7 +2,7 @@
 {-# LANGUAGE TypeApplications #-}
 module Graphics.Color.Model.RGBSpec (spec, rgbs) where
 
-import Graphics.Color.Model.RGB
+import Graphics.Color.Model
 import Graphics.Color.Model.Common
 
 instance (Elevator e, Random e) => Arbitrary (Color RGB e) where

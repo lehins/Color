@@ -4,16 +4,14 @@
 {-# LANGUAGE TypeApplications #-}
 module Graphics.Color.Model.CMYKSpec (spec) where
 
+import Graphics.Color.Model
 import Graphics.Color.Model.Common
-import Graphics.Color.Model.CMYK
-import Graphics.Color.Model.RGB
 import Graphics.Color.Model.RGBSpec ()
 
 instance (Elevator e, Random e) => Arbitrary (Color CMYK e) where
   arbitrary =
     ColorCMYK <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator <*>
     arbitraryElevator
-
 
 spec :: Spec
 spec =

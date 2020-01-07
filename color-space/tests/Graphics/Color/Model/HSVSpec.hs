@@ -3,9 +3,8 @@
 {-# LANGUAGE TypeApplications #-}
 module Graphics.Color.Model.HSVSpec (spec) where
 
+import Graphics.Color.Model
 import Graphics.Color.Model.Common
-import Graphics.Color.Model.HSV
-import Graphics.Color.Model.RGB
 import Graphics.Color.Model.RGBSpec (rgbs)
 
 instance (Elevator e, Random e) => Arbitrary (Color HSV e) where

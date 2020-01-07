@@ -48,8 +48,8 @@ module Graphics.Color.Space.Internal
   , pattern ColorXYZ
   , pattern ColorXYZA
   , CIExyY
-  , pattern Colorxy
-  , pattern ColorxyY
+  , pattern ColorCIExy
+  , pattern ColorCIExyY
   , module GHC.TypeNats
   , module Graphics.Color.Algebra
   , module Graphics.Color.Model.Internal
@@ -288,9 +288,18 @@ pattern ColorXYZA x y z a = Alpha (XYZ (V3 x y z)) a
 
 -- | CIE1931 `XYZ` color space
 deriving instance Eq e => Eq (Color (XYZ i) e)
-
 -- | CIE1931 `XYZ` color space
 deriving instance Ord e => Ord (Color (XYZ i) e)
+-- | CIE1931 `XYZ` color space
+deriving instance Functor (Color (XYZ i))
+-- | CIE1931 `XYZ` color space
+deriving instance Applicative (Color (XYZ i))
+-- | CIE1931 `XYZ` color space
+deriving instance Foldable (Color (XYZ i))
+-- | CIE1931 `XYZ` color space
+deriving instance Traversable (Color (XYZ i))
+-- | CIE1931 `XYZ` color space
+deriving instance Storable e => Storable (Color (XYZ i) e)
 
 -- | CIE1931 `XYZ` color space
 instance (Illuminant i, Elevator e) => Show (Color (XYZ (i :: k)) e) where
@@ -319,43 +328,9 @@ instance (Illuminant i, Elevator e) => ColorSpace (XYZ i) i e where
   {-# INLINE fromColorXYZ #-}
 
 {-# RULES
-"toColorXYZ   :: RealFloat a => Color XYZ a -> Color XYZ a"   toColorXYZ = id
-"fromColorXYZ :: RealFloat a => Color XYZ a -> Color XYZ a" fromColorXYZ = id
+"toColorXYZ   :: Color (XYZ i) a -> Color (XYZ i) a"   toColorXYZ = id
+"fromColorXYZ :: Color (XYZ i) a -> Color (XYZ i) a" fromColorXYZ = id
  #-}
-
--- | CIE1931 `XYZ` color space
-instance Functor (Color (XYZ i)) where
-  fmap f (ColorXYZ x y z) = ColorXYZ (f x) (f y) (f z)
-  {-# INLINE fmap #-}
-
--- | CIE1931 `XYZ` color space
-instance Applicative (Color (XYZ i)) where
-  pure e = ColorXYZ e e e
-  {-# INLINE pure #-}
-  (ColorXYZ fx fy fz) <*> (ColorXYZ x y z) = ColorXYZ (fx x) (fy y) (fz z)
-  {-# INLINE (<*>) #-}
-
--- | CIE1931 `XYZ` color space
-instance Foldable (Color (XYZ i)) where
-  foldr f acc (ColorXYZ x y z) = foldr3 f acc x y z
-  {-# INLINE foldr #-}
-
--- | CIE1931 `XYZ` color space
-instance Traversable (Color (XYZ i)) where
-  traverse f (ColorXYZ x y z) = traverse3 ColorXYZ f x y z
-  {-# INLINE traverse #-}
-
--- | CIE1931 `XYZ` color space
-instance Storable e => Storable (Color (XYZ i) e) where
-  sizeOf = sizeOfN 3
-  {-# INLINE sizeOf #-}
-  alignment = alignmentN 3
-  {-# INLINE alignment #-}
-  peek = peek3 ColorXYZ
-  {-# INLINE peek #-}
-  poke p (ColorXYZ x y z) = poke3 p x y z
-  {-# INLINE poke #-}
-
 
 
 ---------------
@@ -370,13 +345,14 @@ newtype instance Color (CIExyY i) e = CIExyY (V2 e)
 
 -- | Constructor @CIE xyY@ color space. It only requires @x@ and @y@, then @Y@ part will
 -- always be equal to 1.
-pattern Colorxy :: e -> e -> Color (CIExyY i) e
-pattern Colorxy x y = CIExyY (V2 x y)
-{-# COMPLETE Colorxy #-}
+pattern ColorCIExy :: e -> e -> Color (CIExyY i) e
+pattern ColorCIExy x y = CIExyY (V2 x y)
+{-# COMPLETE ColorCIExy #-}
 
 -- | Patttern match on the @CIE xyY@, 3rd argument @Y@ is always set to @1@
-pattern ColorxyY :: Num e => e -> e -> e -> Color (CIExyY i) e
-pattern ColorxyY x y y' <- (addY -> V3 x y y')
+pattern ColorCIExyY :: Num e => e -> e -> e -> Color (CIExyY i) e
+pattern ColorCIExyY x y y' <- (addY -> V3 x y y')
+{-# COMPLETE ColorCIExyY #-}
 
 addY :: Num e => Color (CIExyY i) e -> V3 e
 addY (CIExyY (V2 x y)) = V3 x y 1
@@ -420,9 +396,9 @@ instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
   toColorY _ = ColorY 1
   {-# INLINE toColorY #-}
   toColorXYZ xy = ColorXYZ (x / y) 1 ((1 - x - y) / y)
-    where Colorxy x y = toRealFloat <$> xy
+    where ColorCIExy x y = toRealFloat <$> xy
   {-# INLINE toColorXYZ #-}
-  fromColorXYZ xyz = fromRealFloat <$> Colorxy (x / s) (y / s)
+  fromColorXYZ xyz = fromRealFloat <$> ColorCIExy (x / s) (y / s)
     where
       ColorXYZ x y z = xyz
       !s = x + y + z

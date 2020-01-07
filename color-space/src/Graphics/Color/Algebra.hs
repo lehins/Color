@@ -26,8 +26,12 @@ module Graphics.Color.Algebra
   , multM3x3byV3d
   , transposeM3x3
   , module Graphics.Color.Algebra.Elevator
+  -- * Helpers
+  , showsType
+  , asProxy
   ) where
 
+import Data.Typeable
 import Foreign.Ptr
 import Control.Applicative
 import Foreign.Storable
@@ -131,17 +135,13 @@ instance Storable e => Storable (V2 e) where
   {-# INLINE sizeOf #-}
   alignment _ = alignment (undefined :: e)
   {-# INLINE alignment #-}
-  peek p = do
+  peek p =
     let q = castPtr p
-    v0 <- peek q
-    v1 <- peekElemOff q 1
-    return $! V2 v0 v1
-
+     in V2 <$> peek q <*> peekElemOff q 1
   {-# INLINE peek #-}
-  poke p (V2 v0 v1) = do
+  poke p (V2 v0 v1) =
     let q = castPtr p
-    poke q v0
-    pokeElemOff q 1 v1
+     in poke q v0 >> pokeElemOff q 1 v1
   {-# INLINE poke #-}
 
 
@@ -466,3 +466,11 @@ instance Floating a => Floating (M3x3 a) where
   {-# INLINE atanh #-}
   acosh   = mapM3x3 acosh
   {-# INLINE acosh #-}
+
+
+
+showsType :: Typeable t => proxy t -> ShowS
+showsType = showsTypeRep . typeRep
+
+asProxy :: p -> (Proxy p -> t) -> t
+asProxy _ f = f (Proxy :: Proxy a)

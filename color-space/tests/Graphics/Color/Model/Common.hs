@@ -4,8 +4,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 module Graphics.Color.Model.Common
-  ( module Graphics.Color.Model
-  , colorModelSpec
+  ( colorModelSpec
   , toFromComponentsSpec
   , izipWithM_
   , epsilonExpect
