@@ -17,7 +17,7 @@
 --
 module Graphics.Color.Standard.RAL
   ( RAL(..)
-  , Color(..)
+  , D50
   , greenBeige
   , beige
   , sandYellow
@@ -40,7 +40,7 @@ module Graphics.Color.Standard.RAL
   , trafficYellow
   , ochreYellow
   , luminousYellow
-  , curry'
+  , curryYellow
   , melonYellow
   , broomYellow
   , dahliaYellow
@@ -231,19 +231,23 @@ module Graphics.Color.Standard.RAL
   , papyrusWhite
   , pearlLightGrey
   , pearlDarkGrey
+  , StandardColor(..)
   ) where
 
+import Data.Typeable
 import Graphics.Color.Space
 import Graphics.Color.Space.CIE1976.LAB
 import Graphics.Color.Adaptation.VonKries
+import Graphics.Color.Space.RGB.SRGB
 
--- TODO: Find a home somewhere for this common illuminant
-data D50
+-- -- TODO: Find a home somewhere for this common illuminant
+-- data D50
 
-instance Illuminant D50 where
-  type Temperature D50 = 5003
-  whitePoint = WhitePoint 0.3457 0.3585
-                        -- 0.345704, y = 0.358540 -- << PhotoRGB
+-- -- | @[x=0.44758, y=0.40745]@ - CIE 1931 2° Observer - Used for definition of RAL
+-- instance Illuminant D50 where
+--   type Temperature D50 = 5003
+--   whitePoint = WhitePoint 0.3457 0.3585
+--                         -- 0.345704, y = 0.358540 -- << PhotoRGB
 
 class StandardColor std code where
 
@@ -252,6 +256,13 @@ class StandardColor std code where
 
 -- | Source: https://en.wikipedia.org/wiki/List_of_RAL_colors
 data RAL (n :: k) = RAL
+
+instance (Typeable n, Typeable k) => Show (RAL (n :: k)) where
+  showsPrec n c
+    | n == 0 = p . showsType c
+    | otherwise = ('(' :) . p . showsType c . (')' :)
+    where
+      p = ("RAL " ++)
 
 
 greenBeige
@@ -276,7 +287,7 @@ greenBeige
   , trafficYellow
   , ochreYellow
   , luminousYellow
-  , curry'
+  , curryYellow
   , melonYellow
   , broomYellow
   , dahliaYellow
@@ -494,7 +505,7 @@ rapeYellow = ral 77.828 10.664 94.6
 trafficYellow = ral 77.72 11.334 93.913
 ochreYellow = ral 62.261 8.491 41.488
 luminousYellow = ral 99.618 -17.229 116.966
-curry' = ral 55.557 6.493 58.255
+curryYellow = ral 55.557 6.493 58.255
 melonYellow = ral 73.671 31.654 95.458
 broomYellow = ral 71.135 12.766 74.772
 dahliaYellow = ral 71.74 27.78 71.677
@@ -709,7 +720,7 @@ instance StandardColor RAL 1021 where color _ = rapeYellow
 instance StandardColor RAL 1023 where color _ = trafficYellow
 instance StandardColor RAL 1024 where color _ = ochreYellow
 instance StandardColor RAL 1026 where color _ = luminousYellow
-instance StandardColor RAL 1027 where color _ = curry'
+instance StandardColor RAL 1027 where color _ = curryYellow
 instance StandardColor RAL 1028 where color _ = melonYellow
 instance StandardColor RAL 1032 where color _ = broomYellow
 instance StandardColor RAL 1033 where color _ = dahliaYellow
@@ -932,7 +943,7 @@ instance StandardColor RAL "Rape yellow" where color _ = color (RAL :: RAL 1021)
 instance StandardColor RAL "Traffic yellow" where color _ = color (RAL :: RAL 1023)
 instance StandardColor RAL "Ochre yellow" where color _ = color (RAL :: RAL 1024)
 instance StandardColor RAL "Luminous yellow" where color _ = color (RAL :: RAL 1026)
-instance StandardColor RAL "Curry" where color _ = color (RAL :: RAL 1027)
+instance StandardColor RAL "Curry yellow" where color _ = color (RAL :: RAL 1027)
 instance StandardColor RAL "Melon yellow" where color _ = color (RAL :: RAL 1028)
 instance StandardColor RAL "Broom yellow" where color _ = color (RAL :: RAL 1032)
 instance StandardColor RAL "Dahlia yellow" where color _ = color (RAL :: RAL 1033)
@@ -1013,7 +1024,7 @@ instance StandardColor RAL "Water blue" where color _ = color (RAL :: RAL 5021)
 instance StandardColor RAL "Night blue" where color _ = color (RAL :: RAL 5022)
 instance StandardColor RAL "Distant blue" where color _ = color (RAL :: RAL 5023)
 instance StandardColor RAL "Pastel blue" where color _ = color (RAL :: RAL 5024)
-instance StandardColor RAL "Pearl Gentian blue" where color _ = color (RAL :: RAL 5025)
+instance StandardColor RAL "Pearl gentian blue" where color _ = color (RAL :: RAL 5025)
 instance StandardColor RAL "Pearl night blue" where color _ = color (RAL :: RAL 5026)
 instance StandardColor RAL "Patina green" where color _ = color (RAL :: RAL 6000)
 instance StandardColor RAL "Emerald green" where color _ = color (RAL :: RAL 6001)
@@ -1037,7 +1048,8 @@ instance StandardColor RAL "Yellow green" where color _ = color (RAL :: RAL 6018
 instance StandardColor RAL "Pastel green" where color _ = color (RAL :: RAL 6019)
 instance StandardColor RAL "Chrome green" where color _ = color (RAL :: RAL 6020)
 instance StandardColor RAL "Pale green" where color _ = color (RAL :: RAL 6021)
-instance StandardColor RAL "Olive-drab/brown olive" where color _ = color (RAL :: RAL 6022)
+instance StandardColor RAL "Olive-drab" where color _ = color (RAL :: RAL 6022)
+instance StandardColor RAL "Brown olive" where color _ = color (RAL :: RAL 6022)
 instance StandardColor RAL "Traffic green" where color _ = color (RAL :: RAL 6024)
 instance StandardColor RAL "Fern green" where color _ = color (RAL :: RAL 6025)
 instance StandardColor RAL "Opal green" where color _ = color (RAL :: RAL 6026)
@@ -1064,6 +1076,7 @@ instance StandardColor RAL "Tarpaulin grey" where color _ = color (RAL :: RAL 70
 instance StandardColor RAL "Iron grey" where color _ = color (RAL :: RAL 7011)
 instance StandardColor RAL "Basalt grey" where color _ = color (RAL :: RAL 7012)
 instance StandardColor RAL "Brown grey" where color _ = color (RAL :: RAL 7013)
+instance StandardColor RAL "NATO olive" where color _ = color (RAL :: RAL 7013)
 instance StandardColor RAL "Slate grey" where color _ = color (RAL :: RAL 7015)
 instance StandardColor RAL "Anthracite grey" where color _ = color (RAL :: RAL 7016)
 instance StandardColor RAL "Black grey" where color _ = color (RAL :: RAL 7021)

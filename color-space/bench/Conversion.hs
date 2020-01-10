@@ -9,7 +9,7 @@ module Main where
 import Criterion.Main
 import Control.DeepSeq
 import System.Random as R
-import qualified Graphics.Color.Model.RGB as CM
+import qualified Graphics.Color.Model as CM
 import Graphics.Color.Model
 import Graphics.Color.Space
 import Graphics.Color.Space.RGB

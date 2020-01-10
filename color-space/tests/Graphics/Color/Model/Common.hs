@@ -7,6 +7,8 @@ module Graphics.Color.Model.Common
   ( colorModelSpec
   , toFromComponentsSpec
   , izipWithM_
+  , matchListsWith
+  , expectSameLength
   , epsilonExpect
   , epsilonColorExpect
   , epsilonColorIxSpec
@@ -34,6 +36,19 @@ import Control.Monad
 
 izipWithM_ :: Applicative m => (Int -> a -> b -> m c) -> [a] -> [b] -> m ()
 izipWithM_ f xs = zipWithM_ (uncurry f) (zip [0..] xs)
+
+
+-- | Match to lists exactly element-by-element with an expectation.
+matchListsWith :: (a -> b -> Expectation) -> [a] -> [b] -> Expectation
+matchListsWith f xs ys = do
+  expectSameLength xs ys
+  zipWithM_ f xs ys
+
+expectSameLength :: Foldable t => t a1 -> t a2 -> IO ()
+expectSameLength xs ys =
+  unless (length xs == length ys) $
+  expectationFailure $ "List lengths mismatch: " ++ show (length xs) ++ "/=" ++ show (length ys)
+
 
 arbitraryElevator :: (Elevator e, Random e) => Gen e
 arbitraryElevator = choose (minValue, maxValue)

@@ -149,6 +149,7 @@ test-suite tests
                       -Wredundant-constraints
                       -fno-warn-orphans
                       -threaded
+                      -freduction-depth=0
 
 test-suite doctests
   type:             exitcode-stdio-1.0
