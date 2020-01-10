@@ -7,6 +7,7 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeInType #-}
 -- |
 -- Module      : Graphics.Color.Standard.RAL
 -- Copyright   : (c) Alexey Kuleshevich 2019-2020
