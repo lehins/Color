@@ -1,8 +1,8 @@
 name:                color
 version:             0.0.0
 synopsis:            Collection of common color spaces and coversions between them
-description:         Please see the README on GitHub at <https://github.com/lehins/color-space#readme>
-homepage:            https://github.com/lehins/color-space
+description:         Please see the README on GitHub at <https://github.com/lehins/color#readme>
+homepage:            https://github.com/lehins/color
 license:             BSD3
 license-file:        LICENSE
 author:              Alexey Kuleshevich
@@ -170,4 +170,4 @@ benchmark conversion
 
 source-repository head
   type:     git
-  location: https://github.com/lehins/color-space
+  location: https://github.com/lehins/color
