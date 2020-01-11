@@ -22,9 +22,9 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.RGB.Internal
-  ( RedGreenBlue(..)
-  , pattern ColorRGB
+  ( pattern ColorRGB
   , pattern ColorRGBA
+  , RedGreenBlue(..)
   , Gamut(..)
   , rgb2xyz
   , xyz2rgb

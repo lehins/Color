@@ -1,6 +1,6 @@
 resolver: lts-14.4
 packages:
-- color
+- Color
 extra-deps:
 - cabal-doctest-1.0.8@sha256:471f182dabe23bac29d47ae55a33d11f85a0b0ab64d3b8f2907b437ab47d5ba7,1467
 - doctest-0.16.2@sha256:2f96e9bbe9aee11b47453c82c24b3dc76cdbb8a2a7c984dfd60b4906d08adf68,6942

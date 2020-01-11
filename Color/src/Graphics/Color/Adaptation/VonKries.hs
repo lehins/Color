@@ -18,8 +18,10 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Adaptation.VonKries
-  ( VonKries(..)
-  , convert
+  ( -- * Color conversion
+    convert
+    -- * Von Kries adaptation
+  , VonKries(..)
   , CAT(..)
   , ICAT(..)
   , ChromaticAdaptationTransform
@@ -37,8 +39,6 @@ import Data.Proxy
 import Graphics.Color.Adaptation.Internal
 import Graphics.Color.Algebra
 import Graphics.Color.Space.Internal
---import Graphics.Color.Illuminant.CIE1931
---import Graphics.Color.Space.RGB.SRGB
 import Data.Typeable
 
 data VonKries

@@ -1,8 +1,8 @@
-name:                color
-version:             0.0.0
-synopsis:            Collection of common color spaces and coversions between them
-description:         Please see the README on GitHub at <https://github.com/lehins/color#readme>
-homepage:            https://github.com/lehins/color
+name:                Color
+version:             0.1.1
+synopsis:            Color spaces and conversions between them
+description:         Please see the README on GitHub at <https://github.com/lehins/Color#readme>
+homepage:            https://github.com/lehins/Color
 license:             BSD3
 license-file:        LICENSE
 author:              Alexey Kuleshevich
@@ -120,7 +120,7 @@ test-suite tests
   build-depends:      HUnit
                     , QuickCheck
                     , base             >= 4.8 && < 5
-                    , color
+                    , Color
                     , colour
                     , hspec
                     , random
@@ -142,7 +142,7 @@ test-suite doctests
   build-depends: base
                , doctest >=0.15
                , QuickCheck
-               , color
+               , Color
                , template-haskell
   default-language:    Haskell2010
   ghc-options:        -Wall
@@ -162,7 +162,7 @@ benchmark conversion
                        -O2
   build-depends:       base
                      , criterion
-                     , color
+                     , Color
                      , colour
                      , deepseq
                      , random
@@ -170,4 +170,4 @@ benchmark conversion
 
 source-repository head
   type:     git
-  location: https://github.com/lehins/color
+  location: https://github.com/lehins/Color
