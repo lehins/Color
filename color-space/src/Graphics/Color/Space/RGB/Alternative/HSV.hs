@@ -98,3 +98,5 @@ instance (ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (HSV cs) i e where
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = coerce . fmap fromDouble . CM.rgb2hsv . fmap toDouble . unColorRGB
   {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}

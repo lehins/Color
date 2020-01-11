@@ -18,8 +18,10 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.RGB.ITU.Rec470
-  ( BT470_525
+  ( pattern BT470_525
+  , BT470_525
   , C
+  , pattern BT470_625
   , BT470_625
   , D65
   , primaries525
@@ -36,7 +38,7 @@ import Graphics.Color.Illuminant.ITU.Rec470
 -- ITU-R BT.470 (525) --------------
 ------------------------------------
 
--- | ITU-R BT.470 (525) color space. Used in NTSC
+-- | [ITU-R BT.470](https://www.itu.int/rec/R-REC-BT.470) (525) color space. Used in NTSC
 data BT470_525
 
 newtype instance Color BT470_525 e = BT470_525 (Color CM.RGB e)
@@ -75,6 +77,8 @@ instance Elevator e => ColorSpace BT470_525 C e where
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
   {-# INLINE fromBaseSpace #-}
+  luminance = rgbLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb
@@ -92,7 +96,7 @@ instance RedGreenBlue BT470_525 C where
 -- ITU-R BT.470 (625) --------------
 ------------------------------------
 
--- | ITU-R BT.470 (625) color space. Used in PAL/SECAM
+-- | [ITU-R BT.470](https://www.itu.int/rec/R-REC-BT.470) (625) color space. Used in PAL/SECAM
 data BT470_625
 
 newtype instance Color BT470_625 e = BT470_625 (Color CM.RGB e)
@@ -131,6 +135,8 @@ instance Elevator e => ColorSpace BT470_625 D65 e where
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
   {-# INLINE fromBaseSpace #-}
+  luminance = rgbLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

@@ -18,12 +18,11 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.CIE1976.LAB
-  ( LAB
-  -- * Constructors for an CIE L*a*b* color space.
-  , pattern LAB
+  ( -- * Constructors for an CIE L*a*b* color space.
+    pattern LAB
   , pattern ColorLAB
   , pattern ColorLABA
-  , Color
+  , LAB
   ) where
 
 import Foreign.Storable
@@ -35,7 +34,7 @@ import Graphics.Color.Space.Internal
 --- CIELAB ---
 --------------
 
--- | CIE L*a*b* color space
+-- | [CIE L*a*b*](https://en.wikipedia.org/wiki/CIELAB_color_space) color space
 data LAB (i :: k)
 
 -- | Color in CIE L*a*b* color space
@@ -91,8 +90,8 @@ instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (LAB (i :: k)) i 
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
   {-# INLINE fromBaseSpace #-}
-  toColorY (ColorLAB l' _ _) = ColorY (ift (scaleLightness l'))
-  {-# INLINE toColorY #-}
+  luminance (ColorLAB l' _ _) = Y (ift (scaleLightness l'))
+  {-# INLINE luminance #-}
   toColorXYZ = lab2xyz
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = xyz2lab

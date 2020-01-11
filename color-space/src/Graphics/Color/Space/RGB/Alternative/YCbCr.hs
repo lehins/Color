@@ -90,10 +90,8 @@ instance Elevator e => ColorSpace (YCbCr SRGB) D65 e where
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = fmap fromRealFloat . rgb2ycbcr . fmap toFloat
   {-# INLINE fromBaseSpace #-}
-  toColorXYZ = toColorXYZ . toBaseSpace
-  {-# INLINE toColorXYZ #-}
-  fromColorXYZ = fromBaseSpace . fromColorXYZ
-  {-# INLINE fromColorXYZ #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
 
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
 instance (Luma (cs i), ColorSpace (cs i) i e, RedGreenBlue (cs i) i) =>
@@ -104,12 +102,8 @@ instance (Luma (cs i), ColorSpace (cs i) i e, RedGreenBlue (cs i) i) =>
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = fmap fromDouble . toColorYCbCr
   {-# INLINE fromBaseSpace #-}
-  toColorXYZ = toColorXYZ . toBaseSpace
-  {-# INLINE toColorXYZ #-}
-  fromColorXYZ = fromBaseSpace . fromColorXYZ
-  {-# INLINE fromColorXYZ #-}
-
-
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
 
 
 -- | Source: ITU-T Rec. T.871

@@ -18,7 +18,11 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.RGB.AdobeRGB
-  ( AdobeRGB
+  ( -- * Constructors for a AdobeRGB color space.
+    pattern AdobeRGB
+  , pattern ColorAdobeRGB
+  , pattern ColorAdobeRGBA
+  , AdobeRGB
   , D65
   , primaries
   , npmStandard
@@ -36,10 +40,28 @@ import Graphics.Color.Space
 import Graphics.Color.Space.RGB.ITU.Rec601 (D65)
 
 
--- | A very common @AdobeRGB@ color space with the default `D65` illuminant
+-- | A very common [AdobeRGB (1998)](https://en.wikipedia.org/wiki/Adobe_RGB_color_space)
+-- color space with the default `D65` illuminant
+--
+-- @since 0.1.0
 data AdobeRGB
 
 newtype instance Color AdobeRGB e = AdobeRGB (Color CM.RGB e)
+
+-- | Constructor for a color in @AdobeRGB@ color space
+--
+-- @since 0.1.0
+pattern ColorAdobeRGB :: e -> e -> e -> Color AdobeRGB e
+pattern ColorAdobeRGB r g b = AdobeRGB (CM.ColorRGB r g b)
+{-# COMPLETE ColorAdobeRGB #-}
+
+-- | Constructor for a color in @AdobeRGB@ color space with alpha channel
+--
+-- @since 0.1.0
+pattern ColorAdobeRGBA :: e -> e -> e -> e -> Color (Alpha AdobeRGB) e
+pattern ColorAdobeRGBA r g b a = Alpha (AdobeRGB (CM.ColorRGB r g b)) a
+{-# COMPLETE ColorAdobeRGBA #-}
+
 
 -- | Adobe`RGB` color space
 deriving instance Eq e => Eq (Color AdobeRGB e)
@@ -75,8 +97,8 @@ instance Elevator e => ColorSpace AdobeRGB D65 e where
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
   {-# INLINE fromBaseSpace #-}
-  toColorY = rgbLuminocity . fmap toRealFloat
-  {-# INLINE toColorY #-}
+  luminance = rgbLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb
@@ -149,6 +171,9 @@ itransfer :: Floating a => a -> a
 itransfer u = u ** 2.19921875 -- in rational form 563/256
 {-# INLINE itransfer #-}
 
+-- | @sRGB@ primaries
+--
+-- @since 0.1.0
 primaries :: RealFloat e => Gamut rgb i e
 primaries = Gamut (Primary 0.64 0.33)
                   (Primary 0.21 0.71)

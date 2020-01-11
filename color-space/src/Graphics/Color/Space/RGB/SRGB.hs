@@ -11,30 +11,25 @@
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.SRGB
--- Copyright   : (c) Alexey Kuleshevich 2019
+-- Copyright   : (c) Alexey Kuleshevich 2019-2020
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
 module Graphics.Color.Space.RGB.SRGB
-  ( SRGB
+  ( -- * Constructors for a sRGB color space.
+    pattern SRGB
+  , pattern ColorSRGB
+  , pattern ColorSRGBA
+  , SRGB
   , D50
   , D65
-  , Color(..)
-  , pattern ColorRGB8
-  , pattern ColorRGB16
-  , pattern ColorRGB32
-  , pattern ColorRGB64
-  , pattern ColorRGBF
-  , pattern ColorRGBD
   , primaries
   , npmStandard
   , inpmStandard
   , transfer
   , itransfer
-  , module Graphics.Color.Space.Internal
-  , module Graphics.Color.Space.RGB.Internal
   ) where
 
 import Foreign.Storable
@@ -47,41 +42,26 @@ import Graphics.Color.Space.RGB.Luma
 import Graphics.Color.Illuminant.ICC.PCS (D50)
 import Graphics.Color.Space.RGB.ITU.Rec709 (D65, primaries)
 
--- | The most common @sRGB@ color space with the default `D65` illuminant
+-- | The most common [sRGB](https://en.wikipedia.org/wiki/SRGB) color space with the
+-- default `D65` illuminant
 data SRGB
 
 
 newtype instance Color SRGB e = SRGB (Color CM.RGB e)
 
--- | Constructor for a color in @sRGB@ color space with 8-bits per channel
-pattern ColorRGB8 :: Word8 -> Word8 -> Word8 -> Color SRGB Word8
-pattern ColorRGB8 r g b = SRGB (CM.ColorRGB r g b)
-{-# COMPLETE ColorRGB8 #-}
+-- | Constructor for a color in @sRGB@ color space
+--
+-- @since 0.1.0
+pattern ColorSRGB :: e -> e -> e -> Color SRGB e
+pattern ColorSRGB r g b = SRGB (CM.ColorRGB r g b)
+{-# COMPLETE ColorSRGB #-}
 
--- | Constructor for a color in @sRGB@ color space with 16-bits per channel
-pattern ColorRGB16 :: Word16 -> Word16 -> Word16 -> Color SRGB Word16
-pattern ColorRGB16 r g b = SRGB (CM.ColorRGB r g b)
-{-# COMPLETE ColorRGB16 #-}
-
--- | Constructor for a color in @sRGB@ color space with 32-bits per channel
-pattern ColorRGB32 :: Word32 -> Word32 -> Word32 -> Color SRGB Word32
-pattern ColorRGB32 r g b = SRGB (CM.ColorRGB r g b)
-{-# COMPLETE ColorRGB32 #-}
-
--- | Constructor for a color in @sRGB@ color space with 64-bits per channel
-pattern ColorRGB64 :: Word64 -> Word64 -> Word64 -> Color SRGB Word64
-pattern ColorRGB64 r g b = SRGB (CM.ColorRGB r g b)
-{-# COMPLETE ColorRGB64 #-}
-
--- | Constructor for a color in @sRGB@ color space with 32-bit floating point value per channel
-pattern ColorRGBF :: Float -> Float -> Float -> Color SRGB Float
-pattern ColorRGBF r g b = SRGB (CM.ColorRGB r g b)
-{-# COMPLETE ColorRGBF #-}
-
--- | Constructor for a color in @sRGB@ color space with 32-bit floating point value per channel
-pattern ColorRGBD :: Double -> Double -> Double -> Color SRGB Double
-pattern ColorRGBD r g b = SRGB (CM.ColorRGB r g b)
-{-# COMPLETE ColorRGBD #-}
+-- | Constructor for a color in @sRGB@ color space with alphs channel
+--
+-- @since 0.1.0
+pattern ColorSRGBA :: e -> e -> e -> e -> Color (Alpha SRGB) e
+pattern ColorSRGBA r g b a = Alpha (SRGB (CM.ColorRGB r g b)) a
+{-# COMPLETE ColorSRGBA #-}
 
 
 -- | s`RGB` color space
@@ -118,8 +98,8 @@ instance Elevator e => ColorSpace SRGB D65 e where
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
   {-# INLINE fromBaseSpace #-}
-  toColorY = rgbLuminocity . fmap toRealFloat
-  {-# INLINE toColorY #-}
+  luminance = rgbLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

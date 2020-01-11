@@ -88,3 +88,5 @@ instance (Typeable cs, ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (CMYK
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = coerce . fmap fromDouble . CM.rgb2cmyk . fmap toDouble . unColorRGB
   {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}

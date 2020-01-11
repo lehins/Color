@@ -99,3 +99,5 @@ instance (Typeable cs, ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (HSL 
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = coerce . fmap fromDouble . CM.rgb2hsl . fmap toDouble . unColorRGB
   {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}

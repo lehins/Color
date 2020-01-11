@@ -18,22 +18,33 @@ module Graphics.Pixel.ColorSpace
   ( Pixel(Pixel, PixelY, PixelXYZ, PixelRGB, PixelHSI, PixelHSL, PixelHSV,
       PixelCMYK, PixelYCbCr, PixelYA, PixelXYZA, PixelRGBA, PixelHSIA, PixelHSLA,
       PixelHSVA, PixelCMYKA, PixelYCbCrA)
+  , liftPixel
+  -- * Conversion
+  -- ** Color space
   , convertPixel
   , toPixelY
   , toPixelXYZ
   , fromPixelXYZ
-  , toPixelBaseModel
-  , fromPixelBaseModel
   , toPixelBaseSpace
   , fromPixelBaseSpace
+  -- ** Color model
+  , toPixelBaseModel
+  , fromPixelBaseModel
+  -- ** Precision
+  , toPixel8
+  , toPixel16
+  , toPixel32
+  , toPixel64
+  , toPixelF
+  , toPixelD
   -- * sRGB color space
   , pattern PixelSRGB
   , pattern PixelSRGBA
   , SRGB
   , D65
-  -- * Any RGB color space
+  -- * Adobe RGB color space
   , AdobeRGB
-  , module Graphics.Pixel.Internal
+  -- * Re-export of color space
   , module Graphics.Color.Space
   ) where
 
@@ -84,14 +95,14 @@ pattern PixelSRGBA r g b a = Pixel (Alpha (SRGB (CM.ColorRGB r g b)) a)
 --
 -- @since 0.1.0
 pattern PixelY :: e -> Pixel (Y i) e
-pattern PixelY y = Pixel (ColorY y)
+pattern PixelY y = Pixel (Y y)
 {-# COMPLETE PixelY #-}
 
 -- | Constructor for a pixel with Luminocity and Alpha channel
 --
 -- @since 0.1.0
 pattern PixelYA :: e -> e -> Pixel (Alpha (Y i)) e
-pattern PixelYA y a = Pixel (Alpha (ColorY y) a)
+pattern PixelYA y a = Pixel (Alpha (Y y) a)
 {-# COMPLETE PixelYA #-}
 
 -- | Constructor for a pixel in @CIE1931 XYZ@ color space
@@ -203,11 +214,11 @@ pattern PixelYCbCrA :: e -> e -> e -> e -> Pixel (Alpha (YCbCr cs)) e
 pattern PixelYCbCrA y cb cr a = Pixel (ColorYCbCrA y cb cr a)
 {-# COMPLETE PixelYCbCrA #-}
 
--- | Compute Luminocity of a pixel color
+-- | Compute luminance pixel of a pixel color
 --
 -- @since 0.1.0
 toPixelY :: ColorSpace cs i e => Pixel cs e -> Pixel (Y i) e
-toPixelY = liftPixel (fmap fromDouble . toColorY)
+toPixelY = liftPixel (fmap fromDouble . luminance)
 {-# INLINE toPixelY #-}
 
 -- | Convert to CIE1931 XYZ color space, with the same illuminant as the original.
@@ -263,9 +274,6 @@ fromPixelBaseSpace ::
 fromPixelBaseSpace = liftPixel fromBaseSpace
 {-# INLINE fromPixelBaseSpace #-}
 
-
--- toPixelY :: (Elevator a, RealFloat a, ColorSpace cs i e) => Pixel cs e -> Pixel Y a
--- toPixelY = Pixel . toColorY . pixelColor
 
 -- -- | Constructor for a pixel in @sRGB@ color space with 8-bits per channel
 -- pattern PixelRGB8 :: Word8 -> Word8 -> Word8 -> Pixel SRGB Word8

@@ -28,7 +28,7 @@ module Graphics.Color.Space.RGB.Internal
   , Gamut(..)
   , rgb2xyz
   , xyz2rgb
-  , rgbLuminocity
+  , rgbLuminance
   , NPM(..)
   , npmApply
   , npmDerive
@@ -149,20 +149,19 @@ inpmApply ::
 inpmApply (INPM inpm') = mkColorRGB . coerce . multM3x3byV3 inpm' . coerce
 {-# INLINE inpmApply #-}
 
--- | Linear transformation of a color into a linear luminocity, i.e. the Y component of
+-- | Linear transformation of a color into a linear luminance, i.e. the Y component of
 -- XYZ color space
-npmApplyLuminocity ::
+npmApplyLuminance ::
      forall cs i e. (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e)
   => Color cs e
   -> Color (Y i) e
-npmApplyLuminocity px =
-  ColorY (m3x3row1 (unNPM (npm :: NPM cs e)) `dotProduct` coerce (unColorRGB px))
-{-# INLINE npmApplyLuminocity #-}
+npmApplyLuminance px = Y (m3x3row1 (unNPM (npm :: NPM cs e)) `dotProduct` coerce (unColorRGB px))
+{-# INLINE npmApplyLuminance #-}
 
 
-rgbLuminocity :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Color cs e -> Color (Y i) e
-rgbLuminocity = npmApplyLuminocity . dcctf
-{-# INLINE rgbLuminocity #-}
+rgbLuminance :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Color cs e -> Color (Y i) e
+rgbLuminance = npmApplyLuminance . dcctf
+{-# INLINE rgbLuminance #-}
 
 rgb2xyz :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Color cs e -> Color (XYZ i) e
 rgb2xyz = npmApply npm . dcctf
@@ -282,8 +281,10 @@ rgbColorGamut _ = gamut
 --
 -- >>> import Graphics.Color.Space.RGB
 -- >>> :set -XTypeApplications
--- >>> pixelWhitePoint @Float (ColorRGB8 1 2 3)
--- WhitePointChromaticity (Chromaticity <CIExyY * D65:( 0.312700, 0.329000)>)
+-- >>> pixelWhitePoint @Float (ColorSRGB @Word8 1 2 3)
+-- WhitePoint (Chromaticity <CIExyY * D65:( 0.312700, 0.329000)>)
+-- >>> Just (pixelWhitePoint @Float (ColorSRGB @Word8 1 2 3))
+-- Just (WhitePoint (Chromaticity <CIExyY * D65:( 0.312700, 0.329000)>))
 --
 -- @since 0.1.0
 pixelWhitePoint ::

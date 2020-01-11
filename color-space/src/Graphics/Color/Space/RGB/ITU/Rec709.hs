@@ -18,7 +18,8 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.RGB.ITU.Rec709
-  ( BT709
+  ( pattern BT709
+  , BT709
   , D65
   , primaries
   , Rec601.transfer
@@ -33,7 +34,7 @@ import Graphics.Color.Space
 import Graphics.Color.Space.RGB.ITU.Rec601 as Rec601 (D65, itransfer, transfer)
 import Graphics.Color.Space.RGB.Luma
 
--- | ITU-R BT.709 color space
+-- | [ITU-R BT.709](https://en.wikipedia.org/wiki/Rec._709) color space
 data BT709
 
 newtype instance Color BT709 e = BT709 (Color CM.RGB e)
@@ -72,6 +73,8 @@ instance Elevator e => ColorSpace BT709 D65 e where
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
   {-# INLINE fromBaseSpace #-}
+  luminance = rgbLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

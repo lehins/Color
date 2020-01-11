@@ -32,7 +32,6 @@ library
                      , Graphics.Color.Algebra.Binary
                      , Graphics.Color.Adaptation
                      , Graphics.Color.Adaptation.VonKries
-                     -- Graphics.Color.Adaptation
                      -- , Graphics.Color.Adaptation.CIE1994
                      -- , Graphics.Color.Adaptation.CMCCAT2000
                      -- , Graphics.Color.Adaptation.Fairchild
@@ -43,7 +42,6 @@ library
                      , Graphics.Color.Illuminant.ITU.Rec601
                      , Graphics.Color.Model
                      , Graphics.Color.Space
-                     -- , Graphics.Color.Space.CIE1931
                      -- , Graphics.Color.Space.CIE1931.RGB
                      , Graphics.Color.Space.CIE1931.XYZ
                      , Graphics.Color.Space.CIE1976.LAB
@@ -68,24 +66,10 @@ library
                      -- , Graphics.Color.Space.RGB.SC
                      -- , Graphics.Color.Space.RGB.AdobeWideGamut
                      -- , Graphics.Color.Space.RGB.ProPhoto
-                     -- , Graphics.Color.Space.Common
-                     -- , Graphics.Color.Space.Y
-                     -- , Graphics.Color.Space.Binary
-                     -- , Graphics.Color.Space.Complex
+                     -- , Graphics.Color.Space.RGB.DCI_P3
 
                      -- , Graphics.Color.Space.LMS
-                     -- , Graphics.Color.Space.DCI_P3
                      , Graphics.Color.Standard.RAL
-
-                     -- , Graphics.Color.Space.CMYK
-
-
-                     --   Graphics.Color.Space
-                     -- , Graphics.Color.Space.Binary
-                     -- , Graphics.Color.Space.Complex
-                     -- , Graphics.Color.Space.Y
-                     -- , Graphics.Color.Space.YCbCr
-                     -- , Graphics.Color.Space.RGB
                      , Graphics.Pixel
                      , Graphics.Pixel.ColorSpace
 

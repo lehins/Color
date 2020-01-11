@@ -23,7 +23,7 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.Internal
-  ( Color(Y, XYZ, CIExyY)
+  ( Color(Luminance, XYZ, CIExyY)
   , ColorSpace(..)
   , Chromaticity(..)
   , Primary(.., Primary)
@@ -42,8 +42,8 @@ module Graphics.Color.Space.Internal
   , whitePointTristimulus
   , CCT(..)
   , Y
-  , pattern ColorY
-  , pattern ColorYA
+  , pattern Y
+  , pattern YA
   , XYZ
   , pattern ColorXYZ
   , pattern ColorXYZA
@@ -88,14 +88,10 @@ class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e, Typeable (Opa
   toBaseSpace :: ColorSpace (BaseSpace cs) i e => Color cs e -> Color (BaseSpace cs) e
   fromBaseSpace :: ColorSpace (BaseSpace cs) i e => Color (BaseSpace cs) e -> Color cs e
 
-  -- | Get pixel luminocity
+  -- | Get the relative luminance of a color
   --
   -- @since 0.1.0
-  toColorY :: (Elevator a, RealFloat a) => Color cs e -> Color (Y i) a
-  default toColorY ::
-    (ColorSpace (BaseSpace cs) i e, Elevator a, RealFloat a) => Color cs e -> Color (Y i) a
-  toColorY = toColorY . toBaseSpace
-  {-# INLINE toColorY #-}
+  luminance :: (Elevator a, RealFloat a) => Color cs e -> Color (Y i) a
 
   toColorXYZ :: (Elevator a, RealFloat a) => Color cs e -> Color (XYZ i) a
   default toColorXYZ ::
@@ -121,6 +117,8 @@ instance ( ColorSpace cs i e
   {-# INLINE toBaseModel #-}
   fromBaseModel = modifyOpaque fromBaseModel
   {-# INLINE fromBaseModel #-}
+  luminance = luminance . dropAlpha
+  {-# INLINE luminance #-}
   toBaseSpace = dropAlpha
   {-# INLINE toBaseSpace #-}
   fromBaseSpace c = Alpha c maxValue
@@ -150,7 +148,14 @@ class (Typeable i, Typeable k, KnownNat (Temperature i)) => Illuminant (i :: k) 
 
 
 newtype WhitePoint (i :: k) e = WhitePointChromaticity (Chromaticity i e)
- deriving (Eq, Show)
+ deriving (Eq)
+
+instance (Illuminant i, Elevator e) => Show (WhitePoint (i :: k) e) where
+  showsPrec n (WhitePointChromaticity wp)
+    | n == 0 = inner
+    | otherwise = ('(' :) . inner . (')' :)
+    where
+      inner = ("WhitePoint (" ++) . shows wp . (')' :)
 
 -- | Constructor for the most common @XYZ@ color space
 pattern WhitePoint :: e -> e -> WhitePoint i e
@@ -320,8 +325,8 @@ instance (Illuminant i, Elevator e) => ColorSpace (XYZ i) i e where
   fromBaseModel = id
   toBaseSpace = id
   fromBaseSpace = id
-  toColorY (ColorXYZ _ y _) = ColorY (toRealFloat y)
-  {-# INLINE toColorY #-}
+  luminance (ColorXYZ _ y _) = Y (toRealFloat y)
+  {-# INLINE luminance #-}
   toColorXYZ (ColorXYZ x y z) = ColorXYZ (toRealFloat x) (toRealFloat y) (toRealFloat z)
   {-# INLINE toColorXYZ #-}
   fromColorXYZ (ColorXYZ x y z) = ColorXYZ (fromRealFloat x) (fromRealFloat y) (fromRealFloat z)
@@ -393,8 +398,8 @@ instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
   fromBaseModel = id
   toBaseSpace = id
   fromBaseSpace = id
-  toColorY _ = ColorY 1
-  {-# INLINE toColorY #-}
+  luminance _ = Y 1
+  {-# INLINE luminance #-}
   toColorXYZ xy = ColorXYZ (x / y) 1 ((1 - x - y) / y)
     where ColorCIExy x y = toRealFloat <$> xy
   {-# INLINE toColorXYZ #-}
@@ -410,43 +415,43 @@ instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
 --- Y ---
 -------------
 
--- | Luminance of a color
+-- | [Relative Luminance](https://en.wikipedia.org/wiki/Relative_luminance) of a color
 data Y (i :: k)
 
 -- | Luminance `Y`
-newtype instance Color (Y i) e = Y (CM.Color CM.Y e)
+newtype instance Color (Y i) e = Luminance (CM.Color CM.Y e)
 
 -- | Constructor for @Y@ with alpha channel.
-pattern ColorY :: e-> Color (Y i) e
-pattern ColorY y = Y (CM.Y y)
-{-# COMPLETE ColorY #-}
+pattern Y :: e -> Color (Y i) e
+pattern Y y = Luminance (CM.Y y)
+{-# COMPLETE Y #-}
 
 -- | Constructor for @Y@ with alpha channel.
-pattern ColorYA :: e -> e -> Color (Alpha (Y i)) e
-pattern ColorYA y a = Alpha (ColorY y) a
-{-# COMPLETE ColorYA #-}
+pattern YA :: e -> e -> Color (Alpha (Y i)) e
+pattern YA y a = Alpha (Luminance (CM.Y y)) a
+{-# COMPLETE YA #-}
 
--- | `Y` - luminocity of a color space
+-- | `Y` - relative luminance of a color space
 deriving instance Eq e => Eq (Color (Y i) e)
--- | `Y` - luminocity of a color space
+-- | `Y` - relative luminance of a color space
 deriving instance Ord e => Ord (Color (Y i) e)
--- | `Y` - luminocity of a color space
+-- | `Y` - relative luminance of a color space
 deriving instance Functor (Color (Y i))
--- | `Y` - luminocity of a color space
+-- | `Y` - relative luminance of a color space
 deriving instance Applicative (Color (Y i))
--- | `Y` - luminocity of a color space
+-- | `Y` - relative luminance of a color space
 deriving instance Foldable (Color (Y i))
--- | `Y` - luminocity of a color space
+-- | `Y` - relative luminance of a color space
 deriving instance Traversable (Color (Y i))
--- | `Y` - luminocity of a color space
+-- | `Y` - relative luminance of a color space
 deriving instance Storable e => Storable (Color (Y i) e)
 
 
--- | `Y` - luminocity of a color space
+-- | `Y` - relative luminance of a color space
 instance (Illuminant i, Elevator e) => Show (Color (Y i) e) where
   showsPrec _ = showsColorModel
 
--- | `Y` - luminocity of a color space
+-- | `Y` - relative luminance of a color space
 instance (Illuminant i, Elevator e) => ColorModel (Y i) e where
   type Components (Y i) e = e
   toComponents = coerce
@@ -460,13 +465,13 @@ instance (Illuminant i, Elevator e) => ColorSpace (Y i) i e where
   type BaseModel (Y i) = CM.Y
   toBaseSpace = id
   fromBaseSpace = id
-  toColorY = fmap toRealFloat
-  {-# INLINE toColorY #-}
-  toColorXYZ (ColorY y) = ColorXYZ 0 (toRealFloat y) 0
+  luminance = fmap toRealFloat
+  {-# INLINE luminance #-}
+  toColorXYZ (Y y) = ColorXYZ 0 (toRealFloat y) 0
   {-# INLINE toColorXYZ #-}
-  fromColorXYZ (ColorXYZ _ y _) = ColorY (fromRealFloat y)
+  fromColorXYZ (ColorXYZ _ y _) = Y (fromRealFloat y)
   {-# INLINE fromColorXYZ #-}
 
 {-# RULES
-"toColorY   :: RealFloat a => Color Y a -> Color Y a" toColorY = id
+"luminance   :: RealFloat a => Color Y a -> Color Y a" luminance = id
  #-}

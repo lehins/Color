@@ -74,8 +74,8 @@ instance (Illuminant i, Elevator e) => ColorSpace (SRGB i) i e where
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
   {-# INLINE fromBaseSpace #-}
-  toColorY = rgbLuminocity . fmap toRealFloat
-  {-# INLINE toColorY #-}
+  luminance = rgbLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

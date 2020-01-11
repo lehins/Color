@@ -19,7 +19,9 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.RGB.ITU.Rec601
-  ( BT601_525
+  ( pattern BT601_525
+  , BT601_525
+  , pattern BT601_625
   , BT601_625
   , D65
   , primaries525
@@ -43,7 +45,7 @@ import Graphics.Color.Illuminant.ITU.Rec601
 -- ITU-R BT.601 (525) --------------
 ------------------------------------
 
--- | ITU-R BT.601 (525) color space
+-- | [ITU-R BT.601](https://en.wikipedia.org/wiki/Rec._601) (525) color space
 data BT601_525
 
 newtype instance Color BT601_525 e = BT601_525 (Color CM.RGB e)
@@ -82,6 +84,8 @@ instance Elevator e => ColorSpace BT601_525 D65 e where
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
   {-# INLINE fromBaseSpace #-}
+  luminance = rgbLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb
@@ -99,8 +103,7 @@ instance RedGreenBlue BT601_525 D65 where
 -- ITU-R BT.601 (625) --------------
 ------------------------------------
 
-
--- | ITU-R BT.601 (625) color space
+-- | [ITU-R BT.601](https://en.wikipedia.org/wiki/Rec._601) (625) color space
 data BT601_625
 
 newtype instance Color BT601_625 e = BT601_625 (Color CM.RGB e)
@@ -139,6 +142,8 @@ instance Elevator e => ColorSpace BT601_625 D65 e where
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
   {-# INLINE fromBaseSpace #-}
+  luminance = rgbLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

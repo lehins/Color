@@ -1136,4 +1136,4 @@ instance StandardColor RAL "Traffic white" where color _ = color (RAL :: RAL 901
 instance StandardColor RAL "Traffic black" where color _ = color (RAL :: RAL 9017)
 instance StandardColor RAL "Papyrus white" where color _ = color (RAL :: RAL 9018)
 instance StandardColor RAL "Pearl light grey" where color _ = color (RAL :: RAL 9022)
-instance StandardColor RAL "Pearl dark grey" where color _ = color (RAL :: RAL 9023)
+instance StandardColor RAL "Pearl dark grey" where color _ = pearlDarkGrey --color (RAL :: RAL 9023)
