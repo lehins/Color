@@ -51,6 +51,9 @@ spec = do
                   when (rname `elem` pendingNames) $ pendingWith "Some discrepancy"
                   (expect received expected)
           zipWithM_ mkTest expectedColors receivedColors
+    it "Color ShowS" $ do
+      show (RAL :: RAL "GreenBeige") `shouldBe` "RAL \"GreenBeige\""
+      show (Just (RAL :: RAL "GreenBeige")) `shouldBe` "Just (RAL \"GreenBeige\")"
     it "Color code matches" $ matchListsWith matchColor ralsLAB (toColorRAL ralColorCodes)
     it "Color name matches" $ matchListsWith matchColor ralsLAB (toColorRAL ralColorNames)
     let (srgbs, hsls, _cmyks) = unzip3 ralAlternatives
@@ -210,6 +213,7 @@ ralColorNames ::
    , RAL "Pastel green"
    , RAL "Chrome green"
    , RAL "Pale green"
+   , RAL "Olive-drab"
    , RAL "Brown olive"
    , RAL "Traffic green"
    , RAL "Fern green"
@@ -299,6 +303,7 @@ ralColorNames ::
    , RAL "Pearl dark grey"
    ]
 ralColorNames =
+  RAL :>
   RAL :>
   RAL :>
   RAL :>
@@ -646,6 +651,7 @@ ralColorCodes ::
    , RAL 6020
    , RAL 6021
    , RAL 6022
+   , RAL 6022 -- Synonym: Brown olive
    , RAL 6024
    , RAL 6025
    , RAL 6026
@@ -734,6 +740,7 @@ ralColorCodes ::
    , RAL 9023
    ]
 ralColorCodes =
+  RAL :>
   RAL :>
   RAL :>
   RAL :>
@@ -1081,6 +1088,7 @@ ralColors =
   , ("chromeGreen", chromeGreen, False)
   , ("paleGreen", paleGreen, False)
   , ("oliveDrab", oliveDrab, False)
+  , ("brownOlive", oliveDrab, True)
   , ("trafficGreen", trafficGreen, False)
   , ("fernGreen", fernGreen, False)
   , ("opalGreen", opalGreen, False)
