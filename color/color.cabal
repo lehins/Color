@@ -1,5 +1,5 @@
-name:                color-space
-version:             0.1.0
+name:                color
+version:             0.0.0
 synopsis:            Collection of common color spaces and coversions between them
 description:         Please see the README on GitHub at <https://github.com/lehins/color-space#readme>
 homepage:            https://github.com/lehins/color-space
@@ -7,7 +7,7 @@ license:             BSD3
 license-file:        LICENSE
 author:              Alexey Kuleshevich
 maintainer:          alexey@kuleshevi.ch
-copyright:           2019 Alexey Kuleshevich
+copyright:           2019-2020 Alexey Kuleshevich
 category:            Graphics
 extra-source-files:  README.md
                    , CHANGELOG.md
@@ -120,7 +120,7 @@ test-suite tests
   build-depends:      HUnit
                     , QuickCheck
                     , base             >= 4.8 && < 5
-                    , color-space
+                    , color
                     , colour
                     , hspec
                     , random
@@ -142,10 +142,7 @@ test-suite doctests
   build-depends: base
                , doctest >=0.15
                , QuickCheck
-               , color-space
-               , mersenne-random-pure64
-               , random
-               , splitmix >= 0.0.1
+               , color
                , template-haskell
   default-language:    Haskell2010
   ghc-options:        -Wall
@@ -165,7 +162,7 @@ benchmark conversion
                        -O2
   build-depends:       base
                      , criterion
-                     , color-space
+                     , color
                      , colour
                      , deepseq
                      , random
