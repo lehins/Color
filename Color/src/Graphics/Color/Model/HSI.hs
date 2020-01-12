@@ -58,7 +58,7 @@ pattern ColorHSIA h s i a = Alpha (ColorHSI h s i) a
 -- | Constructor for an HSI color model. Difference from `ColorHSI` is that channels are
 -- restricted to `Double` and the hue is specified in 0 to 360 degree range, rather than 0
 -- to 1. Note, that this is not checked.
-pattern ColorH360SI :: Double -> Double -> Double -> Color HSI Double
+pattern ColorH360SI :: Fractional e => e -> e -> e -> Color HSI e
 pattern ColorH360SI h s i <- ColorHSI ((* 360) -> h) s i where
         ColorH360SI h s i = ColorHSI (h / 360) s i
 {-# COMPLETE ColorH360SI #-}

@@ -14,6 +14,8 @@ module Graphics.Color.Model.Common
   , epsilonColorIxSpec
   , epsilonEq
   , epsilonEqColor
+  , epsilonEqColorFloat
+  , epsilonEqColorDouble
   , epsilonEqColorTol
   , epsilonEqColorTolIx
   , arbitraryElevator
@@ -96,6 +98,17 @@ epsilonEqColor :: (ColorModel cs e, RealFloat e) => Color cs e -> Color cs e -> 
 epsilonEqColor = epsilonEqColorTol epsilon
   where
     epsilon = 1e-11
+
+epsilonEqColorDouble :: ColorModel cs Double => Color cs Double -> Color cs Double -> Property
+epsilonEqColorDouble = epsilonEqColorTol epsilon
+  where
+    epsilon = 1e-12
+
+
+epsilonEqColorFloat :: ColorModel cs Float => Color cs Float -> Color cs Float -> Property
+epsilonEqColorFloat = epsilonEqColorTol epsilon
+  where
+    epsilon = 1e-6
 
 epsilonEqColorTol :: (ColorModel cs e, RealFloat e) => e -> Color cs e -> Color cs e -> Property
 epsilonEqColorTol epsilon x y = conjoin $ F.toList $ liftA2 (epsilonEq epsilon) x y

@@ -59,7 +59,7 @@ pattern ColorHSVA h s v a = Alpha (ColorHSV h s v) a
 -- | Constructor for an HSV color model. Difference from `ColorHSV` is that channels are
 -- restricted to `Double` and the hue is specified in 0 to 360 degree range, rather than 0
 -- to 1. Note, that this is not checked.
-pattern ColorH360SV :: Double -> Double -> Double -> Color HSV Double
+pattern ColorH360SV :: Fractional e => e -> e -> e -> Color HSV e
 pattern ColorH360SV h s v <- ColorHSV ((* 360) -> h) s v where
         ColorH360SV h s v = ColorHSV (h / 360) s v
 {-# COMPLETE ColorH360SV #-}

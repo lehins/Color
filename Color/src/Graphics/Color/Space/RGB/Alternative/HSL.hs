@@ -76,7 +76,7 @@ pattern ColorHSLA h s i a = Alpha (HSL (CM.ColorHSL h s i)) a
 -- | Constructor for an RGB color space in an alternative HSL color model. Difference from
 -- `ColorHSL` is that the hue is specified in 0 to 360 degree range, rather than 0 to
 -- 1. Note, that this is not checked.
-pattern ColorH360SL :: RealFloat e => e -> e -> e -> Color (HSL cs) e
+pattern ColorH360SL :: Fractional e => e -> e -> e -> Color (HSL cs) e
 pattern ColorH360SL h s i <- ColorHSL ((* 360) -> h) s i where
         ColorH360SL h s i = ColorHSL (h / 360) s i
 {-# COMPLETE ColorH360SL #-}

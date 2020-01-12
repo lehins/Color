@@ -8,6 +8,9 @@ import Graphics.Color.Model
 import Graphics.Color.Model.Common
 import Graphics.Color.Model.RGBSpec (rgbs)
 
+import qualified Data.Colour.RGBSpace as Colour
+import qualified Data.Colour.RGBSpace.HSL as Colour
+
 instance (Elevator e, Random e) => Arbitrary (Color HSL e) where
   arbitrary = ColorHSL <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
 
@@ -23,6 +26,13 @@ spec =
       let tol = 2e-3
       describe "rgb2hsl" $ izipWithM_ (epsilonColorIxSpec tol) hsls (rgb2hsl <$> rgbs)
       describe "hsl2rgb" $ izipWithM_ (epsilonColorIxSpec tol) rgbs (hsl2rgb <$> hsls)
+    describe "Same as colour package" $ do
+      prop "rgb2hsl" $ \ rgb@(ColorRGB r g b) ->
+        case Colour.hslView (Colour.RGB r g b) of
+          (h, s, l) -> rgb2hsl rgb `epsilonEqColorFloat` ColorH360SL h s l
+      prop "hsl2rgb" $ \ hsl@(ColorH360SL h s l) ->
+        case Colour.hsl h s l of
+          Colour.RGB r g b -> hsl2rgb hsl `epsilonEqColorFloat` ColorRGB r g b
 
 
 hsls :: [Color HSL Double]

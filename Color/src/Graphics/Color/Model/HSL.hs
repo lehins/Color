@@ -60,7 +60,7 @@ pattern ColorHSLA h s l a = Alpha (ColorHSL h s l) a
 -- | Constructor for an HSL color model. Difference from `ColorHSL` is that channels are
 -- restricted to `Double` and the hue is specified in 0 to 360 degree range, rather than 0
 -- to 1. Note, that this is not checked.
-pattern ColorH360SL :: Double -> Double -> Double -> Color HSL Double
+pattern ColorH360SL :: Fractional e => e -> e -> e -> Color HSL e
 pattern ColorH360SL h s l <- ColorHSL ((* 360) -> h) s l where
         ColorH360SL h s l = ColorHSL (h / 360) s l
 {-# COMPLETE ColorH360SL #-}

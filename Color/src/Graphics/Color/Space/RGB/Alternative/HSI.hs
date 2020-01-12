@@ -77,7 +77,7 @@ pattern ColorHSIA h s i a = Alpha (HSI (CM.ColorHSI h s i)) a
 -- | Constructor for an RGB color space in an alternative HSI color model. Difference from
 -- `ColorHSI` is that the hue is specified in 0 to 360 degree range, rather than 0 to
 -- 1. Note, that this is not checked.
-pattern ColorH360SI :: RealFloat e => e -> e -> e -> Color (HSI cs) e
+pattern ColorH360SI :: Fractional e => e -> e -> e -> Color (HSI cs) e
 pattern ColorH360SI h s i <- ColorHSI ((* 360) -> h) s i where
         ColorH360SI h s i = ColorHSI (h / 360) s i
 {-# COMPLETE ColorH360SI #-}

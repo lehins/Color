@@ -16,6 +16,5 @@ instance (Elevator e, Random e, Illuminant i) => Arbitrary (Color (LAB (i :: k))
 spec :: Spec
 spec = describe "LAB" $ do
   colorModelSpec @(LAB 'D65) @Word "LAB"
-  prop "toFromColorXYZ" (prop_toFromColorXYZ :: Color (LAB 'D65) Double -> Property)
-  prop "toFromColorSpace" (prop_toFromColorSpace :: Color (LAB 'D65) Double -> Property)
+  colorSpaceLenientSpec @(LAB 'D65) @_ @Float 1e-5
 

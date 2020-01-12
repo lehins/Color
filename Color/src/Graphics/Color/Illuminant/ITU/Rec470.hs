@@ -19,8 +19,18 @@ import Graphics.Color.Space.Internal
 
 
 
--- | Whitepoint C that is used for ITU: Rec.470 (525). It is slightly different than the
--- one defined by CIE1931, thus a separate daclaration in here.
+-- | Whitepoint C that is used for ITU: Rec.470 (525). It is slightly different than
+-- `Graphics.Color.Illuminant.CIE1931.C` that is defined by CIE1931, thus a separate
+-- declaration in here.
+--
+-- >>> whitePoint :: WhitePoint C Float
+-- WhitePoint (Chromaticity <CIExyY * C:( 0.310000, 0.316000)>)
+-- >>> whitePointTristimulus :: Color (XYZ C) Float
+-- <XYZ * C:( 0.981013, 1.000000, 1.183544)>
+-- >>> colorTemperature :: CCT C
+-- CCT {unCCT = 6774.0}
+--
+-- @since 0.1.0
 data C
 
 
@@ -31,8 +41,19 @@ instance Illuminant C where
 
 
 
--- ^ Whitepoint D65 that is used for ITU: Rec.470 (625). It is slightly different than the
--- one defined by CIE1931 and the one in Rec.601, thus a separate declaration in here.
+-- | Whitepoint D65 that is used for ITU: Rec.470 (625). It is slightly different than
+-- `Graphics.Color.Illuminant.CIE1931.D65` that is defined by CIE1931 and
+-- `Graphics.Color.Illuminant.ITU.Rec601.D65` specified in Rec.601, thus a separate
+-- declaration in here.
+--
+-- >>> whitePoint :: WhitePoint D65 Float
+-- WhitePoint (Chromaticity <CIExyY * D65:( 0.313000, 0.329000)>)
+-- >>> whitePointTristimulus :: Color (XYZ D65) Float
+-- <XYZ * D65:( 0.951368, 1.000000, 1.088146)>
+-- >>> colorTemperature :: CCT D65
+-- CCT {unCCT = 6504.0}
+--
+-- @since 0.1.0
 data D65
 
 

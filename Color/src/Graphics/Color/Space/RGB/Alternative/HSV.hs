@@ -75,7 +75,7 @@ pattern ColorHSVA h s i a = Alpha (HSV (CM.ColorHSV h s i)) a
 -- | Constructor for an RGB color space in an alternative HSV color model. Difference from
 -- `ColorHSV` is that the hue is specified in 0 to 360 degree range, rather than 0 to
 -- 1. Note, that this is not checked.
-pattern ColorH360SV :: RealFloat e => e -> e -> e -> Color (HSV cs) e
+pattern ColorH360SV :: Fractional e => e -> e -> e -> Color (HSV cs) e
 pattern ColorH360SV h s i <- ColorHSV ((* 360) -> h) s i where
         ColorH360SV h s i = ColorHSV (h / 360) s i
 {-# COMPLETE ColorH360SV #-}

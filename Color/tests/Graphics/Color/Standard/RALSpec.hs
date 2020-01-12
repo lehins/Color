@@ -56,10 +56,10 @@ spec = do
       show (Just (RAL :: RAL "GreenBeige")) `shouldBe` "Just (RAL \"GreenBeige\")"
     it "Color code matches" $ matchListsWith matchColor ralsLAB (toColorRAL ralColorCodes)
     it "Color name matches" $ matchListsWith matchColor ralsLAB (toColorRAL ralColorNames)
-    let (srgbs, hsls, _cmyks) = unzip3 ralAlternatives
+    let (srgbs, _hsls, _cmyks) = unzip3 ralAlternatives
     describe "Matches sRGB" $
       specMatchLists ["luminousBrightOrange", "pastelGreen"] shouldBe srgbs ralColors'
-    xdescribe "Matches HSL" $ specMatchLists [] shouldBe hsls ralColors'
+    -- xdescribe "Matches HSL" $ specMatchLists [] shouldBe hsls ralColors'
 
 
 
