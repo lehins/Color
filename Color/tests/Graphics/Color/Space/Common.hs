@@ -9,7 +9,9 @@ module Graphics.Color.Space.Common
   , module Graphics.Color.Model.Common
   , colorSpaceSpec
   , colorSpaceLenientSpec
+  , colorSpaceCommonSpec
   , prop_toFromColorXYZ
+  , prop_LuminanceColorXYZ
   , prop_toFromLenientColorXYZ
   , prop_toFromBaseSpace
   ) where
@@ -40,12 +42,24 @@ prop_toFromLenientColorXYZ ::
 prop_toFromLenientColorXYZ epsilon c =
   epsilonEqColorTol epsilon c (fromColorXYZ (toColorXYZ c :: Color (XYZ i) Double))
 
+prop_LuminanceColorXYZ :: forall cs i e . ColorSpace cs i e => Color cs e -> Property
+prop_LuminanceColorXYZ c =
+  (luminance c :: Color (Y i) Float) `epsilonEqColor`
+  luminance (toColorXYZ c :: Color (XYZ i) Float)
 
 prop_toFromBaseSpace ::
      forall cs i e. (ColorSpace cs i e, ColorSpace (BaseSpace cs) i e, RealFloat e)
   => Color cs e
   -> Property
 prop_toFromBaseSpace c = c `epsilonEqColor` fromBaseSpace (toBaseSpace c)
+
+prop_toFromBaseSpaceLenient ::
+     forall cs i e. (ColorSpace cs i e, ColorSpace (BaseSpace cs) i e, RealFloat e)
+  => e
+  -> Color cs e
+  -> Property
+prop_toFromBaseSpaceLenient epsilon c = epsilonEqColorTol epsilon c $ fromBaseSpace (toBaseSpace c)
+
 
 prop_toFromBaseModel ::
      forall cs i e. ColorSpace cs i e
@@ -55,15 +69,12 @@ prop_toFromBaseModel c = c === fromBaseModel (toBaseModel c)
 
 colorSpaceCommonSpec ::
      forall cs i e.
-     (Arbitrary (Color cs e), ColorSpace (BaseSpace cs) i e, ColorSpace cs i e, RealFloat e)
+     (Arbitrary (Color cs e), ColorSpace cs i e)
   => Spec -> Spec
-colorSpaceCommonSpec extra = do
+colorSpaceCommonSpec extra =
   describe "ColorSpace" $ do
-    prop "luminance . toColorXYZ" $ \(c :: Color cs e) ->
-      (luminance c :: Color (Y i) Float) `epsilonEqColor`
-      luminance (toColorXYZ c :: Color (XYZ i) Float)
+    prop "luminance . toColorXYZ" $ prop_LuminanceColorXYZ @cs @i @e
     prop "toFromBaseModel" $ prop_toFromBaseModel @cs @i @e
-    prop "toFromBaseSpace" $ prop_toFromBaseSpace @cs @i @e
     extra
 
 colorSpaceSpec ::
@@ -71,7 +82,8 @@ colorSpaceSpec ::
      (Arbitrary (Color cs e), ColorSpace (BaseSpace cs) i e, ColorSpace cs i e, RealFloat e)
   => Spec
 colorSpaceSpec =
-  colorSpaceCommonSpec @cs @i @e $
+  colorSpaceCommonSpec @cs @i @e $ do
+    prop "toFromBaseSpace" $ prop_toFromBaseSpace @cs @i @e
     prop "toFromColorXYZ" $ prop_toFromColorXYZ @cs @i @e
 
 colorSpaceLenientSpec ::
@@ -81,5 +93,6 @@ colorSpaceLenientSpec ::
   -> Spec
 colorSpaceLenientSpec tol =
   let tolStr = "(lenient=" ++ show tol ++ ")"
-  in colorSpaceCommonSpec @cs @i @e $
+  in colorSpaceCommonSpec @cs @i @e $ do
+       prop ("toFromBaseSpace " ++ tolStr) $ prop_toFromBaseSpaceLenient @cs @i @e tol
        prop ("toFromColorXYZ " ++ tolStr) $ prop_toFromLenientColorXYZ @cs @i @e tol
