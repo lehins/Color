@@ -24,6 +24,10 @@ module Graphics.Color.Space.RGB.Alternative.YCbCr
   , pattern ColorYCbCrA
   , YCbCr
   , Color(YCbCr)
+  , ycbcr2srgb
+  , srgb2ycbcr
+  , toColorYCbCr
+  , fromColorYCbCr
   , module Graphics.Color.Space
   ) where
 
@@ -86,9 +90,9 @@ instance ColorModel cs e => ColorModel (YCbCr cs) e where
 instance Elevator e => ColorSpace (YCbCr SRGB) D65 e where
   type BaseModel (YCbCr SRGB) = CM.YCbCr
   type BaseSpace (YCbCr SRGB) = SRGB
-  toBaseSpace = fmap fromRealFloat . ycbcr2rgb . fmap toFloat
+  toBaseSpace = fmap fromRealFloat . ycbcr2srgb . fmap toFloat
   {-# INLINE toBaseSpace #-}
-  fromBaseSpace = fmap fromRealFloat . rgb2ycbcr . fmap toFloat
+  fromBaseSpace = fmap fromRealFloat . srgb2ycbcr . fmap toFloat
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
@@ -106,27 +110,33 @@ instance (Luma (cs i), ColorSpace (cs i) i e, RedGreenBlue (cs i) i) =>
   {-# INLINE luminance #-}
 
 
--- | Source: ITU-T Rec. T.871
-ycbcr2rgb :: (RedGreenBlue cs i, Ord e, Floating e) => Color (YCbCr cs) e -> Color cs e
-ycbcr2rgb (ColorYCbCr y cb cr) = ColorRGB r g b
+-- | This conversion is only correct for sRGB and Rec601. Source: ITU-T Rec. T.871
+--
+-- @since 0.1.3
+ycbcr2srgb :: (RedGreenBlue cs i, RealFloat e) => Color (YCbCr cs) e -> Color cs e
+ycbcr2srgb (ColorYCbCr y' cb cr) = ColorRGB r' g' b'
   where
     !cb05 = cb - 0.5
     !cr05 = cr - 0.5
-    !r = clamp01 (y                   + 1.402    * cr05)
-    !g = clamp01 (y - 0.344136 * cb05 - 0.714136 * cr05)
-    !b = clamp01 (y + 1.772    * cb05)
-{-# INLINE ycbcr2rgb #-}
+    !r' = clamp01 (y'                   + 1.402    * cr05)
+    !g' = clamp01 (y' - 0.344136 * cb05 - 0.714136 * cr05)
+    !b' = clamp01 (y' + 1.772    * cb05)
+{-# INLINE ycbcr2srgb #-}
 
--- | Source: ITU-T Rec. T.871
-rgb2ycbcr :: (RedGreenBlue cs i, Floating e) => Color cs e -> Color (YCbCr cs) e
-rgb2ycbcr (ColorRGB r g b) = ColorYCbCr y cb cr
+-- | This conversion is only correct for sRGB and Rec601. Source: ITU-T Rec. T.871
+--
+-- @since 0.1.3
+srgb2ycbcr :: (RedGreenBlue cs i, RealFloat e) => Color cs e -> Color (YCbCr cs) e
+srgb2ycbcr (ColorRGB r' g' b') = ColorYCbCr y' cb cr
   where
-    !y  =          0.299 * r +    0.587 * g +    0.114 * b
-    !cb = 0.5 - 0.168736 * r - 0.331264 * g +      0.5 * b
-    !cr = 0.5 +      0.5 * r - 0.418688 * g - 0.081312 * b
-{-# INLINE rgb2ycbcr #-}
+    !y' =          0.299 * r' +    0.587 * g' +    0.114 * b'
+    !cb = 0.5 - 0.168736 * r' - 0.331264 * g' +      0.5 * b'
+    !cr = 0.5 +      0.5 * r' - 0.418688 * g' - 0.081312 * b'
+{-# INLINE srgb2ycbcr #-}
 
-
+-- | Convert any RGB color space that has `Luma` specified to `YCbCr`
+--
+-- @since 0.1.3
 toColorYCbCr ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
   => Color cs e'
@@ -136,6 +146,9 @@ toColorYCbCr rgb = YCbCr (CM.rgb2ycbcr (unColorRGB rgb) weights)
     !weights = rgbLumaWeights rgb
 {-# INLINE toColorYCbCr #-}
 
+-- | Convert `YCbCr` to the base RGB color space, which must have `Luma` implemented.
+--
+-- @since 0.1.3
 fromColorYCbCr ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
   => Color (YCbCr cs) e'

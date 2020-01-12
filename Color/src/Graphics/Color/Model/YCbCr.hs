@@ -81,20 +81,20 @@ instance Elevator e => ColorModel YCbCr e where
 
 
 rgb2ycbcr :: (Elevator e', Elevator e, RealFloat e) => Color RGB e' -> Weights e -> Color YCbCr e
-rgb2ycbcr rgb' weights@(Weights (V3 kr _ kb)) = ColorYCbCr y cb cr
+rgb2ycbcr rgb' weights@(Weights (V3 kr _ kb)) = ColorYCbCr y' cb cr
   where
-    rgb@(ColorRGB r _ b) = toRealFloat <$> rgb'
-    ColorY y = rgb2y rgb weights
-    !cb = 0.5 + 0.5 * (b - y) / (1 - kb)
-    !cr = 0.5 + 0.5 * (r - y) / (1 - kr)
+    rgb@(ColorRGB r' _ b') = toRealFloat <$> rgb'
+    ColorY y' = rgb2y rgb weights
+    !cb = 0.5 + 0.5 * (b' - y') / (1 - kb)
+    !cr = 0.5 + 0.5 * (r' - y') / (1 - kr)
 {-# INLINE rgb2ycbcr #-}
 
 
 ycbcr2rgb :: (Elevator e', Elevator e, RealFloat e) => Color YCbCr e' -> Weights e -> Color RGB e
-ycbcr2rgb ycbcr (Weights (V3 kr kg kb)) = ColorRGB r g b
+ycbcr2rgb ycbcr (Weights (V3 kr kg kb)) = ColorRGB r' g' b'
   where
-    ColorYCbCr y cb cr = toRealFloat <$> ycbcr
-    !r = y + (2 - 2 * kr) * cr
-    !b = y + (2 - 2 * kb) * cb
-    !g = (y - kr * r - kb * b) / kg
+    ColorYCbCr y' cb cr = toRealFloat <$> ycbcr
+    !r' = clamp01 (y' + (2 - 2 * kr) * (cr - 0.5))
+    !b' = clamp01 (y' + (2 - 2 * kb) * (cb - 0.5))
+    !g' = clamp01 ((y' - kr * r' - kb * b') / kg)
 {-# INLINE ycbcr2rgb #-}

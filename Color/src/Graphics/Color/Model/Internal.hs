@@ -215,7 +215,7 @@ showsColorModelOpen px = t . (":(" ++) . channels . (')' :)
         [] -> id
         (x:xs) -> foldl' (\facc y -> facc . (channelSeparator :) . toShowS y) (toShowS x) xs
 
--- TODO: consolidate those helpers inot algebra by means of: V2, V3, V4 and V5.
+-- TODO: consolidate those helpers into algebra by means of: V2, V3, V4 and V5.
 -- Foldable helpers.
 
 foldr3 :: (e -> a -> a) -> a -> e -> e -> e -> a

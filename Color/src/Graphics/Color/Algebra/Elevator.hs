@@ -2,9 +2,6 @@
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-#if __GLASGOW_HASKELL__ >= 800
-  {-# OPTIONS_GHC -Wno-redundant-constraints #-}
-#endif
 -- |
 -- Module      : Graphics.Color.Algebra.Elevator
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
@@ -94,13 +91,13 @@ squashTo1 !e = fromIntegral e / fromIntegral (maxBound :: a)
 {-# INLINE squashTo1 #-}
 
 -- | Convert to integral streaching it's value up to a maximum value.
-stretch :: forall a b. (RealFrac a, Floating a, Integral b, Bounded b) => a -> b
+stretch :: forall a b. (RealFloat a, Integral b, Bounded b) => a -> b
 stretch !e = round (fromIntegral (maxBound :: b) * clamp01 e)
 {-# INLINE stretch #-}
 
 
 -- | Clamp a value to @[0, 1]@ range.
-clamp01 :: (Ord a, Floating a) => a -> a
+clamp01 :: RealFloat a => a -> a
 clamp01 !x = min (max 0 x) 1
 {-# INLINE clamp01 #-}
 

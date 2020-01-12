@@ -1,3 +1,5 @@
 resolver: lts-14.4
 packages:
 - Color
+extra-deps:
+- JuicyPixels-3.3.4@sha256:190095c0c169f6012e663eff26eae0d1e5107fb77186320b9357761ebaa3aa43,3913

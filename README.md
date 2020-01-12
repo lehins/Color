@@ -23,8 +23,8 @@ A library for dealing with Colors and pixels. Currently supported:
 * Color spaces and arbitrary conversions between them:
 
     * `Y` - luminance
-    * `XYZ`
-    * `La*b*`
+    * `CIE XYZ`
+    * `CIE L*a*b*`
     * `RGB`:
 
         * `sRGB`

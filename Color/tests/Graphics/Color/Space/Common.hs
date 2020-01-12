@@ -57,7 +57,7 @@ colorSpaceCommonSpec ::
      forall cs i e.
      (Arbitrary (Color cs e), ColorSpace (BaseSpace cs) i e, ColorSpace cs i e, RealFloat e)
   => Spec -> Spec
-colorSpaceCommonSpec extra =
+colorSpaceCommonSpec extra = do
   describe "ColorSpace" $ do
     prop "luminance . toColorXYZ" $ \(c :: Color cs e) ->
       (luminance c :: Color (Y i) Float) `epsilonEqColor`

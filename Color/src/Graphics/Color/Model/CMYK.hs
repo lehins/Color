@@ -94,21 +94,22 @@ instance Storable e => Storable (Color CMYK e) where
   poke p (ColorCMYK c m y k) = poke4 p c m y k
   {-# INLINE poke #-}
 
-cmyk2rgb :: Num e => Color CMYK e -> Color RGB e
-cmyk2rgb (ColorCMYK c m y k) = ColorRGB r g b
+cmyk2rgb :: (RealFloat e, Elevator e) => Color CMYK e -> Color RGB e
+cmyk2rgb (ColorCMYK c m y k) = ColorRGB (clamp01 r) (clamp01 g) (clamp01 b)
   where
-    !r = (1 - c) * (1 - k)
-    !g = (1 - m) * (1 - k)
-    !b = (1 - y) * (1 - k)
+    !k' = maxValue - k
+    !r = (maxValue - c) * k'
+    !g = (maxValue - m) * k'
+    !b = (maxValue - y) * k'
 {-# INLINE cmyk2rgb #-}
 
 
-rgb2cmyk :: (Ord e, Fractional e) => Color RGB e -> Color CMYK e
+rgb2cmyk :: (RealFloat e, Elevator e) => Color RGB e -> Color CMYK e
 rgb2cmyk (ColorRGB r g b) = ColorCMYK c m y k
   where
     !c = (k' - r) / k'
     !m = (k' - g) / k'
     !y = (k' - b) / k'
-    !k = 1 - k'
+    !k = maxValue - k'
     !k' = max r (max g b)
 {-# INLINE rgb2cmyk #-}

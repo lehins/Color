@@ -18,6 +18,10 @@ module Graphics.Color.Model.Common
   , epsilonEqColorDouble
   , epsilonEqColorTol
   , epsilonEqColorTolIx
+  -- * Integral
+  , shouldBeApproxIntegral
+  , approxIntegralColorExpect
+  , approxIntegralColorExpect1
   , arbitraryElevator
   , module Test.Hspec
   , module Test.Hspec.QuickCheck
@@ -56,19 +60,57 @@ expectSameLength xs ys =
 arbitraryElevator :: (Elevator e, Random e) => Gen e
 arbitraryElevator = choose (minValue, maxValue)
 
+shouldBeApproxIntegral ::
+     (HasCallStack, Show a, Integral a)
+  => Word8 -- ^ Epsilon, a maximum tolerated error.
+  -> a -- ^ Tested value.
+  -> a -- ^ Expected result.
+  -> Expectation
+shouldBeApproxIntegral epsilon result expected
+  | result == expected = pure ()
+  | otherwise =
+    assertBool
+      (concat
+         [show result, " /= ", show expected, " (Tolerance: ", show diff, " > ", show epsilon, ")"])
+      (diff <= fromIntegral epsilon)
+  where
+    diff
+      | result > expected = result - expected
+      | otherwise = expected - result
+
+approxIntegralColorExpect ::
+     (HasCallStack, ColorModel cs e, Integral e) => Word8 -> Color cs e -> Color cs e -> Expectation
+approxIntegralColorExpect epsilon x y =
+  zipWithM_ (shouldBeApproxIntegral epsilon) (F.toList x) (F.toList y)
+
+approxIntegralColorExpect1 ::
+     (HasCallStack, ColorModel cs e, Integral e) => Color cs e -> Color cs e -> Expectation
+approxIntegralColorExpect1 = approxIntegralColorExpect 1
+
+infix 1 `approxIntegralColorExpect1`
+
 epsilonExpect ::
      (HasCallStack, Show a, RealFloat a)
   => a -- ^ Epsilon, a maximum tolerated error. Sign is ignored.
   -> a -- ^ Expected result.
   -> a -- ^ Tested value.
   -> Expectation
-epsilonExpect epsilon x y
-  | isNaN x = y `shouldSatisfy` isNaN
-  | x == y = pure ()
-  | otherwise =
-    assertBool
-      (concat [show x, " /= ", show y, "\nTolerance: ", show diff, " > ", show n])
-      (diff <= n)
+epsilonExpect epsilon x y =
+  forM_ (epsilonMaybeEq epsilon x y) $ \errMsg ->
+    expectationFailure $ "Expected: " ++ show x ++ " but got: " ++ show y ++ "\n   " ++ errMsg
+
+
+epsilonMaybeEq ::
+     (Show a, RealFloat a)
+  => a -- ^ Epsilon, a maximum tolerated error. Sign is ignored.
+  -> a -- ^ Expected result.
+  -> a -- ^ Tested value.
+  -> Maybe String
+epsilonMaybeEq epsilon x y
+  | isNaN x && not (isNaN y) = Just $ "Expected NaN, but got: " ++ show y
+  | x == y = Nothing
+  | diff > n = Just $ concat [show x, " /= ", show y, " (Tolerance: ", show diff, " > ", show n, ")"]
+  | otherwise = Nothing
   where
     (absx, absy) = (abs x, abs y)
     n = epsilon * (1 + max absx absy)
@@ -76,7 +118,10 @@ epsilonExpect epsilon x y
 
 epsilonColorExpect ::
      (HasCallStack, ColorModel cs e, RealFloat e) => e -> Color cs e -> Color cs e -> Expectation
-epsilonColorExpect epsilon x y = zipWithM_ (epsilonExpect epsilon) (F.toList x) (F.toList y)
+epsilonColorExpect epsilon x y =
+  forM_ (zipWithM (epsilonMaybeEq epsilon) (F.toList x) (F.toList y)) $ \errMsgs ->
+    expectationFailure $
+    "Expected: " ++ show x ++ " but got: " ++ show y ++ "\n" ++ unlines (map ("    " ++) errMsgs)
 
 epsilonColorIxSpec ::
      (HasCallStack, ColorModel cs e, RealFloat e)
@@ -86,7 +131,7 @@ epsilonColorIxSpec ::
   -> Color cs e
   -> Spec
 epsilonColorIxSpec epsilon ix x y =
-  it ("Index: " ++ show ix) $ zipWithM_ (epsilonExpect epsilon) (F.toList x) (F.toList y)
+  it ("Index: " ++ show ix) $ epsilonColorExpect epsilon x y
 
 
 epsilonEq ::
@@ -95,7 +140,7 @@ epsilonEq ::
   -> a -- ^ Expected result.
   -> a -- ^ Tested value.
   -> Property
-epsilonEq epsilon x y = once $ epsilonExpect epsilon x y
+epsilonEq epsilon x y = property $ epsilonExpect epsilon x y
 
 epsilonEqColor :: (ColorModel cs e, RealFloat e) => Color cs e -> Color cs e -> Property
 epsilonEqColor = epsilonEqColorTol epsilon
@@ -114,7 +159,8 @@ epsilonEqColorFloat = epsilonEqColorTol epsilon
     epsilon = 1e-6
 
 epsilonEqColorTol :: (ColorModel cs e, RealFloat e) => e -> Color cs e -> Color cs e -> Property
-epsilonEqColorTol epsilon x y = conjoin $ F.toList $ liftA2 (epsilonEq epsilon) x y
+epsilonEqColorTol epsilon x y = property $ epsilonColorExpect epsilon x y
+  --conjoin $ F.toList $ liftA2 (epsilonEq epsilon) x y
 
 -- | Same as `epsilonEqColorTol` but with indexed counterexample.
 epsilonEqColorTolIx ::
@@ -136,4 +182,4 @@ colorModelSpec :: forall cs e . (ColorModel cs e, Arbitrary (Color cs e)) => Str
 colorModelSpec name =
   describe "ColorModel" $ do
     toFromComponentsSpec @cs @e
-    it "name" $ showsColorModelName (Proxy :: Proxy (Color cs e)) "" `shouldStartWith` name
+    it "Model Name" $ showsColorModelName (Proxy :: Proxy (Color cs e)) "" `shouldStartWith` name

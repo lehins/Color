@@ -59,6 +59,7 @@ spec = do
     let (srgbs, _hsls, _cmyks) = unzip3 ralAlternatives
     describe "Matches sRGB" $
       specMatchLists ["luminousBrightOrange", "pastelGreen"] shouldBe srgbs ralColors'
+    -- xdescribe "Matches CMYK" $ specMatchLists [] shouldBe cmyks ralColors'
     -- xdescribe "Matches HSL" $ specMatchLists [] shouldBe hsls ralColors'
 
 
