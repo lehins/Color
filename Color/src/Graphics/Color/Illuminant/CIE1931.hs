@@ -4,7 +4,7 @@
 {-# LANGUAGE DataKinds #-}
 -- |
 -- Module      : Graphics.Color.Illuminant.CIE1931
--- Copyright   : (c) Alexey Kuleshevich 2019
+-- Copyright   : (c) Alexey Kuleshevich 2019-2020
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -383,7 +383,7 @@ data CIE1931
   -- ^ High pressure metal halide lamp
   | HP5
   -- ^ High pressure metal halide lamp
-  deriving (Eq, Show, Enum)
+  deriving (Eq, Show, Read, Enum, Bounded)
 
 -- -- | Academy Color Encoding System
 -- data ACES =

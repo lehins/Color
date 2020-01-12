@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE PolyKinds #-}
@@ -15,6 +16,12 @@ module Graphics.Color.Space.Common
 
 import Graphics.Color.Space
 import Graphics.Color.Model.Common
+
+instance (Elevator e, Random e) => Arbitrary (Color (Y i) e) where
+  arbitrary = Y <$> arbitraryElevator
+
+instance (Elevator e, Random e) => Arbitrary (Color (XYZ i) e) where
+  arbitrary = ColorXYZ <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
 
 
 prop_toFromColorXYZ ::

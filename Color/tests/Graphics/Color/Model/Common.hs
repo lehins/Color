@@ -36,6 +36,7 @@ import Test.HUnit (assertBool)
 import Test.QuickCheck
 import Control.Monad
 
+
 izipWithM_ :: Applicative m => (Int -> a -> b -> m c) -> [a] -> [b] -> m ()
 izipWithM_ f xs = zipWithM_ (uncurry f) (zip [0..] xs)
 
@@ -65,7 +66,9 @@ epsilonExpect epsilon x y
   | isNaN x = y `shouldSatisfy` isNaN
   | x == y = pure ()
   | otherwise =
-    assertBool (concat [show x, " /= ", show y, "\nTolerance: ", show diff, " > ", show n]) (diff <= n)
+    assertBool
+      (concat [show x, " /= ", show y, "\nTolerance: ", show diff, " > ", show n])
+      (diff <= n)
   where
     (absx, absy) = (abs x, abs y)
     n = epsilon * (1 + max absx absy)

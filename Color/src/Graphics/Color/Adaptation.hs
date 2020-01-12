@@ -1,8 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Adaptation
 -- Copyright   : (c) Alexey Kuleshevich 2019-2020

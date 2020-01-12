@@ -3,7 +3,7 @@
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Illuminant.CIE1964
--- Copyright   : (c) Alexey Kuleshevich 2019
+-- Copyright   : (c) Alexey Kuleshevich 2019-2020
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -208,4 +208,4 @@ data CIE1964
   -- /Note/ - Takes precedence over other F illuminants
   | FL12
   -- ^ Philips TL83, Ultralume 30
-  deriving (Eq, Show, Enum)
+  deriving (Eq, Show, Read, Enum, Bounded)
