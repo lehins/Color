@@ -23,8 +23,10 @@ module Graphics.Pixel
   , toPixelF
   , toPixelD
   , module Graphics.Color.Model
+  , module Graphics.Color.Algebra.Binary
   ) where
 
+import Graphics.Color.Algebra.Binary
 import Graphics.Color.Model
 import Graphics.Pixel.Internal
 

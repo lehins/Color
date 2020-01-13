@@ -167,7 +167,6 @@ adaptationMatrix =
     ICAT im3x3 = icat :: ICAT t e
     wpTest = coerce (whitePointTristimulus :: Color (XYZ it) e)
     wpRef = coerce (whitePointTristimulus :: Color (XYZ ir) e)
-{-# NOINLINE adaptationMatrix #-}
 
 vonKriesAdaptation :: ChromaticAdaptation 'VonKries it ir e => Adaptation 'VonKries it ir e
 vonKriesAdaptation = adaptationMatrix

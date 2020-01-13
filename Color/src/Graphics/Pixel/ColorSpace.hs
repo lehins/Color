@@ -46,12 +46,14 @@ module Graphics.Pixel.ColorSpace
   , AdobeRGB
   -- * Re-export of color space
   , module Graphics.Color.Space
+  , module Graphics.Color.Algebra.Binary
   ) where
 
 import Data.Coerce
 import Graphics.Color.Adaptation.VonKries
 import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
+import Graphics.Color.Algebra.Binary
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space
 import Graphics.Color.Space.RGB.AdobeRGB
