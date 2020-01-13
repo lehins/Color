@@ -9,20 +9,16 @@ import Graphics.Color.Space.Common
 import Graphics.Color.Space.RGB.SRGB
 import qualified Graphics.Color.Space.RGB.Derived.SRGB as Derived
 import Graphics.Color.Space.RGB.Alternative.YCbCr
-
-instance (Elevator e, Random e) => Arbitrary (Color SRGB e) where
-  arbitrary =
-    ColorRGB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
-
-instance (Illuminant i, Elevator e, Random e) => Arbitrary (Color (Derived.SRGB i) e) where
-  arbitrary =
-    ColorRGB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
+import Graphics.Color.Space.RGB.SRGBSpec ()
+import Graphics.Color.Space.RGB.Derived.SRGBSpec ()
 
 
 instance (Elevator e, Random e) => Arbitrary (Color (YCbCr cs) e) where
   arbitrary =
     ColorYCbCr <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
 
+-- Accurate roundtrip to/from both XYZ and SRGB is not possible due to the nature of the
+-- algorithm.
 spec :: Spec
 spec =
   describe "YCbCr" $ do

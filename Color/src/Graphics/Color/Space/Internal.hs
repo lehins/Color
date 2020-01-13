@@ -34,7 +34,6 @@ module Graphics.Color.Space.Internal
   , primaryTristimulus
   , Illuminant(..)
   , WhitePoint(.., WhitePoint)
-  , Tristimulus(..)
   , xWhitePoint
   , yWhitePoint
   , zWhitePoint
@@ -147,8 +146,9 @@ class (Typeable i, Typeable k, KnownNat (Temperature i)) => Illuminant (i :: k) 
   colorTemperature = CCT (fromIntegral (natVal (Proxy :: Proxy (Temperature i))))
 
 
-newtype WhitePoint (i :: k) e = WhitePointChromaticity (Chromaticity i e)
- deriving (Eq)
+newtype WhitePoint (i :: k) e =
+  WhitePointChromaticity (Chromaticity i e)
+  deriving (Eq)
 
 instance (Illuminant i, Elevator e) => Show (WhitePoint (i :: k) e) where
   showsPrec n (WhitePointChromaticity wp)
@@ -162,10 +162,6 @@ pattern WhitePoint :: e -> e -> WhitePoint i e
 pattern WhitePoint x y <- (coerce -> (V2 x y)) where
   WhitePoint x y = coerce (V2 x y)
 {-# COMPLETE WhitePoint #-}
-
-
-newtype Tristimulus i e = Tristimulus (Color (XYZ i) e)
-  deriving (Show, Eq, Ord, Functor, Applicative)
 
 -- | @x@ value of a `WhitePoint`
 --

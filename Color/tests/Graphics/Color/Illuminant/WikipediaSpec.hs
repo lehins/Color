@@ -1,11 +1,13 @@
-{-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
 module Graphics.Color.Illuminant.WikipediaSpec (spec) where
 
 import Data.Proxy
 import Graphics.Color.Space.Common
+import Graphics.Color.Illuminant.Common
 import Graphics.Color.Illuminant.Wikipedia
 import qualified Data.Colour.CIE as Colour
 import qualified Data.Colour.CIE.Illuminant as Colour
@@ -28,6 +30,27 @@ instance Arbitrary Degree2 where
 spec :: Spec
 spec =
   describe "Wikipedia" $ do
+    describe "IlluminantSpec" $ do
+      illuminantSpec @'A
+      illuminantSpec @'B
+      illuminantSpec @'C
+      illuminantSpec @'D50
+      illuminantSpec @'D55
+      illuminantSpec @'D65
+      illuminantSpec @'D75
+      illuminantSpec @'E
+      illuminantSpec @'F1
+      illuminantSpec @'F12
+      illuminantSpec @'F3
+      illuminantSpec @'F4
+      illuminantSpec @'F5
+      illuminantSpec @'F6
+      illuminantSpec @'F7
+      illuminantSpec @'F8
+      illuminantSpec @'F9
+      illuminantSpec @'F10
+      illuminantSpec @'F11
+      illuminantSpec @'F12
     describe "Match 'colour' package" $ do
       Colour.chromaCoords Colour.a `shouldMatch` (whitePoint :: WhitePoint 'A Double)
       Colour.chromaCoords Colour.b `shouldMatch` (whitePoint :: WhitePoint 'B Double)

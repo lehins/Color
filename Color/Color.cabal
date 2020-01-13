@@ -103,7 +103,10 @@ test-suite tests
   type:               exitcode-stdio-1.0
   hs-source-dirs:     tests
   main-is:            Main.hs
-  other-modules:      Graphics.Color.Illuminant.WikipediaSpec
+  other-modules:      Graphics.Color.Illuminant.CIE1931Spec
+                    , Graphics.Color.Illuminant.CIE1964Spec
+                    , Graphics.Color.Illuminant.Common
+                    , Graphics.Color.Illuminant.WikipediaSpec
                     , Graphics.Color.Model.Common
                     , Graphics.Color.Model.CMYKSpec
                     , Graphics.Color.Model.HSISpec
@@ -113,8 +116,12 @@ test-suite tests
                     , Graphics.Color.Model.YCbCrSpec
                     , Graphics.Color.Space.Common
                     , Graphics.Color.Space.CIE1976.LABSpec
+                    , Graphics.Color.Space.RGB.AdobeRGBSpec
                     , Graphics.Color.Space.RGB.SRGBSpec
+                    , Graphics.Color.Space.RGB.Derived.AdobeRGBSpec
                     , Graphics.Color.Space.RGB.Derived.SRGBSpec
+                    , Graphics.Color.Space.RGB.ITU.Rec470Spec
+                    , Graphics.Color.Space.RGB.ITU.Rec601Spec
                     , Graphics.Color.Space.RGB.ITU.Rec709Spec
                     , Graphics.Color.Space.RGB.Alternative.YCbCrSpec
                     , Graphics.Color.Standard.RALSpec

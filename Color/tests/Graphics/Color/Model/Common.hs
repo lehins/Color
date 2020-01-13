@@ -13,6 +13,8 @@ module Graphics.Color.Model.Common
   , epsilonColorExpect
   , epsilonColorIxSpec
   , epsilonEq
+  , epsilonEqFloat
+  , epsilonEqDouble
   , epsilonEqColor
   , epsilonEqColorFloat
   , epsilonEqColorDouble
@@ -27,9 +29,9 @@ module Graphics.Color.Model.Common
   , module Test.Hspec.QuickCheck
   , module Test.QuickCheck
   , module System.Random
+  , module F
   ) where
 
-import Control.Applicative
 import Data.Proxy
 import Data.Foldable as F
 import Graphics.Color.Model
@@ -40,6 +42,8 @@ import Test.HUnit (assertBool)
 import Test.QuickCheck
 import Control.Monad
 
+
+infix 1 `epsilonEqFloat`, `epsilonEqDouble`, `approxIntegralColorExpect1`
 
 izipWithM_ :: Applicative m => (Int -> a -> b -> m c) -> [a] -> [b] -> m ()
 izipWithM_ f xs = zipWithM_ (uncurry f) (zip [0..] xs)
@@ -86,8 +90,6 @@ approxIntegralColorExpect epsilon x y =
 approxIntegralColorExpect1 ::
      (HasCallStack, ColorModel cs e, Integral e) => Color cs e -> Color cs e -> Expectation
 approxIntegralColorExpect1 = approxIntegralColorExpect 1
-
-infix 1 `approxIntegralColorExpect1`
 
 epsilonExpect ::
      (HasCallStack, Show a, RealFloat a)
@@ -142,6 +144,23 @@ epsilonEq ::
   -> Property
 epsilonEq epsilon x y = property $ epsilonExpect epsilon x y
 
+epsilonEqDouble ::
+     Double -- ^ Expected result.
+  -> Double -- ^ Tested value.
+  -> Property
+epsilonEqDouble = epsilonEq epsilon
+  where
+    epsilon = 1e-12
+
+epsilonEqFloat ::
+     Float -- ^ Expected result.
+  -> Float -- ^ Tested value.
+  -> Property
+epsilonEqFloat = epsilonEq epsilon
+  where
+    epsilon = 1e-6
+
+
 epsilonEqColor :: (ColorModel cs e, RealFloat e) => Color cs e -> Color cs e -> Property
 epsilonEqColor = epsilonEqColorTol epsilon
   where
@@ -151,7 +170,6 @@ epsilonEqColorDouble :: ColorModel cs Double => Color cs Double -> Color cs Doub
 epsilonEqColorDouble = epsilonEqColorTol epsilon
   where
     epsilon = 1e-12
-
 
 epsilonEqColorFloat :: ColorModel cs Float => Color cs Float -> Color cs Float -> Property
 epsilonEqColorFloat = epsilonEqColorTol epsilon
