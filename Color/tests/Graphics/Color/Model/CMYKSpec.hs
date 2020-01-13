@@ -33,7 +33,6 @@ spec =
       prop "cmyk2rgb - 16bit" $ \(cmyk@(ColorCMYK c m y k) :: Color CMYK Word16) ->
         case JuicyPixels.convertPixel (JuicyPixels.PixelCMYK16 c m y k) of
           JuicyPixels.PixelRGB16 r g b ->
-            -- toWord16 <$> cmyk2rgb (toFloat <$> cmyk) `approxIntegralColorExpect1` ColorRGB r g b
             approxIntegralColorExpect 2 (toWord16 <$> cmyk2rgb (toFloat <$> cmyk)) (ColorRGB r g b)
       prop "rgb2cmyk - 16bit" $ \(rgb@(ColorRGB r g b) :: Color RGB Word16) ->
         case JuicyPixels.convertPixel (JuicyPixels.PixelRGB16 r g b) of

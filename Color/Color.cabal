@@ -123,6 +123,10 @@ test-suite tests
                     , Graphics.Color.Space.RGB.ITU.Rec470Spec
                     , Graphics.Color.Space.RGB.ITU.Rec601Spec
                     , Graphics.Color.Space.RGB.ITU.Rec709Spec
+                    , Graphics.Color.Space.RGB.Alternative.CMYKSpec
+                    , Graphics.Color.Space.RGB.Alternative.HSISpec
+                    , Graphics.Color.Space.RGB.Alternative.HSLSpec
+                    , Graphics.Color.Space.RGB.Alternative.HSVSpec
                     , Graphics.Color.Space.RGB.Alternative.YCbCrSpec
                     , Graphics.Color.Standard.RALSpec
                     , Spec

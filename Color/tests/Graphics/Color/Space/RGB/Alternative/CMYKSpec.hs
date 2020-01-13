@@ -1,0 +1,26 @@
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
+module Graphics.Color.Space.RGB.Alternative.CMYKSpec (spec) where
+
+import Graphics.Color.Space.Common
+import Graphics.Color.Space.RGB.SRGB
+import qualified Graphics.Color.Space.RGB.Derived.SRGB as Derived
+import Graphics.Color.Space.RGB.Alternative.CMYK
+import Graphics.Color.Space.RGB.Derived.SRGBSpec ()
+
+
+instance (Elevator e, Random e) => Arbitrary (Color (CMYK cs) e) where
+  arbitrary =
+    ColorCMYK <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator <*>
+    arbitraryElevator
+
+spec :: Spec
+spec =
+  describe "CMYK" $ do
+    colorModelSpec @(CMYK (Derived.SRGB D65)) @Word "CMYK"
+    colorSpaceCommonSpec @(CMYK (Derived.SRGB D65)) @_ @Double $ pure ()
+    -- Arbitrary inverse CMYKtoSRGB is not true.
+    prop "sRGBtoCMYK" $ \ (srgb :: Color (Derived.SRGB D65) Double) ->
+      toBaseSpace (fromBaseSpace srgb :: Color (CMYK (Derived.SRGB D65)) Double)
+      `epsilonEqColor` srgb
