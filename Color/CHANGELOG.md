@@ -1,5 +1,9 @@
 # Changelog for color
 
+## 0.1.2
+
+* Fix `YCbCr` conversion to derived RGB color spaces
+
 ## 0.1.1
 
 * Addition of `Graphics.Color.Illuminant.Wikipedia` module
