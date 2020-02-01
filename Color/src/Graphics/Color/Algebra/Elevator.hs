@@ -23,6 +23,7 @@ import Data.Vector.Storable (Storable)
 import Data.Vector.Unboxed (Unbox)
 import Data.Word
 import GHC.Float
+--import GHC.Float.RealFracMethods
 import Text.Printf
 
 defFieldFormat :: FieldFormat
@@ -92,7 +93,7 @@ squashTo1 !e = fromIntegral e / fromIntegral (maxBound :: a)
 
 -- | Convert to integral streaching it's value up to a maximum value.
 stretch :: forall a b. (RealFloat a, Integral b, Bounded b) => a -> b
-stretch !e = round (fromIntegral (maxBound :: b) * clamp01 e)
+stretch !e = roundRealFloatPositive (fromIntegral (maxBound :: b) * clamp01 e)
 {-# INLINE stretch #-}
 
 
@@ -222,11 +223,11 @@ instance Elevator Word where
   {-# INLINE toFloat #-}
   toDouble = squashTo1
   {-# INLINE toDouble #-}
-  fromDouble = stretch . clamp01
+  fromDouble = stretch
   {-# INLINE fromDouble #-}
   toRealFloat = squashTo1
   {-# INLINE toRealFloat #-}
-  fromRealFloat = stretch . clamp01
+  fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
 
 -- | Values between @[0, 127]@
@@ -246,7 +247,7 @@ instance Elevator Int8 where
   {-# INLINE toFloat #-}
   toRealFloat = squashTo1 . max 0
   {-# INLINE toRealFloat #-}
-  fromRealFloat = stretch . clamp01
+  fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
 
 
@@ -267,7 +268,7 @@ instance Elevator Int16 where
   {-# INLINE toFloat #-}
   toRealFloat = squashTo1 . max 0
   {-# INLINE toRealFloat #-}
-  fromRealFloat = stretch . clamp01
+  fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
 
 
@@ -288,7 +289,7 @@ instance Elevator Int32 where
   {-# INLINE toFloat #-}
   toRealFloat = squashTo1 . max 0
   {-# INLINE toRealFloat #-}
-  fromRealFloat = stretch . clamp01
+  fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
 
 
@@ -309,7 +310,7 @@ instance Elevator Int64 where
   {-# INLINE toFloat #-}
   toRealFloat = squashTo1 . max 0
   {-# INLINE toRealFloat #-}
-  fromRealFloat = stretch . clamp01
+  fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
 
 
@@ -334,7 +335,7 @@ instance Elevator Int where
   {-# INLINE toFloat #-}
   toRealFloat = squashTo1 . max 0
   {-# INLINE toRealFloat #-}
-  fromRealFloat = stretch . clamp01
+  fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
 
 
@@ -343,13 +344,13 @@ instance Elevator Float where
   maxValue = 1
   minValue = 0
   fieldFormat _ = defFieldFormat { fmtWidth = Just 9, fmtPrecision = Just 6, fmtChar = 'f'}
-  toWord8 = stretch . clamp01
+  toWord8 = stretch
   {-# INLINE toWord8 #-}
-  toWord16 = stretch . clamp01
+  toWord16 = stretch
   {-# INLINE toWord16 #-}
-  toWord32 = stretch . clamp01
+  toWord32 = stretch
   {-# INLINE toWord32 #-}
-  toWord64 = stretch . clamp01
+  toWord64 = stretch
   {-# INLINE toWord64 #-}
   toFloat = id
   {-# INLINE toFloat #-}
@@ -368,13 +369,13 @@ instance Elevator Double where
   maxValue = 1
   minValue = 0
   fieldFormat _ = defFieldFormat { fmtWidth = Just 15, fmtPrecision = Just 12, fmtChar = 'f'}
-  toWord8 = stretch . clamp01
+  toWord8 = stretch
   {-# INLINE toWord8 #-}
-  toWord16 = stretch . clamp01
+  toWord16 = stretch
   {-# INLINE toWord16 #-}
-  toWord32 = stretch . clamp01
+  toWord32 = stretch
   {-# INLINE toWord32 #-}
-  toWord64 = stretch . clamp01
+  toWord64 = stretch
   {-# INLINE toWord64 #-}
   toFloat = double2Float
   {-# INLINE toFloat #-}
@@ -420,3 +421,21 @@ instance (PrintfArg e, Elevator e, RealFloat e) => Elevator (Complex e) where
   {-# INLINE toRealFloat #-}
   fromRealFloat = (:+ 0) . fromRealFloat
   {-# INLINE fromRealFloat #-}
+
+
+
+
+roundRealFloatPositive :: forall a b . (Integral b, Bounded b, RealFloat a) => a -> b
+roundRealFloatPositive x
+  | rounded > toInteger (maxBound :: b) = maxBound
+  | otherwise = fromIntegral rounded
+  where
+    rounded =
+      case decodeFloat x of
+        (m, n) ->
+          if n >= 0
+            then m * 2 ^ n
+            else case quotRem m (2 ^ negate n) of
+                   (w, r)
+                     | odd w && encodeFloat r n >= (0.5 :: Float) -> w + 1
+                     | otherwise -> w

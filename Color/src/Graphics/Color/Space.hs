@@ -32,7 +32,7 @@ convertColor ::
 convertColor = fromColorXYZ . (toColorXYZ :: Color cs' e -> Color (XYZ i) Double)
 {-# INLINE convertColor #-}
 
--- | Same as `convertColor`, but use 32but `Float` asn an intermediary precision
+-- | Same as `convertColor`, but use 32bit `Float` as an intermediary precision
 --
 -- @since 0.1.1
 convertColorFloat ::

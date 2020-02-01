@@ -41,6 +41,7 @@ import Graphics.Color.Algebra
 import Graphics.Color.Space.Internal
 import Data.Typeable
 
+
 data VonKries
   = VonKries
   -- ^ VonKries chromatic adaptation transform matrix

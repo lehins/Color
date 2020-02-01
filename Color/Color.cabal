@@ -11,6 +11,7 @@ copyright:           2019-2020 Alexey Kuleshevich
 category:            Graphics
 extra-source-files:  README.md
                    , CHANGELOG.md
+extra-doc-files:     files/*.png
 cabal-version:       >=1.10
 build-type:          Custom
 tested-with:          GHC == 8.4.3

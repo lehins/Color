@@ -44,9 +44,9 @@ A library for dealing with Colors and pixels. Currently supported:
     * CIE1964 - 10 degree observer
     * Some common alternatives
 
-* Chromatic adptation:
+* Chromatic adatation:
 
-    * VonKries adptation with transformations:
+    * VonKries adaptation with transformations:
 
             * VonKries
             * Bradford (default)

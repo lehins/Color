@@ -46,6 +46,7 @@ module Graphics.Pixel.ColorSpace
   , AdobeRGB
   -- * Re-export of color space
   , module Graphics.Color.Space
+  , module Graphics.Color.Space.RGB.Alternative
   , module Graphics.Color.Algebra.Binary
   ) where
 
