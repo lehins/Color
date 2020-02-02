@@ -16,6 +16,7 @@ module Graphics.Color.Illuminant.CIE1931
   , xyzColorMatchingFunctions
   -- , xyzColorMatchingFunctions1nm
   , rectifyColorTemperature
+  , wavelengths
   ) where
 
 import Graphics.Color.Algebra
@@ -408,6 +409,9 @@ data CIE1931
 -- instance Illuminant 'DCI_P3 where
 --   whitePoint = WhitePoint 0.314 0.351
 
+wavelengths :: [(Double, V3 Double)]
+wavelengths = spectralPowerDistributions
+{-# DEPRECATED wavelengths "In favor of 'spectralPowerDistributions'" #-}
 
 -- | Daylight SPDs: S0, S1 and S2. The SPD of the studied daylight samples can be
 --  expressed as the linear combination of three, fixed SPDs.

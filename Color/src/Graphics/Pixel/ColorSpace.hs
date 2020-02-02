@@ -79,7 +79,6 @@ convertPixel ::
 convertPixel = liftPixel convert
 {-# INLINE convertPixel #-}
 
-
 -- | Constructor for a pixel in @sRGB@ color space
 --
 -- @since 0.1.0
@@ -94,14 +93,14 @@ pattern PixelSRGBA :: e -> e -> e -> e -> Pixel (Alpha SRGB) e
 pattern PixelSRGBA r g b a = Pixel (Alpha (SRGB (CM.ColorRGB r g b)) a)
 {-# COMPLETE PixelSRGBA #-}
 
--- | Constructor for a pixel with Luminocity
+-- | Constructor for a pixel with Luminance
 --
 -- @since 0.1.0
 pattern PixelY :: e -> Pixel (Y i) e
 pattern PixelY y = Pixel (Y y)
 {-# COMPLETE PixelY #-}
 
--- | Constructor for a pixel with Luminocity and Alpha channel
+-- | Constructor for a pixel with Luminance and Alpha channel
 --
 -- @since 0.1.0
 pattern PixelYA :: e -> e -> Pixel (Alpha (Y i)) e
@@ -217,7 +216,7 @@ pattern PixelYCbCrA :: e -> e -> e -> e -> Pixel (Alpha (YCbCr cs)) e
 pattern PixelYCbCrA y cb cr a = Pixel (ColorYCbCrA y cb cr a)
 {-# COMPLETE PixelYCbCrA #-}
 
--- | Compute luminance pixel of a pixel color
+-- | Compute luminance of a pixel color
 --
 -- @since 0.1.0
 toPixelY :: ColorSpace cs i e => Pixel cs e -> Pixel (Y i) e

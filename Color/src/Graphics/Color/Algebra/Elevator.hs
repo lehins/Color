@@ -368,7 +368,7 @@ instance Elevator Float where
 instance Elevator Double where
   maxValue = 1
   minValue = 0
-  fieldFormat _ = defFieldFormat { fmtWidth = Just 15, fmtPrecision = Just 12, fmtChar = 'f'}
+  fieldFormat _ = defFieldFormat { fmtWidth = Just 15, fmtPrecision = Just 12, fmtChar = 'f' }
   toWord8 = stretch
   {-# INLINE toWord8 #-}
   toWord16 = stretch

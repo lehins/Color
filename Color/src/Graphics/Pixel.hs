@@ -30,7 +30,7 @@ import Graphics.Color.Algebra.Binary
 import Graphics.Color.Model
 import Graphics.Pixel.Internal
 
--- | Constructor for a pixel with single channel.
+-- | Constructor for a grayscale pixel with single channel.
 --
 -- @since 0.1.0
 pattern PixelY :: e -> Pixel Y e
@@ -80,7 +80,7 @@ pattern PixelYCbCr y cb cr = Pixel (ColorYCbCr y cb cr)
 {-# COMPLETE PixelYCbCr #-}
 
 
--- | Constructor for a pixel with a luminocity and transparency channels.
+-- | Constructor for a grayscale pixel with a transparency channel.
 --
 -- @since 0.1.0
 pattern PixelYA :: e -> e -> Pixel (Alpha Y) e
