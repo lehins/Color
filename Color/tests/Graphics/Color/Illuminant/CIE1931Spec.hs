@@ -80,8 +80,8 @@ daylightChromaticityX_7000to25000K t =
   + 1.90180 * 10 ^ (6 :: Int) / (t ^ (2 :: Int))
   - 2.00640 * 10 ^ (9 :: Int) / (t ^ (3 :: Int))
 
-chromaticity :: (Show e, RealFloat e) => e -> V2 e
-chromaticity t = V2 x y
+_chromaticity :: (Show e, RealFloat e) => e -> V2 e
+_chromaticity t = V2 x y
   where
     x
       | 4000 <= t && t < 7000 = daylightChromaticityX_4000to7000K t
@@ -91,15 +91,11 @@ chromaticity t = V2 x y
 
 
 
-ts =
+_ts :: [Double]
+_ts =
   [ unCCT (colorTemperature :: CCT 'D50)
   , unCCT (colorTemperature :: CCT 'D55)
   , unCCT (colorTemperature :: CCT 'D60)
   , unCCT (colorTemperature :: CCT 'D65)
   , unCCT (colorTemperature :: CCT 'D75)
   ]
-
-
---data D (t :: Nat)
-
---instance

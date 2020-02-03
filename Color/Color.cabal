@@ -104,7 +104,8 @@ test-suite tests
   type:               exitcode-stdio-1.0
   hs-source-dirs:     tests
   main-is:            Main.hs
-  other-modules:      Graphics.Color.Illuminant.CIE1931Spec
+  other-modules:      Graphics.Color.Algebra.ElevatorSpec
+                    , Graphics.Color.Illuminant.CIE1931Spec
                     , Graphics.Color.Illuminant.CIE1964Spec
                     , Graphics.Color.Illuminant.Common
                     , Graphics.Color.Illuminant.WikipediaSpec

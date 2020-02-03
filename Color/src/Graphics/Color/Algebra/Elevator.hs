@@ -93,9 +93,24 @@ squashTo1 !e = fromIntegral e / fromIntegral (maxBound :: a)
 
 -- | Convert to integral streaching it's value up to a maximum value.
 stretch :: forall a b. (RealFloat a, Integral b, Bounded b) => a -> b
-stretch !e = roundRealFloatPositive (fromIntegral (maxBound :: b) * clamp01 e)
+stretch !e = --round (fromIntegral (maxBound :: b) * clamp01 e)
+  roundRealFloatPositive (fromIntegral (maxBound :: b) * clamp01 e)
 {-# INLINE stretch #-}
 
+roundRealFloatPositive :: forall a b . (Integral b, Bounded b, RealFloat a) => a -> b
+roundRealFloatPositive x
+  | rounded > toInteger (maxBound :: b) = maxBound
+  | otherwise = fromIntegral rounded
+  where
+    rounded =
+      case decodeFloat x of
+        (m, n) ->
+          if n >= 0
+            then m * 2 ^ n
+            else case quotRem m (2 ^ negate n) of
+                   (w, r)
+                     | odd w && encodeFloat r n >= (0.5 :: Float) -> w + 1
+                     | otherwise -> w
 
 -- | Clamp a value to @[0, 1]@ range.
 clamp01 :: RealFloat a => a -> a
@@ -208,8 +223,12 @@ instance Elevator Word where
   minValue = minBound
 #if WORD_SIZE_IN_BITS < 64
   fieldFormat _ = defFieldFormat { fmtWidth = Just 10, fmtChar = 'd'}
+  toWord64 = dropDown
+  {-# INLINE toWord64 #-}
 #else
   fieldFormat _ = defFieldFormat { fmtWidth = Just 20, fmtChar = 'd'}
+  toWord64 = fromIntegral
+  {-# INLINE toWord64 #-}
 #endif
   toWord8 = dropDown
   {-# INLINE toWord8 #-}
@@ -217,8 +236,6 @@ instance Elevator Word where
   {-# INLINE toWord16 #-}
   toWord32 = dropDown
   {-# INLINE toWord32 #-}
-  toWord64 = fromIntegral
-  {-# INLINE toWord64 #-}
   toFloat = squashTo1
   {-# INLINE toFloat #-}
   toDouble = squashTo1
@@ -320,8 +337,12 @@ instance Elevator Int where
   minValue = 0
 #if WORD_SIZE_IN_BITS < 64
   fieldFormat _ = defFieldFormat { fmtWidth = Just 10, fmtChar = 'd'}
+  toWord64 = dropDown . max 0
+  {-# INLINE toWord64 #-}
 #else
   fieldFormat _ = defFieldFormat { fmtWidth = Just 19, fmtChar = 'd'}
+  toWord64 = fromIntegral . max 0
+  {-# INLINE toWord64 #-}
 #endif
   toWord8 = dropDown . max 0
   {-# INLINE toWord8 #-}
@@ -329,8 +350,6 @@ instance Elevator Int where
   {-# INLINE toWord16 #-}
   toWord32 = dropDown . max 0
   {-# INLINE toWord32 #-}
-  toWord64 = fromIntegral . max 0
-  {-# INLINE toWord64 #-}
   toFloat = squashTo1 . max 0
   {-# INLINE toFloat #-}
   toRealFloat = squashTo1 . max 0
@@ -421,21 +440,3 @@ instance (PrintfArg e, Elevator e, RealFloat e) => Elevator (Complex e) where
   {-# INLINE toRealFloat #-}
   fromRealFloat = (:+ 0) . fromRealFloat
   {-# INLINE fromRealFloat #-}
-
-
-
-
-roundRealFloatPositive :: forall a b . (Integral b, Bounded b, RealFloat a) => a -> b
-roundRealFloatPositive x
-  | rounded > toInteger (maxBound :: b) = maxBound
-  | otherwise = fromIntegral rounded
-  where
-    rounded =
-      case decodeFloat x of
-        (m, n) ->
-          if n >= 0
-            then m * 2 ^ n
-            else case quotRem m (2 ^ negate n) of
-                   (w, r)
-                     | odd w && encodeFloat r n >= (0.5 :: Float) -> w + 1
-                     | otherwise -> w
