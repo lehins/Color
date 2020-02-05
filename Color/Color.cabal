@@ -11,7 +11,7 @@ copyright:           2019-2020 Alexey Kuleshevich
 category:            Graphics
 extra-source-files:  README.md
                    , CHANGELOG.md
-extra-doc-files:     files/*.png
+extra-doc-files:     files/*.svg
 cabal-version:       >=1.10
 build-type:          Custom
 tested-with:          GHC == 8.4.3
@@ -20,6 +20,7 @@ tested-with:          GHC == 8.4.3
                     , GHC == 8.6.4
                     , GHC == 8.6.5
                     , GHC == 8.8.1
+                    , GHC == 8.8.2
 
 custom-setup
   setup-depends:
@@ -69,7 +70,6 @@ library
                      -- , Graphics.Color.Space.RGB.AdobeWideGamut
                      -- , Graphics.Color.Space.RGB.ProPhoto
                      -- , Graphics.Color.Space.RGB.DCI_P3
-
                      -- , Graphics.Color.Space.LMS
                      , Graphics.Color.Standard.RAL
                      , Graphics.Pixel

@@ -4,6 +4,7 @@
 
 * Fix `YCbCr` conversion to derived RGB color spaces
 * Fix conversion of `toWord64 (1 :: Double)` and `toWord632 (1 :: Float)`.
+* Addition of `xyzColorMatchingFunctions` and `spectralPowerDistributions`
 
 ## 0.1.1
 

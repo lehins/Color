@@ -428,7 +428,7 @@ wavelengths = spectralPowerDistributions
 --
 -- All of the values were taken directly from: /CIE15: Technical Report: Colorimetry, 3rd edition/
 --
--- ![spectralPowerDistributions](files/spectralPowerDistributions.png)
+-- ![spectralPowerDistributions](files/spectralPowerDistributions.svg)
 --
 -- @since 0.1.2
 spectralPowerDistributions :: [(Double, V3 Double)]
@@ -545,6 +545,8 @@ spectralPowerDistributions =
 -- | @[(λ, V3 x̄(λ) ȳ(λ) z̄(λ), V2 x(λ) z(λ))]@
 --
 -- All of the values were taken directly from: /CIE15: Technical Report: Colorimetry, 3rd edition/
+--
+-- ![colorMatchingFunctions](files/colorMatchingFunctions.png)
 --
 -- @since 0.1.2
 xyzColorMatchingFunctions :: [(Double, V3 Double, V2 Double)]
