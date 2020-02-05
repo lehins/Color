@@ -134,8 +134,8 @@ test-suite tests
                     , Spec
   build-depends:      JuicyPixels
                     , HUnit
-                    , QuickCheck
-                    , base             >= 4.8 && < 5
+                    , QuickCheck  > 2.13
+                    , base        >= 4.8 && < 5
                     , Color
                     , colour
                     , hspec

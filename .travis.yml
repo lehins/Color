@@ -37,24 +37,6 @@ matrix:
   # The Stack builds. We can pass in arbitrary Stack arguments via the ARGS
   # variable, such as using --stack-yaml to point to a different file.
 
-  # - env: BUILD=stack ARGS="--resolver lts-8.24 --stack-yaml stack-doctests.yaml" DOCTESTS_DISABLED=true
-  #   compiler: ": #stack GHC-8.0.2 (lts-8.24)"
-  #   addons:
-  #     apt:
-  #       packages: [libgmp-dev]
-
-  # - env: BUILD=stack ARGS="--resolver lts-9.21 --stack-yaml stack-doctests.yaml" DOCTESTS_DISABLED=true
-  #   compiler: ": #stack GHC-8.0.2 (lts-9.21)"
-  #   addons:
-  #     apt:
-  #       packages: [libgmp-dev]
-
-  # - env: BUILD=stack ARGS="--resolver lts-11.22 --stack-yaml stack-doctests.yaml"
-  #   compiler: ": #stack GHC-8.2.2 (lts-11.22)"
-  #   addons:
-  #     apt:
-  #       packages: [libgmp-dev]
-
   - env: BUILD=stack ARGS="--resolver lts-12.14 --haddock --no-haddock-deps"
     compiler: ": #stack GHC-8.4.3 (lts-12.14)"
     addons:
