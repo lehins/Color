@@ -89,20 +89,27 @@ spec =
       -- eprop "toWord8 . toWord16" $ \(e :: Word8) -> e === toWord8 (toWord16 e)
       -- eprop "toWord8 . toWord32" $ \(e :: Word8) -> e === toWord8 (toWord32 e)
       -- eprop "toWord8 . toWord64" $ \(e :: Word8) -> e === toWord8 (toWord64 e)
-      -- eprop "toWord8 . toFloat" $ \(e :: Word8) -> e === toWord8 (toFloat e)
       -- eprop "toWord8 . toDouble" $ \(e :: Word8) -> e === toWord8 (toDouble e)
       -- eprop "toWord8 . toRealFloat :: Float" $ \(e :: Word8) ->
       --   e === toWord8 (toRealFloat e :: Float)
       -- eprop "toWord8 . toRealFloat :: Double" $ \(e :: Word8) ->
       --   e === toWord8 (toRealFloat e :: Double)
+      eprop "fromRealFloat . toFloat" $ \(e :: Float) -> e === toRealFloat (toFloat e)
+      eprop "fromRealFloat . toDouble" $ \(e :: Float) -> e === toRealFloat (toDouble e)
       eprop "fromRealFloat . toRealFloat :: Float" $ \(e :: Float) ->
         e === fromRealFloat (toRealFloat e :: Float)
       eprop "fromRealFloat . toRealFloat :: Double" $ \(e :: Float) ->
         e === fromRealFloat (toRealFloat e :: Double)
       eprop "fromDouble . toDouble" $ \(e :: Float) -> e === fromDouble (toDouble e)
-      eprop "read . toShowS" $ \(e :: Float) -> e === read (toShowS e "")
+      --eprop "read . toShowS" $ \(e :: Float) -> e === read (toShowS e "")
+      it "toWord32 (maxBound edge case)" $ toWord32 (1 :: Float) `shouldBe` maxBound
     describe "Double" $ do
-      it "toWord64 edge case" $ toWord64 (1 :: Double) `shouldBe` maxBound
+      eprop "fromRealFloat . toDouble" $ \(e :: Double) -> e === toRealFloat (toDouble e)
+      eprop "fromRealFloat . toRealFloat :: Double" $ \(e :: Double) ->
+        e === fromRealFloat (toRealFloat e :: Double)
+      eprop "fromDouble . toDouble" $ \(e :: Double) -> e === fromDouble (toDouble e)
+      it "fromDouble . toWord64" $ toWord64 (1 :: Double) `shouldBe` maxBound
+      it "toWord64 (maxBound edge case)" $ toWord64 (1 :: Double) `shouldBe` maxBound
   where
     maxFloatI, maxDoubleI :: Integral a => a
     maxFloatI = 2 ^ (24 :: Int)

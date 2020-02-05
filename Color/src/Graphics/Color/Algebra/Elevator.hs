@@ -1,6 +1,7 @@
-{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE DefaultSignatures #-}
+{-# LANGUAGE MagicHash #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 -- |
 -- Module      : Graphics.Color.Algebra.Elevator
@@ -23,7 +24,6 @@ import Data.Vector.Storable (Storable)
 import Data.Vector.Unboxed (Unbox)
 import Data.Word
 import GHC.Float
---import GHC.Float.RealFracMethods
 import Text.Printf
 
 defFieldFormat :: FieldFormat
@@ -93,29 +93,53 @@ squashTo1 !e = fromIntegral e / fromIntegral (maxBound :: a)
 
 -- | Convert to integral streaching it's value up to a maximum value.
 stretch :: forall a b. (RealFloat a, Integral b, Bounded b) => a -> b
-stretch !e = --round (fromIntegral (maxBound :: b) * clamp01 e)
-  roundRealFloatPositive (fromIntegral (maxBound :: b) * clamp01 e)
+stretch !e = round (fromIntegral (maxBound :: b) * clamp01 e)
 {-# INLINE stretch #-}
-
-roundRealFloatPositive :: forall a b . (Integral b, Bounded b, RealFloat a) => a -> b
-roundRealFloatPositive x
-  | rounded > toInteger (maxBound :: b) = maxBound
-  | otherwise = fromIntegral rounded
-  where
-    rounded =
-      case decodeFloat x of
-        (m, n) ->
-          if n >= 0
-            then m * 2 ^ n
-            else case quotRem m (2 ^ negate n) of
-                   (w, r)
-                     | odd w && encodeFloat r n >= (0.5 :: Float) -> w + 1
-                     | otherwise -> w
 
 -- | Clamp a value to @[0, 1]@ range.
 clamp01 :: RealFloat a => a -> a
 clamp01 !x = min (max 0 x) 1
 {-# INLINE clamp01 #-}
+
+
+float2Word32 :: Float -> Word32
+float2Word32 d'
+  | d' <= 0 = 0
+  | d > 4.294967e9 = maxBound
+  | otherwise = round d
+  where
+    d = maxWord32 * d'
+{-# INLINE float2Word32 #-}
+
+-- | Same as:
+-- λ> fromIntegral (maxBound :: Word32) :: Float
+-- 4.2949673e9
+maxWord32 :: Float
+maxWord32 = F# 4.2949673e9#
+{-# INLINE maxWord32 #-}
+
+double2Word64 :: Double -> Word64
+double2Word64 d'
+  | d' <= 0 = 0
+  | d > 1.844674407370955e19 = maxBound
+  | otherwise = round d
+  where
+    d = maxWord64 * d'
+{-# INLINE double2Word64 #-}
+
+-- | Differs from `fromIntegral` due to: https://gitlab.haskell.org/ghc/ghc/issues/17782
+--
+-- λ> fromIntegral (maxBound :: Word64) :: Double
+-- 1.844674407370955e19
+maxWord64 :: Double
+maxWord64 = D# 1.8446744073709552e19##
+{-# INLINE maxWord64 #-}
+
+{-# RULES
+"fromRealFloat :: Double -> Word" fromRealFloat = fromDouble :: Double -> Word
+"fromRealFloat :: Double -> Word64" fromRealFloat = fromDouble :: Double -> Word64
+"fromRealFloat :: Float -> Word32" fromRealFloat = float2Word32
+ #-}
 
 
 -- | Values between @[0, 255]]@
@@ -210,7 +234,7 @@ instance Elevator Word64 where
   {-# INLINE toFloat #-}
   toDouble = squashTo1
   {-# INLINE toDouble #-}
-  fromDouble = toWord64
+  fromDouble = double2Word64
   {-# INLINE fromDouble #-}
   toRealFloat = squashTo1
   {-# INLINE toRealFloat #-}
@@ -225,10 +249,14 @@ instance Elevator Word where
   fieldFormat _ = defFieldFormat { fmtWidth = Just 10, fmtChar = 'd'}
   toWord64 = dropDown
   {-# INLINE toWord64 #-}
+  fromDouble = stretch
+  {-# INLINE fromDouble #-}
 #else
   fieldFormat _ = defFieldFormat { fmtWidth = Just 20, fmtChar = 'd'}
-  toWord64 = fromIntegral
+  toWord64 (W64# w#) = (W# w#)
   {-# INLINE toWord64 #-}
+  fromDouble = toWord64 . double2Word64
+  {-# INLINE fromDouble #-}
 #endif
   toWord8 = dropDown
   {-# INLINE toWord8 #-}
@@ -240,8 +268,6 @@ instance Elevator Word where
   {-# INLINE toFloat #-}
   toDouble = squashTo1
   {-# INLINE toDouble #-}
-  fromDouble = stretch
-  {-# INLINE fromDouble #-}
   toRealFloat = squashTo1
   {-# INLINE toRealFloat #-}
   fromRealFloat = stretch
@@ -367,7 +393,7 @@ instance Elevator Float where
   {-# INLINE toWord8 #-}
   toWord16 = stretch
   {-# INLINE toWord16 #-}
-  toWord32 = stretch
+  toWord32 = float2Word32
   {-# INLINE toWord32 #-}
   toWord64 = stretch
   {-# INLINE toWord64 #-}
@@ -394,7 +420,7 @@ instance Elevator Double where
   {-# INLINE toWord16 #-}
   toWord32 = stretch
   {-# INLINE toWord32 #-}
-  toWord64 = stretch
+  toWord64 = double2Word64
   {-# INLINE toWord64 #-}
   toFloat = double2Float
   {-# INLINE toFloat #-}
@@ -415,6 +441,7 @@ instance Elevator Double where
 "fromRealFloat :: Double -> Float"                   fromRealFloat = double2Float
 "fromRealFloat :: Float -> Double"                   fromRealFloat = float2Double
  #-}
+
 
 
 -- | Discards imaginary part and changes precision of real part.
