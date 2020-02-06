@@ -1,5 +1,10 @@
 # Changelog for color
 
+## 0.1.3
+
+* Addition of `CMCCAT2000`.
+* Rename `CIECAM02` to `CIECAT02` with a fallback synonym for backwards compatibility
+
 ## 0.1.2
 
 * Fix `YCbCr` conversion to derived RGB color spaces

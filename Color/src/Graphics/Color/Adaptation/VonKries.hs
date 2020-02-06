@@ -31,6 +31,7 @@ module Graphics.Color.Adaptation.VonKries
   , bradfordAdaptation
   , fairchildAdaptation
   , ciecat02Adaptation
+  , cmccat2000Adaptation
   , adaptationMatrix
   -- * Deprecated
   , CIECAM02
@@ -47,7 +48,7 @@ import Data.Typeable
 
 data VonKries
   = VonKries
-  -- ^ VonKries chromatic adaptation transform matrix
+  -- ^ VonKries chromatic adaptation transform
   --
   -- >>> cat :: CAT 'VonKries Float
   -- CAT VonKries 'VonKries Float
@@ -59,8 +60,10 @@ data VonKries
   -- [ [ 1.859936,-1.129382, 0.219897 ]
   -- , [ 0.361191, 0.638812,-0.000006 ]
   -- , [-0.000000,-0.000000, 1.089064 ] ]
+  --
+  -- @since 0.1.0
   | Bradford
-  -- ^ Bradford chromatic adaptation transform matrix
+  -- ^ Bradford chromatic adaptation transform
   --
   -- >>> cat :: CAT 'Bradford Float
   -- CAT VonKries 'Bradford Float
@@ -72,8 +75,10 @@ data VonKries
   -- [ [ 0.986993,-0.147054, 0.159963 ]
   -- , [ 0.432305, 0.518360, 0.049291 ]
   -- , [-0.008529, 0.040043, 0.968487 ] ]
+  --
+  -- @since 0.1.0
   | Fairchild
-  -- ^ Fairchild chromatic adaptation transform matrix
+  -- ^ Fairchild chromatic adaptation transform
   --
   -- >>> cat :: CAT 'Fairchild Float
   -- CAT VonKries 'Fairchild Float
@@ -85,8 +90,10 @@ data VonKries
   -- [ [ 0.987400,-0.176825, 0.189425 ]
   -- , [ 0.450435, 0.464933, 0.084632 ]
   -- , [-0.013968, 0.027807, 0.986162 ] ]
+  --
+  -- @since 0.1.0
   | CIECAT02
-  -- ^ CIECAT02 chromatic adaptation transform matrix
+  -- ^ CIECAT02 chromatic adaptation transform
   --
   -- >>> cat :: CAT 'CIECAT02 Float
   -- CAT VonKries 'CIECAT02 Float
@@ -98,8 +105,25 @@ data VonKries
   -- [ [ 1.096124,-0.278869, 0.182745 ]
   -- , [ 0.454369, 0.473533, 0.072098 ]
   -- , [-0.009628,-0.005698, 1.015326 ] ]
+  --
+  -- @since 0.1.3
+  | CMCCAT2000
+  -- ^ CMCCAT2000 chromatic adaptation transform
+  --
+  -- >>> cat :: CAT 'CMCCAT2000 Float
+  -- CAT VonKries 'CMCCAT2000 Float
+  -- [ [ 0.798200, 0.338900,-0.137100 ]
+  -- , [-0.591800, 1.551200, 0.040600 ]
+  -- , [ 0.000800, 0.023900, 0.975300 ] ]
+  -- >>> icat :: ICAT 'CMCCAT2000 Float
+  -- ICAT VonKries 'CMCCAT2000 Float
+  -- [ [ 1.076450,-0.237662, 0.161212 ]
+  -- , [ 0.410964, 0.554342, 0.034694 ]
+  -- , [-0.010954,-0.013389, 1.024343 ] ]
+  --
+  -- @since 0.1.3
 
--- | Chromatic adaptation transformation matrix matrix
+-- | Chromatic adaptation transformation matrix
 newtype CAT (t :: k) e =
   CAT (M3x3 e)
   deriving (Eq)
@@ -137,11 +161,15 @@ instance ChromaticAdaptationTransform 'Fairchild where
                   (V3 -0.8360  1.8327  0.0033)
                   (V3  0.0357 -0.0469  1.0112))
 
-
 instance ChromaticAdaptationTransform 'CIECAT02 where
   cat = CAT (M3x3 (V3  0.7328  0.4296 -0.1624)
                   (V3 -0.7036  1.6975  0.0061)
                   (V3  0.0030  0.0136  0.9834))
+
+instance ChromaticAdaptationTransform 'CMCCAT2000 where
+  cat = CAT (M3x3 (V3  0.7982  0.3389 -0.1371)
+                  (V3 -0.5918  1.5512  0.0406)
+                  (V3  0.0008  0.0239  0.9753))
 
 instance (Illuminant it, Illuminant ir, Elevator e, RealFloat e) =>
          ChromaticAdaptation (t :: VonKries) (it :: kt) (ir :: kr) e where
@@ -202,6 +230,14 @@ bradfordAdaptation = adaptationMatrix
 ciecat02Adaptation :: ChromaticAdaptation 'CIECAT02 it ir e => Adaptation 'CIECAT02 it ir e
 ciecat02Adaptation = adaptationMatrix
 {-# INLINE ciecat02Adaptation #-}
+
+-- | `CMCCAT2000` chromatic adaptation. Predecessor of `CIECAT02`. as defined it
+-- [CIECAM02](https://en.wikipedia.org/wiki/CIECAM02) color appearance model
+--
+-- @since 0.1.3
+cmccat2000Adaptation :: ChromaticAdaptation 'CMCCAT2000 it ir e => Adaptation 'CIECAT02 it ir e
+cmccat2000Adaptation = adaptationMatrix
+{-# INLINE cmccat2000Adaptation #-}
 
 type CIECAM02 = 'CIECAT02
 {-# DEPRECATED CIECAM02 "In favor of a proper name 'CIECAT02'" #-}
