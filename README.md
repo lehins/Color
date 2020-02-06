@@ -12,47 +12,47 @@ A library for dealing with Colors and pixels. Currently supported:
 
 * Color models:
 
-    * `Y`
-    * `RGB`
-    * `HSI`
-    * `HSL`
-    * `HSV`
-    * `YCbCr`
-    * `CMYK`
+  * `Y`
+  * `RGB`
+  * `HSI`
+  * `HSL`
+  * `HSV`
+  * `YCbCr`
+  * `CMYK`
 
 * Color spaces and arbitrary conversions between them:
 
-    * `Y` - luminance
-    * `CIE XYZ`
-    * `CIE L*a*b*`
-    * `RGB`:
+  * `Y` - luminance
+  * `CIE XYZ`
+  * `CIE L*a*b*`
+  * `RGB`:
 
-        * `sRGB`
-        * `AdobeRGB`
-        * ITU: `Rec470`, `Rec601` and `Rec709`
-        * Alternative representations:
+    * `sRGB`
+    * `AdobeRGB`
+    * ITU: `Rec470`, `Rec601` and `Rec709`
+    * Alternative representations:
 
-            * `HSI`
-            * `HSL`
-            * `HSV`
-            * `YCbCr`
-            * `CMYK`
+      * `HSI`
+      * `HSL`
+      * `HSV`
+      * `YCbCr`
+      * `CMYK`
 
 * Illuminants:
 
-    * CIE1931 - 2 degree observer
-    * CIE1964 - 10 degree observer
-    * Some common alternatives
+  * CIE1931 - 2 degree observer
+  * CIE1964 - 10 degree observer
+  * Some common alternatives
 
 * Chromatic adatation:
 
-    * VonKries adaptation with transformations:
+  * VonKries adaptation with transformations:
 
-            * VonKries
-            * Bradford (default)
-            * Fairchild
-            * CIECAM02
+      * VonKries
+      * Bradford (default)
+      * Fairchild
+      * CIECAM02
 
 * Color Standards:
 
-    * RAL
+  * RAL
