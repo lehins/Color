@@ -8,7 +8,15 @@
 |:-------------------|:-------:|:-------:|:---:|
 |  [`Color`](https://github.com/lehins/Color/tree/master/Color)|                                       [![Hackage](https://img.shields.io/hackage/v/Color.svg)](https://hackage.haskell.org/package/Color)|                                                                                                        [![Nightly](https://www.stackage.org/package/Color/badge/nightly)](https://www.stackage.org/nightly/package/Color)|                                                                                         [![Nightly](https://www.stackage.org/package/Color/badge/lts)](https://www.stackage.org/lts/package/Color)|
 
-A library for dealing with Colors and pixels. Currently supported:
+A library for dealing with Colors and pixels. It implements arbitrary color space
+conversion, chromatic adaptation and other color manipulations.
+
+There is a clear separation between color models, color spaces and alternative
+representations of color spaces. All are distinct at the type level. The goal is to
+prevent mixups of incompatible color types as well as utilize type information for
+conversion between them.
+
+Currently supported:
 
 * Color models:
 
@@ -56,3 +64,13 @@ A library for dealing with Colors and pixels. Currently supported:
 * Color Standards:
 
   * RAL
+
+
+# External resources
+
+* `Color` is on a list of curated [Awesome Colour](https://awesome-colour.org/#haskell)
+  resources.
+
+* While working on this library the [colour-science.org](https://www.colour-science.org/)
+  and their Python implementation of [colour](https://github.com/colour-science/colour)
+  was used extensively as a reference.
