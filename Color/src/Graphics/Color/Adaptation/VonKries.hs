@@ -30,8 +30,11 @@ module Graphics.Color.Adaptation.VonKries
   , vonKriesAdaptation
   , bradfordAdaptation
   , fairchildAdaptation
-  , ciecam02Adaptation
+  , ciecat02Adaptation
   , adaptationMatrix
+  -- * Deprecated
+  , CIECAM02
+  , ciecam02Adaptation
   ) where
 
 import Data.Coerce
@@ -82,16 +85,16 @@ data VonKries
   -- [ [ 0.987400,-0.176825, 0.189425 ]
   -- , [ 0.450435, 0.464933, 0.084632 ]
   -- , [-0.013968, 0.027807, 0.986162 ] ]
-  | CIECAM02
-  -- ^ CIECAM02 chromatic adaptation transform matrix
+  | CIECAT02
+  -- ^ CIECAT02 chromatic adaptation transform matrix
   --
-  -- >>> cat :: CAT 'CIECAM02 Float
-  -- CAT VonKries 'CIECAM02 Float
+  -- >>> cat :: CAT 'CIECAT02 Float
+  -- CAT VonKries 'CIECAT02 Float
   -- [ [ 0.732800, 0.429600,-0.162400 ]
   -- , [-0.703600, 1.697500, 0.006100 ]
   -- , [ 0.003000, 0.013600, 0.983400 ] ]
-  -- >>> icat :: ICAT 'CIECAM02 Float
-  -- ICAT VonKries 'CIECAM02 Float
+  -- >>> icat :: ICAT 'CIECAT02 Float
+  -- ICAT VonKries 'CIECAT02 Float
   -- [ [ 1.096124,-0.278869, 0.182745 ]
   -- , [ 0.454369, 0.473533, 0.072098 ]
   -- , [-0.009628,-0.005698, 1.015326 ] ]
@@ -135,7 +138,7 @@ instance ChromaticAdaptationTransform 'Fairchild where
                   (V3  0.0357 -0.0469  1.0112))
 
 
-instance ChromaticAdaptationTransform 'CIECAM02 where
+instance ChromaticAdaptationTransform 'CIECAT02 where
   cat = CAT (M3x3 (V3  0.7328  0.4296 -0.1624)
                   (V3 -0.7036  1.6975  0.0061)
                   (V3  0.0030  0.0136  0.9834))
@@ -169,21 +172,44 @@ adaptationMatrix =
     wpTest = coerce (whitePointTristimulus :: Color (XYZ it) e)
     wpRef = coerce (whitePointTristimulus :: Color (XYZ ir) e)
 
+-- | `VonKries` chromatic adaptation transform.
+--
+-- @since 0.1.2
 vonKriesAdaptation :: ChromaticAdaptation 'VonKries it ir e => Adaptation 'VonKries it ir e
 vonKriesAdaptation = adaptationMatrix
 {-# INLINE vonKriesAdaptation #-}
 
+-- | `Fairchild` chromatic adaptation transform.
+--
+-- @since 0.1.2
 fairchildAdaptation :: ChromaticAdaptation 'Fairchild it ir e => Adaptation 'Fairchild it ir e
 fairchildAdaptation = adaptationMatrix
 {-# INLINE fairchildAdaptation #-}
 
+-- | `Bradford` chromatic adaptation transform, as defined in the
+-- [CIECAM97s](https://en.wikipedia.org/wiki/Color_appearance_model#CIECAM97s) color
+-- appearance model.
+--
+-- @since 0.1.2
 bradfordAdaptation :: ChromaticAdaptation 'Bradford it ir e => Adaptation 'Bradford it ir e
 bradfordAdaptation = adaptationMatrix
 {-# INLINE bradfordAdaptation #-}
 
-ciecam02Adaptation :: ChromaticAdaptation 'CIECAM02 it ir e => Adaptation 'CIECAM02 it ir e
+-- | `CIECAT02` chromatic adaptation as defined it
+-- [CIECAM02](https://en.wikipedia.org/wiki/CIECAM02) color appearance model
+--
+-- @since 0.1.3
+ciecat02Adaptation :: ChromaticAdaptation 'CIECAT02 it ir e => Adaptation 'CIECAT02 it ir e
+ciecat02Adaptation = adaptationMatrix
+{-# INLINE ciecat02Adaptation #-}
+
+type CIECAM02 = 'CIECAT02
+{-# DEPRECATED CIECAM02 "In favor of a proper name 'CIECAT02'" #-}
+
+ciecam02Adaptation :: ChromaticAdaptation CIECAM02 it ir e => Adaptation CIECAM02 it ir e
 ciecam02Adaptation = adaptationMatrix
 {-# INLINE ciecam02Adaptation #-}
+{-# DEPRECATED ciecam02Adaptation "In favor of a proper name 'ciecat02Adaptation'" #-}
 
 -- | This function allows conversion of a color between any two color spaces. It uses a
 -- very common `VonKries` chromatic adaptation transform with `Bradford` matrix. One of
@@ -195,25 +221,3 @@ ciecam02Adaptation = adaptationMatrix
 convert :: (ColorSpace cs' i' e', ColorSpace cs i e) => Color cs' e' -> Color cs e
 convert = convertElevatedWith (adaptationMatrix @'Bradford @_ @_ @Double)
 {-# INLINE convert #-}
-
-
--- RAL adopted: Daffodil yellow
--- toWord8 <$> (fromColorXYZ (chromaticAdaptationXYZ (vonKriesAdaptation :: VonKriesAdaptation Bradford D50a D65 Float) (toColorXYZ (ColorLAB 66.5 27.308 80.402 :: Color (LAB D50a) Float) :: Color XYZ Float)) :: Color SRGB Float)
--- <RGB:(226,141,  0)>
-
-
---
--- toWord8 <$> (fromColorXYZ (chromaticAdaptationXYZ (vonKriesAdaptation :: VonKriesAdaptation Bradford D50a D65 Double) (toColorXYZ (ColorLAB 83.353 3.462 75.829 :: Color (LAB D50a) Double) :: Color XYZ Double)) :: Color SRGB Double)
--- <RGB:(242,203, 46)>
-
-
--- -- Green beige
--- toWord8 <$> (fromColorXYZ (chromaticAdaptationXYZ (vonKriesAdaptation :: VonKriesAdaptation Bradford D50a D65 Double) (toColorXYZ (ColorLAB 76.022 (-0.366) 27.636 :: Color (LAB D50a) Double) :: Color XYZ Double)) :: Color SRGB Double)
--- <RGB:(201,187,136)>
-
--- From srgb spec
--- srgbVonKries :: VonKriesAdaptationMatrix t it ir Double
--- srgbVonKries = VonKriesAdaptationMatrix $ M3x3
---       (V3  1.047844353856414 0.022898981050086 -0.050206647741605)
---       (V3  0.029549007606644 0.990508028941971 -0.017074711360960)
---       (V3 -0.009250984365223 0.015072338237051  0.751717835079977)
