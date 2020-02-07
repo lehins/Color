@@ -11,6 +11,7 @@ module Graphics.Color.Model.Common
   , matchListsWith
   , expectSameLength
   , epsilonExpect
+  , epsilonFoldableExpect
   , epsilonColorExpect
   , epsilonColorIxSpec
   , epsilonEq
@@ -45,6 +46,9 @@ import Test.Hspec.QuickCheck
 import Test.HUnit (assertBool)
 import Test.Massiv.Array.Mutable
 import Test.QuickCheck
+
+instance (Random e, ColorModel cs e, Arbitrary (Color cs e)) => Arbitrary (Color (Alpha cs) e) where
+  arbitrary = addAlpha <$> arbitrary <*> arbitraryElevator
 
 instance (ColorModel cs e, CoArbitrary (Components cs e)) => CoArbitrary (Color cs e) where
   coarbitrary c = coarbitrary (toComponents c)
@@ -129,7 +133,11 @@ epsilonMaybeEq epsilon x y
 
 epsilonColorExpect ::
      (HasCallStack, ColorModel cs e, RealFloat e) => e -> Color cs e -> Color cs e -> Expectation
-epsilonColorExpect epsilon x y =
+epsilonColorExpect = epsilonFoldableExpect
+
+epsilonFoldableExpect ::
+     (HasCallStack, Foldable f, Show (f e), Show e, RealFloat e) => e -> f e -> f e -> Expectation
+epsilonFoldableExpect epsilon x y =
   M.forM_ (zipWithM (epsilonMaybeEq epsilon) (F.toList x) (F.toList y)) $ \errMsgs ->
     expectationFailure $
     "Expected: " ++ show x ++ " but got: " ++ show y ++ "\n" ++ unlines (P.map ("    " ++) errMsgs)

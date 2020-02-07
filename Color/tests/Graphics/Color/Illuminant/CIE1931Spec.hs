@@ -60,7 +60,26 @@ spec =
       it "Enum" $ forM_ is $ \ i -> toEnum (fromEnum i) `shouldBe` i
       it "Read . Show" $ forM_ is $ \ i -> read (show i) `shouldBe` i
       it "Read . Show" $  read (show is) `shouldBe` (is :: [CIE1931])
-
+    describe "Data" $ do
+      describe "Wavelength is in 5nm intervals" $ do
+        it "spectralPowerDistributions" $
+          map fst spectralPowerDistributions `shouldBe`
+          map fromIntegral [300, 305 .. 830 :: Int]
+        it "xyzColorMatchingFunctions" $
+          [w | (w, _, _) <- xyzColorMatchingFunctions] `shouldBe`
+          map fromIntegral [380, 385 .. 780 :: Int]
+      describe "Sum" $ do
+        it "spectralPowerDistributions" $
+          epsilonFoldableExpect epsilon (sum (map snd spectralPowerDistributions))
+            (V3 8715.51 890.13 374.95)
+        it "xyzColorMatchingFunctions (x̄(λ) ȳ(λ) z̄(λ))" $
+          epsilonFoldableExpect epsilon (sum [xyz | (_, xyz, _) <- xyzColorMatchingFunctions])
+            (V3 21.371524 21.371327 21.37154)
+        it "xyzColorMatchingFunctions (x(λ) z(λ))" $
+          epsilonFoldableExpect epsilon (sum [xy | (_, _, xy) <- xyzColorMatchingFunctions])
+            (V2 35.7978 24.58414)
+  where
+    epsilon = 1e-12
 
 daylightChromaticityY :: RealFloat a => a -> a
 daylightChromaticityY x = 2.87 * x - 3 * x ^ (2 :: Int) - 0.275

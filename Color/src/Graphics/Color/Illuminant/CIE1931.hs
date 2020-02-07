@@ -546,7 +546,7 @@ spectralPowerDistributions =
 --
 -- All of the values were taken directly from: /CIE15: Technical Report: Colorimetry, 3rd edition/
 --
--- ![colorMatchingFunctions](files/colorMatchingFunctions.png)
+-- ![colorMatchingFunctions](files/colorMatchingFunctions.svg)
 --
 -- @since 0.1.2
 xyzColorMatchingFunctions :: [(Double, V3 Double, V2 Double)]
