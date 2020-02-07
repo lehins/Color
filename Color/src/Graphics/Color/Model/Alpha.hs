@@ -16,7 +16,6 @@
 module Graphics.Color.Model.Alpha
   ( Alpha
   , Opaque
-  , Transparent
   , addAlpha
   , getAlpha
   , setAlpha
@@ -86,19 +85,16 @@ instance (Eq (Color cs e), Eq e) => Eq (Color (Alpha cs) e) where
   (==) (Alpha px1 a1) (Alpha px2 a2) = px1 == px2 && a1 == a2
   {-# INLINE (==) #-}
 
-instance (ColorModel cs e, cs ~ Opaque (Alpha cs), Alpha cs ~ Transparent cs) =>
+instance (ColorModel cs e, cs ~ Opaque (Alpha cs)) =>
          Show (Color (Alpha cs) e) where
   showsPrec _ = showsColorModel
 
 type family Opaque cs where
   Opaque (Alpha (Alpha cs)) = TypeError ('Text "Nested alpha channels are not allowed")
   Opaque (Alpha cs) = cs
+  Opaque cs = cs
 
-type family Transparent cs where
-  Transparent (Alpha cs) = TypeError ('Text "Nested alpha channels are not allowed")
-  Transparent cs = Alpha cs
-
-instance (ColorModel cs e, cs ~ Opaque (Alpha cs), Alpha cs ~ Transparent cs) =>
+instance (ColorModel cs e, cs ~ Opaque (Alpha cs)) =>
          ColorModel (Alpha cs) e where
   type Components (Alpha cs) e = (Components cs e, e)
   toComponents (Alpha px a) = (toComponents px, a)

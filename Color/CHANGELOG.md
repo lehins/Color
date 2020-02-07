@@ -1,6 +1,11 @@
 # Changelog for color
 
-## 0.1.3
+## 0.1.3.1
+
+* Fix introduced in `0.1.2` for `Alpha cs` was incomplete and is fixed in this version
+  without breakage.
+
+## 0.1.3 (deprecated)
 
 * Addition of `CMCCAT2000`.
 * Rename `CIECAM02` to `CIECAT02` with a fallback synonym for backwards compatibility

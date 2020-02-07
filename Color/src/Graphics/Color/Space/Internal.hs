@@ -64,7 +64,7 @@ import Data.Coerce
 import GHC.TypeNats
 import Data.Kind
 
-class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
+class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e, Typeable (Opaque cs)) =>
   ColorSpace cs (i :: k) e | cs -> i where
 
   type BaseModel cs :: Type
@@ -109,9 +109,7 @@ instance ( ColorSpace cs i e
          , ColorSpace (BaseSpace cs) i e
          , ColorSpace (Alpha (BaseSpace cs)) i e
          , cs ~ Opaque (Alpha cs)
-         , Alpha cs ~ Transparent cs
          , BaseModel cs ~ Opaque (Alpha (BaseModel cs))
-         , Alpha (BaseModel cs) ~ Transparent (BaseModel cs)
          ) =>
          ColorSpace (Alpha cs) i e where
   type BaseModel (Alpha cs) = Alpha (BaseModel cs)
