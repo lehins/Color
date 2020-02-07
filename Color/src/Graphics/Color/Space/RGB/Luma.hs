@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -22,6 +23,7 @@ module Graphics.Color.Space.RGB.Luma
   , Color
   , Luma(..)
   , Weight(..)
+  , Weights(..)
   , rgbLuma
   , rgbLumaWeights
   ) where
@@ -109,7 +111,7 @@ class Luma cs where
 
 newtype Weight cs e = Weight
   { unWeight :: e
-  } deriving (Eq, Show, Num, Fractional, Floating)
+  } deriving (Eq, Show, Num, Fractional, Floating, Functor)
 
 
 rgbLumaWeights ::

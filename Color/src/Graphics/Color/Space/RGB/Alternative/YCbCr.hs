@@ -39,6 +39,8 @@ import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.YCbCr as CM
 import Graphics.Color.Space
 import Graphics.Color.Space.RGB.SRGB
+import Graphics.Color.Space.RGB.ITU.Rec601
+import Graphics.Color.Space.RGB.ITU.Rec709
 import Graphics.Color.Space.RGB.Luma
 
 -- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
@@ -93,6 +95,39 @@ instance Elevator e => ColorSpace (YCbCr SRGB) D65 e where
   toBaseSpace = fmap fromRealFloat . ycbcr2srgb . fmap toFloat
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = fmap fromRealFloat . srgb2ycbcr . fmap toFloat
+  {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
+
+-- | `YCbCr` representation for `BT601_525` color space
+instance Elevator e => ColorSpace (YCbCr BT601_525) D65 e where
+  type BaseModel (YCbCr BT601_525) = CM.YCbCr
+  type BaseSpace (YCbCr BT601_525) = BT601_525
+  toBaseSpace = fmap fromDouble . fromColorYCbCr
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = fmap fromDouble . toColorYCbCr
+  {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
+
+-- | `YCbCr` representation for `BT601_625` color space
+instance Elevator e => ColorSpace (YCbCr BT601_625) D65 e where
+  type BaseModel (YCbCr BT601_625) = CM.YCbCr
+  type BaseSpace (YCbCr BT601_625) = BT601_625
+  toBaseSpace = fmap fromDouble . fromColorYCbCr
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = fmap fromDouble . toColorYCbCr
+  {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
+
+-- | `YCbCr` representation for `BT709` color space
+instance Elevator e => ColorSpace (YCbCr BT709) D65 e where
+  type BaseModel (YCbCr BT709) = CM.YCbCr
+  type BaseSpace (YCbCr BT709) = BT709
+  toBaseSpace = fmap fromDouble . fromColorYCbCr
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = fmap fromDouble . toColorYCbCr
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}

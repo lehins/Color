@@ -106,4 +106,4 @@ rgb2y rgb weights =
 
 newtype Weights e = Weights
   { unWeights :: V3 e
-  }
+  } deriving (Eq, Num, Show, Fractional, Floating, Functor)
