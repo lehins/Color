@@ -4,6 +4,9 @@
 
 * Addition of `CMCCAT2000`.
 * Rename `CIECAM02` to `CIECAT02` with a fallback synonym for backwards compatibility
+* Fix `ColorSpace` instance for `Alpha cs`
+* Add `ColorSpace` instances for `YCbCr cs` color spaces that have `Luma` instance:
+  `BT709`, `BT601_525` and `BT601_625`
 
 ## 0.1.2
 

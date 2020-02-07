@@ -10,17 +10,16 @@
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Luma
--- Copyright   : (c) Alexey Kuleshevich 2018-2019
+-- Copyright   : (c) Alexey Kuleshevich 2018-2020
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
 module Graphics.Color.Space.RGB.Luma
-  ( Y'
-  -- * Constructors for Luma.
-  , pattern Y'
-  , Color
+  ( -- * Luma
+    pattern Y'
+  , Y'
   , Luma(..)
   , Weight(..)
   , Weights(..)
