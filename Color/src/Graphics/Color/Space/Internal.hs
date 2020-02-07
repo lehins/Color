@@ -64,7 +64,7 @@ import Data.Coerce
 import GHC.TypeNats
 import Data.Kind
 
-class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e, Typeable (Opaque cs)) =>
+class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
   ColorSpace cs (i :: k) e | cs -> i where
 
   type BaseModel cs :: Type
@@ -106,21 +106,29 @@ class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e, Typeable (Opa
 
 
 instance ( ColorSpace cs i e
-         , Opaque (Alpha cs) ~ cs
-         , Opaque (Alpha (BaseModel cs)) ~ BaseModel cs) =>
+         , ColorSpace (BaseSpace cs) i e
+         , ColorSpace (Alpha (BaseSpace cs)) i e
+         , cs ~ Opaque (Alpha cs)
+         , Alpha cs ~ Transparent cs
+         , BaseModel cs ~ Opaque (Alpha (BaseModel cs))
+         , Alpha (BaseModel cs) ~ Transparent (BaseModel cs)
+         ) =>
          ColorSpace (Alpha cs) i e where
   type BaseModel (Alpha cs) = Alpha (BaseModel cs)
-  type BaseSpace (Alpha cs) = cs
-
+  type BaseSpace (Alpha cs) = Alpha (BaseSpace cs)
   toBaseModel = modifyOpaque toBaseModel
   {-# INLINE toBaseModel #-}
   fromBaseModel = modifyOpaque fromBaseModel
   {-# INLINE fromBaseModel #-}
+  toColorXYZ = toColorXYZ . dropAlpha
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = (`addAlpha` maxValue) . fromColorXYZ
+  {-# INLINE fromColorXYZ #-}
   luminance = luminance . dropAlpha
   {-# INLINE luminance #-}
-  toBaseSpace = dropAlpha
+  toBaseSpace = modifyOpaque toBaseSpace
   {-# INLINE toBaseSpace #-}
-  fromBaseSpace c = Alpha c maxValue
+  fromBaseSpace = modifyOpaque fromBaseSpace
   {-# INLINE fromBaseSpace #-}
 
 -- | This is a data type that encodes a data point on the chromaticity diagram

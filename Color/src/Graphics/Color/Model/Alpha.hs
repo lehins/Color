@@ -16,6 +16,7 @@
 module Graphics.Color.Model.Alpha
   ( Alpha
   , Opaque
+  , Transparent
   , addAlpha
   , getAlpha
   , setAlpha
@@ -85,21 +86,26 @@ instance (Eq (Color cs e), Eq e) => Eq (Color (Alpha cs) e) where
   (==) (Alpha px1 a1) (Alpha px2 a2) = px1 == px2 && a1 == a2
   {-# INLINE (==) #-}
 
-instance (ColorModel cs e, Opaque (Alpha cs) ~ cs) => Show (Color (Alpha cs) e) where
+instance (ColorModel cs e, cs ~ Opaque (Alpha cs), Alpha cs ~ Transparent cs) =>
+         Show (Color (Alpha cs) e) where
   showsPrec _ = showsColorModel
 
 type family Opaque cs where
   Opaque (Alpha (Alpha cs)) = TypeError ('Text "Nested alpha channels are not allowed")
   Opaque (Alpha cs) = cs
-  Opaque cs = cs
 
-instance (ColorModel cs e, Opaque (Alpha cs) ~ cs) => ColorModel (Alpha cs) e where
+type family Transparent cs where
+  Transparent (Alpha cs) = TypeError ('Text "Nested alpha channels are not allowed")
+  Transparent cs = Alpha cs
+
+instance (ColorModel cs e, cs ~ Opaque (Alpha cs), Alpha cs ~ Transparent cs) =>
+         ColorModel (Alpha cs) e where
   type Components (Alpha cs) e = (Components cs e, e)
   toComponents (Alpha px a) = (toComponents px, a)
   {-# INLINE toComponents #-}
   fromComponents (pxc, a) = Alpha (fromComponents pxc) a
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = showsColorModelName (Proxy :: Proxy (Color cs e)) . ('A':)
+  showsColorModelName _ = ("Alpha (" ++) . showsColorModelName (Proxy :: Proxy (Color cs e)) . (')':)
 
 
 instance Functor (Color cs) => Functor (Color (Alpha cs)) where
