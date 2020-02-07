@@ -19,7 +19,7 @@ spec :: Spec
 spec =
   describe "CMYK" $ do
     colorModelSpec @(CMYK (Derived.SRGB D65)) @Word "CMYK"
-    colorSpaceCommonSpec @(CMYK (Derived.SRGB D65)) @_ @Double $ pure ()
+    colorSpaceCommonSpec @(CMYK (Derived.SRGB D65)) @Double $ pure ()
     -- Arbitrary inverse CMYKtoSRGB is not true.
     prop "sRGBtoCMYK" $ \ (srgb :: Color (Derived.SRGB D65) Double) ->
       toBaseSpace (fromBaseSpace srgb :: Color (CMYK (Derived.SRGB D65)) Double)

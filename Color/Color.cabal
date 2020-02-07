@@ -130,6 +130,7 @@ test-suite tests
                     , Graphics.Color.Space.RGB.Alternative.HSLSpec
                     , Graphics.Color.Space.RGB.Alternative.HSVSpec
                     , Graphics.Color.Space.RGB.Alternative.YCbCrSpec
+                    , Graphics.Color.SpaceSpec
                     , Graphics.Color.Standard.RALSpec
                     , Spec
   build-depends:      JuicyPixels
@@ -141,6 +142,8 @@ test-suite tests
                     , hspec
                     , random
                     , vector
+                    , massiv
+                    , massiv-test
 
   default-language:   Haskell2010
   ghc-options:        -Wall

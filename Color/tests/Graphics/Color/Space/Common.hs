@@ -27,7 +27,7 @@ instance (Elevator e, Random e) => Arbitrary (Color (XYZ i) e) where
 
 
 prop_toFromColorXYZ ::
-     forall cs i e. (ColorSpace cs i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, RealFloat e)
   => Color cs e
   -> Property
 prop_toFromColorXYZ c = c `epsilonEqColor` fromColorXYZ (toColorXYZ c :: Color (XYZ i) Double)
@@ -35,26 +35,26 @@ prop_toFromColorXYZ c = c `epsilonEqColor` fromColorXYZ (toColorXYZ c :: Color (
 
 -- For RGB standards, that have matrices rounded to 4 digits after the decimal point
 prop_toFromLenientColorXYZ ::
-     forall cs i e. (ColorSpace cs i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, RealFloat e)
   => e
   -> Color cs e
   -> Property
 prop_toFromLenientColorXYZ epsilon c =
   epsilonEqColorTol epsilon c (fromColorXYZ (toColorXYZ c :: Color (XYZ i) Double))
 
-prop_LuminanceColorXYZ :: forall cs i e . ColorSpace cs i e => Color cs e -> Property
+prop_LuminanceColorXYZ :: forall cs e i . ColorSpace cs i e => Color cs e -> Property
 prop_LuminanceColorXYZ c =
   (luminance c :: Color (Y i) Float) `epsilonEqColor`
   luminance (toColorXYZ c :: Color (XYZ i) Float)
 
 prop_toFromBaseSpace ::
-     forall cs i e. (ColorSpace cs i e, ColorSpace (BaseSpace cs) i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, ColorSpace (BaseSpace cs) i e, RealFloat e)
   => Color cs e
   -> Property
 prop_toFromBaseSpace c = c `epsilonEqColor` fromBaseSpace (toBaseSpace c)
 
 prop_toFromBaseSpaceLenient ::
-     forall cs i e. (ColorSpace cs i e, ColorSpace (BaseSpace cs) i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, ColorSpace (BaseSpace cs) i e, RealFloat e)
   => e
   -> Color cs e
   -> Property
@@ -62,37 +62,37 @@ prop_toFromBaseSpaceLenient epsilon c = epsilonEqColorTol epsilon c $ fromBaseSp
 
 
 prop_toFromBaseModel ::
-     forall cs i e. ColorSpace cs i e
+     forall cs e i. ColorSpace cs i e
   => Color cs e
   -> Property
 prop_toFromBaseModel c = c === fromBaseModel (toBaseModel c)
 
 colorSpaceCommonSpec ::
-     forall cs i e.
+     forall cs e i.
      (Arbitrary (Color cs e), ColorSpace cs i e)
   => Spec -> Spec
 colorSpaceCommonSpec extra =
   describe "ColorSpace" $ do
-    prop "luminance . toColorXYZ" $ prop_LuminanceColorXYZ @cs @i @e
-    prop "toFromBaseModel" $ prop_toFromBaseModel @cs @i @e
+    prop "luminance . toColorXYZ" $ prop_LuminanceColorXYZ @cs @e @i
+    prop "toFromBaseModel" $ prop_toFromBaseModel @cs @e @i
     extra
 
 colorSpaceSpec ::
-     forall cs i e.
+     forall cs e i.
      (Arbitrary (Color cs e), ColorSpace (BaseSpace cs) i e, ColorSpace cs i e, RealFloat e)
   => Spec
 colorSpaceSpec =
-  colorSpaceCommonSpec @cs @i @e $ do
-    prop "toFromBaseSpace" $ prop_toFromBaseSpace @cs @i @e
-    prop "toFromColorXYZ" $ prop_toFromColorXYZ @cs @i @e
+  colorSpaceCommonSpec @cs @e @i $ do
+    prop "toFromBaseSpace" $ prop_toFromBaseSpace @cs @e @i
+    prop "toFromColorXYZ" $ prop_toFromColorXYZ @cs @e @i
 
 colorSpaceLenientSpec ::
-     forall cs i e.
+     forall cs e i.
      (Arbitrary (Color cs e), ColorSpace (BaseSpace cs) i e, ColorSpace cs i e, RealFloat e)
   => e
   -> Spec
 colorSpaceLenientSpec tol =
   let tolStr = "(lenient=" ++ show tol ++ ")"
-  in colorSpaceCommonSpec @cs @i @e $ do
-       prop ("toFromBaseSpace " ++ tolStr) $ prop_toFromBaseSpaceLenient @cs @i @e tol
-       prop ("toFromColorXYZ " ++ tolStr) $ prop_toFromLenientColorXYZ @cs @i @e tol
+  in colorSpaceCommonSpec @cs @e @i $ do
+       prop ("toFromBaseSpace " ++ tolStr) $ prop_toFromBaseSpaceLenient @cs @e @i tol
+       prop ("toFromColorXYZ " ++ tolStr) $ prop_toFromLenientColorXYZ @cs @e @i tol

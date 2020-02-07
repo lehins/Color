@@ -12,4 +12,4 @@ instance (Elevator e, Random e) => Arbitrary (Color AdobeRGB e) where
 spec :: Spec
 spec = describe "AdobeRGB" $ do
   colorModelSpec @AdobeRGB @Word "AdobeRGB"
-  colorSpaceLenientSpec @AdobeRGB @_ @Float 0.00001
+  colorSpaceLenientSpec @AdobeRGB @Float 0.00001

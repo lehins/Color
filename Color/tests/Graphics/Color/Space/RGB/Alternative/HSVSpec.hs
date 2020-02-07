@@ -18,4 +18,4 @@ spec =
   describe "HSV" $ do
     describe "Derived-sRGB" $ do
       colorModelSpec @(HSV (Derived.SRGB D65)) @Word "HSV"
-      colorSpaceSpec @(HSV (Derived.SRGB D65)) @_ @Double
+      colorSpaceSpec @(HSV (Derived.SRGB D65)) @Double

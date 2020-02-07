@@ -1,3 +1,4 @@
+{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -32,21 +33,29 @@ module Graphics.Color.Model.Common
   , module F
   ) where
 
-import Data.Proxy
+import Prelude as P
+import Control.Monad as M
 import Data.Foldable as F
+import Data.Massiv.Array as A
+import Data.Proxy
 import Graphics.Color.Model
 import System.Random
 import Test.Hspec
 import Test.Hspec.QuickCheck
 import Test.HUnit (assertBool)
+import Test.Massiv.Array.Mutable
 import Test.QuickCheck
-import Control.Monad
 
+instance (ColorModel cs e, CoArbitrary (Components cs e)) => CoArbitrary (Color cs e) where
+  coarbitrary c = coarbitrary (toComponents c)
+
+instance (Function (Components cs e), ColorModel cs e) => Function (Color cs e) where
+  function = functionMap toComponents fromComponents
 
 infix 1 `epsilonEqFloat`, `epsilonEqDouble`, `approxIntegralColorExpect1`
 
 izipWithM_ :: Applicative m => (Int -> a -> b -> m c) -> [a] -> [b] -> m ()
-izipWithM_ f xs = zipWithM_ (uncurry f) (zip [0..] xs)
+izipWithM_ f xs = zipWithM_ (uncurry f) (P.zip [0..] xs)
 
 
 -- | Match to lists exactly element-by-element with an expectation.
@@ -98,7 +107,7 @@ epsilonExpect ::
   -> a -- ^ Tested value.
   -> Expectation
 epsilonExpect epsilon x y =
-  forM_ (epsilonMaybeEq epsilon x y) $ \errMsg ->
+  M.forM_ (epsilonMaybeEq epsilon x y) $ \errMsg ->
     expectationFailure $ "Expected: " ++ show x ++ " but got: " ++ show y ++ "\n   " ++ errMsg
 
 
@@ -121,9 +130,9 @@ epsilonMaybeEq epsilon x y
 epsilonColorExpect ::
      (HasCallStack, ColorModel cs e, RealFloat e) => e -> Color cs e -> Color cs e -> Expectation
 epsilonColorExpect epsilon x y =
-  forM_ (zipWithM (epsilonMaybeEq epsilon) (F.toList x) (F.toList y)) $ \errMsgs ->
+  M.forM_ (zipWithM (epsilonMaybeEq epsilon) (F.toList x) (F.toList y)) $ \errMsgs ->
     expectationFailure $
-    "Expected: " ++ show x ++ " but got: " ++ show y ++ "\n" ++ unlines (map ("    " ++) errMsgs)
+    "Expected: " ++ show x ++ " but got: " ++ show y ++ "\n" ++ unlines (P.map ("    " ++) errMsgs)
 
 epsilonColorIxSpec ::
      (HasCallStack, ColorModel cs e, RealFloat e)
@@ -195,9 +204,21 @@ prop_ToFromComponents px = px === fromComponents (toComponents px)
 toFromComponentsSpec :: forall cs e . (ColorModel cs e, Arbitrary (Color cs e)) => Spec
 toFromComponentsSpec = prop "fromComponents . toComponents" $ prop_ToFromComponents @cs @e
 
-
-colorModelSpec :: forall cs e . (ColorModel cs e, Arbitrary (Color cs e)) => String -> Spec
+colorModelSpec ::
+     forall cs e.
+     ( ColorModel cs e
+     , Function (Components cs e)
+     , CoArbitrary (Components cs e)
+     , Arbitrary (Color cs e)
+     )
+  => String
+  -> Spec
 colorModelSpec name =
   describe "ColorModel" $ do
     toFromComponentsSpec @cs @e
     it "Model Name" $ showsColorModelName (Proxy :: Proxy (Color cs e)) "" `shouldStartWith` name
+    modifyMaxSuccess (`div` 10) $ describe "Array" $ do
+      describe "Storable" $
+        mutableSpec @S @Ix1 @(Color cs e)
+      describe "Unboxed" $
+        mutableSpec @U @Ix1 @(Color cs e)

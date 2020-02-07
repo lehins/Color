@@ -23,7 +23,7 @@ instance (Elevator e, Random e, Illuminant i) => Arbitrary (Color (LAB (i :: k))
 spec :: Spec
 spec = describe "LAB" $ do
   colorModelSpec @(LAB 'D65) @Word "LAB"
-  colorSpaceLenientSpec @(LAB 'D65) @_ @Double 1e-10
+  colorSpaceLenientSpec @(LAB 'D65) @Double 1e-10
   describe "Same as colour package" $ do
     prop "lab2srgb" $ \lab@(ColorLAB l' a' b' :: Color (LAB 'W.D65) Double) ->
       case Colour.toSRGB (Colour.cieLAB Colour.d65 l' a' b') of

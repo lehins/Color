@@ -21,7 +21,7 @@ instance (Elevator e, Random e, Illuminant i) => Arbitrary (Color (SRGB (i :: k)
 spec :: Spec
 spec = describe "SRGB" $ do
   colorModelSpec @(SRGB 'D65) @Word "SRGB"
-  colorSpaceSpec @(SRGB 'D65) @_ @Float
+  colorSpaceSpec @(SRGB 'D65) @Float
   describe "Same as colour package" $ do
     prop "xyz2srgb" $ \xyz@(ColorXYZ x y z :: Color (XYZ 'W.D65) Double) ->
       case Colour.toSRGB (Colour.cieXYZ x y z) of

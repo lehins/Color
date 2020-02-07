@@ -24,10 +24,10 @@ spec =
   describe "YCbCr" $ do
     describe "sRGB" $ do
       colorModelSpec @(YCbCr SRGB) @Word "YCbCr"
-      colorSpaceCommonSpec @(YCbCr SRGB) @_ @Double $ pure ()
+      colorSpaceCommonSpec @(YCbCr SRGB) @Double $ pure ()
     describe "Derived-sRGB" $ do
       colorModelSpec @(YCbCr (Derived.SRGB D65)) @Word "YCbCr"
-      colorSpaceCommonSpec @(YCbCr (Derived.SRGB D65)) @_ @Double $ pure ()
+      colorSpaceCommonSpec @(YCbCr (Derived.SRGB D65)) @Double $ pure ()
     prop "toColorYCbCr . toColorYCbCr" $ \(rgb :: Color (Derived.SRGB D65) Double) ->
       rgb `epsilonEqColor`
       fromColorYCbCr (toColorYCbCr rgb :: Color (YCbCr (Derived.SRGB D65)) Double)

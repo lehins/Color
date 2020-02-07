@@ -18,7 +18,7 @@ spec :: Spec
 spec = do
   describe "Rec470 (525)" $ do
     colorModelSpec @BT470_525 @Word "BT470_525"
-    colorSpaceSpec @BT470_525 @_ @Float
+    colorSpaceSpec @BT470_525 @Float
   describe "Rec470 (625)" $ do
     colorModelSpec @BT470_625 @Word "BT470_625"
-    colorSpaceSpec @BT470_625 @_ @Float
+    colorSpaceSpec @BT470_625 @Float

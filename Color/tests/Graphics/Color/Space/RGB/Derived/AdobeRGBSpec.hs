@@ -17,4 +17,4 @@ instance (Elevator e, Random e, Illuminant i) => Arbitrary (Color (AdobeRGB (i :
 spec :: Spec
 spec = describe "AdobeRGB" $ do
   colorModelSpec @(AdobeRGB 'D65) @Word "AdobeRGB"
-  colorSpaceSpec @(AdobeRGB 'D65) @_ @Float
+  colorSpaceSpec @(AdobeRGB 'D65) @Float

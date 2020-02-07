@@ -15,4 +15,4 @@ spec :: Spec
 spec = describe "Rec709" $ do
   colorModelSpec @BT709 @Word "BT709"
   -- Roundrtrip is not always very accurate, eg: 8.115324539550295e-2 /= 8.140132075907752e-2
-  colorSpaceLenientSpec @BT709 @_ @Float 5e-4
+  colorSpaceLenientSpec @BT709 @Float 5e-4
