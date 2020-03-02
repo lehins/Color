@@ -1,10 +1,12 @@
-{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -19,6 +21,8 @@
 module Graphics.Color.Space.RGB.Luma
   ( -- * Luma
     pattern Y'
+  , pattern Y'A
+  , pattern Luma
   , Y'
   , Luma(..)
   , Weight(..)
@@ -29,10 +33,9 @@ module Graphics.Color.Space.RGB.Luma
 
 import Data.Coerce
 import Foreign.Storable
-import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.RGB as CM
 import Graphics.Color.Model.Internal
-import Graphics.Color.Model.Y
+import Graphics.Color.Model.Y as CM
 import Graphics.Color.Space.RGB.Internal
 
 -------------
@@ -44,13 +47,31 @@ import Graphics.Color.Space.RGB.Internal
 data Y'
 
 -- | Constructor for Luma.
-newtype instance Color Y' e = Y' e
+newtype instance Color Y' e = Luma (CM.Color CM.Y e)
 
--- | `Y'` color model
+-- | Constructor for @Y@ with alpha channel.
+pattern Y' :: e -> Color Y' e
+pattern Y' y = Luma (CM.Y y)
+{-# COMPLETE Y' #-}
+
+-- | Constructor for @Y@ with alpha channel.
+pattern Y'A :: e -> e -> Color (Alpha Y') e
+pattern Y'A y a = Alpha (Luma (CM.Y y)) a
+{-# COMPLETE Y'A #-}
+
+-- | `Y'` - luma of a color space
 deriving instance Eq e => Eq (Color Y' e)
--- | `Y'` color model
+-- | `Y'` - luma of a color space
 deriving instance Ord e => Ord (Color Y' e)
--- | `Y'` color model
+-- | `Y'` - luma of a color space
+deriving instance Functor (Color Y')
+-- | `Y'` - luma of a color space
+deriving instance Applicative (Color Y')
+-- | `Y'` - luma of a color space
+deriving instance Foldable (Color Y')
+-- | `Y'` - luma of a color space
+deriving instance Traversable (Color Y')
+-- | `Y'` - luma of a color space
 deriving instance Storable e => Storable (Color Y' e)
 
 
@@ -65,29 +86,6 @@ instance Elevator e => ColorModel Y' e where
   {-# INLINE toComponents #-}
   fromComponents = Y'
   {-# INLINE fromComponents #-}
-
--- | `Y'` color model
-instance Functor (Color Y') where
-  fmap f (Y' y) = Y' (f y)
-  {-# INLINE fmap #-}
-
--- | `Y'` color model
-instance Applicative (Color Y') where
-  pure = Y'
-  {-# INLINE pure #-}
-  (Y' fy) <*> (Y' y) = Y' (fy y)
-  {-# INLINE (<*>) #-}
-
--- | `Y'` color model
-instance Foldable (Color Y') where
-  foldr f !z (Y' y) = f y z
-  {-# INLINE foldr #-}
-
--- | `Y'` color model
-instance Traversable (Color Y') where
-  traverse f (Y' y) = Y' <$> f y
-  {-# INLINE traverse #-}
-
 
 
 ------------------

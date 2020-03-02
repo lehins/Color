@@ -27,7 +27,6 @@ module Graphics.Color.Model.Y
 
 import Data.Coerce
 import Foreign.Storable
-import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
 

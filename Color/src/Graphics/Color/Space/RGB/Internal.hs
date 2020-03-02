@@ -43,7 +43,6 @@ module Graphics.Color.Space.RGB.Internal
 
 import Data.Coerce
 import Graphics.Color.Algebra
-import Graphics.Color.Model.Alpha
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space.Internal
 

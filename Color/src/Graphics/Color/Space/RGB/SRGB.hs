@@ -33,7 +33,6 @@ module Graphics.Color.Space.RGB.SRGB
   ) where
 
 import Foreign.Storable
-import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space.Internal

@@ -29,7 +29,6 @@ module Graphics.Color.Model.RGB
 
 import Foreign.Storable
 import Graphics.Color.Algebra
-import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
 
 -- | The most common @RGB@ color model

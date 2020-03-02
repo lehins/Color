@@ -32,7 +32,6 @@ import Data.Coerce
 import Data.Proxy
 import Data.Typeable
 import Foreign.Storable
-import Graphics.Color.Model.Alpha
 import qualified Graphics.Color.Model.HSI as CM
 import Graphics.Color.Model.Internal
 import Graphics.Color.Space

@@ -55,7 +55,6 @@ module Graphics.Color.Space.Internal
   ) where
 
 import Foreign.Storable
-import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.Y as CM
 import Graphics.Color.Algebra
@@ -64,7 +63,7 @@ import Data.Coerce
 import GHC.TypeNats
 import Data.Kind
 
-class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e, Typeable (Opaque cs)) =>
+class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
   ColorSpace cs (i :: k) e | cs -> i where
 
   type BaseModel cs :: Type

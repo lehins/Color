@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -6,6 +5,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 -- |
 -- Module      : Graphics.Color.Model.Internal
 -- Copyright   : (c) Alexey Kuleshevich 2018-2019
@@ -15,11 +15,21 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Model.Internal
-  ( Color
-  , ColorModel(..)
+  ( ColorModel(..)
   , module Graphics.Color.Algebra
   , showsColorModel
   , showsColorModelOpen
+  -- * Alpha
+  , Alpha
+  , Opaque
+  , addAlpha
+  , getAlpha
+  , setAlpha
+  , dropAlpha
+  , modifyAlpha
+  , modifyOpaque
+  , Color(..)
+  -- * Helpers
   , foldr3
   , foldr4
   , traverse3
@@ -39,6 +49,7 @@ import Control.DeepSeq (NFData(rnf), deepseq)
 import Control.Monad (liftM)
 import Data.Default.Class (Default(..))
 import Data.Foldable
+import Data.Kind
 import Data.Typeable
 import qualified Data.Vector.Generic as V
 import qualified Data.Vector.Generic.Mutable as VM
@@ -46,8 +57,8 @@ import qualified Data.Vector.Storable as VS
 import qualified Data.Vector.Unboxed as VU
 import Foreign.Ptr
 import Foreign.Storable
+import GHC.TypeLits
 import Graphics.Color.Algebra
-import Data.Kind
 
 -- | A Color family with a color space and a precision of elements.
 data family Color cs e :: Type
@@ -62,6 +73,7 @@ class ( Functor (Color cs)
       , VS.Storable (Color cs e)
       , Typeable cs
       , Elevator e
+      , Typeable (Opaque cs)
       ) =>
       ColorModel cs e where
   type Components cs e :: Type
@@ -276,3 +288,116 @@ poke4 p c0 c1 c2 c3 = do
   poke (castPtr p) c0
   poke3 (p `plusPtr` sizeOf (undefined :: e)) c1 c2 c3
 {-# INLINE poke4 #-}
+
+
+-----------
+-- Alpha --
+-----------
+
+
+
+data Alpha cs
+
+data instance Color (Alpha cs) e = Alpha
+  { _opaque :: !(Color cs e)
+  , _alpha :: !e
+  }
+
+-- | Get the alpha channel value for the pixel
+--
+-- @since 0.1.0
+getAlpha :: Color (Alpha cs) e -> e
+getAlpha = _alpha
+{-# INLINE getAlpha #-}
+
+-- | Get the opaque pixel value, while leaving alpha channel intact.
+--
+-- @since 0.1.0
+dropAlpha :: Color (Alpha cs) e -> Color cs e
+dropAlpha = _opaque
+{-# INLINE dropAlpha #-}
+
+-- | Add an alpha channel value to an opaque pixel
+--
+-- @since 0.1.0
+addAlpha :: Color cs e -> e -> Color (Alpha cs) e
+addAlpha = Alpha
+{-# INLINE addAlpha #-}
+
+-- | Change the alpha channel value for the pixel
+--
+-- @since 0.1.0
+setAlpha :: Color (Alpha cs) e -> e -> Color (Alpha cs) e
+setAlpha px a = px { _alpha = a }
+{-# INLINE setAlpha #-}
+
+-- | Change the alpha channel value for the pixel
+--
+-- @since 0.1.0
+modifyAlpha :: (e -> e) -> Color (Alpha cs) e -> Color (Alpha cs) e
+modifyAlpha f px = px { _alpha = f (_alpha px) }
+{-# INLINE modifyAlpha #-}
+
+-- | Change the opaque pixel value, while leaving alpha channel intact.
+--
+-- @since 0.1.0
+modifyOpaque :: (Color cs e -> Color cs' e) -> Color (Alpha cs) e -> Color (Alpha cs') e
+modifyOpaque fpx pxa = pxa { _opaque = fpx (_opaque pxa) }
+{-# INLINE modifyOpaque #-}
+
+instance (Eq (Color cs e), Eq e) => Eq (Color (Alpha cs) e) where
+  (==) (Alpha px1 a1) (Alpha px2 a2) = px1 == px2 && a1 == a2
+  {-# INLINE (==) #-}
+
+instance (ColorModel cs e, cs ~ Opaque (Alpha cs)) =>
+         Show (Color (Alpha cs) e) where
+  showsPrec _ = showsColorModel
+
+type family Opaque cs where
+  Opaque (Alpha (Alpha cs)) = TypeError ('Text "Nested alpha channels are not allowed")
+  Opaque (Alpha cs) = cs
+  Opaque cs = cs
+
+instance (ColorModel cs e, cs ~ Opaque (Alpha cs)) =>
+         ColorModel (Alpha cs) e where
+  type Components (Alpha cs) e = (Components cs e, e)
+  toComponents (Alpha px a) = (toComponents px, a)
+  {-# INLINE toComponents #-}
+  fromComponents (pxc, a) = Alpha (fromComponents pxc) a
+  {-# INLINE fromComponents #-}
+  showsColorModelName _ = ("Alpha (" ++) . showsColorModelName (Proxy :: Proxy (Color cs e)) . (')':)
+
+
+instance Functor (Color cs) => Functor (Color (Alpha cs)) where
+  fmap f (Alpha px a) = Alpha (fmap f px) (f a)
+  {-# INLINE fmap #-}
+
+instance Applicative (Color cs) => Applicative (Color (Alpha cs)) where
+  pure e = Alpha (pure e) e
+  {-# INLINE pure #-}
+  (Alpha fpx fa) <*> (Alpha px a) = Alpha (fpx <*> px) (fa a)
+  {-# INLINE (<*>) #-}
+
+instance Foldable (Color cs) => Foldable (Color (Alpha cs)) where
+  foldr f acc (Alpha px a) = foldr f (f a acc) px
+  {-# INLINE foldr #-}
+  foldr1 f (Alpha px a) = foldr f a px
+  {-# INLINE foldr1 #-}
+
+instance Traversable (Color cs) => Traversable (Color (Alpha cs)) where
+  traverse f (Alpha px a) = Alpha <$> traverse f px <*> f a
+  {-# INLINE traverse #-}
+
+instance (Storable (Color cs e), Storable e) => Storable (Color (Alpha cs) e) where
+  sizeOf _ = sizeOf (undefined :: Color cs e) + sizeOf (undefined :: e)
+  {-# INLINE sizeOf #-}
+  alignment _ = alignment (undefined :: e)
+  {-# INLINE alignment #-}
+  peek ptr = do
+    px <- peek (castPtr ptr)
+    Alpha px <$> peekByteOff ptr (sizeOf px)
+  {-# INLINE peek #-}
+  poke ptr (Alpha px a) = do
+    poke (castPtr ptr) px
+    pokeByteOff ptr (sizeOf px) a
+  {-# INLINE poke #-}

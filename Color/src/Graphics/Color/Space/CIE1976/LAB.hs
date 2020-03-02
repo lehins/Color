@@ -26,7 +26,6 @@ module Graphics.Color.Space.CIE1976.LAB
   ) where
 
 import Foreign.Storable
-import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
 import Graphics.Color.Space.Internal
 

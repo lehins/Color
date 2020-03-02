@@ -15,6 +15,7 @@ module Graphics.Pixel
       PixelCMYK, PixelYCbCr, PixelYA, PixelRGBA, PixelHSIA, PixelHSLA,
       PixelHSVA, PixelCMYKA, PixelYCbCrA)
   , liftPixel
+  , pixelColor
   -- * Elevation
   , toPixel8
   , toPixel16

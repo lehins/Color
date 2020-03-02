@@ -31,7 +31,6 @@ module Graphics.Color.Model.HSL
   ) where
 
 import Foreign.Storable
-import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.HSV (hc2rgb)
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB

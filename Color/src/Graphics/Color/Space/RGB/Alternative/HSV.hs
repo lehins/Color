@@ -31,7 +31,6 @@ module Graphics.Color.Space.RGB.Alternative.HSV
 import Data.Coerce
 import Data.Proxy
 import Foreign.Storable
-import Graphics.Color.Model.Alpha
 import qualified Graphics.Color.Model.HSV as CM
 import Graphics.Color.Model.Internal
 import Graphics.Color.Space

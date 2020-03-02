@@ -1,5 +1,10 @@
 # Changelog for color
 
+## 0.1.4
+
+* Export `pixelColor`
+* Add luma related patterns: `PixelY'`, `PixelY'A`, `Y'` and `Y'A`
+
 ## 0.1.3.1
 
 * Fix introduced in `0.1.2` for `Alpha cs` was incomplete and is fixed in this version

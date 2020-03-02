@@ -16,9 +16,10 @@
 --
 module Graphics.Pixel.ColorSpace
   ( Pixel(Pixel, PixelY, PixelXYZ, PixelRGB, PixelHSI, PixelHSL, PixelHSV,
-      PixelCMYK, PixelYCbCr, PixelYA, PixelXYZA, PixelRGBA, PixelHSIA, PixelHSLA,
-      PixelHSVA, PixelCMYKA, PixelYCbCrA)
+      PixelCMYK, PixelYCbCr, PixelY', PixelYA, PixelXYZA, PixelRGBA, PixelHSIA, PixelHSLA,
+      PixelHSVA, PixelCMYKA, PixelYCbCrA, PixelY'A)
   , liftPixel
+  , pixelColor
   -- * Conversion
   -- ** Color space
   , convertPixel
@@ -37,22 +38,25 @@ module Graphics.Pixel.ColorSpace
   , toPixel64
   , toPixelF
   , toPixelD
-  -- * sRGB color space
+  -- * RGB
+  -- ** sRGB color space
   , pattern PixelSRGB
   , pattern PixelSRGBA
   , SRGB
   , D65
-  -- * Adobe RGB color space
+  -- ** Adobe RGB color space
   , AdobeRGB
+  -- ** Luma
+  , rgbPixelLuma
   -- * Re-export of color space
   , module Graphics.Color.Space
+  , module Graphics.Color.Space.RGB.Luma
   , module Graphics.Color.Space.RGB.Alternative
   , module Graphics.Color.Algebra.Binary
   ) where
 
 import Data.Coerce
 import Graphics.Color.Adaptation.VonKries
-import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
 import Graphics.Color.Algebra.Binary
 import qualified Graphics.Color.Model.RGB as CM
@@ -60,6 +64,7 @@ import Graphics.Color.Space
 import Graphics.Color.Space.RGB.AdobeRGB
 import Graphics.Color.Space.RGB.Alternative
 import Graphics.Color.Space.RGB.SRGB
+import Graphics.Color.Space.RGB.Luma
 import Graphics.Pixel.Internal
 
 -- | Convert a pixel from one color space to any other.
@@ -168,6 +173,21 @@ pattern PixelYCbCr :: e -> e -> e -> Pixel (YCbCr cs) e
 pattern PixelYCbCr y cb cr = Pixel (ColorYCbCr y cb cr)
 {-# COMPLETE PixelYCbCr #-}
 
+-- | Constructor for a pixel with Luma (not to be confused with luminance `Y`)
+--
+-- @since 0.1.0
+pattern PixelY' :: e -> Pixel Y' e
+pattern PixelY' y = Pixel (Y' y)
+{-# COMPLETE PixelY' #-}
+
+-- | Constructor for a pixel with Luma (not to be confused with luminance `Y`) and Alpha
+-- channel
+--
+-- @since 0.1.0
+pattern PixelY'A :: e -> e -> Pixel (Alpha Y') e
+pattern PixelY'A y a = Pixel (Alpha (Y' y) a)
+{-# COMPLETE PixelY'A #-}
+
 
 -- | Constructor for a pixel in RGB color space with Alpha channel
 --
@@ -215,6 +235,13 @@ pattern PixelCMYKA c m y k a = Pixel (ColorCMYKA c m y k a)
 pattern PixelYCbCrA :: e -> e -> e -> e -> Pixel (Alpha (YCbCr cs)) e
 pattern PixelYCbCrA y cb cr a = Pixel (ColorYCbCrA y cb cr a)
 {-# COMPLETE PixelYCbCrA #-}
+
+
+rgbPixelLuma ::
+     forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
+  => Pixel cs e'
+  -> Pixel Y' e
+rgbPixelLuma = liftPixel rgbLuma
 
 -- | Compute luminance of a pixel color
 --

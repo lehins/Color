@@ -36,7 +36,6 @@ module Graphics.Color.Model
   , module Graphics.Color.Algebra.Elevator
   ) where
 
-import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.CMYK
 import Graphics.Color.Model.HSI
 import Graphics.Color.Model.HSL

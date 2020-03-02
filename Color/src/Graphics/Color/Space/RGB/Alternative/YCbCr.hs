@@ -34,7 +34,6 @@ module Graphics.Color.Space.RGB.Alternative.YCbCr
 import Data.Coerce
 import Data.Proxy
 import Foreign.Storable
-import Graphics.Color.Model.Alpha
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.YCbCr as CM
 import Graphics.Color.Space
