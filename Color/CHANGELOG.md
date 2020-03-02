@@ -3,7 +3,7 @@
 ## 0.1.4
 
 * Export `pixelColor`
-* Add luma related patterns: `PixelY'`, `PixelY'A`, `Y'` and `Y'A`
+* Add luma related patterns: `PixelY'`, `PixelY'A`, `Y'` and `Y'A`. Also `rgbPixelLuma`
 
 ## 0.1.3.1
 
