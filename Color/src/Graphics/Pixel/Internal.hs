@@ -33,6 +33,7 @@ import Foreign.Storable
 import qualified Data.Vector.Generic as V
 import qualified Data.Vector.Generic.Mutable as VM
 import qualified Data.Vector.Unboxed as VU
+import Data.Default.Class (Default)
 
 -- | Digital imaging is one of the most common places for a color to be used in. The
 -- smallest element in any image is a pixel, which is defined by its color.
@@ -57,6 +58,7 @@ deriving instance Applicative (Color cs) => Applicative (Pixel cs)
 deriving instance Foldable (Color cs) => Foldable (Pixel cs)
 deriving instance Traversable (Color cs) => Traversable (Pixel cs)
 deriving instance Storable (Color cs e) => Storable (Pixel cs e)
+deriving instance Default (Color cs e) => Default (Pixel cs e)
 instance Show (Color cs e) => Show (Pixel cs e) where
   show = show . pixelColor
 
