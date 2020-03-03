@@ -119,18 +119,17 @@ script:
 - |
   set -ex
   if [ -n "${COVERALLS_STACK_YAML}" ] && [ -n "${COVERALLS_REPO_TOKEN}" ]; then
-     stack --stack-yaml $COVERALLS_STACK_YAML test Color:tests --coverage
+     stack --stack-yaml $COVERALLS_STACK_YAML test Color:tests --coverage --bench --no-run-benchmarks --haddock --no-haddock-deps
      stack --stack-yaml $COVERALLS_STACK_YAML hpc report --all
      travis_retry curl -L https://github.com/lehins/stack-hpc-coveralls/releases/download/0.0.5.0/shc.tar.gz | tar xz shc
      STACK_YAML="$COVERALLS_STACK_YAML" ./shc --repo-token=$COVERALLS_REPO_TOKEN combined custom
      if [ -z "$DOCTESTS_DISABLED" ]; then
-       stack $ARGS $DOCTEST_ARGS test Color:doctests --coverage
+       stack $ARGS $DOCTEST_ARGS test Color:doctests --coverage --bench --no-run-benchmarks --haddock --no-haddock-deps
      fi
   else
+    stack $ARGS $DOCTEST_ARGS test Color:tests --bench --no-run-benchmarks --haddock --no-haddock-deps
     if [ -z "$DOCTESTS_DISABLED" ]; then
-      stack $ARGS $DOCTEST_ARGS test --bench --no-run-benchmarks
-    else
-      stack $ARGS $DOCTEST_ARGS test Color:tests --bench --no-run-benchmarks
+      stack $ARGS $DOCTEST_ARGS test Color:doctests --bench --no-run-benchmarks --haddock --no-haddock-deps
     fi
   fi
   set +ex
