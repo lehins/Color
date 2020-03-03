@@ -43,18 +43,22 @@ import Graphics.Color.Space.RGB.Internal
 -------------
 
 -- | [Luma](https://en.wikipedia.org/wiki/Luma_(video\)) of a non-linear gamma corrected
--- RGB color space.
+-- RGB color space. (Not to be confused with luminance `Y`)
 data Y'
 
 -- | Constructor for Luma.
 newtype instance Color Y' e = Luma (CM.Color CM.Y e)
 
--- | Constructor for @Y@ with alpha channel.
+-- | Constructor for Luma `Y'`. (Not to be confused with luminance `Y`)
+--
+-- @since 0.1.0
 pattern Y' :: e -> Color Y' e
 pattern Y' y = Luma (CM.Y y)
 {-# COMPLETE Y' #-}
 
--- | Constructor for @Y@ with alpha channel.
+-- | Constructor for `Y'` with alpha channel. (Not to be confused with luminance `Y`)
+--
+-- @since 0.1.4
 pattern Y'A :: e -> e -> Color (Alpha Y') e
 pattern Y'A y a = Alpha (Luma (CM.Y y)) a
 {-# COMPLETE Y'A #-}
@@ -75,11 +79,11 @@ deriving instance Traversable (Color Y')
 deriving instance Storable e => Storable (Color Y' e)
 
 
--- | `Y'` color model
+-- | `Y'` - as a color model
 instance Elevator e => Show (Color Y' e) where
   showsPrec _ = showsColorModel
 
--- | `Y'` color model
+-- | `Y'` - as a color model
 instance Elevator e => ColorModel Y' e where
   type Components Y' e = e
   toComponents (Y' y) = y
@@ -110,7 +114,9 @@ newtype Weight cs e = Weight
   { unWeight :: e
   } deriving (Eq, Show, Num, Fractional, Floating, Functor)
 
-
+-- | Get the weights of a non-linear RGB color space that can be used for converting to `Luma`
+--
+-- @since 0.1.4
 rgbLumaWeights ::
      forall cs e' e. (Luma cs, RealFloat e)
   => Color cs e'
@@ -122,6 +128,8 @@ rgbLumaWeights _ =
 {-# INLINE rgbLumaWeights #-}
 
 -- | Convert a non-linear RGB pixel to a luma pixel
+--
+-- @since 0.1.0
 rgbLuma ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
   => Color cs e'

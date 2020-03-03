@@ -175,15 +175,14 @@ pattern PixelYCbCr y cb cr = Pixel (ColorYCbCr y cb cr)
 
 -- | Constructor for a pixel with Luma (not to be confused with luminance `Y`)
 --
--- @since 0.1.0
+-- @since 0.1.4
 pattern PixelY' :: e -> Pixel Y' e
 pattern PixelY' y = Pixel (Y' y)
 {-# COMPLETE PixelY' #-}
 
--- | Constructor for a pixel with Luma (not to be confused with luminance `Y`) and Alpha
--- channel
+-- | Constructor for a pixel with Luma and Alpha channel (not to be confused with luminance `Y`)
 --
--- @since 0.1.0
+-- @since 0.1.4
 pattern PixelY'A :: e -> e -> Pixel (Alpha Y') e
 pattern PixelY'A y a = Pixel (Alpha (Y' y) a)
 {-# COMPLETE PixelY'A #-}
@@ -236,7 +235,9 @@ pattern PixelYCbCrA :: e -> e -> e -> e -> Pixel (Alpha (YCbCr cs)) e
 pattern PixelYCbCrA y cb cr a = Pixel (ColorYCbCrA y cb cr a)
 {-# COMPLETE PixelYCbCrA #-}
 
-
+-- | Convert an RGB pixel to `Y'` if it has the weights specified with `Luma`.
+--
+-- @since 0.1.4
 rgbPixelLuma ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
   => Pixel cs e'

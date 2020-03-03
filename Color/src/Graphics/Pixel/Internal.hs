@@ -40,6 +40,9 @@ import qualified Data.Vector.Unboxed as VU
 -- @since 0.1.0
 newtype Pixel cs e = Pixel
   { pixelColor :: Color cs e
+  -- ^ Get to the underlying `Color`
+  --
+  -- @since 0.1.4
   }
 
 deriving instance Eq (Color cs e) => Eq (Pixel cs e)
