@@ -158,6 +158,8 @@ instance Elevator Bit where
   fromRealFloat 0 = Bit 0
   fromRealFloat _ = Bit 1
   {-# INLINE fromRealFloat #-}
+  (//) (Bit x) (Bit y) = Bit (x `div` y)
+  {-# INLINE (//) #-}
 
 
 instance Num Bit where

@@ -26,6 +26,8 @@ import Data.Word
 import GHC.Float
 import Text.Printf
 
+infixl 7 //
+
 defFieldFormat :: FieldFormat
 defFieldFormat = FieldFormat Nothing Nothing Nothing Nothing False "" 'v'
 
@@ -73,6 +75,9 @@ class (Show e, Eq e, Num e, Typeable e, Unbox e, Storable e) => Elevator e where
   -- | Values are scaled from @[0.0, 1.0]@ range.
   fromDouble :: Double -> e
   fromDouble = fromRealFloat
+
+  -- | Division that works for integral types as well as floating points. May throw an exception.
+  (//) :: e -> e -> e
 
 
 -- | Lower the precision
@@ -167,6 +172,8 @@ instance Elevator Word8 where
   {-# INLINE toRealFloat #-}
   fromRealFloat = toWord8
   {-# INLINE fromRealFloat #-}
+  (//) = div
+  {-# INLINE (//) #-}
 
 
 -- | Values between @[0, 65535]]@
@@ -192,6 +199,8 @@ instance Elevator Word16 where
   {-# INLINE toRealFloat #-}
   fromRealFloat = toWord16
   {-# INLINE fromRealFloat #-}
+  (//) = div
+  {-# INLINE (//) #-}
 
 
 -- | Values between @[0, 4294967295]@
@@ -217,6 +226,8 @@ instance Elevator Word32 where
   {-# INLINE toRealFloat #-}
   fromRealFloat = toWord32
   {-# INLINE fromRealFloat #-}
+  (//) = div
+  {-# INLINE (//) #-}
 
 
 -- | Values between @[0, 18446744073709551615]@
@@ -242,6 +253,8 @@ instance Elevator Word64 where
   {-# INLINE toRealFloat #-}
   fromRealFloat = toWord64
   {-# INLINE fromRealFloat #-}
+  (//) = div
+  {-# INLINE (//) #-}
 
 -- | Values between @[0, 18446744073709551615]@ on 64bit
 instance Elevator Word where
@@ -274,6 +287,8 @@ instance Elevator Word where
   {-# INLINE toRealFloat #-}
   fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
+  (//) = div
+  {-# INLINE (//) #-}
 
 -- | Values between @[0, 127]@
 instance Elevator Int8 where
@@ -294,6 +309,8 @@ instance Elevator Int8 where
   {-# INLINE toRealFloat #-}
   fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
+  (//) = div
+  {-# INLINE (//) #-}
 
 
 -- | Values between @[0, 32767]@
@@ -315,6 +332,8 @@ instance Elevator Int16 where
   {-# INLINE toRealFloat #-}
   fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
+  (//) = div
+  {-# INLINE (//) #-}
 
 
 -- | Values between @[0, 2147483647]@
@@ -336,6 +355,8 @@ instance Elevator Int32 where
   {-# INLINE toRealFloat #-}
   fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
+  (//) = div
+  {-# INLINE (//) #-}
 
 
 -- | Values between @[0, 9223372036854775807]@
@@ -357,6 +378,8 @@ instance Elevator Int64 where
   {-# INLINE toRealFloat #-}
   fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
+  (//) = div
+  {-# INLINE (//) #-}
 
 
 -- | Values between @[0, 9223372036854775807]@ on 64bit
@@ -384,6 +407,8 @@ instance Elevator Int where
   {-# INLINE toRealFloat #-}
   fromRealFloat = stretch
   {-# INLINE fromRealFloat #-}
+  (//) = div
+  {-# INLINE (//) #-}
 
 
 -- | Values between @[0.0, 1.0]@
@@ -409,6 +434,8 @@ instance Elevator Float where
   {-# INLINE toRealFloat #-}
   fromRealFloat = uncurry encodeFloat . decodeFloat
   {-# INLINE fromRealFloat #-}
+  (//) = (/)
+  {-# INLINE (//) #-}
 
 
 -- | Values between @[0.0, 1.0]@
@@ -434,6 +461,8 @@ instance Elevator Double where
   {-# INLINE toRealFloat #-}
   fromRealFloat = uncurry encodeFloat . decodeFloat
   {-# INLINE fromRealFloat #-}
+  (//) = (/)
+  {-# INLINE (//) #-}
 
 {-# RULES
 "toRealFloat   :: Double -> Double / Float -> Float" toRealFloat = id
@@ -469,3 +498,5 @@ instance (PrintfArg e, Elevator e, RealFloat e) => Elevator (Complex e) where
   {-# INLINE toRealFloat #-}
   fromRealFloat = (:+ 0) . fromRealFloat
   {-# INLINE fromRealFloat #-}
+  (//) = (/)
+  {-# INLINE (//) #-}

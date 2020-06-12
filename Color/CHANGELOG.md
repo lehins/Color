@@ -3,6 +3,7 @@
 ## 0.1.5
 
 * Add `Default` instance for `Pixel`
+* Addition of universal division `(//)` to `Elevator`
 
 ## 0.1.4
 
