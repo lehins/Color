@@ -55,7 +55,7 @@ module Graphics.Color.Space.Internal
   ) where
 
 import Foreign.Storable
-import Graphics.Color.Model.Internal hiding (Vector, MVector)
+import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.Y as CM
 import Graphics.Color.Algebra
 import Data.Typeable
