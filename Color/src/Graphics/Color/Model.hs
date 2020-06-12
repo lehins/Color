@@ -40,7 +40,7 @@ import Graphics.Color.Model.CMYK
 import Graphics.Color.Model.HSI
 import Graphics.Color.Model.HSL
 import Graphics.Color.Model.HSV
-import Graphics.Color.Model.Internal
+import Graphics.Color.Model.Internal hiding (MVector, Vector)
 import Graphics.Color.Model.RGB
 import Graphics.Color.Model.Y
 import Graphics.Color.Model.YCbCr

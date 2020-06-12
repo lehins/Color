@@ -37,56 +37,67 @@ matrix:
   # The Stack builds. We can pass in arbitrary Stack arguments via the ARGS
   # variable, such as using --stack-yaml to point to a different file.
 
-  - env: BUILD=stack ARGS="--resolver lts-12.14"
+  - env: BUILD=stack RESOLVER="lts-12.26"
+    compiler: ": #stack GHC-8.4.4 (lts-12.26)"
+    os: osx
+
+  - env: BUILD=stack RESOLVER="lts-14.27"
+    compiler: ": #stack GHC-8.6.5 (lts-14.27)"
+    os: osx
+
+  - env: BUILD=stack RESOLVER="lts-15"
+    compiler: ": #stack GHC-8.8.2 (lts-15)"
+    os: osx
+
+
+  - env: BUILD=stack RESOLVER="lts-12.14"
     compiler: ": #stack GHC-8.4.3 (lts-12.14)"
     addons:
       apt:
         packages: [libgmp-dev]
 
-  - env: BUILD=stack ARGS="--resolver lts-12.26"
+  - env: BUILD=stack RESOLVER="lts-12.26"
     compiler: ": #stack GHC-8.4.4 (lts-12.26)"
     addons:
       apt:
         packages: [libgmp-dev]
 
-  - env: BUILD=stack ARGS="--resolver lts-13.9"
+  - env: BUILD=stack RESOLVER="lts-13.9"
     compiler: ": #stack GHC-8.6.3 (lts-13.9)"
     addons:
       apt:
         packages: [libgmp-dev]
 
-  - env: BUILD=stack ARGS="--resolver lts-13.19"
+  - env: BUILD=stack RESOLVER="lts-13.19"
     compiler: ": #stack GHC-8.6.4 (lts-13.19)"
     addons:
       apt:
         packages: [libgmp-dev]
 
-  - env: BUILD=stack ARGS="--resolver lts-13.30" COVERALLS_STACK_YAML="stack.yaml"
+  - env: BUILD=stack RESOLVER="lts-13.30"
     compiler: ": #stack GHC-8.6.5 (lts-13.30)"
     addons:
       apt:
         packages: [libgmp-dev]
 
-  - env: BUILD=stack ARGS="--resolver lts-14"
-    compiler: ": #stack GHC-8.6.5 (lts-14)"
+  - env: BUILD=stack RESOLVER="lts-14.27" COVERALLS_STACK_YAML="stack.yaml"
+    compiler: ": #stack GHC-8.6.5 (lts-14.27)"
+    addons:
+      apt:
+        packages: [libgmp-dev]
+
+  - env: BUILD=stack RESOLVER="lts-15"
+    compiler: ": #stack GHC-8.8.2 (lts-15)"
     addons:
       apt:
         packages: [libgmp-dev]
 
   # Nightly builds are allowed to fail
-  - env: BUILD=stack ARGS="--resolver nightly"
+  - env: BUILD=stack RESOLVER="nightly"
     compiler: ": #stack nightly"
     addons:
       apt:
         packages: [libgmp-dev]
-
-  - env: BUILD=stack ARGS="--resolver lts-12.26"
-    compiler: ": #stack GHC-8.4.4 (lts-12.26)"
-    os: osx
-
-  - env: BUILD=stack ARGS="--resolver lts-14"
-    compiler: ": #stack GHC-8.6.5 (lts-14)"
-    os: osx
 
   allow_failures:
   - env: BUILD=stack ARGS="--resolver nightly"
@@ -99,11 +110,6 @@ before_install:
 - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$HOME/.local/bin:/opt/alex/$ALEXVER/bin:/opt/happy/$HAPPYVER/bin:$HOME/.cabal/bin:$PATH
 - mkdir -p ~/.local/bin
 - |
-  # restore file modification times, so only changed modules get rebuilt
-  git ls-tree -r --name-only HEAD | while read filename; do
-    TS="$(git log -1 --format="%ct" -- ${filename})"
-    touch "${filename}" -mt "$(date --date="@$TS" "+%Y%m%d%H%M.%S")"
-  done
 
   if [ "$TRAVIS_OS_NAME" = "osx" ]; then
     travis_retry curl -L https://www.stackage.org/stack/osx-x86_64 | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
@@ -114,14 +120,16 @@ before_install:
 script:
 - |
   set -ex
+  stack script --resolver $RESOLVER git-modtime.hs
+  ARGS="--resolver $RESOLVER"
   BUILD_ARGS="--bench --no-run-benchmarks --haddock --no-haddock-deps"
   if [ -n "${COVERALLS_STACK_YAML}" ] && [ -n "${COVERALLS_REPO_TOKEN}" ]; then
-     stack --stack-yaml $COVERALLS_STACK_YAML test Color:tests --coverage $BUILD_ARGS
-     stack --stack-yaml $COVERALLS_STACK_YAML hpc report --all
+     stack --stack-yaml="$COVERALLS_STACK_YAML" test Color:tests --coverage $BUILD_ARGS
+     stack --stack-yaml="$COVERALLS_STACK_YAML" hpc report --all
      travis_retry curl -L https://github.com/lehins/stack-hpc-coveralls/releases/download/0.0.5.0/shc.tar.gz | tar xz shc
      STACK_YAML="$COVERALLS_STACK_YAML" ./shc --repo-token=$COVERALLS_REPO_TOKEN combined custom
      if [ -z "$DOCTESTS_DISABLED" ]; then
-       stack --stack-yaml $COVERALLS_STACK_YAML $ARGS test Color:doctests --coverage $BUILD_ARGS
+       stack --stack-yaml="$COVERALLS_STACK_YAML" $ARGS test Color:doctests --coverage $BUILD_ARGS
      fi
   else
     stack $ARGS test Color:tests $BUILD_ARGS

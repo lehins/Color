@@ -112,8 +112,9 @@ float2Word32 d'
 {-# INLINE float2Word32 #-}
 
 -- | Same as:
--- λ> fromIntegral (maxBound :: Word32) :: Float
+-- >>> fromIntegral (maxBound :: Word32) :: Float
 -- 4.2949673e9
+--
 maxWord32 :: Float
 maxWord32 = F# 4.2949673e9#
 {-# INLINE maxWord32 #-}
@@ -127,10 +128,11 @@ double2Word64 d'
     d = maxWord64 * d'
 {-# INLINE double2Word64 #-}
 
--- | Differs from `fromIntegral` due to: https://gitlab.haskell.org/ghc/ghc/issues/17782
+-- | Differs from `fromIntegral` due to: [GHC #17782](https://gitlab.haskell.org/ghc/ghc/issues/17782)
 --
--- λ> fromIntegral (maxBound :: Word64) :: Double
+-- >>> fromIntegral (maxBound :: Word64) :: Double
 -- 1.844674407370955e19
+--
 maxWord64 :: Double
 maxWord64 = D# 1.8446744073709552e19##
 {-# INLINE maxWord64 #-}

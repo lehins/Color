@@ -71,7 +71,7 @@ instance Illuminant 'D75 where
   whitePoint = WhitePoint 0.29968 0.31740
   colorTemperature = I2.rectifyColorTemperature 7500 1.4380
 
--- | @[x=1/3, y=1/3]@ - CIE 1964 10° Observer -
+-- | @[x=1\/3, y=1\/3]@ - CIE 1964 10° Observer -
 -- /https://www.colour-science.org/
 instance Illuminant 'E   where
   type Temperature 'E = 5454

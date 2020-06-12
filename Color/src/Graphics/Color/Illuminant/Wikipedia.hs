@@ -51,7 +51,7 @@ instance Illuminant 'D75 where
   type Temperature 'D75 = 7504
   whitePoint = WhitePoint 0.29902 0.31485
 
--- | @[x=1/3, y=1/3]@ - 2° Observer - Wikipedia
+-- | @[x=1\/3, y=1\/3]@ - 2° Observer - Wikipedia
 instance Illuminant 'E   where
   type Temperature 'E = 5454
   whitePoint = WhitePoint (1 / 3) (1 / 3)
