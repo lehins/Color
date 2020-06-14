@@ -29,7 +29,6 @@ import Data.Bits
 import qualified Data.Vector.Generic as V
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Unboxed as U
-import Data.Word (Word8)
 import Foreign.Storable
 import Graphics.Color.Algebra.Elevator
 import Prelude hiding (map)
