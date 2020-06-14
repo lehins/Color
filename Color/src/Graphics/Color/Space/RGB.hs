@@ -7,7 +7,6 @@
 -- Stability   : experimental
 -- Portability : non-portable
 --
-
 module Graphics.Color.Space.RGB
   ( -- * Default sRGB color space
     pattern ColorSRGB

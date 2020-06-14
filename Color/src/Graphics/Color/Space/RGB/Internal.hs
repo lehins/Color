@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -25,10 +26,14 @@ module Graphics.Color.Space.RGB.Internal
   ( pattern ColorRGB
   , pattern ColorRGBA
   , RedGreenBlue(..)
+  , Linearity(..)
   , Gamut(..)
   , rgb2xyz
+  , rgbLinear2xyz
   , xyz2rgb
+  , xyz2rgbLinear
   , rgbLuminance
+  , rgbLinearLuminance
   , NPM(..)
   , npmApply
   , npmDerive
@@ -45,42 +50,44 @@ import Data.Coerce
 import Graphics.Color.Algebra
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space.Internal
+import Data.Kind
 
+data Linearity = Linear | NonLinear
 
-class Illuminant i => RedGreenBlue cs (i :: k) | cs -> i where
+class Illuminant i => RedGreenBlue (cs :: Linearity -> Type) (i :: k) | cs -> i where
   -- | RGB primaries that are defined for the RGB color space, while point is defined by
   -- the __@i@__ type parameter
   gamut :: RealFloat e => Gamut cs i e
 
   -- | Encoding color component transfer function (inverse). Also known as opto-electronic
   -- transfer function (OETF / OECF) or gamma function.
-  ecctf :: (RealFloat a, Elevator a) => Color cs a -> Color cs a
+  ecctf :: (RealFloat a, Elevator a) => Color (cs 'Linear) a -> Color (cs 'NonLinear) a
 
   -- | Decoding color component transfer function (forward)
-  dcctf :: (RealFloat a, Elevator a) => Color cs a -> Color cs a
+  dcctf :: (RealFloat a, Elevator a) => Color (cs 'NonLinear) a -> Color (cs 'Linear) a
 
   -- | Normalized primary matrix for this RGB color space. Default implementation derives
   -- it from `chromaticity`
-  npm :: (ColorSpace cs i a, RealFloat a) => NPM cs a
+  npm :: (ColorSpace (cs 'Linear) i a, RealFloat a) => NPM cs a
   npm = npmDerive gamut
   {-# INLINE npm #-}
 
   -- | Inverse normalized primary matrix for this RGB color space. Default implementation
   -- derives it from `chromaticity`
-  inpm :: (ColorSpace cs i a, RealFloat a) => INPM cs a
+  inpm :: (ColorSpace (cs 'Linear) i a, RealFloat a) => INPM cs a
   inpm = inpmDerive gamut
   {-# INLINE inpm #-}
 
   -- | Lift RGB color model into a RGB color space
-  mkColorRGB :: Color CM.RGB e -> Color cs e
+  mkColorRGB :: Color CM.RGB e -> Color (cs l) e
   default mkColorRGB ::
-    Coercible (Color CM.RGB e) (Color cs e) => Color CM.RGB e -> Color cs e
+    Coercible (Color CM.RGB e) (Color (cs l) e) => Color CM.RGB e -> Color (cs l) e
   mkColorRGB = coerce
 
   -- | Drop RGB color space down to the RGB color model
-  unColorRGB :: Color cs e -> Color CM.RGB e
+  unColorRGB :: Color (cs l) e -> Color CM.RGB e
   default unColorRGB ::
-    Coercible (Color cs e) (Color CM.RGB e) => Color cs e -> Color CM.RGB e
+    Coercible (Color (cs l) e) (Color CM.RGB e) => Color (cs l) e -> Color CM.RGB e
   unColorRGB = coerce
 
 
@@ -113,7 +120,7 @@ gamutWhitePoint _ = whitePoint
 -- >>> import Graphics.Color.Illuminant.CIE1931
 -- >>> import Graphics.Color.Space.RGB.Derived.SRGB
 -- >>> :{
--- srgbFromLinear :: Color (SRGB 'D65) Float -> Color (XYZ 'D65) Float
+-- srgbFromLinear :: Color (SRGB 'D65 'Linear) Float -> Color (XYZ 'D65) Float
 -- srgbFromLinear = npmApply npm'
 --   where npm' = trace "Evaluated only once!!!" npm :: NPM (SRGB 'D65) Float
 -- :}
@@ -123,12 +130,13 @@ gamutWhitePoint _ = whitePoint
 --  0.166888, 0.185953, 0.310856)>
 -- >>> srgbFromLinear $ ColorRGB 0.1 0.2 0.3
 -- <XYZ CIE1931 'D65:( 0.166888, 0.185953, 0.310856)>
--- >>> rgb = ColorRGB 0.1 0.2 0.3 :: Color (SRGB 'D65) Float
+-- >>> rgb = ColorRGB 0.1 0.2 0.3 :: Color (SRGB 'D65 'Linear) Float
 -- >>> npmApply npm rgb :: Color (XYZ 'D65) Float
 -- <XYZ CIE1931 'D65:( 0.166888, 0.185953, 0.310856)>
 --
 -- Here is a comparison with a non-liner sRGB conversion:
 --
+-- >>> rgb = ColorRGB 0.1 0.2 0.3 :: Color (SRGB 'D65 'NonLinear) Float
 -- >>> npmApply npm (dcctf rgb) :: Color (XYZ 'D65) Float {- non-linear transformation -}
 -- <XYZ CIE1931 'D65:( 0.029186, 0.031093, 0.073737)>
 -- >>> toColorXYZ rgb :: Color (XYZ 'D65) Float           {- non-linear transformation -}
@@ -136,7 +144,11 @@ gamutWhitePoint _ = whitePoint
 --
 --
 -- @since 0.1.0
-npmApply :: (RedGreenBlue cs i, Elevator e) => NPM cs e -> Color cs e -> Color (XYZ i) e
+npmApply ::
+     (RedGreenBlue cs i, Elevator e)
+  => NPM cs e
+  -> Color (cs 'Linear) e
+  -> Color (XYZ i) e
 npmApply (NPM npm') = coerce . multM3x3byV3 npm' . coerce . unColorRGB
 {-# INLINE npmApply #-}
 
@@ -144,43 +156,68 @@ npmApply (NPM npm') = coerce . multM3x3byV3 npm' . coerce . unColorRGB
 --
 -- @since 0.1.0
 inpmApply ::
-     (RedGreenBlue cs i, Elevator e) => INPM cs e -> Color (XYZ i) e -> Color cs e
+     (RedGreenBlue cs i, Elevator e)
+  => INPM cs e
+  -> Color (XYZ i) e
+  -> Color (cs 'Linear) e
 inpmApply (INPM inpm') = mkColorRGB . coerce . multM3x3byV3 inpm' . coerce
 {-# INLINE inpmApply #-}
 
 -- | Linear transformation of a color into a linear luminance, i.e. the Y component of
 -- XYZ color space
-npmApplyLuminance ::
-     forall cs i e. (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e)
-  => Color cs e
+rgbLinearLuminance ::
+     forall cs i e. (RedGreenBlue cs i, ColorSpace (cs 'Linear) i e, RealFloat e)
+  => Color (cs 'Linear) e
   -> Color (Y i) e
-npmApplyLuminance px = Y (m3x3row1 (unNPM (npm :: NPM cs e)) `dotProduct` coerce (unColorRGB px))
-{-# INLINE npmApplyLuminance #-}
+rgbLinearLuminance px =
+  Y (m3x3row1 (unNPM (npm :: NPM cs e)) `dotProduct` coerce (unColorRGB px))
+{-# INLINE rgbLinearLuminance #-}
 
 
-rgbLuminance :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Color cs e -> Color (Y i) e
-rgbLuminance = npmApplyLuminance . dcctf
+rgbLuminance ::
+     (RedGreenBlue cs i, ColorSpace (cs 'Linear) i e, RealFloat e)
+  => Color (cs 'NonLinear) e
+  -> Color (Y i) e
+rgbLuminance = rgbLinearLuminance . dcctf
 {-# INLINE rgbLuminance #-}
 
-rgb2xyz :: (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e) => Color cs e -> Color (XYZ i) e
+rgb2xyz ::
+     (RedGreenBlue cs i, ColorSpace (cs 'NonLinear) i e, ColorSpace (cs 'Linear) i e, RealFloat e)
+  => Color (cs 'NonLinear) e
+  -> Color (XYZ i) e
 rgb2xyz = npmApply npm . dcctf
 {-# INLINE rgb2xyz #-}
 
 xyz2rgb ::
-     (RedGreenBlue cs i, ColorSpace cs i e, RealFloat e)
+     (RedGreenBlue cs i, ColorSpace (cs 'NonLinear) i e, ColorSpace (cs 'Linear) i e, RealFloat e)
   => Color (XYZ i) e
-  -> Color cs e
+  -> Color (cs 'NonLinear) e
 xyz2rgb = ecctf . inpmApply inpm
 {-# INLINE xyz2rgb #-}
 
+
+rgbLinear2xyz ::
+     (RedGreenBlue cs i, ColorSpace (cs 'NonLinear) i e, ColorSpace (cs 'Linear) i e, RealFloat e)
+  => Color (cs 'Linear) e
+  -> Color (XYZ i) e
+rgbLinear2xyz = npmApply npm
+{-# INLINE rgbLinear2xyz #-}
+
+xyz2rgbLinear ::
+     (RedGreenBlue cs i, ColorSpace (cs 'NonLinear) i e, ColorSpace (cs 'Linear) i e, RealFloat e)
+  => Color (XYZ i) e
+  -> Color (cs 'Linear) e
+xyz2rgbLinear = inpmApply inpm
+{-# INLINE xyz2rgbLinear #-}
+
 -- | Constructor for an RGB color space.
-pattern ColorRGB :: RedGreenBlue cs i => e -> e -> e -> Color cs e
+pattern ColorRGB :: RedGreenBlue cs i => e -> e -> e -> Color (cs l) e
 pattern ColorRGB r g b <- (unColorRGB -> CM.ColorRGB r g b) where
         ColorRGB r g b = mkColorRGB (CM.ColorRGB r g b)
 {-# COMPLETE ColorRGB #-}
 
 -- | Constructor for an RGB color space with Alpha channel
-pattern ColorRGBA :: RedGreenBlue cs i => e -> e -> e -> e -> Color (Alpha cs) e
+pattern ColorRGBA :: RedGreenBlue cs i => e -> e -> e -> e -> Color (Alpha (cs l)) e
 pattern ColorRGBA r g b a <- Alpha (unColorRGB -> CM.ColorRGB r g b) a where
         ColorRGBA r g b a = Alpha (mkColorRGB (CM.ColorRGB r g b)) a
 {-# COMPLETE ColorRGBA #-}
@@ -219,7 +256,7 @@ newtype NPM cs e = NPM
   { unNPM :: M3x3 e
   } deriving (Eq, Functor, Applicative, Foldable, Traversable)
 
-instance ColorSpace cs i e => Show (NPM cs e) where
+instance Elevator e => Show (NPM cs e) where
   show = show . unNPM
 
 -- | Inverse normalized primary matrix (iNPM), which is used to tranform linear
@@ -239,7 +276,7 @@ instance Elevator e => Show (INPM cs e) where
 --
 -- @since 0.1.0
 npmDerive ::
-     forall cs i e. (ColorSpace cs i e, RealFloat e)
+     forall cs i e. (ColorSpace (cs 'Linear) i e, RealFloat e)
   => Gamut cs i e
   -> NPM cs e
 npmDerive (Gamut r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
@@ -258,7 +295,7 @@ npmDerive (Gamut r g b) = NPM (primaries' * M3x3 coeff coeff coeff)
 --
 -- @since 0.1.0
 inpmDerive ::
-     forall cs i e. (ColorSpace cs i e, RealFloat e)
+     forall cs i e. (ColorSpace (cs 'Linear) i e, RealFloat e)
   => Gamut cs i e
   -> INPM cs e
 inpmDerive = INPM . invertM3x3 . unNPM . npmDerive
@@ -270,7 +307,7 @@ inpmDerive = INPM . invertM3x3 . unNPM . npmDerive
 -- evaluated, its type carries enough information for this operation.
 --
 -- @since 0.1.0
-rgbColorGamut :: (RedGreenBlue cs i, RealFloat e) => Color cs a -> Gamut cs i e
+rgbColorGamut :: (RedGreenBlue cs i, RealFloat e) => Color (cs l) a -> Gamut cs i e
 rgbColorGamut _ = gamut
 {-# INLINE rgbColorGamut #-}
 
@@ -287,8 +324,8 @@ rgbColorGamut _ = gamut
 --
 -- @since 0.1.0
 pixelWhitePoint ::
-     forall e cs a i. (RedGreenBlue cs i, RealFloat e)
-  => Color cs a
+     forall e cs a i l. (RedGreenBlue cs i, RealFloat e)
+  => Color (cs l) a
   -> WhitePoint i e
 pixelWhitePoint _ = whitePoint
 {-# INLINE pixelWhitePoint #-}

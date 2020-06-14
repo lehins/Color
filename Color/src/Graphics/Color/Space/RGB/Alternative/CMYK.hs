@@ -33,6 +33,12 @@ import Foreign.Storable
 import qualified Graphics.Color.Model.CMYK as CM
 import Graphics.Color.Model.Internal
 import Graphics.Color.Space
+import Graphics.Color.Space.RGB.AdobeRGB as AdobeRGB
+import qualified Graphics.Color.Space.RGB.ITU.Rec470 as Rec470
+import Graphics.Color.Space.RGB.ITU.Rec601
+import Graphics.Color.Space.RGB.ITU.Rec709
+import Graphics.Color.Space.RGB.SRGB
+
 
 -- | `CMYK` representation for some (@`RedGreenBlue` cs i@) color space
 data CMYK cs
@@ -80,9 +86,89 @@ instance ColorModel cs e => ColorModel (CMYK cs) e where
 
 
 -- | `CMYK` representation for some (@`RedGreenBlue` cs i@) color space
-instance (Typeable cs, ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (CMYK cs) i e where
-  type BaseModel (CMYK cs) = CM.CMYK
-  type BaseSpace (CMYK cs) = cs
+instance (Typeable cs, ColorSpace (cs i l) i e, RedGreenBlue (cs i) i) =>
+         ColorSpace (CMYK (cs i l)) i e where
+  type BaseModel (CMYK (cs i l)) = CM.CMYK
+  type BaseSpace (CMYK (cs i l)) = cs i l
+  toBaseSpace = mkColorRGB . fmap fromDouble . CM.cmyk2rgb . fmap toDouble . coerce
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = coerce . fmap fromDouble . CM.rgb2cmyk . fmap toDouble . unColorRGB
+  {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
+
+
+
+-- | `CMYK` representation for `SRGB` color space
+instance ColorSpace (SRGB l) D65 e => ColorSpace (CMYK (SRGB l)) D65 e where
+  type BaseModel (CMYK (SRGB l)) = CM.CMYK
+  type BaseSpace (CMYK (SRGB l)) = SRGB l
+  toBaseSpace = mkColorRGB . fmap fromDouble . CM.cmyk2rgb . fmap toDouble . coerce
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = coerce . fmap fromDouble . CM.rgb2cmyk . fmap toDouble . unColorRGB
+  {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
+
+-- | `CMYK` representation for `AdobeRGB` color space
+instance ColorSpace (AdobeRGB l) D65 e => ColorSpace (CMYK (AdobeRGB l)) D65 e where
+  type BaseModel (CMYK (AdobeRGB l)) = CM.CMYK
+  type BaseSpace (CMYK (AdobeRGB l)) = AdobeRGB l
+  toBaseSpace = mkColorRGB . fmap fromDouble . CM.cmyk2rgb . fmap toDouble . coerce
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = coerce . fmap fromDouble . CM.rgb2cmyk . fmap toDouble . unColorRGB
+  {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
+
+-- | `CMYK` representation for `Rec470.BT470_525` color space
+instance ColorSpace (Rec470.BT470_525 l) D65 e => ColorSpace (CMYK (Rec470.BT470_525 l)) D65 e where
+  type BaseModel (CMYK (Rec470.BT470_525 l)) = CM.CMYK
+  type BaseSpace (CMYK (Rec470.BT470_525 l)) = Rec470.BT470_525 l
+  toBaseSpace = mkColorRGB . fmap fromDouble . CM.cmyk2rgb . fmap toDouble . coerce
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = coerce . fmap fromDouble . CM.rgb2cmyk . fmap toDouble . unColorRGB
+  {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
+
+-- | `CMYK` representation for `Rec470.BT470_625` color space
+instance ColorSpace (Rec470.BT470_625 l) D65 e => ColorSpace (CMYK (Rec470.BT470_625 l)) D65 e where
+  type BaseModel (CMYK (Rec470.BT470_625 l)) = CM.CMYK
+  type BaseSpace (CMYK (Rec470.BT470_625 l)) = Rec470.BT470_625 l
+  toBaseSpace = mkColorRGB . fmap fromDouble . CM.cmyk2rgb . fmap toDouble . coerce
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = coerce . fmap fromDouble . CM.rgb2cmyk . fmap toDouble . unColorRGB
+  {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
+
+-- | `CMYK` representation for `BT601_525` color space
+instance ColorSpace (BT601_525 l) D65 e => ColorSpace (CMYK (BT601_525 l)) D65 e where
+  type BaseModel (CMYK (BT601_525 l)) = CM.CMYK
+  type BaseSpace (CMYK (BT601_525 l)) = BT601_525 l
+  toBaseSpace = mkColorRGB . fmap fromDouble . CM.cmyk2rgb . fmap toDouble . coerce
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = coerce . fmap fromDouble . CM.rgb2cmyk . fmap toDouble . unColorRGB
+  {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
+
+-- | `CMYK` representation for `BT601_625` color space
+instance ColorSpace (BT601_625 l) D65 e => ColorSpace (CMYK (BT601_625 l)) D65 e where
+  type BaseModel (CMYK (BT601_625 l)) = CM.CMYK
+  type BaseSpace (CMYK (BT601_625 l)) = BT601_625 l
+  toBaseSpace = mkColorRGB . fmap fromDouble . CM.cmyk2rgb . fmap toDouble . coerce
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = coerce . fmap fromDouble . CM.rgb2cmyk . fmap toDouble . unColorRGB
+  {-# INLINE fromBaseSpace #-}
+  luminance = luminance . toBaseSpace
+  {-# INLINE luminance #-}
+
+-- | `CMYK` representation for `BT709` color space
+instance ColorSpace (BT709 l) D65 e => ColorSpace (CMYK (BT709 l)) D65 e where
+  type BaseModel (CMYK (BT709 l)) = CM.CMYK
+  type BaseSpace (CMYK (BT709 l)) = BT709 l
   toBaseSpace = mkColorRGB . fmap fromDouble . CM.cmyk2rgb . fmap toDouble . coerce
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = coerce . fmap fromDouble . CM.rgb2cmyk . fmap toDouble . unColorRGB

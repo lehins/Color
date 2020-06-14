@@ -28,9 +28,9 @@ spec = describe "LAB" $ do
     prop "lab2srgb" $ \lab@(ColorLAB l' a' b' :: Color (LAB 'W.D65) Double) ->
       case Colour.toSRGB (Colour.cieLAB Colour.d65 l' a' b') of
         Colour.RGB r g b ->
-          (convertColor lab :: Color (SRGB 'W.D65) Double)
+          (convertColor lab :: Color (SRGB 'W.D65 'NonLinear) Double)
           `epsilonEqColorDouble` ColorRGB r g b
-    prop "srgb2xlab" $ \rgb@(ColorRGB r g b :: Color (SRGB 'W.D65) Double) ->
+    prop "srgb2xlab" $ \rgb@(ColorRGB r g b :: Color (SRGB 'W.D65 'NonLinear) Double) ->
       case Colour.cieLABView Colour.d65 (Colour.sRGB r g b) of
         (l', a', b') ->
           convertColor rgb `epsilonEqColorDouble` (ColorLAB l' a' b' :: Color (LAB 'W.D65) Double)

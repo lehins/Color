@@ -1178,7 +1178,10 @@ ralColors =
   ]
 
 
-ralAlternatives :: [(Color SRGB Word8, Color (HSL SRGB) Float, Color (CMYK SRGB) Word8)]
+ralAlternatives ::
+     [( Color (SRGB 'NonLinear) Word8
+      , Color (HSL (SRGB 'NonLinear)) Float
+      , Color (CMYK (SRGB 'NonLinear)) Word8)]
 ralAlternatives =
   [ (ColorRGB r g b, ColorH360SL h (s / 100) (l / 100), ColorCMYK c m y k)
   | (_y', r, g, b, h, s, l, c, m, y, k) <- ralAlternativeRaw
@@ -1402,7 +1405,7 @@ ralAlternatives =
       , (122.57, 121, 123, 123, 0.50, 0.82, 47.84, 2, 0, 0, 52)
       ]
 
-_hexes :: [Color SRGB Word8]
+_hexes :: [Color (SRGB 'NonLinear) Word8]
 _hexes =
   [ fromIntegral <$>
   fromComponents (shiftR (x .&. 0xFF0000) 16, shiftR (x .&. 0xFF00) 8, x .&. 0xFF)

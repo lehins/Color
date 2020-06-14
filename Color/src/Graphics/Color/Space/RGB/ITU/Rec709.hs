@@ -27,6 +27,8 @@ module Graphics.Color.Space.RGB.ITU.Rec709
   , module Graphics.Color.Space
   ) where
 
+import Data.Coerce
+import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
@@ -35,40 +37,54 @@ import Graphics.Color.Space.RGB.ITU.Rec601 as Rec601 (D65, itransfer, transfer)
 import Graphics.Color.Space.RGB.Luma
 
 -- | [ITU-R BT.709](https://en.wikipedia.org/wiki/Rec._709) color space
-data BT709
+data BT709 (l :: Linearity)
 
-newtype instance Color BT709 e = BT709 (Color CM.RGB e)
-
--- | ITU-R BT.709 color space
-deriving instance Eq e => Eq (Color BT709 e)
--- | ITU-R BT.709 color space
-deriving instance Ord e => Ord (Color BT709 e)
--- | ITU-R BT.709 color space
-deriving instance Functor (Color BT709)
--- | ITU-R BT.709 color space
-deriving instance Applicative (Color BT709)
--- | ITU-R BT.709 color space
-deriving instance Foldable (Color BT709)
--- | ITU-R BT.709 color space
-deriving instance Traversable (Color BT709)
--- | ITU-R BT.709 color space
-deriving instance Storable e => Storable (Color BT709 e)
+newtype instance Color (BT709 l) e = BT709 (Color CM.RGB e)
 
 -- | ITU-R BT.709 color space
-instance Elevator e => Show (Color BT709 e) where
+deriving instance Eq e => Eq (Color (BT709 l) e)
+-- | ITU-R BT.709 color space
+deriving instance Ord e => Ord (Color (BT709 l) e)
+-- | ITU-R BT.709 color space
+deriving instance Functor (Color (BT709 l))
+-- | ITU-R BT.709 color space
+deriving instance Applicative (Color (BT709 l))
+-- | ITU-R BT.709 color space
+deriving instance Foldable (Color (BT709 l))
+-- | ITU-R BT.709 color space
+deriving instance Traversable (Color (BT709 l))
+-- | ITU-R BT.709 color space
+deriving instance Storable e => Storable (Color (BT709 l) e)
+
+-- | ITU-R BT.709 color space
+instance (Typeable l, Elevator e) => Show (Color (BT709 l) e) where
   showsPrec _ = showsColorModel
 
 -- | ITU-R BT.709 color space
-instance Elevator e => ColorModel BT709 e where
-  type Components BT709 e = (e, e, e)
+instance (Typeable l, Elevator e) => ColorModel (BT709 l) e where
+  type Components (BT709 l) e = (e, e, e)
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
+-- | ITU-R BT.709 linear color space
+instance Elevator e => ColorSpace (BT709 'Linear) D65 e where
+  type BaseModel (BT709 'Linear) = CM.RGB
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
+  luminance = rgbLinearLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
+  toColorXYZ = rgbLinear2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
+  {-# INLINE fromColorXYZ #-}
+
 -- | ITU-R BT.709 color space
-instance Elevator e => ColorSpace BT709 D65 e where
-  type BaseModel BT709 = CM.RGB
+instance Elevator e => ColorSpace (BT709 'NonLinear) D65 e where
+  type BaseModel (BT709 'NonLinear) = CM.RGB
   toBaseSpace = id
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
@@ -83,9 +99,9 @@ instance Elevator e => ColorSpace BT709 D65 e where
 -- | ITU-R BT.709 color space
 instance RedGreenBlue BT709 D65 where
   gamut = primaries
-  ecctf = fmap Rec601.transfer
+  ecctf = BT709 . fmap Rec601.transfer . coerce
   {-# INLINE ecctf #-}
-  dcctf = fmap Rec601.itransfer
+  dcctf = BT709 . fmap Rec601.itransfer . coerce
   {-# INLINE dcctf #-}
 
 

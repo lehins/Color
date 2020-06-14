@@ -32,67 +32,84 @@ module Graphics.Color.Space.RGB.SRGB
   , itransfer
   ) where
 
+import Data.Coerce
+import Data.Typeable
 import Foreign.Storable
+import Graphics.Color.Illuminant.ICC.PCS (D50)
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space.Internal
 import Graphics.Color.Space.RGB.Internal
-import Graphics.Color.Space.RGB.Luma
-import Graphics.Color.Illuminant.ICC.PCS (D50)
 import Graphics.Color.Space.RGB.ITU.Rec709 (D65, primaries)
+import Graphics.Color.Space.RGB.Luma
 
 -- | The most common [sRGB](https://en.wikipedia.org/wiki/SRGB) color space with the
 -- default `D65` illuminant
-data SRGB
+data SRGB (l :: Linearity)
 
 
-newtype instance Color SRGB e = SRGB (Color CM.RGB e)
+newtype instance Color (SRGB l) e = SRGB (Color CM.RGB e)
 
 -- | Constructor for a color in @sRGB@ color space
 --
 -- @since 0.1.0
-pattern ColorSRGB :: e -> e -> e -> Color SRGB e
+pattern ColorSRGB :: e -> e -> e -> Color (SRGB l) e
 pattern ColorSRGB r g b = SRGB (CM.ColorRGB r g b)
 {-# COMPLETE ColorSRGB #-}
 
 -- | Constructor for a color in @sRGB@ color space with alphs channel
 --
 -- @since 0.1.0
-pattern ColorSRGBA :: e -> e -> e -> e -> Color (Alpha SRGB) e
+pattern ColorSRGBA :: e -> e -> e -> e -> Color (Alpha (SRGB l)) e
 pattern ColorSRGBA r g b a = Alpha (SRGB (CM.ColorRGB r g b)) a
 {-# COMPLETE ColorSRGBA #-}
 
 
--- | s`RGB` color space
-deriving instance Eq e => Eq (Color SRGB e)
--- | s`RGB` color space
-deriving instance Ord e => Ord (Color SRGB e)
--- | s`RGB` color space
-deriving instance Functor (Color SRGB)
--- | s`RGB` color space
-deriving instance Applicative (Color SRGB)
--- | s`RGB` color space
-deriving instance Foldable (Color SRGB)
--- | s`RGB` color space
-deriving instance Traversable (Color SRGB)
--- | s`RGB` color space
-deriving instance Storable e => Storable (Color SRGB e)
+-- | `SRGB` color space
+deriving instance Eq e => Eq (Color (SRGB l) e)
+-- | `SRGB` color space
+deriving instance Ord e => Ord (Color (SRGB l) e)
+-- | `SRGB` color space
+deriving instance Functor (Color (SRGB l))
+-- | `SRGB` color space
+deriving instance Applicative (Color (SRGB l))
+-- | `SRGB` color space
+deriving instance Foldable (Color (SRGB l))
+-- | `SRGB` color space
+deriving instance Traversable (Color (SRGB l))
+-- | `SRGB` color space
+deriving instance Storable e => Storable (Color (SRGB l) e)
 
--- | s`RGB` color space
-instance Elevator e => Show (Color SRGB e) where
+-- | `SRGB` color space
+instance (Typeable l, Elevator e) => Show (Color (SRGB l) e) where
   showsPrec _ = showsColorModel
 
--- | s`RGB` color space
-instance Elevator e => ColorModel SRGB e where
-  type Components SRGB e = (e, e, e)
+-- | `SRGB` color space
+instance (Typeable l, Elevator e) => ColorModel (SRGB l) e where
+  type Components (SRGB l) e = (e, e, e)
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
--- | s`RGB` color space
-instance Elevator e => ColorSpace SRGB D65 e where
-  type BaseModel SRGB = CM.RGB
+-- | `SRGB` linear color space
+instance Elevator e => ColorSpace (SRGB 'Linear) D65 e where
+  type BaseModel (SRGB 'Linear) = CM.RGB
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
+  luminance = rgbLinearLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
+  toColorXYZ = rgbLinear2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
+  {-# INLINE fromColorXYZ #-}
+
+
+-- | `SRGB` linear color space
+instance Elevator e => ColorSpace (SRGB 'NonLinear) D65 e where
+  type BaseModel (SRGB 'NonLinear) = CM.RGB
   toBaseSpace = id
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
@@ -104,14 +121,14 @@ instance Elevator e => ColorSpace SRGB D65 e where
   fromColorXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromColorXYZ #-}
 
--- | s`RGB` color space
+-- | `SRGB` color space
 instance RedGreenBlue SRGB D65 where
   gamut = primaries
   npm = npmStandard
   inpm = inpmStandard
-  ecctf = fmap transfer
+  ecctf = SRGB . fmap transfer . coerce
   {-# INLINE ecctf #-}
-  dcctf = fmap itransfer
+  dcctf = SRGB . fmap itransfer . coerce
   {-# INLINE dcctf #-}
 
 instance Luma SRGB where

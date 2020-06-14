@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -31,6 +32,7 @@ module Graphics.Color.Space.RGB.Luma
   , rgbLumaWeights
   ) where
 
+import Data.Kind
 import Data.Coerce
 import Foreign.Storable
 import Graphics.Color.Model.RGB as CM
@@ -96,7 +98,7 @@ instance Elevator e => ColorModel Y' e where
 -- Luma Weights --
 ------------------
 
-class Luma cs where
+class Luma (cs :: Linearity -> Type) where
   {-# MINIMAL (rWeight, gWeight)|(rWeight, bWeight)|(gWeight, bWeight) #-}
   rWeight :: RealFloat e => Weight cs e
   rWeight = 1 - bWeight - gWeight
@@ -119,7 +121,7 @@ newtype Weight cs e = Weight
 -- @since 0.1.4
 rgbLumaWeights ::
      forall cs e' e. (Luma cs, RealFloat e)
-  => Color cs e'
+  => Color (cs 'NonLinear) e'
   -> Weights e
 rgbLumaWeights _ =
   Weights (V3 (coerce (rWeight :: Weight cs e) :: e)
@@ -132,7 +134,7 @@ rgbLumaWeights _ =
 -- @since 0.1.0
 rgbLuma ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
-  => Color cs e'
+  => Color (cs 'NonLinear) e'
   -> Color Y' e
 rgbLuma rgb' = Y' (coerce (fmap toRealFloat rgb :: Color CM.RGB e) `dotProduct` coerce weights)
   where

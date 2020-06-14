@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeApplications #-}
 module Graphics.Color.Space.RGB.Alternative.HSISpec (spec) where
@@ -17,5 +18,5 @@ spec :: Spec
 spec =
   describe "HSI" $ do
     describe "Derived-sRGB" $ do
-      colorModelSpec @(HSI (Derived.SRGB D65)) @Word "HSI"
-      colorSpaceSpec @(HSI (Derived.SRGB D65)) @Double
+      colorModelSpec @(HSI (Derived.SRGB D65 'NonLinear)) @Word "HSI"
+      colorSpaceSpec @(HSI (Derived.SRGB D65 'NonLinear)) @Double

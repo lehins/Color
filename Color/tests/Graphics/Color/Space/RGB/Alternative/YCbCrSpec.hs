@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -23,26 +24,26 @@ spec :: Spec
 spec =
   describe "YCbCr" $ do
     describe "sRGB" $ do
-      colorModelSpec @(YCbCr SRGB) @Word "YCbCr"
-      colorSpaceCommonSpec @(YCbCr SRGB) @Double $ pure ()
+      colorModelSpec @(YCbCr (SRGB 'NonLinear)) @Word "YCbCr"
+      colorSpaceCommonSpec @(YCbCr (SRGB 'NonLinear)) @Double $ pure ()
     describe "Derived-sRGB" $ do
-      colorModelSpec @(YCbCr (Derived.SRGB D65)) @Word "YCbCr"
-      colorSpaceCommonSpec @(YCbCr (Derived.SRGB D65)) @Double $ pure ()
-    prop "toColorYCbCr . toColorYCbCr" $ \(rgb :: Color (Derived.SRGB D65) Double) ->
+      colorModelSpec @(YCbCr (Derived.SRGB D65 'NonLinear)) @Word "YCbCr"
+      colorSpaceCommonSpec @(YCbCr (Derived.SRGB D65 'NonLinear)) @Double $ pure ()
+    prop "toColorYCbCr . toColorYCbCr" $ \(rgb :: Color (Derived.SRGB D65 'NonLinear) Double) ->
       rgb `epsilonEqColor`
-      fromColorYCbCr (toColorYCbCr rgb :: Color (YCbCr (Derived.SRGB D65)) Double)
-    prop "toColorYCbCr == srgb2ycbcr" $ \(rgb :: Color SRGB Double) ->
+      fromColorYCbCr (toColorYCbCr rgb :: Color (YCbCr (Derived.SRGB D65 'NonLinear)) Double)
+    prop "toColorYCbCr == srgb2ycbcr" $ \(rgb :: Color (SRGB 'NonLinear) Double) ->
       srgb2ycbcr rgb `epsilonEqColor`
-      (toColorYCbCr rgb :: Color (YCbCr SRGB) Double)
-    prop "fromColorYCbCr == ycbcr2srgb" $ \(ycbcr :: Color (YCbCr SRGB) Double) ->
-      ycbcr2srgb ycbcr `epsilonEqColor` (fromColorYCbCr ycbcr :: Color SRGB Double)
+      (toColorYCbCr rgb :: Color (YCbCr (SRGB 'NonLinear)) Double)
+    prop "fromColorYCbCr == ycbcr2srgb" $ \(ycbcr :: Color (YCbCr (SRGB 'NonLinear)) Double) ->
+      ycbcr2srgb ycbcr `epsilonEqColor` (fromColorYCbCr ycbcr :: Color (SRGB 'NonLinear) Double)
     describe "Match JuicyPixels" $ do
-      prop "rgb2ycbcr" $ \(rgb@(ColorRGB r g b) :: Color SRGB Word8) ->
+      prop "rgb2ycbcr" $ \(rgb@(ColorRGB r g b) :: Color (SRGB 'NonLinear) Word8) ->
         case JuicyPixels.convertPixel (JuicyPixels.PixelRGB8 r g b) of
           JuicyPixels.PixelYCbCr8 y cb cr ->
-            (fromBaseSpace rgb :: Color (YCbCr SRGB) Word8)
+            (fromBaseSpace rgb :: Color (YCbCr (SRGB 'NonLinear)) Word8)
             `approxIntegralColorExpect1` ColorYCbCr y cb cr
-      prop "ycbcr2rgb" $ \(ycbcr@(ColorYCbCr y cb cr) :: Color (YCbCr SRGB) Word8) ->
+      prop "ycbcr2rgb" $ \(ycbcr@(ColorYCbCr y cb cr) :: Color (YCbCr (SRGB 'NonLinear)) Word8) ->
         case JuicyPixels.convertPixel (JuicyPixels.PixelYCbCr8 y cb cr) of
           JuicyPixels.PixelRGB8 r g b ->
             (toBaseSpace ycbcr) `approxIntegralColorExpect1` ColorRGB r g b

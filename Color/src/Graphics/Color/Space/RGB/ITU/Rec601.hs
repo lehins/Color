@@ -31,13 +31,15 @@ module Graphics.Color.Space.RGB.ITU.Rec601
   , module Graphics.Color.Space
   ) where
 
+import Data.Coerce
+import Data.Typeable
 import Foreign.Storable
+import Graphics.Color.Illuminant.ITU.Rec601
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space
 import Graphics.Color.Space.RGB.ITU.Rec470 (primaries625)
 import Graphics.Color.Space.RGB.Luma
-import Graphics.Color.Illuminant.ITU.Rec601
 
 
 
@@ -46,40 +48,55 @@ import Graphics.Color.Illuminant.ITU.Rec601
 ------------------------------------
 
 -- | [ITU-R BT.601](https://en.wikipedia.org/wiki/Rec._601) (525) color space
-data BT601_525
+data BT601_525 (l :: Linearity)
 
-newtype instance Color BT601_525 e = BT601_525 (Color CM.RGB e)
-
--- | ITU-R BT.601 (525) color space
-deriving instance Eq e => Eq (Color BT601_525 e)
--- | ITU-R BT.601 (525) color space
-deriving instance Ord e => Ord (Color BT601_525 e)
--- | ITU-R BT.601 (525) color space
-deriving instance Functor (Color BT601_525)
--- | ITU-R BT.601 (525) color space
-deriving instance Applicative (Color BT601_525)
--- | ITU-R BT.601 (525) color space
-deriving instance Foldable (Color BT601_525)
--- | ITU-R BT.601 (525) color space
-deriving instance Traversable (Color BT601_525)
--- | ITU-R BT.601 (525) color space
-deriving instance Storable e => Storable (Color BT601_525 e)
+newtype instance Color (BT601_525 l) e = BT601_525 (Color CM.RGB e)
 
 -- | ITU-R BT.601 (525) color space
-instance Elevator e => Show (Color BT601_525 e) where
+deriving instance Eq e => Eq (Color (BT601_525 l) e)
+-- | ITU-R BT.601 (525) color space
+deriving instance Ord e => Ord (Color (BT601_525 l) e)
+-- | ITU-R BT.601 (525) color space
+deriving instance Functor (Color (BT601_525 l))
+-- | ITU-R BT.601 (525) color space
+deriving instance Applicative (Color (BT601_525 l))
+-- | ITU-R BT.601 (525) color space
+deriving instance Foldable (Color (BT601_525 l))
+-- | ITU-R BT.601 (525) color space
+deriving instance Traversable (Color (BT601_525 l))
+-- | ITU-R BT.601 (525) color space
+deriving instance Storable e => Storable (Color (BT601_525 l) e)
+
+-- | ITU-R BT.601 (525) color space
+instance  (Typeable l, Elevator e) => Show (Color (BT601_525 l) e) where
   showsPrec _ = showsColorModel
 
 -- | ITU-R BT.601 (525) color space
-instance Elevator e => ColorModel BT601_525 e where
-  type Components BT601_525 e = (e, e, e)
+instance  (Typeable l, Elevator e) => ColorModel (BT601_525 l) e where
+  type Components (BT601_525 l) e = (e, e, e)
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
--- | ITU-R BT.601 (525) color space
-instance Elevator e => ColorSpace BT601_525 D65 e where
-  type BaseModel BT601_525 = CM.RGB
+-- | ITU-R BT.601 (525) linear color space
+instance Elevator e => ColorSpace (BT601_525 'Linear) D65 e where
+  type BaseModel (BT601_525 'Linear) = CM.RGB
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
+  luminance = rgbLinearLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
+  toColorXYZ = rgbLinear2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
+  {-# INLINE fromColorXYZ #-}
+
+
+-- | ITU-R BT.601 (525) linear color space
+instance Elevator e => ColorSpace (BT601_525 'NonLinear) D65 e where
+  type BaseModel (BT601_525 'NonLinear) = CM.RGB
   toBaseSpace = id
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
@@ -94,9 +111,9 @@ instance Elevator e => ColorSpace BT601_525 D65 e where
 -- | ITU-R BT.601 (525) color space
 instance RedGreenBlue BT601_525 D65 where
   gamut = primaries525
-  ecctf = fmap transfer
+  ecctf = BT601_525 . fmap transfer . coerce
   {-# INLINE ecctf #-}
-  dcctf = fmap itransfer
+  dcctf = BT601_525 . fmap itransfer . coerce
   {-# INLINE dcctf #-}
 
 ------------------------------------
@@ -104,40 +121,54 @@ instance RedGreenBlue BT601_525 D65 where
 ------------------------------------
 
 -- | [ITU-R BT.601](https://en.wikipedia.org/wiki/Rec._601) (625) color space
-data BT601_625
+data BT601_625 (l :: Linearity)
 
-newtype instance Color BT601_625 e = BT601_625 (Color CM.RGB e)
-
--- | ITU-R BT.601 (625) color space
-deriving instance Eq e => Eq (Color BT601_625 e)
--- | ITU-R BT.601 (625) color space
-deriving instance Ord e => Ord (Color BT601_625 e)
--- | ITU-R BT.601 (625) color space
-deriving instance Functor (Color BT601_625)
--- | ITU-R BT.601 (625) color space
-deriving instance Applicative (Color BT601_625)
--- | ITU-R BT.601 (625) color space
-deriving instance Foldable (Color BT601_625)
--- | ITU-R BT.601 (625) color space
-deriving instance Traversable (Color BT601_625)
--- | ITU-R BT.601 (625) color space
-deriving instance Storable e => Storable (Color BT601_625 e)
+newtype instance Color (BT601_625 l) e = BT601_625 (Color CM.RGB e)
 
 -- | ITU-R BT.601 (625) color space
-instance Elevator e => Show (Color BT601_625 e) where
+deriving instance Eq e => Eq (Color (BT601_625 l) e)
+-- | ITU-R BT.601 (625) color space
+deriving instance Ord e => Ord (Color (BT601_625 l) e)
+-- | ITU-R BT.601 (625) color space
+deriving instance Functor (Color (BT601_625 l))
+-- | ITU-R BT.601 (625) color space
+deriving instance Applicative (Color (BT601_625 l))
+-- | ITU-R BT.601 (625) color space
+deriving instance Foldable (Color (BT601_625 l))
+-- | ITU-R BT.601 (625) color space
+deriving instance Traversable (Color (BT601_625 l))
+-- | ITU-R BT.601 (625) color space
+deriving instance Storable e => Storable (Color (BT601_625 l) e)
+
+-- | ITU-R BT.601 (625) color space
+instance (Typeable l, Elevator e) => Show (Color (BT601_625 l) e) where
   showsPrec _ = showsColorModel
 
 -- | ITU-R BT.601 (625) color space
-instance Elevator e => ColorModel BT601_625 e where
-  type Components BT601_625 e = (e, e, e)
+instance (Typeable l, Elevator e) => ColorModel (BT601_625 l) e where
+  type Components (BT601_625 l) e = (e, e, e)
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
+-- | ITU-R BT.601 (625) linear color space
+instance Elevator e => ColorSpace (BT601_625 'Linear) D65 e where
+  type BaseModel (BT601_625 'Linear) = CM.RGB
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
+  luminance = rgbLinearLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
+  toColorXYZ = rgbLinear2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
+  {-# INLINE fromColorXYZ #-}
+
 -- | ITU-R BT.601 (625) color space
-instance Elevator e => ColorSpace BT601_625 D65 e where
-  type BaseModel BT601_625 = CM.RGB
+instance Elevator e => ColorSpace (BT601_625 'NonLinear) D65 e where
+  type BaseModel (BT601_625 'NonLinear) = CM.RGB
   toBaseSpace = id
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
@@ -152,9 +183,9 @@ instance Elevator e => ColorSpace BT601_625 D65 e where
 -- | ITU-R BT.601 (625) color space
 instance RedGreenBlue BT601_625 D65 where
   gamut = primaries625
-  ecctf = fmap transfer
+  ecctf = BT601_625 . fmap transfer . coerce
   {-# INLINE ecctf #-}
-  dcctf = fmap itransfer
+  dcctf = BT601_625 . fmap itransfer . coerce
   {-# INLINE dcctf #-}
 
 instance Luma BT601_525 where

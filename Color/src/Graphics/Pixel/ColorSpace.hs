@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ExplicitForAll #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE KindSignatures #-}
@@ -39,6 +40,8 @@ module Graphics.Pixel.ColorSpace
   , toPixelF
   , toPixelD
   -- * RGB
+  , toPixelLinearRGB
+  , fromPixelLinearRGB
   -- ** sRGB color space
   , pattern PixelSRGB
   , pattern PixelSRGBA
@@ -69,12 +72,13 @@ import Graphics.Pixel.Internal
 
 -- | Convert a pixel from one color space to any other.
 --
+-- >>> :set -XDataKinds
 -- >>> :set -XTypeApplications
 -- >>> px = PixelSRGB @Float 0.0 0.5 1.0
 -- >>> px
--- <SRGB:( 0.000000, 0.500000, 1.000000)>
--- >>> convertPixel @AdobeRGB @_ @Word8 px
--- <AdobeRGB:( 71,127,251)>
+-- <SRGB 'NonLinear:( 0.000000, 0.500000, 1.000000)>
+-- >>> convertPixel @(AdobeRGB 'NonLinear) @_ @Word8 px
+-- <AdobeRGB 'NonLinear:( 71,127,251)>
 --
 -- @since 0.1.0
 convertPixel ::
@@ -87,14 +91,14 @@ convertPixel = liftPixel convert
 -- | Constructor for a pixel in @sRGB@ color space
 --
 -- @since 0.1.0
-pattern PixelSRGB :: e -> e -> e -> Pixel SRGB e
+pattern PixelSRGB :: e -> e -> e -> Pixel (SRGB 'NonLinear) e
 pattern PixelSRGB r g b = Pixel (SRGB (CM.ColorRGB r g b))
 {-# COMPLETE PixelSRGB #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with Alpha channel
 --
 -- @since 0.1.0
-pattern PixelSRGBA :: e -> e -> e -> e -> Pixel (Alpha SRGB) e
+pattern PixelSRGBA :: e -> e -> e -> e -> Pixel (Alpha (SRGB 'NonLinear)) e
 pattern PixelSRGBA r g b a = Pixel (Alpha (SRGB (CM.ColorRGB r g b)) a)
 {-# COMPLETE PixelSRGBA #-}
 
@@ -130,7 +134,7 @@ pattern PixelXYZA x y z a = Pixel (Alpha (XYZ (V3 x y z)) a)
 -- | Constructor for a pixel in RGB color space.
 --
 -- @since 0.1.0
-pattern PixelRGB :: RedGreenBlue cs (i :: k) => e -> e -> e -> Pixel cs e
+pattern PixelRGB :: RedGreenBlue cs (i :: k) => e -> e -> e -> Pixel (cs l) e
 pattern PixelRGB r g b <- (coerce . unColorRGB . coerce -> V3 r g b) where
         PixelRGB r g b = coerce (mkColorRGB (coerce (V3 r g b)))
 {-# COMPLETE PixelRGB #-}
@@ -191,7 +195,7 @@ pattern PixelY'A y a = Pixel (Alpha (Y' y) a)
 -- | Constructor for a pixel in RGB color space with Alpha channel
 --
 -- @since 0.1.0
-pattern PixelRGBA :: RedGreenBlue cs i => e -> e -> e -> e -> Pixel (Alpha cs) e
+pattern PixelRGBA :: RedGreenBlue cs i => e -> e -> e -> e -> Pixel (Alpha (cs l)) e
 pattern PixelRGBA r g b a <- (pixelColor -> Alpha (unColorRGB -> CM.ColorRGB r g b) a) where
         PixelRGBA r g b a = Pixel (Alpha (mkColorRGB (CM.ColorRGB r g b)) a)
 {-# COMPLETE PixelRGBA #-}
@@ -235,12 +239,28 @@ pattern PixelYCbCrA :: e -> e -> e -> e -> Pixel (Alpha (YCbCr cs)) e
 pattern PixelYCbCrA y cb cr a = Pixel (ColorYCbCrA y cb cr a)
 {-# COMPLETE PixelYCbCrA #-}
 
+-- | Convert non-linear RGB color space into linear one
+--
+-- @since 0.2.0
+toPixelLinearRGB ::
+     (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel (cs 'NonLinear) e -> Pixel (cs 'Linear) e
+toPixelLinearRGB = liftPixel dcctf
+{-# INLINE toPixelLinearRGB #-}
+
+-- | Convert linear RGB color space into a non-linear one
+--
+-- @since 0.2.0
+fromPixelLinearRGB ::
+     (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel (cs 'Linear) e -> Pixel (cs 'NonLinear) e
+fromPixelLinearRGB = liftPixel ecctf
+{-# INLINE fromPixelLinearRGB #-}
+
 -- | Convert an RGB pixel to `Y'` if it has the weights specified with `Luma`.
 --
 -- @since 0.1.4
 rgbPixelLuma ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
-  => Pixel cs e'
+  => Pixel (cs 'NonLinear) e'
   -> Pixel Y' e
 rgbPixelLuma = liftPixel rgbLuma
 

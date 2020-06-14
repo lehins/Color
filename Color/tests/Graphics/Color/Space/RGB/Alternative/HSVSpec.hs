@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeApplications #-}
 module Graphics.Color.Space.RGB.Alternative.HSVSpec (spec) where
@@ -17,5 +18,7 @@ spec :: Spec
 spec =
   describe "HSV" $ do
     describe "Derived-sRGB" $ do
-      colorModelSpec @(HSV (Derived.SRGB D65)) @Word "HSV"
-      colorSpaceSpec @(HSV (Derived.SRGB D65)) @Double
+      colorModelSpec @(HSV (Derived.SRGB D65 'NonLinear)) @Word "HSV"
+      colorSpaceSpec @(HSV (Derived.SRGB D65 'NonLinear)) @Double
+      colorModelSpec @(HSV (Derived.SRGB D65 'Linear)) @Int "HSV"
+      colorSpaceSpec @(HSV (Derived.SRGB D65 'Linear)) @Float

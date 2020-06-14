@@ -90,9 +90,9 @@ instance ColorModel cs e => ColorModel (HSV cs) e where
 
 
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
-instance (ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (HSV cs) i e where
-  type BaseModel (HSV cs) = CM.HSV
-  type BaseSpace (HSV cs) = cs
+instance (ColorSpace (cs l) i e, RedGreenBlue cs i) => ColorSpace (HSV (cs l)) i e where
+  type BaseModel (HSV (cs l)) = CM.HSV
+  type BaseSpace (HSV (cs l)) = cs l
   toBaseSpace = mkColorRGB . fmap fromDouble . CM.hsv2rgb . fmap toDouble . coerce
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = coerce . fmap fromDouble . CM.rgb2hsv . fmap toDouble . unColorRGB

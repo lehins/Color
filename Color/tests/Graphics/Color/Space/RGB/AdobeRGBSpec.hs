@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeApplications #-}
 module Graphics.Color.Space.RGB.AdobeRGBSpec (spec, arbitraryElevator) where
@@ -5,11 +6,12 @@ module Graphics.Color.Space.RGB.AdobeRGBSpec (spec, arbitraryElevator) where
 import Graphics.Color.Space.Common
 import Graphics.Color.Space.RGB.AdobeRGB
 
-instance (Elevator e, Random e) => Arbitrary (Color AdobeRGB e) where
+instance (Elevator e, Random e) => Arbitrary (Color (AdobeRGB l) e) where
   arbitrary = ColorRGB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
 
 
 spec :: Spec
 spec = describe "AdobeRGB" $ do
-  colorModelSpec @AdobeRGB @Word "AdobeRGB"
-  colorSpaceLenientSpec @AdobeRGB @Float 0.00001
+  colorModelSpec @(AdobeRGB 'NonLinear) @Word "AdobeRGB 'NonLinear"
+  colorSpaceLenientSpec @(AdobeRGB 'NonLinear) @Float 0.00001
+  colorSpaceLenientSpec @(AdobeRGB 'Linear) @Double 0.00001

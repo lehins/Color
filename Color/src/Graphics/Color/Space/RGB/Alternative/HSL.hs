@@ -30,7 +30,6 @@ module Graphics.Color.Space.RGB.Alternative.HSL
 
 import Data.Coerce
 import Data.Proxy
-import Data.Typeable
 import Foreign.Storable
 import qualified Graphics.Color.Model.HSL as CM
 import Graphics.Color.Model.Internal
@@ -91,9 +90,9 @@ instance ColorModel cs e => ColorModel (HSL cs) e where
 
 
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
-instance (Typeable cs, ColorSpace cs i e, RedGreenBlue cs i) => ColorSpace (HSL cs) i e where
-  type BaseModel (HSL cs) = CM.HSL
-  type BaseSpace (HSL cs) = cs
+instance (ColorSpace (cs l) i e, RedGreenBlue cs i) => ColorSpace (HSL (cs l)) i e where
+  type BaseModel (HSL (cs l)) = CM.HSL
+  type BaseSpace (HSL (cs l)) = cs l
   toBaseSpace = mkColorRGB . fmap fromDouble . CM.hsl2rgb . fmap toDouble . coerce
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = coerce . fmap fromDouble . CM.rgb2hsl . fmap toDouble . unColorRGB

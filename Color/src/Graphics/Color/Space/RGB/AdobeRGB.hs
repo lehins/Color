@@ -32,6 +32,8 @@ module Graphics.Color.Space.RGB.AdobeRGB
   , module Graphics.Color.Space
   ) where
 
+import Data.Typeable
+import Data.Coerce
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
@@ -43,55 +45,69 @@ import Graphics.Color.Space.RGB.ITU.Rec601 (D65)
 -- color space with the default `D65` illuminant
 --
 -- @since 0.1.0
-data AdobeRGB
+data AdobeRGB (l :: Linearity)
 
-newtype instance Color AdobeRGB e = AdobeRGB (Color CM.RGB e)
+newtype instance Color (AdobeRGB l) e = AdobeRGB (Color CM.RGB e)
 
 -- | Constructor for a color in @AdobeRGB@ color space
 --
 -- @since 0.1.0
-pattern ColorAdobeRGB :: e -> e -> e -> Color AdobeRGB e
+pattern ColorAdobeRGB :: e -> e -> e -> Color (AdobeRGB l) e
 pattern ColorAdobeRGB r g b = AdobeRGB (CM.ColorRGB r g b)
 {-# COMPLETE ColorAdobeRGB #-}
 
 -- | Constructor for a color in @AdobeRGB@ color space with alpha channel
 --
 -- @since 0.1.0
-pattern ColorAdobeRGBA :: e -> e -> e -> e -> Color (Alpha AdobeRGB) e
+pattern ColorAdobeRGBA :: e -> e -> e -> e -> Color (Alpha (AdobeRGB l)) e
 pattern ColorAdobeRGBA r g b a = Alpha (AdobeRGB (CM.ColorRGB r g b)) a
 {-# COMPLETE ColorAdobeRGBA #-}
 
 
--- | Adobe`RGB` color space
-deriving instance Eq e => Eq (Color AdobeRGB e)
--- | Adobe`RGB` color space
-deriving instance Ord e => Ord (Color AdobeRGB e)
--- | Adobe`RGB` color space
-deriving instance Functor (Color AdobeRGB)
--- | Adobe`RGB` color space
-deriving instance Applicative (Color AdobeRGB)
--- | Adobe`RGB` color space
-deriving instance Foldable (Color AdobeRGB)
--- | Adobe`RGB` color space
-deriving instance Traversable (Color AdobeRGB)
--- | Adobe`RGB` color space
-deriving instance Storable e => Storable (Color AdobeRGB e)
+-- | `AdobeRGB` color space
+deriving instance Eq e => Eq (Color (AdobeRGB l) e)
+-- | `AdobeRGB` color space
+deriving instance Ord e => Ord (Color (AdobeRGB l) e)
+-- | `AdobeRGB` color space
+deriving instance Functor (Color (AdobeRGB l))
+-- | `AdobeRGB` color space
+deriving instance Applicative (Color (AdobeRGB l))
+-- | `AdobeRGB` color space
+deriving instance Foldable (Color (AdobeRGB l))
+-- | `AdobeRGB` color space
+deriving instance Traversable (Color (AdobeRGB l))
+-- | `AdobeRGB` color space
+deriving instance Storable e => Storable (Color (AdobeRGB l) e)
 
--- | Adobe`RGB` color space
-instance Elevator e => Show (Color AdobeRGB e) where
+-- | `AdobeRGB` color space
+instance (Typeable l, Elevator e) => Show (Color (AdobeRGB l) e) where
   showsPrec _ = showsColorModel
 
--- | Adobe`RGB` color space
-instance Elevator e => ColorModel AdobeRGB e where
-  type Components AdobeRGB e = (e, e, e)
+-- | `AdobeRGB` color space
+instance (Typeable l, Elevator e) => ColorModel (AdobeRGB l) e where
+  type Components (AdobeRGB l) e = (e, e, e)
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
--- | Adobe`RGB` color space
-instance Elevator e => ColorSpace AdobeRGB D65 e where
-  type BaseModel AdobeRGB = CM.RGB
+-- | `AdobeRGB` linear color space
+instance Elevator e => ColorSpace (AdobeRGB 'Linear) D65 e where
+  type BaseModel (AdobeRGB 'Linear) = CM.RGB
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
+  luminance = rgbLinearLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
+  toColorXYZ = rgbLinear2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
+  {-# INLINE fromColorXYZ #-}
+
+-- | `AdobeRGB` color space
+instance Elevator e => ColorSpace (AdobeRGB 'NonLinear) D65 e where
+  type BaseModel (AdobeRGB 'NonLinear) = CM.RGB
   toBaseSpace = id
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
@@ -103,18 +119,17 @@ instance Elevator e => ColorSpace AdobeRGB D65 e where
   fromColorXYZ = fmap fromRealFloat . xyz2rgb
   {-# INLINE fromColorXYZ #-}
 
-
--- | Adobe`RGB` color space
+-- | `AdobeRGB` color space
 instance RedGreenBlue AdobeRGB D65 where
   gamut = primaries
   npm = npmStandard
   inpm = inpmStandard
-  ecctf = fmap transfer
+  ecctf = AdobeRGB . fmap transfer . coerce
   {-# INLINE ecctf #-}
-  dcctf = fmap itransfer
+  dcctf = AdobeRGB . fmap itransfer . coerce
   {-# INLINE dcctf #-}
 
--- | sRGB normalized primary matrix. This is a helper definition, use `npm` instead.
+-- | AdobeRGB normalized primary matrix. This is a helper definition, use `npm` instead.
 --
 -- >>> :set -XDataKinds
 -- >>> import Graphics.Color.Space.RGB.AdobeRGB
@@ -130,7 +145,7 @@ npmStandard = NPM $ M3x3 (V3 0.57667 0.18556 0.18823)
                          (V3 0.02703 0.07069 0.99134)
 
 
--- | sRGB inverse normalized primary matrix. This is a helper definition, use `inpm` instead.
+-- | AdobeRGB inverse normalized primary matrix. This is a helper definition, use `inpm` instead.
 --
 -- >>> :set -XDataKinds
 -- >>> import Graphics.Color.Space.RGB.AdobeRGB
@@ -170,7 +185,7 @@ itransfer :: Floating a => a -> a
 itransfer u = u ** 2.19921875 -- in rational form 563/256
 {-# INLINE itransfer #-}
 
--- | @sRGB@ primaries
+-- | @AdobeRGB@ primaries
 --
 -- @since 0.1.0
 primaries :: RealFloat e => Gamut rgb i e

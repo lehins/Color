@@ -1,7 +1,8 @@
 # Changelog for Color
 
-## 0.1.5
+## 0.2.0
 
+* Add `Linearity` kind to `RedGreenBlue` color spaces.
 * Add `Default` instance for `Pixel`
 * Addition of universal division `(//)` to `Elevator`
 

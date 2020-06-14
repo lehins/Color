@@ -25,6 +25,8 @@ module Graphics.Color.Space.RGB.Derived.SRGB
   , module Graphics.Color.Space
   ) where
 
+import Data.Coerce
+import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
@@ -34,41 +36,56 @@ import qualified Graphics.Color.Space.RGB.SRGB as SRGB
 
 
 -- | The most common @sRGB@ color space with an arbitrary illuminant
-data SRGB (i :: k)
+data SRGB (i :: k) (l :: Linearity)
 
 -- | `SRGB` color space (derived)
-newtype instance Color (SRGB i) e = SRGB (Color CM.RGB e)
+newtype instance Color (SRGB i l) e = SRGB (Color CM.RGB e)
 
 -- | `SRGB` color space (derived)
-deriving instance Eq e => Eq (Color (SRGB i) e)
+deriving instance Eq e => Eq (Color (SRGB i l) e)
 -- | `SRGB` color space (derived)
-deriving instance Ord e => Ord (Color (SRGB i) e)
+deriving instance Ord e => Ord (Color (SRGB i l) e)
 -- | `SRGB` color space (derived)
-deriving instance Functor (Color (SRGB i))
+deriving instance Functor (Color (SRGB i l))
 -- | `SRGB` color space (derived)
-deriving instance Applicative (Color (SRGB i))
+deriving instance Applicative (Color (SRGB i l))
 -- | `SRGB` color space (derived)
-deriving instance Foldable (Color (SRGB i))
+deriving instance Foldable (Color (SRGB i l))
 -- | `SRGB` color space (derived)
-deriving instance Traversable (Color (SRGB i))
+deriving instance Traversable (Color (SRGB i l))
 -- | `SRGB` color space (derived)
-deriving instance Storable e => Storable (Color (SRGB i) e)
+deriving instance Storable e => Storable (Color (SRGB i l) e)
 
 -- | `SRGB` color space (derived)
-instance (Illuminant i, Elevator e) => Show (Color (SRGB (i :: k)) e) where
+instance (Typeable l, Illuminant i, Elevator e) => Show (Color (SRGB (i :: k) l) e) where
   showsPrec _ = showsColorModel
 
 -- | `SRGB` color space (derived)
-instance (Illuminant i, Elevator e) => ColorModel (SRGB (i :: k)) e where
-  type Components (SRGB i) e = (e, e, e)
+instance (Typeable l, Illuminant i, Elevator e) => ColorModel (SRGB (i :: k) l) e where
+  type Components (SRGB i l) e = (e, e, e)
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
+-- | `SRGB` linear color space (derived)
+instance (Illuminant i, Elevator e) => ColorSpace (SRGB i 'Linear) i e where
+  type BaseModel (SRGB i 'Linear) = CM.RGB
+  toBaseSpace = id
+  {-# INLINE toBaseSpace #-}
+  fromBaseSpace = id
+  {-# INLINE fromBaseSpace #-}
+  luminance = rgbLinearLuminance . fmap toRealFloat
+  {-# INLINE luminance #-}
+  toColorXYZ = rgbLinear2xyz . fmap toRealFloat
+  {-# INLINE toColorXYZ #-}
+  fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
+  {-# INLINE fromColorXYZ #-}
+
+
 -- | `SRGB` color space (derived)
-instance (Illuminant i, Elevator e) => ColorSpace (SRGB i) i e where
-  type BaseModel (SRGB i) = CM.RGB
+instance (Illuminant i, Elevator e) => ColorSpace (SRGB i 'NonLinear) i e where
+  type BaseModel (SRGB i 'NonLinear) = CM.RGB
   toBaseSpace = id
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = id
@@ -83,9 +100,9 @@ instance (Illuminant i, Elevator e) => ColorSpace (SRGB i) i e where
 -- | `SRGB` color space (derived)
 instance Illuminant i => RedGreenBlue (SRGB i) i where
   gamut = SRGB.primaries
-  ecctf = fmap SRGB.transfer
+  ecctf = SRGB . fmap SRGB.transfer . coerce
   {-# INLINE ecctf #-}
-  dcctf = fmap SRGB.itransfer
+  dcctf = SRGB . fmap SRGB.itransfer . coerce
   {-# INLINE dcctf #-}
 
 
