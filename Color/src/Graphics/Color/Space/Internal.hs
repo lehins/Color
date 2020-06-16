@@ -106,7 +106,7 @@ class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
 
 instance ( ColorSpace cs i e
          , ColorSpace (BaseSpace cs) i e
-         , ColorSpace (Alpha (BaseSpace cs)) i e
+         -- , ColorSpace (Alpha (BaseSpace cs)) i e
          , cs ~ Opaque (Alpha cs)
          , BaseModel cs ~ Opaque (Alpha (BaseModel cs))
          ) =>

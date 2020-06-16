@@ -1,17 +1,5 @@
-# This is the complex Travis configuration, which is intended for use
-# on open source libraries which need compatibility across multiple GHC
-# versions, must work with cabal-install, and should be
-# cross-platform. For more information and other options, see:
-#
-# https://docs.haskellstack.org/en/stable/travis_ci/
-#
-# Copy these contents into the root directory of your Github project in a file
-# named .travis.yml
-
-# Use new container infrastructure to enable caching
 sudo: false
 
-# Do not choose a language; we provide our own build tools.
 language: generic
 
 cache:
@@ -21,121 +9,66 @@ cache:
   - $TRAVIS_BUILD_DIR/Color/.stack-work
   timeout: 360
 
-# The different configurations we want to test. We have BUILD=cabal which uses
-# cabal-install, and BUILD=stack which uses Stack. More documentation on each
-# of those below.
-#
-# We set the compiler values here to tell Travis to use a different
-# cache file per set of arguments.
-#
-# If you need to have different apt packages for each combination in the
-# matrix, you can use a line such as:
-#     addons: {apt: {packages: [libfcgi-dev,libgmp-dev]}}
 matrix:
   include:
 
-  # The Stack builds. We can pass in arbitrary Stack arguments via the ARGS
-  # variable, such as using --stack-yaml to point to a different file.
-
-  - env: BUILD=stack RESOLVER="lts-12.26"
-    compiler: ": #stack GHC-8.4.4 (lts-12.26)"
+  - env: GHC="8.4.4" RESOLVER="lts-12.26" STACK_YAML="stack-extra-deps.yaml"
     os: osx
 
-  - env: BUILD=stack RESOLVER="lts-14.27"
-    compiler: ": #stack GHC-8.6.5 (lts-14.27)"
+  - env: GHC="8.6.5" RESOLVER="lts-14.27"
     os: osx
 
-  - env: BUILD=stack RESOLVER="lts-15"
-    compiler: ": #stack GHC-8.8.2 (lts-15)"
+  - env: GHC="8.8.3" RESOLVER="lts-16"
     os: osx
 
 
-  - env: BUILD=stack RESOLVER="lts-12.14"
-    compiler: ": #stack GHC-8.4.3 (lts-12.14)"
-    addons:
-      apt:
-        packages: [libgmp-dev]
+  - env: GHC="8.4.3" RESOLVER="lts-12.14" STACK_YAML="stack-extra-deps.yaml"
+    addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: BUILD=stack RESOLVER="lts-12.26"
-    compiler: ": #stack GHC-8.4.4 (lts-12.26)"
-    addons:
-      apt:
-        packages: [libgmp-dev]
+  - env: GHC="8.4.4" RESOLVER="lts-12.26" STACK_YAML="stack-extra-deps.yaml"
+    addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: BUILD=stack RESOLVER="lts-13.9"
-    compiler: ": #stack GHC-8.6.3 (lts-13.9)"
-    addons:
-      apt:
-        packages: [libgmp-dev]
+  - env: GHC="8.6.3" RESOLVER="lts-13.9" STACK_YAML="stack-extra-deps.yaml"
+    addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: BUILD=stack RESOLVER="lts-13.19"
-    compiler: ": #stack GHC-8.6.4 (lts-13.19)"
-    addons:
-      apt:
-        packages: [libgmp-dev]
+  - env: GHC="8.6.4" RESOLVER="lts-13.19" STACK_YAML="stack-extra-deps.yaml"
+    addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: BUILD=stack RESOLVER="lts-13.30"
-    compiler: ": #stack GHC-8.6.5 (lts-13.30)"
-    addons:
-      apt:
-        packages: [libgmp-dev]
+  - env: GHC="8.6.5" RESOLVER="lts-14.27" COVERALLS_STACK_YAML="stack-coveralls.yaml"
+    addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: BUILD=stack RESOLVER="lts-14.27" COVERALLS_STACK_YAML="stack.yaml"
-    compiler: ": #stack GHC-8.6.5 (lts-14.27)"
-    addons:
-      apt:
-        packages: [libgmp-dev]
+  - env: GHC="8.8.3" RESOLVER="lts-16"
+    addons: {apt: {packages: [libgmp-dev]}}
 
-  - env: BUILD=stack RESOLVER="lts-15"
-    compiler: ": #stack GHC-8.8.2 (lts-15)"
-    addons:
-      apt:
-        packages: [libgmp-dev]
-
-  # Nightly builds are allowed to fail
-  - env: BUILD=stack RESOLVER="nightly"
-    compiler: ": #stack nightly"
-    addons:
-      apt:
-        packages: [libgmp-dev]
+  - env: RESOLVER="nightly"
+    addons: {apt: {packages: [libgmp-dev]}}
 
   allow_failures:
-  - env: BUILD=stack ARGS="--resolver nightly"
+  - env: RESOLVER="nightly"
 
 before_install:
-# Using compiler above sets CC to an invalid value, so unset it
-- unset CC
-
-# We want to always allow newer versions of packages when building on GHC HEAD
-- export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$HOME/.local/bin:/opt/alex/$ALEXVER/bin:/opt/happy/$HAPPYVER/bin:$HOME/.cabal/bin:$PATH
-- mkdir -p ~/.local/bin
 - |
-  travis_retry curl -s -L https://gist.githubusercontent.com/lehins/fd36a8cc8bf853173437b17f6b6426ad/raw/d9ddb32cac2f0dc6800be4fa54d450f0dcda6c60/git-modtime.hs -o git-modtime.hs
-
-  if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-    travis_retry curl -L https://www.stackage.org/stack/osx-x86_64 | tar xz --strip-components=1 --include '*/stack' -C ~/.local/bin
-  else
-    travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+  travis_retry curl -sSL https://gist.githubusercontent.com/lehins/fd36a8cc8bf853173437b17f6b6426ad/raw/d9ddb32cac2f0dc6800be4fa54d450f0dcda6c60/git-modtime.hs -o git-modtime.hs
+  travis_retry curl -sSL https://get.haskellstack.org/ | sh -s - -f
+  BUILD_ARGS="--bench --no-run-benchmarks --haddock --no-haddock-deps"
+  if [ -n "${COVERALLS_STACK_YAML}" ]; then
+     STACK_YAML="${COVERALLS_STACK_YAML}"
+     travis_retry curl -L https://github.com/lehins/stack-hpc-coveralls/releases/download/0.0.5.0/shc.tar.gz | tar xz shc
+     BUILD_ARGS="${BUILD_ARGS} --coverage"
   fi
 
 script:
 - |
   set -ex
-  stack script --resolver $RESOLVER git-modtime.hs
   ARGS="--resolver $RESOLVER"
-  BUILD_ARGS="--bench --no-run-benchmarks --haddock --no-haddock-deps"
-  if [ -n "${COVERALLS_STACK_YAML}" ] && [ -n "${COVERALLS_REPO_TOKEN}" ]; then
-     stack --stack-yaml="$COVERALLS_STACK_YAML" test Color:tests --coverage $BUILD_ARGS
-     stack --stack-yaml="$COVERALLS_STACK_YAML" hpc report --all
-     travis_retry curl -L https://github.com/lehins/stack-hpc-coveralls/releases/download/0.0.5.0/shc.tar.gz | tar xz shc
-     STACK_YAML="$COVERALLS_STACK_YAML" ./shc --repo-token=$COVERALLS_REPO_TOKEN combined custom
-     if [ -z "$DOCTESTS_DISABLED" ]; then
-       stack --stack-yaml="$COVERALLS_STACK_YAML" $ARGS test Color:doctests --coverage $BUILD_ARGS
-     fi
-  else
-    stack $ARGS test Color:tests $BUILD_ARGS
-    if [ -z "$DOCTESTS_DISABLED" ]; then
-      stack $ARGS test Color:doctests $BUILD_ARGS
-    fi
+  stack $ARGS script git-modtime.hs
+  # ^ ensure file modification timestamp matches the time it was committed.
+  stack $ARGS test --no-run-tests $BUILD_ARGS
+  # ^ ensure everything else beside test suite gets built as well.
+  stack $ARGS test Color:tests $BUILD_ARGS
+  if [ -n "${COVERALLS_STACK_YAML}" ]; then
+     stack $ARGS hpc report --all
+     STACK_YAML="${COVERALLS_STACK_YAML}" ./shc --partial-coverage --fetch-coverage combined custom
   fi
-  set +ex
+  stack $ARGS test Color:doctests $BUILD_ARGS
+  set -ex

@@ -47,7 +47,7 @@ makeRandomColor gen =
 
 
 makeRandomRGB ::
-     (RedGreenBlue cs (i :: k), RandomGen g, Random a, Elevator a) => g -> (Color cs a, g)
+     (RedGreenBlue cs (i :: k), RandomGen g, Random a, Elevator a) => g -> (Color (cs 'NonLinear) a, g)
 makeRandomRGB gen =
   case randomV3 gen of
     (V3 r g b, gen') -> (mkColorRGB (CM.ColorRGB r g b), gen')
@@ -69,8 +69,8 @@ mkBenchmarks ::
   -> g
   -> (Benchmark, g)
 mkBenchmarks _ tyName g0 =
-  let !(srgb :: Color SRGB f, g1) = makeRandomRGB g0
-      !(srgbDerived :: Color (Derived.SRGB 'D65) f, g2) = makeRandomRGB g1
+  let !(srgb :: Color (SRGB 'NonLinear) f, g1) = makeRandomRGB g0
+      !(srgbDerived :: Color (Derived.SRGB 'D65 'NonLinear) f, g2) = makeRandomRGB g1
       !(xyz :: Color (XYZ D65) f) = toColorXYZ srgb
       !(xyzDerived :: Color (XYZ 'D65) f) = toColorXYZ srgbDerived
       !(srgbColour :: Colour.Colour f, g3) = makeRandomColour g2

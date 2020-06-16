@@ -13,20 +13,13 @@ extra-source-files:  README.md
                    , CHANGELOG.md
 extra-doc-files:     files/*.svg
 cabal-version:       >=1.18
-build-type:          Custom
+build-type:          Simple
 tested-with:          GHC == 8.4.3
                     , GHC == 8.4.4
                     , GHC == 8.6.3
                     , GHC == 8.6.4
                     , GHC == 8.6.5
-                    , GHC == 8.8.1
-                    , GHC == 8.8.2
-
-custom-setup
-  setup-depends:
-      base
-    , Cabal
-    , cabal-doctest >=1.0.6
+                    , GHC == 8.8.3
 
 library
   hs-source-dirs:      src
@@ -158,10 +151,9 @@ test-suite doctests
   hs-source-dirs:   tests
   main-is:          doctests.hs
   build-depends: base
-               , doctest >=0.15
+               , doctest >=0.16
                , QuickCheck
                , Color
-               , template-haskell
   default-language:    Haskell2010
   ghc-options:        -Wall
                       -Wincomplete-record-updates

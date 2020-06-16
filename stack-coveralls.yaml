@@ -1,4 +1,4 @@
-resolver: lts-16.0
+resolver: lts-14.27
 packages:
 - Color
 extra-deps: []

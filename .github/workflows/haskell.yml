@@ -1,0 +1,35 @@
+name: Haskell CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # - name: Cache
+    #   uses: actions/cache@v1
+    #   env:
+    #     resolver: lts-16
+    #   with:
+    #     path: ~/.stack
+    #     key: ${{ runner.os }}-build-${{ env.resolver }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-build-${{ env.resolver }}
+    #       ${{ runner.os }}-build-
+    #       ${{ runner.os }}-
+
+    - name: Install dependencies
+      run: |
+        curl -sSL https://get.haskellstack.org/ | sh -s - -f
+        curl -sSL https://gist.githubusercontent.com/lehins/fd36a8cc8bf853173437b17f6b6426ad/raw/d9ddb32cac2f0dc6800be4fa54d450f0dcda6c60/git-modtime.hs -o git-modtime.hs
+        stack script --resolver lts-16 git-modtime.hs
+    - name: Test
+      run: stack --resolver lts-16 test --bench --no-run-benchmarks --haddock --no-haddock-deps
