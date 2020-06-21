@@ -129,7 +129,7 @@ instance ( ColorSpace cs i e
 
 -- | This is a data type that encodes a data point on the chromaticity diagram
 newtype Chromaticity i e =
-  Chromaticity (Color (CIExyY i) e)
+  Chromaticity { chromaticityCIExyY :: Color (CIExyY i) e }
   deriving (Eq, Show)
 
 
@@ -151,7 +151,7 @@ class (Typeable i, Typeable k, KnownNat (Temperature i)) => Illuminant (i :: k) 
 
 
 newtype WhitePoint (i :: k) e =
-  WhitePointChromaticity (Chromaticity i e)
+  WhitePointChromaticity { whitePointChromaticity :: Chromaticity i e }
   deriving (Eq)
 
 instance (Illuminant i, Elevator e) => Show (WhitePoint (i :: k) e) where

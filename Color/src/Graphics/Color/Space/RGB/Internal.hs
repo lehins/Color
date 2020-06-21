@@ -328,9 +328,7 @@ rgbColorGamut _ = gamut
 -- >>> import Graphics.Color.Space.RGB
 -- >>> :set -XTypeApplications
 -- >>> pixelWhitePoint @Float (ColorSRGB @Word8 1 2 3)
--- WhitePoint (Chromaticity <CIExyY * D65:( 0.31270000, 0.32900000)>)
--- >>> Just (pixelWhitePoint @Float (ColorSRGB @Word8 1 2 3))
--- Just (WhitePoint (Chromaticity <CIExyY * D65:( 0.31270000, 0.32900000)>))
+-- WhitePoint (Chromaticity {chromaticityCIExyY = <CIExyY * D65:( 0.31270000, 0.32900000)>})
 --
 -- @since 0.1.0
 pixelWhitePoint ::

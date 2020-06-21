@@ -7,6 +7,8 @@
 * Addition of universal division `(//)` to `Elevator`
 * Addition of CIE1931 RGB color space.
 * Fix show instance for floating point colors: adjust formatting in Elevator for `Float` and `Double`
+* Add record accessor functions: `chromaticityCIExyY`, `whitePointChromaticity`
+* Fix show instance for `Gamut`
 
 ## 0.1.4
 
