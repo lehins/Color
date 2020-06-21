@@ -103,9 +103,9 @@ instance (RealFloat e, Elevator e, Illuminant i) => Show (Gamut cs i e) where
   show Gamut {..} =
     unlines
       [ "Gamut:"
-      , "  Red: " <> show (primaryChromaticity gamutRedPrimary)
+      , "  Red:   " <> show (primaryChromaticity gamutRedPrimary)
       , "  Green: " <> show (primaryChromaticity gamutGreenPrimary)
-      , "  Blue: " <> show (primaryChromaticity gamutBluePrimary)
+      , "  Blue:  " <> show (primaryChromaticity gamutBluePrimary)
       ]
 
 -- | Get the `WhitePoint` of chromaticity. `Chromaticity` itself isn't actually evaluated,
