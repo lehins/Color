@@ -216,8 +216,11 @@ whitePointXZ vY (coerce -> V2 x y) = ColorXYZ (vYy * x) vY (vYy * (1 - x - y))
 -- Primary --
 -------------
 
-newtype Primary (i :: k) e = PrimaryChromaticity (Chromaticity i e)
- deriving (Eq, Show)
+newtype Primary (i :: k) e =
+  PrimaryChromaticity
+    { primaryChromaticity :: Chromaticity i e
+    }
+  deriving (Eq, Show)
 
 
 -- | Constructor for the most common @XYZ@ color space

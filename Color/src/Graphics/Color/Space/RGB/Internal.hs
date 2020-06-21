@@ -9,6 +9,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -97,7 +98,15 @@ data Gamut cs i e = Gamut
   , gamutBluePrimary  :: !(Primary i e)
   }
 deriving instance Eq e => Eq (Gamut cs i e)
-deriving instance ColorSpace cs i e => Show (Gamut cs i e) -- TODO: better show with whitepoint
+
+instance (RealFloat e, Elevator e, Illuminant i) => Show (Gamut cs i e) where
+  show Gamut {..} =
+    unlines
+      [ "Gamut:"
+      , "  Red: " <> show (primaryChromaticity gamutRedPrimary)
+      , "  Green: " <> show (primaryChromaticity gamutGreenPrimary)
+      , "  Blue: " <> show (primaryChromaticity gamutBluePrimary)
+      ]
 
 -- | Get the `WhitePoint` of chromaticity. `Chromaticity` itself isn't actually evaluated,
 -- its type carries enough information for this operation.
