@@ -127,20 +127,20 @@ gamutWhitePoint _ = whitePoint
 --
 -- >>> srgbFromLinear $ ColorRGB 0.1 0.2 0.3
 -- <XYZ CIE1931 'D65:(Evaluated only once!!!
---  0.166888, 0.185953, 0.310856)>
+--  0.16688849, 0.18595251, 0.31085595)>
 -- >>> srgbFromLinear $ ColorRGB 0.1 0.2 0.3
--- <XYZ CIE1931 'D65:( 0.166888, 0.185953, 0.310856)>
+-- <XYZ CIE1931 'D65:( 0.16688849, 0.18595251, 0.31085595)>
 -- >>> rgb = ColorRGB 0.1 0.2 0.3 :: Color (SRGB 'D65 'Linear) Float
 -- >>> npmApply npm rgb :: Color (XYZ 'D65) Float
--- <XYZ CIE1931 'D65:( 0.166888, 0.185953, 0.310856)>
+-- <XYZ CIE1931 'D65:( 0.16688849, 0.18595251, 0.31085595)>
 --
 -- Here is a comparison with a non-liner sRGB conversion:
 --
 -- >>> rgb = ColorRGB 0.1 0.2 0.3 :: Color (SRGB 'D65 'NonLinear) Float
 -- >>> npmApply npm (dcctf rgb) :: Color (XYZ 'D65) Float {- non-linear transformation -}
--- <XYZ CIE1931 'D65:( 0.029186, 0.031093, 0.073737)>
+-- <XYZ CIE1931 'D65:( 0.02918611, 0.03109305, 0.07373714)>
 -- >>> toColorXYZ rgb :: Color (XYZ 'D65) Float           {- non-linear transformation -}
--- <XYZ CIE1931 'D65:( 0.029186, 0.031093, 0.073737)>
+-- <XYZ CIE1931 'D65:( 0.02918611, 0.03109305, 0.07373714)>
 --
 --
 -- @since 0.1.0
@@ -319,9 +319,9 @@ rgbColorGamut _ = gamut
 -- >>> import Graphics.Color.Space.RGB
 -- >>> :set -XTypeApplications
 -- >>> pixelWhitePoint @Float (ColorSRGB @Word8 1 2 3)
--- WhitePoint (Chromaticity <CIExyY * D65:( 0.312700, 0.329000)>)
+-- WhitePoint (Chromaticity <CIExyY * D65:( 0.31270000, 0.32900000)>)
 -- >>> Just (pixelWhitePoint @Float (ColorSRGB @Word8 1 2 3))
--- Just (WhitePoint (Chromaticity <CIExyY * D65:( 0.312700, 0.329000)>))
+-- Just (WhitePoint (Chromaticity <CIExyY * D65:( 0.31270000, 0.32900000)>))
 --
 -- @since 0.1.0
 pixelWhitePoint ::

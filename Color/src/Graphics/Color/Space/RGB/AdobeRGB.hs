@@ -134,9 +134,9 @@ instance RedGreenBlue AdobeRGB D65 where
 -- >>> :set -XDataKinds
 -- >>> import Graphics.Color.Space.RGB.AdobeRGB
 -- >>> npmStandard :: NPM AdobeRGB Float
--- [ [ 0.576670, 0.185560, 0.188230 ]
--- , [ 0.297340, 0.627360, 0.075290 ]
--- , [ 0.027030, 0.070690, 0.991340 ] ]
+-- [ [ 0.57667000, 0.18556000, 0.18823000 ]
+-- , [ 0.29734000, 0.62736000, 0.07529000 ]
+-- , [ 0.02703000, 0.07069000, 0.99134000 ] ]
 --
 -- @since 0.1.0
 npmStandard :: RealFloat e => NPM AdobeRGB e
@@ -150,9 +150,9 @@ npmStandard = NPM $ M3x3 (V3 0.57667 0.18556 0.18823)
 -- >>> :set -XDataKinds
 -- >>> import Graphics.Color.Space.RGB.AdobeRGB
 -- >>> inpmStandard :: INPM AdobeRGB Float
--- [ [ 2.041590,-0.565010,-0.344730 ]
--- , [-0.969240, 1.875970, 0.041560 ]
--- , [ 0.013440,-0.118360, 1.015170 ] ]
+-- [ [ 2.04159000,-0.56501000,-0.34473000 ]
+-- , [-0.96924000, 1.87597000, 0.04156000 ]
+-- , [ 0.01344000,-0.11836000, 1.01517000 ] ]
 --
 -- @since 0.1.0
 inpmStandard :: RealFloat e => INPM AdobeRGB e

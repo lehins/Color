@@ -76,7 +76,7 @@ import Graphics.Pixel.Internal
 -- >>> :set -XTypeApplications
 -- >>> px = PixelSRGB @Float 0.0 0.5 1.0
 -- >>> px
--- <SRGB 'NonLinear:( 0.000000, 0.500000, 1.000000)>
+-- <SRGB 'NonLinear:( 0.00000000, 0.50000000, 1.00000000)>
 -- >>> convertPixel @(AdobeRGB 'NonLinear) @_ @Word8 px
 -- <AdobeRGB 'NonLinear:( 71,127,251)>
 --

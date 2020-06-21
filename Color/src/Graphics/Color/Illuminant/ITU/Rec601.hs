@@ -22,9 +22,9 @@ import Graphics.Color.Space.Internal
 -- `Graphics.Color.Illuminant.ITU.Rec470.D65` specified in Rec.470.
 --
 -- >>> whitePoint :: WhitePoint D65 Float
--- WhitePoint (Chromaticity <CIExyY * D65:( 0.312700, 0.329000)>)
+-- WhitePoint (Chromaticity <CIExyY * D65:( 0.31270000, 0.32900000)>)
 -- >>> whitePointTristimulus :: Color (XYZ D65) Float
--- <XYZ * D65:( 0.950456, 1.000000, 1.089058)>
+-- <XYZ * D65:( 0.95045596, 1.00000000, 1.08905770)>
 -- >>> colorTemperature :: CCT D65
 -- CCT {unCCT = 6504.0}
 --

@@ -20,9 +20,9 @@ import Graphics.Color.Space.Internal
 -- white point defined in ICC PCS. Useful for chromatic adaptation.
 --
 -- >>> whitePoint :: WhitePoint D50 Double
--- WhitePoint (Chromaticity <CIExyY * D50:( 0.345702914919, 0.358538596680)>)
+-- WhitePoint (Chromaticity <CIExyY * D50:( 0.3457029149190000, 0.3585385966800000)>)
 -- >>> whitePointTristimulus :: Color (XYZ D50) Float
--- <XYZ * D50:( 0.964200, 1.000000, 0.824900)>
+-- <XYZ * D50:( 0.96420000, 1.00000000, 0.82490010)>
 -- >>> colorTemperature :: CCT D50
 -- CCT {unCCT = 5003.0}
 --

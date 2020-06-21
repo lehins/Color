@@ -24,9 +24,9 @@ import Graphics.Color.Space.Internal
 -- declaration in here.
 --
 -- >>> whitePoint :: WhitePoint C Float
--- WhitePoint (Chromaticity <CIExyY * C:( 0.310000, 0.316000)>)
+-- WhitePoint (Chromaticity <CIExyY * C:( 0.31000000, 0.31600000)>)
 -- >>> whitePointTristimulus :: Color (XYZ C) Float
--- <XYZ * C:( 0.981013, 1.000000, 1.183544)>
+-- <XYZ * C:( 0.98101264, 1.00000000, 1.18354420)>
 -- >>> colorTemperature :: CCT C
 -- CCT {unCCT = 6774.0}
 --
@@ -47,9 +47,9 @@ instance Illuminant C where
 -- declaration in here.
 --
 -- >>> whitePoint :: WhitePoint D65 Float
--- WhitePoint (Chromaticity <CIExyY * D65:( 0.313000, 0.329000)>)
+-- WhitePoint (Chromaticity <CIExyY * D65:( 0.31300000, 0.32900000)>)
 -- >>> whitePointTristimulus :: Color (XYZ D65) Float
--- <XYZ * D65:( 0.951368, 1.000000, 1.088146)>
+-- <XYZ * D65:( 0.95136780, 1.00000000, 1.08814610)>
 -- >>> colorTemperature :: CCT D65
 -- CCT {unCCT = 6504.0}
 --
