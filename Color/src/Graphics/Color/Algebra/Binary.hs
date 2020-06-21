@@ -8,7 +8,7 @@
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Algebra.Binary
--- Copyright   : (c) Alexey Kuleshevich 2018-2019
+-- Copyright   : (c) Alexey Kuleshevich 2018-2020
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental

@@ -16,7 +16,7 @@
 {-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Internal
--- Copyright   : (c) Alexey Kuleshevich 2019
+-- Copyright   : (c) Alexey Kuleshevich 2019-2020
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -204,6 +204,7 @@ rgbLinear2xyz = npmApply npm
 {-# INLINE rgbLinear2xyz #-}
 
 xyz2rgbLinear ::
+     forall cs i e.
      (RedGreenBlue cs i, ColorSpace (cs 'NonLinear) i e, ColorSpace (cs 'Linear) i e, RealFloat e)
   => Color (XYZ i) e
   -> Color (cs 'Linear) e

@@ -4,7 +4,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 -- |
 -- Module      : Graphics.Color.Algebra
--- Copyright   : (c) Alexey Kuleshevich 2019
+-- Copyright   : (c) Alexey Kuleshevich 2019-2020
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental

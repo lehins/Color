@@ -38,23 +38,25 @@ library
                      , Graphics.Color.Illuminant.Wikipedia
                      , Graphics.Color.Model
                      , Graphics.Color.Space
-                     -- , Graphics.Color.Space.CIE1931.RGB
+                     , Graphics.Color.Space.CIE1931.RGB
                      , Graphics.Color.Space.CIE1931.XYZ
                      , Graphics.Color.Space.CIE1976.LAB
                      -- , Graphics.Color.Space.CIE1976.LAB.LCH
                      -- , Graphics.Color.Space.CIE1976.LAB.HLC
                      -- , Graphics.Color.Space.CIE1976.LUV
                      , Graphics.Color.Space.RGB
-                     , Graphics.Color.Space.RGB.SRGB
+                     , Graphics.Color.Space.RGB.CIERGB
                      , Graphics.Color.Space.RGB.AdobeRGB
+                     , Graphics.Color.Space.RGB.SRGB
                      , Graphics.Color.Space.RGB.Alternative
                      , Graphics.Color.Space.RGB.Alternative.CMYK
                      , Graphics.Color.Space.RGB.Alternative.HSI
                      , Graphics.Color.Space.RGB.Alternative.HSV
                      , Graphics.Color.Space.RGB.Alternative.HSL
                      , Graphics.Color.Space.RGB.Alternative.YCbCr
-                     , Graphics.Color.Space.RGB.Derived.SRGB
                      , Graphics.Color.Space.RGB.Derived.AdobeRGB
+                     , Graphics.Color.Space.RGB.Derived.CIERGB
+                     , Graphics.Color.Space.RGB.Derived.SRGB
                      , Graphics.Color.Space.RGB.ITU.Rec470
                      , Graphics.Color.Space.RGB.ITU.Rec601
                      , Graphics.Color.Space.RGB.ITU.Rec709
@@ -109,10 +111,12 @@ test-suite tests
                     , Graphics.Color.Model.RGBSpec
                     , Graphics.Color.Model.YCbCrSpec
                     , Graphics.Color.Space.Common
+                    , Graphics.Color.Space.CIE1931.RGBSpec
                     , Graphics.Color.Space.CIE1976.LABSpec
                     , Graphics.Color.Space.RGB.AdobeRGBSpec
                     , Graphics.Color.Space.RGB.SRGBSpec
                     , Graphics.Color.Space.RGB.Derived.AdobeRGBSpec
+                    , Graphics.Color.Space.RGB.Derived.CIERGBSpec
                     , Graphics.Color.Space.RGB.Derived.SRGBSpec
                     , Graphics.Color.Space.RGB.ITU.Rec470Spec
                     , Graphics.Color.Space.RGB.ITU.Rec601Spec

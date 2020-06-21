@@ -16,7 +16,7 @@
 {-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.Color.Space.Internal
--- Copyright   : (c) Alexey Kuleshevich 2018-2019
+-- Copyright   : (c) Alexey Kuleshevich 2018-2020
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -106,7 +106,6 @@ class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
 
 instance ( ColorSpace cs i e
          , ColorSpace (BaseSpace cs) i e
-         -- , ColorSpace (Alpha (BaseSpace cs)) i e
          , cs ~ Opaque (Alpha cs)
          , BaseModel cs ~ Opaque (Alpha (BaseModel cs))
          ) =>

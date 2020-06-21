@@ -5,6 +5,7 @@
 * Add `Linearity` kind to `RedGreenBlue` color spaces.
 * Add `Default` instance for `Pixel`
 * Addition of universal division `(//)` to `Elevator`
+* Addition of CIE1931 RGB color space.
 
 ## 0.1.4
 
