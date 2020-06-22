@@ -52,8 +52,8 @@ instance (Illuminant it, Illuminant ir, Elevator e, RealFloat e, Temperature it 
 chromaticAdaptation ::
      ChromaticAdaptation t it ir e
   => Adaptation t it ir e
-  -> Gamut cst it e
-  -> Gamut csr ir e
+  -> Gamut cs it e
+  -> Gamut cs ir e
 chromaticAdaptation adaptation g = Gamut redPrimary greenPrimary bluePrimary
   where
     applyMatrix primary =

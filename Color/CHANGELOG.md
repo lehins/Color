@@ -9,6 +9,7 @@
 * Fix show instance for floating point colors: adjust formatting in Elevator for `Float` and `Double`
 * Add record accessor functions: `chromaticityCIExyY`, `whitePointChromaticity`
 * Fix show instance for `Gamut`
+* Remove deprecated: `CIECAM02` and `ciecam02Adaptation`
 
 ## 0.1.4
 

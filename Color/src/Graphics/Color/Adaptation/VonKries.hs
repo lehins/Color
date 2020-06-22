@@ -33,9 +33,6 @@ module Graphics.Color.Adaptation.VonKries
   , ciecat02Adaptation
   , cmccat2000Adaptation
   , adaptationMatrix
-  -- * Deprecated
-  , CIECAM02
-  , ciecam02Adaptation
   ) where
 
 import Data.Coerce
@@ -238,14 +235,6 @@ ciecat02Adaptation = adaptationMatrix
 cmccat2000Adaptation :: ChromaticAdaptation 'CMCCAT2000 it ir e => Adaptation 'CIECAT02 it ir e
 cmccat2000Adaptation = adaptationMatrix
 {-# INLINE cmccat2000Adaptation #-}
-
-type CIECAM02 = 'CIECAT02
-{-# DEPRECATED CIECAM02 "In favor of a proper name 'CIECAT02'" #-}
-
-ciecam02Adaptation :: ChromaticAdaptation CIECAM02 it ir e => Adaptation CIECAM02 it ir e
-ciecam02Adaptation = adaptationMatrix
-{-# INLINE ciecam02Adaptation #-}
-{-# DEPRECATED ciecam02Adaptation "In favor of a proper name 'ciecat02Adaptation'" #-}
 
 -- | This function allows conversion of a color between any two color spaces. It uses a
 -- very common `VonKries` chromatic adaptation transform with `Bradford` matrix. One of
