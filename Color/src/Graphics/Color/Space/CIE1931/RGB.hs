@@ -37,29 +37,29 @@ import Graphics.Color.Illuminant.CIE1931
 -- | The original @CIE1931 RGB@ color space with an arbitrary illuminant
 data CIERGB (l :: Linearity)
 
--- | `CIERGB` color space (derived)
+-- | `CIERGB` color space
 newtype instance Color (CIERGB l) e = CIERGB (Color CM.RGB e)
 
--- | `CIERGB` color space (derived)
+-- | `CIERGB` color space
 deriving instance Eq e => Eq (Color (CIERGB l) e)
--- | `CIERGB` color space (derived)
+-- | `CIERGB` color space
 deriving instance Ord e => Ord (Color (CIERGB l) e)
--- | `CIERGB` color space (derived)
+-- | `CIERGB` color space
 deriving instance Functor (Color (CIERGB l))
--- | `CIERGB` color space (derived)
+-- | `CIERGB` color space
 deriving instance Applicative (Color (CIERGB l))
--- | `CIERGB` color space (derived)
+-- | `CIERGB` color space
 deriving instance Foldable (Color (CIERGB l))
--- | `CIERGB` color space (derived)
+-- | `CIERGB` color space
 deriving instance Traversable (Color (CIERGB l))
--- | `CIERGB` color space (derived)
+-- | `CIERGB` color space
 deriving instance Storable e => Storable (Color (CIERGB l) e)
 
--- | `CIERGB` color space (derived)
+-- | `CIERGB` color space
 instance (Typeable l, Elevator e) => Show (Color (CIERGB l) e) where
   showsPrec _ = showsColorModel
 
--- | `CIERGB` color space (derived)
+-- | `CIERGB` color space
 instance (Typeable l, Elevator e) => ColorModel (CIERGB l) e where
   type Components (CIERGB l) e = (e, e, e)
   toComponents = toComponents . unColorRGB
@@ -67,7 +67,7 @@ instance (Typeable l, Elevator e) => ColorModel (CIERGB l) e where
   fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
--- | `CIERGB` linear color space (derived)
+-- | `CIERGB` linear color space
 instance (Typeable l, Elevator e) => ColorSpace (CIERGB l) 'E e where
   type BaseModel (CIERGB l) = CM.RGB
   toBaseSpace = id
@@ -81,7 +81,7 @@ instance (Typeable l, Elevator e) => ColorSpace (CIERGB l) 'E e where
   fromColorXYZ xyz = castLinearity (fromRealFloat <$> (xyz2rgbLinear @CIERGB xyz))
   {-# INLINE fromColorXYZ #-}
 
--- | `CIERGB` color space (derived)
+-- | `CIERGB` color space
 instance RedGreenBlue CIERGB 'E where
   gamut = primaries
   ecctf = coerce
@@ -89,7 +89,7 @@ instance RedGreenBlue CIERGB 'E where
   dcctf = coerce
   {-# INLINE dcctf #-}
 
--- | CIE RGB does not utilize a gamma function, therefore it is safe to cast the
+-- | CIE RGB does not utilize any gamma function, therefore it is safe to cast the
 -- `Linearity` kind.
 --
 -- @since 0.2.0

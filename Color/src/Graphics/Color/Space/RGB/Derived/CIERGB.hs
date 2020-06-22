@@ -89,7 +89,7 @@ instance Illuminant i => RedGreenBlue (CIERGB i) i where
   dcctf = coerce
   {-# INLINE dcctf #-}
 
--- | CIE RGB does not utilize a gamm function, therefore it is safe to cast the
+-- | CIE RGB does not utilize any gamma function, therefore it is safe to cast the
 -- `Linearity` kind.
 --
 -- @since 0.2.0
