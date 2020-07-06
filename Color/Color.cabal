@@ -12,7 +12,7 @@ category:            Graphics
 extra-source-files:  README.md
                    , CHANGELOG.md
 extra-doc-files:     files/*.svg
-cabal-version:       >=1.18
+cabal-version:       1.18
 build-type:          Simple
 tested-with:          GHC == 8.4.3
                     , GHC == 8.4.4

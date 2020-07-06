@@ -67,7 +67,7 @@ instance (Typeable l, Illuminant i, Elevator e) => ColorModel (CIERGB (i :: k) l
   fromComponents = mkColorRGB . fromComponents
   {-# INLINE fromComponents #-}
 
--- | `CIERGB` linear color space (derived)
+-- | `CIERGB` color space (derived)
 instance (Illuminant i, Typeable l, Elevator e) => ColorSpace (CIERGB i l) i e where
   type BaseModel (CIERGB i l) = CM.RGB
   toBaseSpace = id
