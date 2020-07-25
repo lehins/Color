@@ -6,7 +6,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -476,5 +475,5 @@ instance (Illuminant i, Elevator e) => ColorSpace (Y i) i e where
   {-# INLINE fromColorXYZ #-}
 
 {-# RULES
-"luminance   :: RealFloat a => Color Y a -> Color Y a" luminance = id
+"luminance :: RealFloat a => Color Y a -> Color Y a" luminance = id
  #-}

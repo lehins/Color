@@ -1,4 +1,3 @@
-{-# LANGUAGE PatternSynonyms #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Alternative
 -- Copyright   : (c) Alexey Kuleshevich 2019-2020

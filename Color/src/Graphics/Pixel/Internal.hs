@@ -74,12 +74,12 @@ instance ColorModel cs e => VM.MVector VU.MVector (Pixel cs e) where
   {-# INLINE basicUnsafeSlice #-}
   basicOverlaps (MV_Pixel mvec) (MV_Pixel mvec') = VM.basicOverlaps mvec mvec'
   {-# INLINE basicOverlaps #-}
-  basicUnsafeNew len = MV_Pixel `liftM` VM.basicUnsafeNew len
+  basicUnsafeNew len = MV_Pixel <$> VM.basicUnsafeNew len
   {-# INLINE basicUnsafeNew #-}
   basicUnsafeReplicate len val =
-    MV_Pixel `liftM` VM.basicUnsafeReplicate len (toComponents (coerce val))
+    MV_Pixel <$> VM.basicUnsafeReplicate len (toComponents (coerce val))
   {-# INLINE basicUnsafeReplicate #-}
-  basicUnsafeRead (MV_Pixel mvec) idx = (coerce . fromComponents) `liftM` VM.basicUnsafeRead mvec idx
+  basicUnsafeRead (MV_Pixel mvec) idx = coerce . fromComponents <$> VM.basicUnsafeRead mvec idx
   {-# INLINE basicUnsafeRead #-}
   basicUnsafeWrite (MV_Pixel mvec) idx val = VM.basicUnsafeWrite mvec idx (toComponents (coerce val))
   {-# INLINE basicUnsafeWrite #-}
@@ -91,7 +91,7 @@ instance ColorModel cs e => VM.MVector VU.MVector (Pixel cs e) where
   {-# INLINE basicUnsafeCopy #-}
   basicUnsafeMove (MV_Pixel mvec) (MV_Pixel mvec') = VM.basicUnsafeMove mvec mvec'
   {-# INLINE basicUnsafeMove #-}
-  basicUnsafeGrow (MV_Pixel mvec) len = MV_Pixel `liftM` VM.basicUnsafeGrow mvec len
+  basicUnsafeGrow (MV_Pixel mvec) len = MV_Pixel <$> VM.basicUnsafeGrow mvec len
   {-# INLINE basicUnsafeGrow #-}
 #if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_Pixel mvec) = VM.basicInitialize mvec
@@ -102,15 +102,15 @@ instance ColorModel cs e => VM.MVector VU.MVector (Pixel cs e) where
 newtype instance VU.Vector (Pixel cs e) = V_Pixel (VU.Vector (Components cs e))
 
 instance (ColorModel cs e) => V.Vector VU.Vector (Pixel cs e) where
-  basicUnsafeFreeze (MV_Pixel mvec) = V_Pixel `liftM` V.basicUnsafeFreeze mvec
+  basicUnsafeFreeze (MV_Pixel mvec) = V_Pixel <$> V.basicUnsafeFreeze mvec
   {-# INLINE basicUnsafeFreeze #-}
-  basicUnsafeThaw (V_Pixel vec) = MV_Pixel `liftM` V.basicUnsafeThaw vec
+  basicUnsafeThaw (V_Pixel vec) = MV_Pixel <$> V.basicUnsafeThaw vec
   {-# INLINE basicUnsafeThaw #-}
   basicLength (V_Pixel vec) = V.basicLength vec
   {-# INLINE basicLength #-}
   basicUnsafeSlice idx len (V_Pixel vec) = V_Pixel (V.basicUnsafeSlice idx len vec)
   {-# INLINE basicUnsafeSlice #-}
-  basicUnsafeIndexM (V_Pixel vec) idx = (coerce . fromComponents) `liftM` V.basicUnsafeIndexM vec idx
+  basicUnsafeIndexM (V_Pixel vec) idx = coerce . fromComponents <$> V.basicUnsafeIndexM vec idx
   {-# INLINE basicUnsafeIndexM #-}
   basicUnsafeCopy (MV_Pixel mvec) (V_Pixel vec) = V.basicUnsafeCopy mvec vec
   {-# INLINE basicUnsafeCopy #-}

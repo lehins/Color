@@ -170,11 +170,11 @@ instance ColorModel cs e => VM.MVector VU.MVector (Color cs e) where
   {-# INLINE basicUnsafeSlice #-}
   basicOverlaps (MV_Color mvec) (MV_Color mvec') = VM.basicOverlaps mvec mvec'
   {-# INLINE basicOverlaps #-}
-  basicUnsafeNew len = MV_Color `liftM` VM.basicUnsafeNew len
+  basicUnsafeNew len = MV_Color <$> VM.basicUnsafeNew len
   {-# INLINE basicUnsafeNew #-}
-  basicUnsafeReplicate len val = MV_Color `liftM` VM.basicUnsafeReplicate len (toComponents val)
+  basicUnsafeReplicate len val = MV_Color <$> VM.basicUnsafeReplicate len (toComponents val)
   {-# INLINE basicUnsafeReplicate #-}
-  basicUnsafeRead (MV_Color mvec) idx = fromComponents `liftM` VM.basicUnsafeRead mvec idx
+  basicUnsafeRead (MV_Color mvec) idx = fromComponents <$> VM.basicUnsafeRead mvec idx
   {-# INLINE basicUnsafeRead #-}
   basicUnsafeWrite (MV_Color mvec) idx val = VM.basicUnsafeWrite mvec idx (toComponents val)
   {-# INLINE basicUnsafeWrite #-}
@@ -186,7 +186,7 @@ instance ColorModel cs e => VM.MVector VU.MVector (Color cs e) where
   {-# INLINE basicUnsafeCopy #-}
   basicUnsafeMove (MV_Color mvec) (MV_Color mvec') = VM.basicUnsafeMove mvec mvec'
   {-# INLINE basicUnsafeMove #-}
-  basicUnsafeGrow (MV_Color mvec) len = MV_Color `liftM` VM.basicUnsafeGrow mvec len
+  basicUnsafeGrow (MV_Color mvec) len = MV_Color <$> VM.basicUnsafeGrow mvec len
   {-# INLINE basicUnsafeGrow #-}
 #if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_Color mvec) = VM.basicInitialize mvec
@@ -197,15 +197,15 @@ instance ColorModel cs e => VM.MVector VU.MVector (Color cs e) where
 newtype instance VU.Vector (Color cs e) = V_Color (VU.Vector (Components cs e))
 
 instance (ColorModel cs e) => V.Vector VU.Vector (Color cs e) where
-  basicUnsafeFreeze (MV_Color mvec) = V_Color `liftM` V.basicUnsafeFreeze mvec
+  basicUnsafeFreeze (MV_Color mvec) = V_Color <$> V.basicUnsafeFreeze mvec
   {-# INLINE basicUnsafeFreeze #-}
-  basicUnsafeThaw (V_Color vec) = MV_Color `liftM` V.basicUnsafeThaw vec
+  basicUnsafeThaw (V_Color vec) = MV_Color <$> V.basicUnsafeThaw vec
   {-# INLINE basicUnsafeThaw #-}
   basicLength (V_Color vec) = V.basicLength vec
   {-# INLINE basicLength #-}
   basicUnsafeSlice idx len (V_Color vec) = V_Color (V.basicUnsafeSlice idx len vec)
   {-# INLINE basicUnsafeSlice #-}
-  basicUnsafeIndexM (V_Color vec) idx = fromComponents `liftM` V.basicUnsafeIndexM vec idx
+  basicUnsafeIndexM (V_Color vec) idx = fromComponents <$> V.basicUnsafeIndexM vec idx
   {-# INLINE basicUnsafeIndexM #-}
   basicUnsafeCopy (MV_Color mvec) (V_Color vec) = V.basicUnsafeCopy mvec vec
   {-# INLINE basicUnsafeCopy #-}

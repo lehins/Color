@@ -1,6 +1,5 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -101,7 +100,7 @@ convertNoAdaptationFloat = fromColorXYZ . (toColorXYZ :: Color cs' e' -> Color (
 {-# RULES
 "convertElevatedWith (Float)"[~2] forall (a :: Adaptation t i i Float) . convertElevatedWith a = convertNoAdaptationFloat
 "convertElevatedWith (Double)"[~2] forall (a :: Adaptation t i i Double) . convertElevatedWith a = convertNoAdaptation
-#-}
+  #-}
 
 
 -- toword8 <$> (fromColorXYZ (chromaticAdaptationXYZ (vonKriesAdaptationMatrix :: VonKriesAdaptationMatrix Bradford D50a D65 Double) (toColorXYZ (ColorLAB 76.022 (-0.366) 27.636 :: Color (LAB D50a) Double) :: Color XYZ Double)) :: Color SRGB Double)

@@ -194,11 +194,11 @@ instance M.MVector U.MVector Bit where
   {-# INLINE basicUnsafeSlice #-}
   basicOverlaps (MV_Bit mvec) (MV_Bit mvec') = M.basicOverlaps mvec mvec'
   {-# INLINE basicOverlaps #-}
-  basicUnsafeNew len = MV_Bit `liftM` M.basicUnsafeNew len
+  basicUnsafeNew len = MV_Bit <$> M.basicUnsafeNew len
   {-# INLINE basicUnsafeNew #-}
-  basicUnsafeReplicate len (Bit w) = MV_Bit `liftM` M.basicUnsafeReplicate len w
+  basicUnsafeReplicate len (Bit w) = MV_Bit <$> M.basicUnsafeReplicate len w
   {-# INLINE basicUnsafeReplicate #-}
-  basicUnsafeRead (MV_Bit mvec) idx = Bit `liftM` M.basicUnsafeRead mvec idx
+  basicUnsafeRead (MV_Bit mvec) idx = Bit <$> M.basicUnsafeRead mvec idx
   {-# INLINE basicUnsafeRead #-}
   basicUnsafeWrite (MV_Bit mvec) idx (Bit w) = M.basicUnsafeWrite mvec idx w
   {-# INLINE basicUnsafeWrite #-}
@@ -210,7 +210,7 @@ instance M.MVector U.MVector Bit where
   {-# INLINE basicUnsafeCopy #-}
   basicUnsafeMove (MV_Bit mvec) (MV_Bit mvec') = M.basicUnsafeMove mvec mvec'
   {-# INLINE basicUnsafeMove #-}
-  basicUnsafeGrow (MV_Bit mvec) len = MV_Bit `liftM` M.basicUnsafeGrow mvec len
+  basicUnsafeGrow (MV_Bit mvec) len = MV_Bit <$> M.basicUnsafeGrow mvec len
   {-# INLINE basicUnsafeGrow #-}
 #if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_Bit mvec) = M.basicInitialize mvec
@@ -221,15 +221,15 @@ instance M.MVector U.MVector Bit where
 newtype instance U.Vector Bit = V_Bit (U.Vector Word8)
 
 instance V.Vector U.Vector Bit where
-  basicUnsafeFreeze (MV_Bit mvec) = V_Bit `liftM` V.basicUnsafeFreeze mvec
+  basicUnsafeFreeze (MV_Bit mvec) = V_Bit <$> V.basicUnsafeFreeze mvec
   {-# INLINE basicUnsafeFreeze #-}
-  basicUnsafeThaw (V_Bit vec) = MV_Bit `liftM` V.basicUnsafeThaw vec
+  basicUnsafeThaw (V_Bit vec) = MV_Bit <$> V.basicUnsafeThaw vec
   {-# INLINE basicUnsafeThaw #-}
   basicLength (V_Bit vec) = V.basicLength vec
   {-# INLINE basicLength #-}
   basicUnsafeSlice idx len (V_Bit vec) = V_Bit (V.basicUnsafeSlice idx len vec)
   {-# INLINE basicUnsafeSlice #-}
-  basicUnsafeIndexM (V_Bit vec) idx = Bit `liftM` V.basicUnsafeIndexM vec idx
+  basicUnsafeIndexM (V_Bit vec) idx = Bit <$> V.basicUnsafeIndexM vec idx
   {-# INLINE basicUnsafeIndexM #-}
   basicUnsafeCopy (MV_Bit mvec) (V_Bit vec) = V.basicUnsafeCopy mvec vec
   {-# INLINE basicUnsafeCopy #-}

@@ -4,7 +4,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
@@ -78,7 +77,7 @@ instance (Illuminant i, Typeable l, Elevator e) => ColorSpace (CIERGB i l) i e w
   {-# INLINE luminance #-}
   toColorXYZ = rgbLinear2xyz . fmap toRealFloat . castLinearity
   {-# INLINE toColorXYZ #-}
-  fromColorXYZ xyz = castLinearity (fromRealFloat <$> (xyz2rgbLinear @(CIERGB i) xyz))
+  fromColorXYZ xyz = castLinearity (fromRealFloat <$> xyz2rgbLinear @(CIERGB i) xyz)
   {-# INLINE fromColorXYZ #-}
 
 -- | `CIERGB` color space (derived)
