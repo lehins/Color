@@ -24,7 +24,6 @@ module Graphics.Color.Algebra.Binary
   , fromNum
   ) where
 
-import Control.Monad
 import Data.Bits
 import qualified Data.Vector.Generic as V
 import qualified Data.Vector.Generic.Mutable as M

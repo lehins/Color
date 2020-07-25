@@ -28,7 +28,6 @@ module Graphics.Pixel.Internal
 import Data.Coerce
 import Control.DeepSeq (NFData)
 import Graphics.Color.Model.Internal
-import Control.Monad (liftM)
 import Foreign.Storable
 import qualified Data.Vector.Generic as V
 import qualified Data.Vector.Generic.Mutable as VM

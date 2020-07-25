@@ -46,7 +46,6 @@ module Graphics.Color.Model.Internal
 
 import Control.Applicative
 import Control.DeepSeq (NFData(rnf), deepseq)
-import Control.Monad (liftM)
 import Data.Default.Class (Default(..))
 import Data.Foldable
 import Data.Kind
