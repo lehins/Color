@@ -179,14 +179,14 @@ pattern PixelYCbCr y cb cr = Pixel (ColorYCbCr y cb cr)
 -- | Constructor for a pixel with Luma (not to be confused with luminance `Y`)
 --
 -- @since 0.1.4
-pattern PixelY' :: e -> Pixel Y' e
+pattern PixelY' :: e -> Pixel (Y' cs) e
 pattern PixelY' y = Pixel (Y' y)
 {-# COMPLETE PixelY' #-}
 
 -- | Constructor for a pixel with Luma and Alpha channel (not to be confused with luminance `Y`)
 --
 -- @since 0.1.4
-pattern PixelY'A :: e -> e -> Pixel (Alpha Y') e
+pattern PixelY'A :: e -> e -> Pixel (Alpha (Y' cs)) e
 pattern PixelY'A y a = Pixel (Alpha (Y' y) a)
 {-# COMPLETE PixelY'A #-}
 
@@ -260,7 +260,7 @@ fromPixelLinearRGB = liftPixel ecctf
 rgbPixelLuma ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
   => Pixel (cs 'NonLinear) e'
-  -> Pixel Y' e
+  -> Pixel (Y' cs) e
 rgbPixelLuma = liftPixel rgbLuma
 
 -- | Compute luminance of a pixel color

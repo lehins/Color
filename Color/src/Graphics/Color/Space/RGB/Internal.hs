@@ -60,7 +60,7 @@ class Illuminant i => RedGreenBlue (cs :: Linearity -> Type) (i :: k) | cs -> i 
   gamut :: RealFloat e => Gamut cs i e
 
   -- | Encoding color component transfer function (inverse). Also known as opto-electronic
-  -- transfer function (OETF / OECF) or gamma function.
+  -- transfer function (OETF / OECF) or sometimes gamma function.
   ecctf :: (RealFloat a, Elevator a) => Color (cs 'Linear) a -> Color (cs 'NonLinear) a
 
   -- | Decoding color component transfer function (forward)
