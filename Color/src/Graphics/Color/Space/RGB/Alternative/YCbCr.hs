@@ -20,77 +20,80 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.RGB.Alternative.YCbCr
-  ( pattern ColorYCbCr
-  , pattern ColorYCbCrA
-  , YCbCr
-  , Color(YCbCr)
+  ( pattern ColorY'CbCr
+  , pattern ColorY'CbCrA
+  , Y'CbCr
+  , Color(Y'CbCr)
   , ycbcr2srgb
   , srgb2ycbcr
-  , toColorYCbCr
-  , fromColorYCbCr
+  , toColorY'CbCr
+  , fromColorY'CbCr
   , module Graphics.Color.Space
   ) where
 
 import Data.Coerce
+import Data.Kind
 import Data.Proxy
+import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.YCbCr as CM
 import Graphics.Color.Space
-import Graphics.Color.Space.RGB.SRGB
 import Graphics.Color.Space.RGB.ITU.Rec601
 import Graphics.Color.Space.RGB.ITU.Rec709
 import Graphics.Color.Space.RGB.Luma
+import Graphics.Color.Space.RGB.SRGB
 
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-data YCbCr cs
+-- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+data Y'CbCr (cs :: Linearity -> Type)
 
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-newtype instance Color (YCbCr cs) e = YCbCr (Color CM.YCbCr e)
+-- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+newtype instance Color (Y'CbCr cs) e = Y'CbCr (Color CM.YCbCr e)
 
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Eq e => Eq (Color (YCbCr cs) e)
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Ord e => Ord (Color (YCbCr cs) e)
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Functor (Color (YCbCr cs))
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Applicative (Color (YCbCr cs))
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Foldable (Color (YCbCr cs))
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Traversable (Color (YCbCr cs))
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-deriving instance Storable e => Storable (Color (YCbCr cs) e)
+-- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Eq e => Eq (Color (Y'CbCr cs) e)
+-- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Ord e => Ord (Color (Y'CbCr cs) e)
+-- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Functor (Color (Y'CbCr cs))
+-- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Applicative (Color (Y'CbCr cs))
+-- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Foldable (Color (Y'CbCr cs))
+-- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Traversable (Color (Y'CbCr cs))
+-- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+deriving instance Storable e => Storable (Color (Y'CbCr cs) e)
 
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-instance ColorModel cs e => Show (Color (YCbCr cs) e) where
+-- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+instance (Typeable cs, ColorModel (cs 'NonLinear) e, Elevator e) => Show (Color (Y'CbCr cs) e) where
   showsPrec _ = showsColorModel
 
--- | Constructor for an RGB color space in an alternative YCbCr color model
-pattern ColorYCbCr :: e -> e -> e -> Color (YCbCr cs) e
-pattern ColorYCbCr y cb cr = YCbCr (CM.ColorYCbCr y cb cr)
-{-# COMPLETE ColorYCbCr #-}
+-- | Constructor for an RGB color space in an alternative Y'CbCr color model
+pattern ColorY'CbCr :: e -> e -> e -> Color (Y'CbCr cs) e
+pattern ColorY'CbCr y cb cr = Y'CbCr (CM.ColorYCbCr y cb cr)
+{-# COMPLETE ColorY'CbCr #-}
 
--- | Constructor for @YCbCr@ with alpha channel.
-pattern ColorYCbCrA :: e -> e -> e -> e -> Color (Alpha (YCbCr cs)) e
-pattern ColorYCbCrA y cb cr a = Alpha (YCbCr (CM.ColorYCbCr y cb cr)) a
-{-# COMPLETE ColorYCbCrA #-}
+-- | Constructor for @Y'CbCr@ with alpha channel.
+pattern ColorY'CbCrA :: e -> e -> e -> e -> Color (Alpha (Y'CbCr cs)) e
+pattern ColorY'CbCrA y cb cr a = Alpha (Y'CbCr (CM.ColorYCbCr y cb cr)) a
+{-# COMPLETE ColorY'CbCrA #-}
 
 
--- | `YCbCr` color model
-instance ColorModel cs e => ColorModel (YCbCr cs) e where
-  type Components (YCbCr cs) e = (e, e, e)
-  toComponents (ColorYCbCr y cb cr) = (y, cb, cr)
+-- | `Y'CbCr` color model
+instance (Typeable cs, ColorModel (cs 'NonLinear) e, Elevator e) => ColorModel (Y'CbCr cs) e where
+  type Components (Y'CbCr cs) e = (e, e, e)
+  toComponents (ColorY'CbCr y cb cr) = (y, cb, cr)
   {-# INLINE toComponents #-}
-  fromComponents (y, cb, cr) = ColorYCbCr y cb cr
+  fromComponents (y, cb, cr) = ColorY'CbCr y cb cr
   {-# INLINE fromComponents #-}
-  showsColorModelName _ = ("YCbCr-" ++) . showsColorModelName (Proxy :: Proxy (Color cs e))
+  showsColorModelName _ =
+    ("Y'CbCr-" ++) . showsColorModelName (Proxy :: Proxy (Color (cs 'NonLinear) e))
 
--- | `YCbCr` representation for `SRGB` color space
-instance Elevator e => ColorSpace (YCbCr (SRGB 'NonLinear)) D65 e where
-  type BaseModel (YCbCr (SRGB 'NonLinear)) = CM.YCbCr
-  type BaseSpace (YCbCr (SRGB 'NonLinear)) = SRGB 'NonLinear
+-- | `Y'CbCr` representation for `SRGB` color space
+instance Elevator e => ColorSpace (Y'CbCr SRGB) D65 e where
+  type BaseModel (Y'CbCr SRGB) = CM.YCbCr
+  type BaseSpace (Y'CbCr SRGB) = SRGB 'NonLinear
   toBaseSpace = fmap fromRealFloat . ycbcr2srgb . fmap toFloat
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = fmap fromRealFloat . srgb2ycbcr . fmap toFloat
@@ -98,47 +101,47 @@ instance Elevator e => ColorSpace (YCbCr (SRGB 'NonLinear)) D65 e where
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
 
--- | `YCbCr` representation for `BT601_525` color space
-instance Elevator e => ColorSpace (YCbCr (BT601_525 'NonLinear)) D65 e where
-  type BaseModel (YCbCr (BT601_525 'NonLinear)) = CM.YCbCr
-  type BaseSpace (YCbCr (BT601_525 'NonLinear)) = BT601_525 'NonLinear
-  toBaseSpace = fmap fromDouble . fromColorYCbCr
+-- | `Y'CbCr` representation for `BT601_525` color space
+instance Elevator e => ColorSpace (Y'CbCr BT601_525) D65 e where
+  type BaseModel (Y'CbCr BT601_525) = CM.YCbCr
+  type BaseSpace (Y'CbCr BT601_525) = BT601_525 'NonLinear
+  toBaseSpace = fmap fromDouble . fromColorY'CbCr
   {-# INLINE toBaseSpace #-}
-  fromBaseSpace = fmap fromDouble . toColorYCbCr
+  fromBaseSpace = fmap fromDouble . toColorY'CbCr
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
 
--- | `YCbCr` representation for `BT601_625` color space
-instance Elevator e => ColorSpace (YCbCr (BT601_625 'NonLinear)) D65 e where
-  type BaseModel (YCbCr (BT601_625 'NonLinear)) = CM.YCbCr
-  type BaseSpace (YCbCr (BT601_625 'NonLinear)) = BT601_625 'NonLinear
-  toBaseSpace = fmap fromDouble . fromColorYCbCr
+-- | `Y'CbCr` representation for `BT601_625` color space
+instance Elevator e => ColorSpace (Y'CbCr BT601_625) D65 e where
+  type BaseModel (Y'CbCr BT601_625) = CM.YCbCr
+  type BaseSpace (Y'CbCr BT601_625) = BT601_625 'NonLinear
+  toBaseSpace = fmap fromDouble . fromColorY'CbCr
   {-# INLINE toBaseSpace #-}
-  fromBaseSpace = fmap fromDouble . toColorYCbCr
+  fromBaseSpace = fmap fromDouble . toColorY'CbCr
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
 
--- | `YCbCr` representation for `BT709` color space
-instance Elevator e => ColorSpace (YCbCr (BT709 'NonLinear)) D65 e where
-  type BaseModel (YCbCr (BT709 'NonLinear)) = CM.YCbCr
-  type BaseSpace (YCbCr (BT709 'NonLinear)) = BT709 'NonLinear
-  toBaseSpace = fmap fromDouble . fromColorYCbCr
+-- | `Y'CbCr` representation for `BT709` color space
+instance Elevator e => ColorSpace (Y'CbCr BT709) D65 e where
+  type BaseModel (Y'CbCr BT709) = CM.YCbCr
+  type BaseSpace (Y'CbCr BT709) = BT709 'NonLinear
+  toBaseSpace = fmap fromDouble . fromColorY'CbCr
   {-# INLINE toBaseSpace #-}
-  fromBaseSpace = fmap fromDouble . toColorYCbCr
+  fromBaseSpace = fmap fromDouble . toColorY'CbCr
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
 
--- | `YCbCr` representation for some (@`RedGreenBlue` cs i@) color space
-instance (Luma (cs i), ColorSpace (cs i 'NonLinear) i e, RedGreenBlue (cs i) i) =>
-         ColorSpace (YCbCr (cs i 'NonLinear)) i e where
-  type BaseModel (YCbCr (cs i 'NonLinear)) = CM.YCbCr
-  type BaseSpace (YCbCr (cs i 'NonLinear)) = cs i 'NonLinear
-  toBaseSpace = fmap fromDouble . fromColorYCbCr
+-- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+instance (Typeable cs, Luma (cs i), ColorSpace (cs i 'NonLinear) i e, RedGreenBlue (cs i) i) =>
+         ColorSpace (Y'CbCr (cs i)) i e where
+  type BaseModel (Y'CbCr (cs i)) = CM.YCbCr
+  type BaseSpace (Y'CbCr (cs i)) = cs i 'NonLinear
+  toBaseSpace = fmap fromDouble . fromColorY'CbCr
   {-# INLINE toBaseSpace #-}
-  fromBaseSpace = fmap fromDouble . toColorYCbCr
+  fromBaseSpace = fmap fromDouble . toColorY'CbCr
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
@@ -148,8 +151,8 @@ instance (Luma (cs i), ColorSpace (cs i 'NonLinear) i e, RedGreenBlue (cs i) i) 
 --
 -- @since 0.1.3
 ycbcr2srgb ::
-     (RedGreenBlue cs i, RealFloat e) => Color (YCbCr (cs 'NonLinear)) e -> Color (cs 'NonLinear) e
-ycbcr2srgb (ColorYCbCr y' cb cr) = ColorRGB r' g' b'
+     (RedGreenBlue cs i, RealFloat e) => Color (Y'CbCr cs) e -> Color (cs 'NonLinear) e
+ycbcr2srgb (ColorY'CbCr y' cb cr) = ColorRGB r' g' b'
   where
     !cb05 = cb - 0.5
     !cr05 = cr - 0.5
@@ -162,35 +165,35 @@ ycbcr2srgb (ColorYCbCr y' cb cr) = ColorRGB r' g' b'
 --
 -- @since 0.1.3
 srgb2ycbcr ::
-     (RedGreenBlue cs i, RealFloat e) => Color (cs 'NonLinear) e -> Color (YCbCr (cs 'NonLinear)) e
-srgb2ycbcr (ColorRGB r' g' b') = ColorYCbCr y' cb cr
+     (RedGreenBlue cs i, RealFloat e) => Color (cs 'NonLinear) e -> Color (Y'CbCr cs) e
+srgb2ycbcr (ColorRGB r' g' b') = ColorY'CbCr y' cb cr
   where
     !y' =          0.299 * r' +    0.587 * g' +    0.114 * b'
     !cb = 0.5 - 0.168736 * r' - 0.331264 * g' +      0.5 * b'
     !cr = 0.5 +      0.5 * r' - 0.418688 * g' - 0.081312 * b'
 {-# INLINE srgb2ycbcr #-}
 
--- | Convert any RGB color space that has `Luma` specified to `YCbCr`
+-- | Convert any RGB color space that has `Luma` specified to `Y'CbCr`
 --
 -- @since 0.1.3
-toColorYCbCr ::
+toColorY'CbCr ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
   => Color (cs 'NonLinear) e'
-  -> Color (YCbCr (cs 'NonLinear)) e
-toColorYCbCr rgb = YCbCr (CM.rgb2ycbcr (unColorRGB rgb) weights)
+  -> Color (Y'CbCr cs) e
+toColorY'CbCr rgb = Y'CbCr (CM.rgb2ycbcr (unColorRGB rgb) weights)
   where
     !weights = rgbLumaWeights rgb
-{-# INLINE toColorYCbCr #-}
+{-# INLINE toColorY'CbCr #-}
 
--- | Convert `YCbCr` to the base RGB color space, which must have `Luma` implemented.
+-- | Convert `Y'CbCr` to the base RGB color space, which must have `Luma` implemented.
 --
 -- @since 0.1.3
-fromColorYCbCr ::
+fromColorY'CbCr ::
      forall cs i e' e. (Luma cs, RedGreenBlue cs i, Elevator e', Elevator e, RealFloat e)
-  => Color (YCbCr (cs 'NonLinear)) e'
+  => Color (Y'CbCr cs) e'
   -> Color (cs 'NonLinear) e
-fromColorYCbCr ycbcr = rgb
+fromColorY'CbCr ycbcr = rgb
   where
     !rgb = mkColorRGB (CM.ycbcr2rgb (coerce ycbcr :: Color CM.YCbCr e') weights)
     !weights = rgbLumaWeights rgb
-{-# INLINE fromColorYCbCr #-}
+{-# INLINE fromColorY'CbCr #-}

@@ -16,8 +16,8 @@
 --
 module Graphics.Pixel.ColorSpace
   ( Pixel(Pixel, PixelY, PixelXYZ, PixelRGB, PixelHSI, PixelHSL, PixelHSV,
-      PixelCMYK, PixelYCbCr, PixelY', PixelYA, PixelXYZA, PixelRGBA, PixelHSIA, PixelHSLA,
-      PixelHSVA, PixelCMYKA, PixelYCbCrA, PixelY'A)
+      PixelCMYK, PixelY'CbCr, PixelY', PixelYA, PixelXYZA, PixelRGBA, PixelHSIA, PixelHSLA,
+      PixelHSVA, PixelCMYKA, PixelY'CbCrA, PixelY'A)
   , liftPixel
   , pixelColor
   -- * Conversion
@@ -169,12 +169,12 @@ pattern PixelCMYK c m y k = Pixel (ColorCMYK c m y k)
 {-# COMPLETE PixelCMYK #-}
 
 
--- | Constructor for a pixel in @YCbCr@.
+-- | Constructor for a pixel in @Y'CbCr@.
 --
 -- @since 0.1.0
-pattern PixelYCbCr :: e -> e -> e -> Pixel (YCbCr cs) e
-pattern PixelYCbCr y cb cr = Pixel (ColorYCbCr y cb cr)
-{-# COMPLETE PixelYCbCr #-}
+pattern PixelY'CbCr :: e -> e -> e -> Pixel (Y'CbCr cs) e
+pattern PixelY'CbCr y cb cr = Pixel (ColorY'CbCr y cb cr)
+{-# COMPLETE PixelY'CbCr #-}
 
 -- | Constructor for a pixel with Luma (not to be confused with luminance `Y`)
 --
@@ -231,12 +231,12 @@ pattern PixelCMYKA c m y k a = Pixel (ColorCMYKA c m y k a)
 {-# COMPLETE PixelCMYKA #-}
 
 
--- | Constructor for a pixel in @YCbCr@ with alpha channel.
+-- | Constructor for a pixel in @Y'CbCr@ with alpha channel.
 --
 -- @since 0.1.0
-pattern PixelYCbCrA :: e -> e -> e -> e -> Pixel (Alpha (YCbCr cs)) e
-pattern PixelYCbCrA y cb cr a = Pixel (ColorYCbCrA y cb cr a)
-{-# COMPLETE PixelYCbCrA #-}
+pattern PixelY'CbCrA :: e -> e -> e -> e -> Pixel (Alpha (Y'CbCr cs)) e
+pattern PixelY'CbCrA y cb cr a = Pixel (ColorY'CbCrA y cb cr a)
+{-# COMPLETE PixelY'CbCrA #-}
 
 -- | Convert non-linear RGB color space into linear one
 --
