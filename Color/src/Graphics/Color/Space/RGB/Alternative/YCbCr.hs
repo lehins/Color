@@ -29,6 +29,7 @@ module Graphics.Color.Space.RGB.Alternative.YCbCr
   , toColorY'CbCr
   , fromColorY'CbCr
   , module Graphics.Color.Space
+  , module Graphics.Color.Space.RGB.Luma
   ) where
 
 import Data.Coerce
