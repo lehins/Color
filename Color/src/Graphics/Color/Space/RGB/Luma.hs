@@ -9,6 +9,7 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 -- |
@@ -30,6 +31,7 @@ module Graphics.Color.Space.RGB.Luma
   , Weights(..)
   , rgbLuma
   , rgbLumaWeights
+  , toBaseLinearSpace
   ) where
 
 import Data.Coerce
@@ -98,6 +100,7 @@ instance (Typeable cs, Elevator e) => ColorModel (Y' cs) e where
 
 instance ( Typeable cs
          , Illuminant i
+         , ColorSpace (cs 'Linear) i e
          , ColorSpace (cs 'NonLinear) i e
          , Luma cs
          , RedGreenBlue cs i
@@ -110,14 +113,22 @@ instance ( Typeable cs
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = rgbLuma
   {-# INLINE fromBaseSpace #-}
-  luminance = luminance . toBaseSpace -- toBaseLinearSpace
+  luminance = luminance . toBaseLinearSpace
   {-# INLINE luminance #-}
-  toColorXYZ = toColorXYZ . toBaseSpace -- toBaseLinearSpace
+  toColorXYZ = toColorXYZ . toBaseLinearSpace
   {-# INLINE toColorXYZ #-}
 
--- TODO:
--- toBaseLinearSpace :: forall cs e . Color (Y' cs) e -> Color (cs 'Linear) e
--- toBaseLinearSpace y = pure (transfer @cs (coerce y :: e))
+-- | Convert Luma directly into the linear version of base space. This is equivalent to
+-- `dcctf . toBaseSpace`, but is a bit faster, since inverse transfer function is applied
+-- only once
+--
+-- @since 0.3.0
+toBaseLinearSpace ::
+     forall cs e i. (RedGreenBlue cs i, Applicative (Color (cs 'Linear)), RealFloat e)
+  => Color (Y' cs) e
+  -> Color (cs 'Linear) e
+toBaseLinearSpace y = pure (itransfer @_ @cs (coerce y :: e))
+{-# INLINE toBaseLinearSpace #-}
 
 ------------------
 -- Luma Weights --
