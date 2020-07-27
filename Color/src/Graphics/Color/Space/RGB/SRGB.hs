@@ -8,6 +8,7 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.SRGB
@@ -25,11 +26,6 @@ module Graphics.Color.Space.RGB.SRGB
   , SRGB
   , D50
   , D65
-  , primaries
-  , npmStandard
-  , inpmStandard
-  , transfer
-  , itransfer
   ) where
 
 import Data.Coerce
@@ -40,11 +36,52 @@ import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space.Internal
 import Graphics.Color.Space.RGB.Internal
-import Graphics.Color.Space.RGB.ITU.Rec709 (D65, primaries)
+import Graphics.Color.Space.RGB.ITU.Rec709 (BT709, D65)
 import Graphics.Color.Space.RGB.Luma
 
 -- | The most common [sRGB](https://en.wikipedia.org/wiki/SRGB) color space with the
--- default `D65` illuminant
+-- default `D65` illuminant.
+--
+-- sRGB is defined with:
+--
+-- * `D50` illuminant
+--
+-- * transfer function
+--
+-- \[
+-- \gamma(u) = \begin{cases}
+--     12.92 u & u \leq 0.0031308 \\
+--     1.055 u^{1/2.4} - 0.055 & \text{otherwise}
+--   \end{cases}
+-- \]
+--
+-- * Inverse transfer function
+--
+-- \[
+-- \gamma^{-1}(u) = \begin{cases}
+--     u / 12.92 & u \leq 0.04045 \\
+--     \left(\tfrac{u + 0.055}{1.055}\right)^{2.4} & \text{otherwise}
+--   \end{cases}
+-- \]
+--
+-- * Normalized primary matrix:
+--
+-- >>> :set -XDataKinds
+-- >>> import Graphics.Color.Space.RGB
+-- >>> npm :: NPM SRGB Float
+-- [ [ 0.41240000, 0.35760000, 0.18050000 ]
+-- , [ 0.21260000, 0.71520000, 0.07220000 ]
+-- , [ 0.01930000, 0.11920000, 0.95050000 ] ]
+--
+-- * Inverse normalized primary matrix:
+--
+-- >>> :set -XDataKinds
+-- >>> import Graphics.Color.Space.RGB
+-- >>> inpm :: INPM SRGB Float
+-- [ [ 3.24060000,-1.53720000,-0.49860000 ]
+-- , [-0.96890000, 1.87580000, 0.04150000 ]
+-- , [ 0.05570000,-0.20400000, 1.05700000 ] ]
+--
 data SRGB (l :: Linearity)
 
 
@@ -123,82 +160,23 @@ instance Elevator e => ColorSpace (SRGB 'NonLinear) D65 e where
 
 -- | `SRGB` color space
 instance RedGreenBlue SRGB D65 where
-  gamut = primaries
-  npm = npmStandard
-  inpm = inpmStandard
-  ecctf = SRGB . fmap transfer . coerce
-  {-# INLINE ecctf #-}
-  dcctf = SRGB . fmap itransfer . coerce
-  {-# INLINE dcctf #-}
+  gamut = coerce (gamut @_ @BT709)
+  npm = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
+                   (V3 0.2126 0.7152 0.0722)
+                   (V3 0.0193 0.1192 0.9505)
+  inpm = INPM $ M3x3 (V3  3.2406 -1.5372 -0.4986)
+                     (V3 -0.9689  1.8758  0.0415)
+                     (V3  0.0557 -0.2040  1.0570)
+  transfer u
+    | u <= 0.0031308 = 12.92 * u
+    | otherwise = 1.055 * (u ** (1 / 2.4)) - 0.055
+  {-# INLINE transfer #-}
+  itransfer u
+    | u <= 0.04045 = u / 12.92
+    | otherwise = ((u + 0.055) / 1.055) ** 2.4
+  {-# INLINE itransfer #-}
 
 instance Luma SRGB where
   rWeight = 0.299
   gWeight = 0.587
   bWeight = 0.114
-
-
--- | sRGB normalized primary matrix. This is a helper definition, use `npm` instead.
---
--- >>> :set -XDataKinds
--- >>> import Graphics.Color.Space.RGB
--- >>> npmStandard :: NPM SRGB Float
--- [ [ 0.41240000, 0.35760000, 0.18050000 ]
--- , [ 0.21260000, 0.71520000, 0.07220000 ]
--- , [ 0.01930000, 0.11920000, 0.95050000 ] ]
---
--- @since 0.1.0
-npmStandard :: RealFloat a => NPM SRGB a
-npmStandard = NPM $ M3x3 (V3 0.4124 0.3576 0.1805)
-                         (V3 0.2126 0.7152 0.0722)
-                         (V3 0.0193 0.1192 0.9505)
-
-
--- | sRGB inverse normalized primary matrix. This is a helper definition, use `inpm` instead.
---
--- >>> :set -XDataKinds
--- >>> import Graphics.Color.Space.RGB
--- >>> inpmStandard :: INPM SRGB Float
--- [ [ 3.24060000,-1.53720000,-0.49860000 ]
--- , [-0.96890000, 1.87580000, 0.04150000 ]
--- , [ 0.05570000,-0.20400000, 1.05700000 ] ]
---
--- @since 0.1.0
-inpmStandard :: RealFloat a => INPM SRGB a
-inpmStandard = INPM $ M3x3 (V3  3.2406 -1.5372 -0.4986)
-                           (V3 -0.9689  1.8758  0.0415)
-                           (V3  0.0557 -0.2040  1.0570)
-
-
--- | sRGB transfer function "gamma". This is a helper function, therefore `ecctf` should be used
--- instead.
---
--- \[
--- \gamma(u) = \begin{cases}
---     12.92 u & u \leq 0.0031308 \\
---     1.055 u^{1/2.4} - 0.055 & \text{otherwise}
---   \end{cases}
--- \]
---
--- @since 0.1.0
-transfer :: (Ord a, Floating a) => a -> a
-transfer u
-  | u <= 0.0031308 = 12.92 * u
-  | otherwise = 1.055 * (u ** (1 / 2.4)) - 0.055
-{-# INLINE transfer #-}
-
--- | sRGB inverse transfer function "gamma". This is a helper function, therefore `dcctf` should
--- be used instead.
---
--- \[
--- \gamma^{-1}(u) = \begin{cases}
---     u / 12.92 & u \leq 0.04045 \\
---     \left(\tfrac{u + 0.055}{1.055}\right)^{2.4} & \text{otherwise}
---   \end{cases}
--- \]
---
--- @since 0.1.0
-itransfer :: (Ord a, Floating a) => a -> a
-itransfer u
-  | u <= 0.04045 = u / 12.92
-  | otherwise = ((u + 0.055) / 1.055) ** 2.4
-{-# INLINE itransfer #-}

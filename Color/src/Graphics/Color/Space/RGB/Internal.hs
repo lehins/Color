@@ -1,3 +1,4 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DefaultSignatures #-}
@@ -28,7 +29,10 @@ module Graphics.Color.Space.RGB.Internal
   , pattern ColorRGBA
   , RedGreenBlue(..)
   , Linearity(..)
+  , ecctf
+  , dcctf
   , Gamut(..)
+  , coerceGamut
   , rgb2xyz
   , rgbLinear2xyz
   , xyz2rgb
@@ -47,7 +51,6 @@ module Graphics.Color.Space.RGB.Internal
   , module Graphics.Color.Algebra
   ) where
 
-import Data.Proxy
 import Data.Coerce
 import Graphics.Color.Algebra
 import qualified Graphics.Color.Model.RGB as CM
@@ -56,38 +59,26 @@ import Data.Kind
 
 data Linearity = Linear | NonLinear
 
-
 class Illuminant i => RedGreenBlue (cs :: Linearity -> Type) (i :: k) | cs -> i where
   -- | RGB primaries that are defined for the RGB color space, while point is defined by
   -- the __@i@__ type parameter
   gamut :: RealFloat e => Gamut cs i e
 
   -- | @since 0.3.0
-  transfer :: RealFloat e => Proxy cs -> e -> e
+  transfer :: RealFloat e => e -> e
 
   -- | @since 0.3.0
-  itransfer :: RealFloat e => Proxy cs -> e -> e
-
-  -- | Encoding color component transfer function (forward). Also known as opto-electronic
-  -- transfer function (OETF / OECF) or sometimes gamma function.
-  ecctf :: (RealFloat a, Elevator a) => Color (cs 'Linear) a -> Color (cs 'NonLinear) a
-  ecctf = mkColorRGB . fmap (transfer (Proxy :: Proxy cs)) . unColorRGB
-  {-# INLINE ecctf #-}
-
-  -- | Decoding color component transfer function (inverse)
-  dcctf :: (RealFloat a, Elevator a) => Color (cs 'NonLinear) a -> Color (cs 'Linear) a
-  dcctf = mkColorRGB . fmap (itransfer (Proxy :: Proxy cs)) . unColorRGB
-  {-# INLINE dcctf #-}
+  itransfer :: RealFloat e => e -> e
 
   -- | Normalized primary matrix for this RGB color space. Default implementation derives
   -- it from `chromaticity`
-  npm :: (ColorSpace (cs 'Linear) i a, RealFloat a) => NPM cs a
+  npm :: (ColorSpace (cs 'Linear) i e, RealFloat e) => NPM cs e
   npm = npmDerive gamut
   {-# INLINE npm #-}
 
   -- | Inverse normalized primary matrix for this RGB color space. Default implementation
   -- derives it from `chromaticity`
-  inpm :: (ColorSpace (cs 'Linear) i a, RealFloat a) => INPM cs a
+  inpm :: (ColorSpace (cs 'Linear) i e, RealFloat e) => INPM cs e
   inpm = inpmDerive gamut
   {-# INLINE inpm #-}
 
@@ -103,8 +94,14 @@ class Illuminant i => RedGreenBlue (cs :: Linearity -> Type) (i :: k) | cs -> i 
     Coercible (Color (cs l) e) (Color CM.RGB e) => Color (cs l) e -> Color CM.RGB e
   unColorRGB = coerce
 
+-- | This functiona can allow for completely mismatched in color space spec. Make sure you
+-- knwo what you are doing when using it.
+--
+-- @since 0.3.0
+coerceGamut :: Gamut cs' i' e -> Gamut cs i e
+coerceGamut (Gamut r g b) = Gamut (coerce r) (coerce g) (coerce b)
 
-data Gamut cs i e = Gamut
+data Gamut (cs :: Linearity -> Type) i e = Gamut
   { gamutRedPrimary   :: !(Primary i e)
   , gamutGreenPrimary :: !(Primary i e)
   , gamutBluePrimary  :: !(Primary i e)
@@ -124,9 +121,35 @@ instance (RealFloat e, Elevator e, Illuminant i) => Show (Gamut cs i e) where
 -- its type carries enough information for this operation.
 --
 -- @since 0.1.0
-gamutWhitePoint :: (RedGreenBlue cs i, RealFloat e) => Gamut cs i e -> WhitePoint i e
+gamutWhitePoint ::
+     forall cs e i. (RedGreenBlue cs i, RealFloat e)
+  => Gamut cs i e
+  -> WhitePoint i e
 gamutWhitePoint _ = whitePoint
 {-# INLINE gamutWhitePoint #-}
+
+
+-- | Encoding color component transfer function (forward). Also known as opto-electronic
+-- transfer function (OETF / OECF).
+--
+-- @since 0.1.0
+ecctf ::
+     forall cs e i. (RedGreenBlue cs i, RealFloat e)
+  => Color (cs 'Linear) e
+  -> Color (cs 'NonLinear) e
+ecctf = mkColorRGB . fmap (transfer @_ @cs) . unColorRGB
+{-# INLINE ecctf #-}
+
+-- | Decoding color component transfer function (inverse).  Also known as electro-optical
+-- transfer function (EOTF / EOCF).
+--
+-- @since 0.1.0
+dcctf ::
+     forall cs e i. (RedGreenBlue cs i, RealFloat e)
+  => Color (cs 'NonLinear) e
+  -> Color (cs 'Linear) e
+dcctf = mkColorRGB . fmap (itransfer @_ @cs) . unColorRGB
+{-# INLINE dcctf #-}
 
 
 -- | Linear transformation of a pixel in a linear RGB color space into XYZ color space

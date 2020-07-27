@@ -19,7 +19,6 @@
 --
 module Graphics.Color.Space.CIE1931.RGB
   ( CIERGB
-  , primaries
   , castLinearity
   , module Graphics.Color.Space
   ) where
@@ -82,11 +81,12 @@ instance (Typeable l, Elevator e) => ColorSpace (CIERGB l) 'E e where
 
 -- | `CIERGB` color space
 instance RedGreenBlue CIERGB 'E where
-  gamut = primaries
-  ecctf = coerce
-  {-# INLINE ecctf #-}
-  dcctf = coerce
-  {-# INLINE dcctf #-}
+  -- | [Source](https://github.com/colour-science/colour/blob/60679360c3990bc549b5f947bfeb621383e18b5e/colour/models/rgb/datasets/cie_rgb.py#L44-L48)
+  gamut = Gamut (Primary 0.734742840005998 0.265257159994002)
+                (Primary 0.273779033824958 0.717477700256116)
+                (Primary 0.166555629580280 0.008910726182545)
+  transfer = id
+  itransfer = id
 
 -- | CIE RGB does not utilize any gamma function, therefore it is safe to cast the
 -- `Linearity` kind.
@@ -95,12 +95,3 @@ instance RedGreenBlue CIERGB 'E where
 castLinearity :: Color (CIERGB l') e -> Color (CIERGB l) e
 castLinearity = coerce
 
-
--- | Primaries for CIERGB
---
--- @since 0.2.0
-primaries :: RealFloat e => Gamut rgb i e
-primaries = Gamut (Primary 0.734742840005998 0.265257159994002)
-                  (Primary 0.273779033824958 0.717477700256116)
-                  (Primary 0.166555629580280 0.008910726182545)
--- Source ^: https://github.com/colour-science/colour/blob/60679360c3990bc549b5f947bfeb621383e18b5e/colour/models/rgb/datasets/cie_rgb.py#L44-L48

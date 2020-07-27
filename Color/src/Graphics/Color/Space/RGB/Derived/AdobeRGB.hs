@@ -7,6 +7,7 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Derived.AdobeRGB
@@ -18,13 +19,9 @@
 --
 module Graphics.Color.Space.RGB.Derived.AdobeRGB
   ( AdobeRGB
-  , AdobeRGB.primaries
-  , AdobeRGB.transfer
-  , AdobeRGB.itransfer
   , module Graphics.Color.Space
   ) where
 
-import Data.Coerce
 import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
@@ -96,8 +93,8 @@ instance (Illuminant i, Elevator e) => ColorSpace (AdobeRGB i 'NonLinear) i e wh
 
 -- | `AdobeRGB` color space (derived)
 instance Illuminant i => RedGreenBlue (AdobeRGB i) i where
-  gamut = AdobeRGB.primaries
-  ecctf = AdobeRGB . fmap AdobeRGB.transfer . coerce
-  {-# INLINE ecctf #-}
-  dcctf = AdobeRGB . fmap AdobeRGB.itransfer . coerce
-  {-# INLINE dcctf #-}
+  gamut = coerceGamut (gamut @_ @AdobeRGB.AdobeRGB)
+  transfer = transfer @_ @AdobeRGB.AdobeRGB
+  {-# INLINE transfer #-}
+  itransfer = itransfer @_ @AdobeRGB.AdobeRGB
+  {-# INLINE itransfer #-}

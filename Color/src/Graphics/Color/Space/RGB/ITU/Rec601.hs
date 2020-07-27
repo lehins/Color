@@ -9,6 +9,7 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.ITU.Rec601
@@ -24,21 +25,16 @@ module Graphics.Color.Space.RGB.ITU.Rec601
   , pattern BT601_625
   , BT601_625
   , D65
-  , primaries525
-  , primaries625
-  , transferRec601
-  , itransferRec601
   , module Graphics.Color.Space
   ) where
 
-import Data.Coerce
 import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Illuminant.ITU.Rec601
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space
-import Graphics.Color.Space.RGB.ITU.Rec470 (primaries625)
+import Graphics.Color.Space.RGB.ITU.Rec470 (BT470_625)
 import Graphics.Color.Space.RGB.Luma
 
 
@@ -110,15 +106,13 @@ instance Elevator e => ColorSpace (BT601_525 'NonLinear) D65 e where
 
 -- | ITU-R BT.601 (525) color space
 instance RedGreenBlue BT601_525 D65 where
-  gamut = primaries525
-  transfer _ = transferRec601
+  gamut = Gamut (Primary 0.630 0.340)
+                (Primary 0.310 0.595)
+                (Primary 0.155 0.070)
+  transfer = transferRec601
   {-# INLINE transfer #-}
-  itransfer _ = itransferRec601
+  itransfer = itransferRec601
   {-# INLINE itransfer #-}
-  ecctf = BT601_525 . fmap transferRec601 . coerce
-  {-# INLINE ecctf #-}
-  dcctf = BT601_525 . fmap itransferRec601 . coerce
-  {-# INLINE dcctf #-}
 
 ------------------------------------
 -- ITU-R BT.601 (625) --------------
@@ -186,15 +180,11 @@ instance Elevator e => ColorSpace (BT601_625 'NonLinear) D65 e where
 
 -- | ITU-R BT.601 (625) color space
 instance RedGreenBlue BT601_625 D65 where
-  gamut = primaries625
-  transfer _ = transferRec601
+  gamut = coerceGamut (gamut @_ @BT470_625)
+  transfer = transferRec601
   {-# INLINE transfer #-}
-  itransfer _ = itransferRec601
+  itransfer = itransferRec601
   {-# INLINE itransfer #-}
-  ecctf = BT601_625 . fmap transferRec601 . coerce
-  {-# INLINE ecctf #-}
-  dcctf = BT601_625 . fmap itransferRec601 . coerce
-  {-# INLINE dcctf #-}
 
 instance Luma BT601_525 where
   rWeight = 0.299
@@ -234,21 +224,12 @@ transferRec601 l
 --   \end{cases}
 -- \]
 --
--- @since 0.1.0
 itransferRec601 :: (Ord a, Floating a) => a -> a
 itransferRec601 e
   | e < inv0018 = e / 4.5
   | otherwise = ((e + 0.099) / 1.099) ** (1 / 0.45)
-  where
-    !inv0018 = transferRec601 0.018 -- ~ 0.081
 {-# INLINE itransferRec601 #-}
 
-
--- | Primaries for ITU-R BT.601 (525).
---
--- @since 0.1.0
-primaries525 :: RealFloat e => Gamut rgb i e
-primaries525 = Gamut (Primary 0.630 0.340)
-                     (Primary 0.310 0.595)
-                     (Primary 0.155 0.070)
+inv0018 :: (Ord a, Floating a) => a
+inv0018 = transferRec601 0.018 -- ~ 0.081
 

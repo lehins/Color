@@ -1,4 +1,3 @@
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -8,6 +7,8 @@
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.ITU.Rec470
@@ -24,12 +25,9 @@ module Graphics.Color.Space.RGB.ITU.Rec470
   , pattern BT470_625
   , BT470_625
   , D65
-  , primaries525
-  , primaries625
   , module Graphics.Color.Space
   ) where
 
-import Data.Coerce
 import Data.Typeable
 import Foreign.Storable
 import qualified Graphics.Color.Model.RGB as CM
@@ -102,15 +100,13 @@ instance Elevator e => ColorSpace (BT470_525 'NonLinear) C e where
 
 -- | ITU-R BT.470 (525) color space
 instance RedGreenBlue BT470_525 C where
-  gamut = primaries525
-  transfer _ = gamma 2.2
+  gamut = Gamut (Primary 0.67 0.33)
+                (Primary 0.21 0.71)
+                (Primary 0.14 0.08)
+  transfer = gamma (1 / 2.2)
   {-# INLINE transfer #-}
-  itransfer _ = igamma 2.2
+  itransfer = gamma 2.2
   {-# INLINE itransfer #-}
-  ecctf c = BT470_525 (fmap (gamma 2.2) (coerce c))
-  {-# INLINE ecctf #-}
-  dcctf c = BT470_525 (fmap (igamma 2.2) (coerce c))
-  {-# INLINE dcctf #-}
 
 ------------------------------------
 -- ITU-R BT.470 (625) --------------
@@ -178,38 +174,16 @@ instance Elevator e => ColorSpace (BT470_625 'NonLinear) D65 e where
 
 -- | ITU-R BT.470 (625) color space
 instance RedGreenBlue BT470_625 D65 where
-  gamut = primaries625
-  transfer _ = gamma 2.8
+  gamut = Gamut (Primary 0.64 0.33)
+                (Primary 0.29 0.60)
+                (Primary 0.15 0.06)
+  transfer = gamma (1 / 2.8)
   {-# INLINE transfer #-}
-  itransfer _ = igamma 2.8
+  itransfer = gamma 2.8
   {-# INLINE itransfer #-}
-  ecctf c = BT470_625 (fmap (gamma 2.8) (coerce c))
-  {-# INLINE ecctf #-}
-  dcctf c = BT470_625 (fmap (igamma 2.8) (coerce c))
-  {-# INLINE dcctf #-}
 
+-- | Gamma correction function
 gamma :: Floating a => a -> a -> a
 gamma p v = v ** p
 {-# INLINE gamma #-}
-
-igamma :: Floating a => a -> a -> a
-igamma p v = v ** (1 / p)
-{-# INLINE igamma #-}
-
--- | Primaries for ITU-R BT.470 (525).
---
--- @since 0.1.0
-primaries525 :: RealFloat e => Gamut rgb i e
-primaries525 = Gamut (Primary 0.67 0.33)
-                     (Primary 0.21 0.71)
-                     (Primary 0.14 0.08)
-
-
--- | Primaries for ITU-R BT.470 and BT.601 (625).
---
--- @since 0.1.0
-primaries625 :: RealFloat e => Gamut rgb i e
-primaries625 = Gamut (Primary 0.64 0.33)
-                     (Primary 0.29 0.60)
-                     (Primary 0.15 0.06)
 

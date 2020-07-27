@@ -7,6 +7,7 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Derived.SRGB
@@ -18,13 +19,9 @@
 --
 module Graphics.Color.Space.RGB.Derived.SRGB
   ( SRGB
-  , SRGB.primaries
-  , SRGB.transfer
-  , SRGB.itransfer
   , module Graphics.Color.Space
   ) where
 
-import Data.Coerce
 import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
@@ -98,11 +95,11 @@ instance (Illuminant i, Elevator e) => ColorSpace (SRGB i 'NonLinear) i e where
 
 -- | `SRGB` color space (derived)
 instance Illuminant i => RedGreenBlue (SRGB i) i where
-  gamut = SRGB.primaries
-  ecctf = SRGB . fmap SRGB.transfer . coerce
-  {-# INLINE ecctf #-}
-  dcctf = SRGB . fmap SRGB.itransfer . coerce
-  {-# INLINE dcctf #-}
+  gamut = coerceGamut (gamut @_ @SRGB.SRGB)
+  transfer = transfer @_ @SRGB.SRGB
+  {-# INLINE transfer #-}
+  itransfer = itransfer @_ @SRGB.SRGB
+  {-# INLINE itransfer #-}
 
 
 instance Luma (SRGB i) where

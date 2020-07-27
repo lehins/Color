@@ -19,7 +19,6 @@
 --
 module Graphics.Color.Space.RGB.Derived.CIERGB
   ( CIERGB
-  , CIERGB.primaries
   , castLinearity
   , module Graphics.Color.Space
   ) where
@@ -82,11 +81,11 @@ instance (Illuminant i, Typeable l, Elevator e) => ColorSpace (CIERGB i l) i e w
 
 -- | `CIERGB` color space (derived)
 instance Illuminant i => RedGreenBlue (CIERGB i) i where
-  gamut = CIERGB.primaries
-  ecctf = coerce
-  {-# INLINE ecctf #-}
-  dcctf = coerce
-  {-# INLINE dcctf #-}
+  gamut = coerceGamut (gamut @_ @CIERGB.CIERGB)
+  transfer = id
+  {-# INLINE transfer #-}
+  itransfer = id
+  {-# INLINE itransfer #-}
 
 -- | CIE RGB does not utilize any gamma function, therefore it is safe to cast the
 -- `Linearity` kind.

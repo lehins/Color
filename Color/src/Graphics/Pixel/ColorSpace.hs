@@ -242,7 +242,7 @@ pattern PixelY'CbCrA y cb cr a = Pixel (ColorY'CbCrA y cb cr a)
 --
 -- @since 0.2.0
 toPixelLinearRGB ::
-     (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel (cs 'NonLinear) e -> Pixel (cs 'Linear) e
+     (RedGreenBlue cs i, RealFloat e) => Pixel (cs 'NonLinear) e -> Pixel (cs 'Linear) e
 toPixelLinearRGB = liftPixel dcctf
 {-# INLINE toPixelLinearRGB #-}
 
@@ -250,7 +250,7 @@ toPixelLinearRGB = liftPixel dcctf
 --
 -- @since 0.2.0
 fromPixelLinearRGB ::
-     (RedGreenBlue cs i, Elevator e, RealFloat e) => Pixel (cs 'Linear) e -> Pixel (cs 'NonLinear) e
+     (RedGreenBlue cs i, RealFloat e) => Pixel (cs 'Linear) e -> Pixel (cs 'NonLinear) e
 fromPixelLinearRGB = liftPixel ecctf
 {-# INLINE fromPixelLinearRGB #-}
 

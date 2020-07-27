@@ -4,6 +4,19 @@
 
 * Add `ColorSpace` instance for `Y'` and enrich it with base space info
 * Rename `YCbCr` -> `Y'CbCr` and remove explicit linearity from its base space
+* Fix BT470 transfer function. `ecctf` and `dcctf` were mixed up.
+* Move `transfer` and `itransfer` functions into the `RedGreenBlue` class
+* Move out `ecctf` and `dcctf` functions outside of `RedGreenBlue` class
+* Remove all customized functions from RGB modules in favor of their respective class
+  implementations:
+
+  * `primaries` (standalone) -> `gamut` (in class)
+  * `transfer` (standalone) -> `transfer` (in class)
+  * `itransfer` (standalone) -> `itransfer` (in class)
+  * `npmStandard` (standalone) -> `npm` (in class)
+  * `inpmStandard` (standalone) -> `inpm` (in class)
+
+* addition of `coerceGamut`
 
 ## 0.2.0
 

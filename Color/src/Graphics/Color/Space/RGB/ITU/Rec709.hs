@@ -8,6 +8,7 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.ITU.Rec709
@@ -21,19 +22,15 @@ module Graphics.Color.Space.RGB.ITU.Rec709
   ( pattern BT709
   , BT709
   , D65
-  , primaries
-  , Rec601.transferRec601
-  , Rec601.itransferRec601
   , module Graphics.Color.Space
   ) where
 
-import Data.Coerce
 import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space
-import Graphics.Color.Space.RGB.ITU.Rec601 as Rec601 (D65, itransferRec601, transferRec601)
+import Graphics.Color.Space.RGB.ITU.Rec601 as Rec601 (D65, BT601_625)
 import Graphics.Color.Space.RGB.Luma
 
 -- | [ITU-R BT.709](https://en.wikipedia.org/wiki/Rec._709) color space
@@ -98,24 +95,13 @@ instance Elevator e => ColorSpace (BT709 'NonLinear) D65 e where
 
 -- | ITU-R BT.709 color space
 instance RedGreenBlue BT709 D65 where
-  gamut = primaries
-  transfer _ = Rec601.transferRec601
+  gamut = Gamut (Primary 0.64 0.33)
+                (Primary 0.30 0.60)
+                (Primary 0.15 0.06)
+  transfer = transfer @_ @BT601_625
   {-# INLINE transfer #-}
-  itransfer _ = Rec601.itransferRec601
+  itransfer = itransfer @_ @BT601_625
   {-# INLINE itransfer #-}
-  ecctf = BT709 . fmap Rec601.transferRec601 . coerce
-  {-# INLINE ecctf #-}
-  dcctf = BT709 . fmap Rec601.itransferRec601 . coerce
-  {-# INLINE dcctf #-}
-
-
--- | Primaries for ITU-R BT.709, which are also the primaries for sRGB color space.
---
--- @since 0.1.0
-primaries :: RealFloat e => Gamut rgb i e
-primaries = Gamut (Primary 0.64 0.33)
-                  (Primary 0.30 0.60)
-                  (Primary 0.15 0.06)
 
 
 instance Luma BT709 where
