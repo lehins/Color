@@ -1,7 +1,13 @@
 # Changelog for Color
 
+## 0.3.0
+
+* Add `ColorSpace` instance for `Y'` and enrich it with base space info
+* Rename `YCbCr` -> `Y'CbCr` and remove explicit linearity from its base space
+
 ## 0.2.0
 
+* Addition of `CIE1931 RGB` color space
 * Add `Linearity` kind to `RedGreenBlue` color spaces.
 * Add `Default` instance for `Pixel`
 * Addition of universal division `(//)` to `Elevator`

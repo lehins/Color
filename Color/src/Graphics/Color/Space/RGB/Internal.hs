@@ -11,6 +11,7 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
@@ -46,6 +47,7 @@ module Graphics.Color.Space.RGB.Internal
   , module Graphics.Color.Algebra
   ) where
 
+import Data.Proxy
 import Data.Coerce
 import Graphics.Color.Algebra
 import qualified Graphics.Color.Model.RGB as CM
@@ -54,17 +56,28 @@ import Data.Kind
 
 data Linearity = Linear | NonLinear
 
+
 class Illuminant i => RedGreenBlue (cs :: Linearity -> Type) (i :: k) | cs -> i where
   -- | RGB primaries that are defined for the RGB color space, while point is defined by
   -- the __@i@__ type parameter
   gamut :: RealFloat e => Gamut cs i e
 
-  -- | Encoding color component transfer function (inverse). Also known as opto-electronic
+  -- | @since 0.3.0
+  transfer :: RealFloat e => Proxy cs -> e -> e
+
+  -- | @since 0.3.0
+  itransfer :: RealFloat e => Proxy cs -> e -> e
+
+  -- | Encoding color component transfer function (forward). Also known as opto-electronic
   -- transfer function (OETF / OECF) or sometimes gamma function.
   ecctf :: (RealFloat a, Elevator a) => Color (cs 'Linear) a -> Color (cs 'NonLinear) a
+  ecctf = mkColorRGB . fmap (transfer (Proxy :: Proxy cs)) . unColorRGB
+  {-# INLINE ecctf #-}
 
-  -- | Decoding color component transfer function (forward)
+  -- | Decoding color component transfer function (inverse)
   dcctf :: (RealFloat a, Elevator a) => Color (cs 'NonLinear) a -> Color (cs 'Linear) a
+  dcctf = mkColorRGB . fmap (itransfer (Proxy :: Proxy cs)) . unColorRGB
+  {-# INLINE dcctf #-}
 
   -- | Normalized primary matrix for this RGB color space. Default implementation derives
   -- it from `chromaticity`

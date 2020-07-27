@@ -26,8 +26,8 @@ module Graphics.Color.Space.RGB.ITU.Rec601
   , D65
   , primaries525
   , primaries625
-  , transfer
-  , itransfer
+  , transferRec601
+  , itransferRec601
   , module Graphics.Color.Space
   ) where
 
@@ -111,9 +111,13 @@ instance Elevator e => ColorSpace (BT601_525 'NonLinear) D65 e where
 -- | ITU-R BT.601 (525) color space
 instance RedGreenBlue BT601_525 D65 where
   gamut = primaries525
-  ecctf = BT601_525 . fmap transfer . coerce
+  transfer _ = transferRec601
+  {-# INLINE transfer #-}
+  itransfer _ = itransferRec601
+  {-# INLINE itransfer #-}
+  ecctf = BT601_525 . fmap transferRec601 . coerce
   {-# INLINE ecctf #-}
-  dcctf = BT601_525 . fmap itransfer . coerce
+  dcctf = BT601_525 . fmap itransferRec601 . coerce
   {-# INLINE dcctf #-}
 
 ------------------------------------
@@ -183,9 +187,13 @@ instance Elevator e => ColorSpace (BT601_625 'NonLinear) D65 e where
 -- | ITU-R BT.601 (625) color space
 instance RedGreenBlue BT601_625 D65 where
   gamut = primaries625
-  ecctf = BT601_625 . fmap transfer . coerce
+  transfer _ = transferRec601
+  {-# INLINE transfer #-}
+  itransfer _ = itransferRec601
+  {-# INLINE itransfer #-}
+  ecctf = BT601_625 . fmap transferRec601 . coerce
   {-# INLINE ecctf #-}
-  dcctf = BT601_625 . fmap itransfer . coerce
+  dcctf = BT601_625 . fmap itransferRec601 . coerce
   {-# INLINE dcctf #-}
 
 instance Luma BT601_525 where
@@ -210,11 +218,11 @@ instance Luma BT601_625 where
 -- \]
 --
 -- @since 0.1.0
-transfer :: (Ord a, Floating a) => a -> a
-transfer l
+transferRec601 :: (Ord a, Floating a) => a -> a
+transferRec601 l
   | l < 0.018 = 4.5 * l
   | otherwise = 1.099 * (l ** 0.45 {- ~ 1 / 2.2 -}) - 0.099
-{-# INLINE transfer #-}
+{-# INLINE transferRec601 #-}
 
 -- | Rec.601 inverse transfer function "gamma". This is a helper function, therefore `dcctf` should
 -- be used instead.
@@ -227,13 +235,13 @@ transfer l
 -- \]
 --
 -- @since 0.1.0
-itransfer :: (Ord a, Floating a) => a -> a
-itransfer e
+itransferRec601 :: (Ord a, Floating a) => a -> a
+itransferRec601 e
   | e < inv0018 = e / 4.5
   | otherwise = ((e + 0.099) / 1.099) ** (1 / 0.45)
   where
-    !inv0018 = transfer 0.018 -- ~ 0.081
-{-# INLINE itransfer #-}
+    !inv0018 = transferRec601 0.018 -- ~ 0.081
+{-# INLINE itransferRec601 #-}
 
 
 -- | Primaries for ITU-R BT.601 (525).

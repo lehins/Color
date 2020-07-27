@@ -103,6 +103,10 @@ instance Elevator e => ColorSpace (BT470_525 'NonLinear) C e where
 -- | ITU-R BT.470 (525) color space
 instance RedGreenBlue BT470_525 C where
   gamut = primaries525
+  transfer _ = gamma 2.2
+  {-# INLINE transfer #-}
+  itransfer _ = igamma 2.2
+  {-# INLINE itransfer #-}
   ecctf c = BT470_525 (fmap (gamma 2.2) (coerce c))
   {-# INLINE ecctf #-}
   dcctf c = BT470_525 (fmap (igamma 2.2) (coerce c))
@@ -175,6 +179,10 @@ instance Elevator e => ColorSpace (BT470_625 'NonLinear) D65 e where
 -- | ITU-R BT.470 (625) color space
 instance RedGreenBlue BT470_625 D65 where
   gamut = primaries625
+  transfer _ = gamma 2.8
+  {-# INLINE transfer #-}
+  itransfer _ = igamma 2.8
+  {-# INLINE itransfer #-}
   ecctf c = BT470_625 (fmap (gamma 2.8) (coerce c))
   {-# INLINE ecctf #-}
   dcctf c = BT470_625 (fmap (igamma 2.8) (coerce c))

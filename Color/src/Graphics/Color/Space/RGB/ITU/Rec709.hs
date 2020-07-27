@@ -22,8 +22,8 @@ module Graphics.Color.Space.RGB.ITU.Rec709
   , BT709
   , D65
   , primaries
-  , Rec601.transfer
-  , Rec601.itransfer
+  , Rec601.transferRec601
+  , Rec601.itransferRec601
   , module Graphics.Color.Space
   ) where
 
@@ -33,7 +33,7 @@ import Foreign.Storable
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space
-import Graphics.Color.Space.RGB.ITU.Rec601 as Rec601 (D65, itransfer, transfer)
+import Graphics.Color.Space.RGB.ITU.Rec601 as Rec601 (D65, itransferRec601, transferRec601)
 import Graphics.Color.Space.RGB.Luma
 
 -- | [ITU-R BT.709](https://en.wikipedia.org/wiki/Rec._709) color space
@@ -99,9 +99,13 @@ instance Elevator e => ColorSpace (BT709 'NonLinear) D65 e where
 -- | ITU-R BT.709 color space
 instance RedGreenBlue BT709 D65 where
   gamut = primaries
-  ecctf = BT709 . fmap Rec601.transfer . coerce
+  transfer _ = Rec601.transferRec601
+  {-# INLINE transfer #-}
+  itransfer _ = Rec601.itransferRec601
+  {-# INLINE itransfer #-}
+  ecctf = BT709 . fmap Rec601.transferRec601 . coerce
   {-# INLINE ecctf #-}
-  dcctf = BT709 . fmap Rec601.itransfer . coerce
+  dcctf = BT709 . fmap Rec601.itransferRec601 . coerce
   {-# INLINE dcctf #-}
 
 
