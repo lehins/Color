@@ -15,8 +15,8 @@
 -- Portability : non-portable
 --
 module Graphics.Pixel.ColorSpace
-  ( Pixel(Pixel, PixelY, PixelXYZ, PixelRGB, PixelHSI, PixelHSL, PixelHSV,
-      PixelCMYK, PixelY'CbCr, PixelY', PixelYA, PixelXYZA, PixelRGBA, PixelHSIA, PixelHSLA,
+  ( Pixel(Pixel, PixelY, PixelXYZ, PixelLAB, PixelRGB, PixelHSI, PixelHSL, PixelHSV,
+      PixelCMYK, PixelY'CbCr, PixelY', PixelYA, PixelXYZA, PixelLABA, PixelRGBA, PixelHSIA, PixelHSLA,
       PixelHSVA, PixelCMYKA, PixelY'CbCrA, PixelY'A)
   , liftPixel
   , pixelColor
@@ -122,6 +122,7 @@ pattern PixelXYZ :: e -> e -> e -> Pixel (XYZ i) e
 pattern PixelXYZ x y z = Pixel (XYZ (V3 x y z))
 {-# COMPLETE PixelXYZ #-}
 
+
 -- | Constructor for a pixel in @CIE1931 XYZ@ color space with Alpha channel
 --
 -- @since 0.1.0
@@ -129,6 +130,20 @@ pattern PixelXYZA :: e -> e -> e -> e -> Pixel (Alpha (XYZ i)) e
 pattern PixelXYZA x y z a = Pixel (Alpha (XYZ (V3 x y z)) a)
 {-# COMPLETE PixelXYZA #-}
 
+
+-- | Constructor for a pixel in @CIE1976 LAB@ color space
+--
+-- @since 0.3.0
+pattern PixelLAB :: e -> e -> e -> Pixel (LAB i) e
+pattern PixelLAB l' a' b' = Pixel (LAB (V3 l' a' b'))
+{-# COMPLETE PixelLAB #-}
+
+-- | Constructor for a pixel in @CIE1976 LAB@ color space with Alpha channel
+--
+-- @since 0.3.0
+pattern PixelLABA :: e -> e -> e -> e -> Pixel (Alpha (LAB i)) e
+pattern PixelLABA l' a' b' a = Pixel (Alpha (LAB (V3 l' a' b')) a)
+{-# COMPLETE PixelLABA #-}
 
 -- | Constructor for a pixel in RGB color space.
 --

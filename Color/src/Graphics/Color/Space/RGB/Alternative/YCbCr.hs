@@ -45,28 +45,20 @@ import Graphics.Color.Space.RGB.ITU.Rec709
 import Graphics.Color.Space.RGB.Luma
 import Graphics.Color.Space.RGB.SRGB
 
--- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+-- | `Y'CbCr` representation for some non-linear (@`RedGreenBlue` cs i@) color space
 data Y'CbCr (cs :: Linearity -> Type)
 
--- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
+-- | Constructor  for `Y'CbCr` color space
 newtype instance Color (Y'CbCr cs) e = Y'CbCr (Color CM.YCbCr e)
 
--- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
 deriving instance Eq e => Eq (Color (Y'CbCr cs) e)
--- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
 deriving instance Ord e => Ord (Color (Y'CbCr cs) e)
--- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
 deriving instance Functor (Color (Y'CbCr cs))
--- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
 deriving instance Applicative (Color (Y'CbCr cs))
--- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
 deriving instance Foldable (Color (Y'CbCr cs))
--- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
 deriving instance Traversable (Color (Y'CbCr cs))
--- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
 deriving instance Storable e => Storable (Color (Y'CbCr cs) e)
 
--- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
 instance (Typeable cs, ColorModel (cs 'NonLinear) e, Elevator e) => Show (Color (Y'CbCr cs) e) where
   showsPrec _ = showsColorModel
 
@@ -81,7 +73,6 @@ pattern ColorY'CbCrA y cb cr a = Alpha (Y'CbCr (CM.ColorYCbCr y cb cr)) a
 {-# COMPLETE ColorY'CbCrA #-}
 
 
--- | `Y'CbCr` color model
 instance (Typeable cs, ColorModel (cs 'NonLinear) e, Elevator e) => ColorModel (Y'CbCr cs) e where
   type Components (Y'CbCr cs) e = (e, e, e)
   toComponents (ColorY'CbCr y cb cr) = (y, cb, cr)
@@ -91,7 +82,6 @@ instance (Typeable cs, ColorModel (cs 'NonLinear) e, Elevator e) => ColorModel (
   showsColorModelName _ =
     ("Y'CbCr-" ++) . showsColorModelName (Proxy :: Proxy (Color (cs 'NonLinear) e))
 
--- | `Y'CbCr` representation for `SRGB` color space
 instance Elevator e => ColorSpace (Y'CbCr SRGB) D65 e where
   type BaseModel (Y'CbCr SRGB) = CM.YCbCr
   type BaseSpace (Y'CbCr SRGB) = SRGB 'NonLinear
@@ -102,7 +92,6 @@ instance Elevator e => ColorSpace (Y'CbCr SRGB) D65 e where
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
 
--- | `Y'CbCr` representation for `BT601_525` color space
 instance Elevator e => ColorSpace (Y'CbCr BT601_525) D65 e where
   type BaseModel (Y'CbCr BT601_525) = CM.YCbCr
   type BaseSpace (Y'CbCr BT601_525) = BT601_525 'NonLinear
@@ -113,7 +102,6 @@ instance Elevator e => ColorSpace (Y'CbCr BT601_525) D65 e where
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
 
--- | `Y'CbCr` representation for `BT601_625` color space
 instance Elevator e => ColorSpace (Y'CbCr BT601_625) D65 e where
   type BaseModel (Y'CbCr BT601_625) = CM.YCbCr
   type BaseSpace (Y'CbCr BT601_625) = BT601_625 'NonLinear
@@ -124,7 +112,6 @@ instance Elevator e => ColorSpace (Y'CbCr BT601_625) D65 e where
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
 
--- | `Y'CbCr` representation for `BT709` color space
 instance Elevator e => ColorSpace (Y'CbCr BT709) D65 e where
   type BaseModel (Y'CbCr BT709) = CM.YCbCr
   type BaseSpace (Y'CbCr BT709) = BT709 'NonLinear
@@ -135,7 +122,6 @@ instance Elevator e => ColorSpace (Y'CbCr BT709) D65 e where
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
 
--- | `Y'CbCr` representation for some (@`RedGreenBlue` cs i@) color space
 instance (Typeable cs, Luma (cs i), ColorSpace (cs i 'NonLinear) i e, RedGreenBlue (cs i) i) =>
          ColorSpace (Y'CbCr (cs i)) i e where
   type BaseModel (Y'CbCr (cs i)) = CM.YCbCr

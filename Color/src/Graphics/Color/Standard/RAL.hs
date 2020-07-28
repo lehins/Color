@@ -234,7 +234,6 @@ module Graphics.Color.Standard.RAL
 
 import Data.Typeable
 import Graphics.Color.Space
-import Graphics.Color.Space.CIE1976.LAB
 import Graphics.Color.Adaptation.VonKries
 import Graphics.Color.Space.RGB.SRGB
 

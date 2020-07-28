@@ -11,7 +11,6 @@ import qualified Data.Colour.CIE.Illuminant as Colour
 import qualified Data.Colour.SRGB as Colour
 import Graphics.Color.Illuminant.CIE1931 as I2
 import qualified Graphics.Color.Illuminant.Wikipedia as W
-import Graphics.Color.Space.CIE1976.LAB
 import Graphics.Color.Space.Common
 import Graphics.Color.Space.RGB.Derived.SRGBSpec ()
 import Graphics.Color.Space.RGB.Derived.SRGB
