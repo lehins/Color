@@ -4,7 +4,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -20,7 +19,6 @@ import Graphics.Color.Model.Common hiding ((.&.))
 import Graphics.Color.Space
 import Graphics.Color.Space.RGB
 import Graphics.Color.Standard.RAL as RAL
-import Graphics.Color.Space.CIE1976.LAB
 import Data.Bits
 
 
@@ -48,7 +46,7 @@ spec = do
           let mkTest expected (rname, received) =
                 it rname $ do
                   when (rname `elem` pendingNames) $ pendingWith "Some discrepancy"
-                  (expect received expected)
+                  expect received expected
           zipWithM_ mkTest expectedColors receivedColors
     it "Color ShowS" $ do
       show (RAL :: RAL "GreenBeige") `shouldBe` "RAL \"GreenBeige\""

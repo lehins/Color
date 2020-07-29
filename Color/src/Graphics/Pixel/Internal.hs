@@ -23,6 +23,8 @@ module Graphics.Pixel.Internal
   , toPixel64
   , toPixelF
   , toPixelD
+  , MVector(MV_Pixel)
+  , Vector(V_Pixel)
   ) where
 
 import Data.Coerce

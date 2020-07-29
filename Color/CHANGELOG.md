@@ -16,7 +16,8 @@
   * `npmStandard` (standalone) -> `npm` (in class)
   * `inpmStandard` (standalone) -> `inpm` (in class)
 
-* addition of `coerceGamut`
+* Addition of `coerceGamut`
+* Fix re-export of vector's `MVector`, `Vector` type families.
 
 ## 0.2.0
 

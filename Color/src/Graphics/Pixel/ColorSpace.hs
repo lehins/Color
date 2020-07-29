@@ -59,7 +59,7 @@ module Graphics.Pixel.ColorSpace
 
 import Data.Coerce
 import Graphics.Color.Adaptation.VonKries
-import Graphics.Color.Model.Internal
+import Graphics.Color.Model.Internal hiding (MVector, Vector)
 import Graphics.Color.Algebra.Binary
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space
@@ -67,7 +67,7 @@ import Graphics.Color.Space.RGB.AdobeRGB
 import Graphics.Color.Space.RGB.Alternative
 import Graphics.Color.Space.RGB.SRGB
 import Graphics.Color.Space.RGB.Luma
-import Graphics.Pixel.Internal
+import Graphics.Pixel.Internal hiding (MVector, Vector)
 
 -- | Convert a pixel from one color space to any other.
 --

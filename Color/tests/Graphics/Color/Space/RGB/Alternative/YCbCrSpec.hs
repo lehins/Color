@@ -46,4 +46,4 @@ spec =
       prop "ycbcr2rgb" $ \(ycbcr@(ColorY'CbCr y cb cr) :: Color (Y'CbCr SRGB) Word8) ->
         case JuicyPixels.convertPixel (JuicyPixels.PixelYCbCr8 y cb cr) of
           JuicyPixels.PixelRGB8 r g b ->
-            (toBaseSpace ycbcr) `approxIntegralColorExpect1` ColorRGB r g b
+            toBaseSpace ycbcr `approxIntegralColorExpect1` ColorRGB r g b

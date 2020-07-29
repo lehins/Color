@@ -14,7 +14,7 @@ module Graphics.Color.Space
   , module X
   ) where
 
-import Graphics.Color.Model.Internal as X
+import Graphics.Color.Model.Internal as X hiding (MVector, Vector)
 import Graphics.Color.Space.Internal as X
 import Graphics.Color.Space.RGB.Internal as X
 import Graphics.Color.Space.CIE1976.LAB as X
