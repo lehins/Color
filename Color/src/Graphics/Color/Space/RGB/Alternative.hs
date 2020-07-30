@@ -11,6 +11,8 @@ module Graphics.Color.Space.RGB.Alternative
   ( module X
   ) where
 
+import Graphics.Color.Space.Internal as X
+import Graphics.Color.Space.RGB.Internal as X
 import Graphics.Color.Space.RGB.Alternative.HSI as X
 import Graphics.Color.Space.RGB.Alternative.HSL as X
 import Graphics.Color.Space.RGB.Alternative.HSV as X

@@ -5,7 +5,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE StandaloneDeriving #-}
@@ -25,7 +24,6 @@ module Graphics.Color.Space.RGB.ITU.Rec601
   , pattern BT601_625
   , BT601_625
   , D65
-  , module Graphics.Color.Space
   ) where
 
 import Data.Typeable
@@ -33,7 +31,8 @@ import Foreign.Storable
 import Graphics.Color.Illuminant.ITU.Rec601
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
-import Graphics.Color.Space
+import Graphics.Color.Space.Internal
+import Graphics.Color.Space.RGB.Internal
 import Graphics.Color.Space.RGB.ITU.Rec470 (BT470_625)
 import Graphics.Color.Space.RGB.Luma
 

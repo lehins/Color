@@ -11,6 +11,7 @@ import Data.Proxy
 import Graphics.Color.Space
 import Graphics.Color.Model.Common
 import GHC.TypeLits
+import Graphics.Color.Algebra (showsType)
 
 
 colorTemperatureExpectation ::

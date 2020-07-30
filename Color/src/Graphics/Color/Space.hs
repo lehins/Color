@@ -11,21 +11,19 @@
 module Graphics.Color.Space
   ( convertColor
   , convertColorFloat
+  , module Graphics.Color.Space.RGB
   , module Graphics.Color.Space.Internal
-  , module Graphics.Color.Space.RGB.Internal
-  -- , module Graphics.Color.Space.RGB.SRGB
   , module Graphics.Color.Space.CIE1976.LAB
   ) where
 
 import Graphics.Color.Space.CIE1976.LAB
 import Graphics.Color.Space.Internal
-import Graphics.Color.Space.RGB.Internal
--- import Graphics.Color.Space.RGB.SRGB
+import Graphics.Color.Space.RGB
 
 
 -- | Convert a color space through `XYZ` intermediary with `Double` precision. Illuminant is
 -- enforced to be the same, but in case that it is a limitation and chromatic adaptation is
--- needed `Graphics.Color.Adaptation.convertWith` can be used instead.
+-- needed `Graphics.Color.Adaptation.convert` can be used instead.
 --
 -- @since 0.1.1
 convertColor ::

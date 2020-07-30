@@ -22,7 +22,7 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.Internal
-  (  ColorModel(..)
+  ( ColorModel(..)
   -- * Alpha
   , Alpha
   , Opaque
@@ -59,9 +59,13 @@ module Graphics.Color.Space.Internal
   , pattern ColorCIExy
   , pattern ColorCIExyY
   , showsColorModel
+  , module Graphics.Color.Algebra.Binary
+  , module Graphics.Color.Algebra.Elevator
   ) where
 
 import Foreign.Storable
+import Graphics.Color.Algebra.Binary
+import Graphics.Color.Algebra.Elevator
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.Y as CM
 import Data.Typeable

@@ -8,6 +8,7 @@ module Graphics.Color.Illuminant.CIE1931Spec (spec) where
 import Graphics.Color.Space.Common
 import Graphics.Color.Illuminant.Common
 import Graphics.Color.Illuminant.CIE1931
+import Graphics.Color.Algebra
 
 spec :: Spec
 spec =

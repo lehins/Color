@@ -24,14 +24,14 @@ module Graphics.Color.Space.RGB.AdobeRGB
   , pattern ColorAdobeRGBA
   , AdobeRGB
   , D65
-  , module Graphics.Color.Space
   ) where
 
 import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
-import Graphics.Color.Space
+import Graphics.Color.Space.Internal
+import Graphics.Color.Space.RGB.Internal
 import Graphics.Color.Space.RGB.ITU.Rec601 (D65)
 
 

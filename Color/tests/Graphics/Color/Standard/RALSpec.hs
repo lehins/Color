@@ -17,7 +17,6 @@ import Data.Kind
 import GHC.TypeLits
 import Graphics.Color.Model.Common hiding ((.&.))
 import Graphics.Color.Space
-import Graphics.Color.Space.RGB
 import Graphics.Color.Standard.RAL as RAL
 import Data.Bits
 

@@ -4,11 +4,9 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.ITU.Rec470
@@ -25,14 +23,14 @@ module Graphics.Color.Space.RGB.ITU.Rec470
   , pattern BT470_625
   , BT470_625
   , D65
-  , module Graphics.Color.Space
   ) where
 
 import Data.Typeable
 import Foreign.Storable
-import qualified Graphics.Color.Model.RGB as CM
-import Graphics.Color.Space
 import Graphics.Color.Illuminant.ITU.Rec470
+import qualified Graphics.Color.Model.RGB as CM
+import Graphics.Color.Space.Internal
+import Graphics.Color.Space.RGB.Internal
 
 ------------------------------------
 -- ITU-R BT.470 (525) --------------

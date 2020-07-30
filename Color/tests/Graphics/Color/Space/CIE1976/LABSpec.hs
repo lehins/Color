@@ -12,7 +12,7 @@ import Graphics.Color.Illuminant.CIE1931 as I2
 import qualified Graphics.Color.Illuminant.Wikipedia as W
 import Graphics.Color.Space.Common
 import Graphics.Color.Space.RGB.Derived.SRGBSpec ()
-import Graphics.Color.Space.RGB.Derived.SRGB
+import Graphics.Color.Space.RGB.Derived.SRGB as D
 
 instance (Elevator e, Random e, Illuminant i) => Arbitrary (Color (LAB (i :: k)) e) where
   arbitrary = ColorLAB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
@@ -26,9 +26,9 @@ spec = describe "LAB" $ do
     prop "lab2srgb" $ \lab@(ColorLAB l' a' b' :: Color (LAB 'W.D65) Double) ->
       case Colour.toSRGB (Colour.cieLAB Colour.d65 l' a' b') of
         Colour.RGB r g b ->
-          (convertColor lab :: Color (SRGB 'W.D65 'NonLinear) Double)
+          (convertColor lab :: Color (D.SRGB 'W.D65 'NonLinear) Double)
           `epsilonEqColorDouble` ColorRGB r g b
-    prop "srgb2xlab" $ \rgb@(ColorRGB r g b :: Color (SRGB 'W.D65 'NonLinear) Double) ->
+    prop "srgb2xlab" $ \rgb@(ColorRGB r g b :: Color (D.SRGB 'W.D65 'NonLinear) Double) ->
       case Colour.cieLABView Colour.d65 (Colour.sRGB r g b) of
         (l', a', b') ->
           convertColor rgb `epsilonEqColorDouble` (ColorLAB l' a' b' :: Color (LAB 'W.D65) Double)

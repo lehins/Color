@@ -18,6 +18,7 @@
 
 * Addition of `coerceGamut`
 * Fix re-export of vector's `MVector`, `Vector` type families.
+* Re-arrange how modules are exported a little bit.
 
 ## 0.2.0
 

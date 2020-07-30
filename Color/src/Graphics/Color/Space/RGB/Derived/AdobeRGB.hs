@@ -19,14 +19,14 @@
 --
 module Graphics.Color.Space.RGB.Derived.AdobeRGB
   ( AdobeRGB
-  , module Graphics.Color.Space
   ) where
 
 import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
-import Graphics.Color.Space
+import Graphics.Color.Space.Internal
+import Graphics.Color.Space.RGB.Internal
 import qualified Graphics.Color.Space.RGB.AdobeRGB as AdobeRGB
 
 

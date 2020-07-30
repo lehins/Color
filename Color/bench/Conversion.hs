@@ -1,6 +1,5 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -10,11 +9,10 @@ import Criterion.Main
 import Control.DeepSeq
 import System.Random as R
 import qualified Graphics.Color.Model as CM
+import Graphics.Color.Algebra
 import Graphics.Color.Model
 import Graphics.Color.Space
-import Graphics.Color.Space.RGB
 import Graphics.Color.Illuminant.CIE1931
-import Graphics.Color.Space.CIE1976.LAB
 import qualified Graphics.Color.Space.RGB.Derived.SRGB as Derived
 
 import qualified Data.Colour as Colour

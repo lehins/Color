@@ -7,9 +7,7 @@ module Graphics.Color.Space.RGB.Alternative.YCbCrSpec (spec) where
 
 import qualified Codec.Picture.Types as JuicyPixels
 import Graphics.Color.Space.Common
-import Graphics.Color.Space.RGB.SRGB
 import qualified Graphics.Color.Space.RGB.Derived.SRGB as Derived
-import Graphics.Color.Space.RGB.Alternative.YCbCr
 import Graphics.Color.Space.RGB.SRGBSpec ()
 import Graphics.Color.Space.RGB.Derived.SRGBSpec ()
 

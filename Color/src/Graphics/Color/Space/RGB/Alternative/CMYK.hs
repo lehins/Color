@@ -23,7 +23,6 @@ module Graphics.Color.Space.RGB.Alternative.CMYK
   , pattern ColorCMYKA
   , CMYK
   , Color(CMYK)
-  , module Graphics.Color.Space
   ) where
 
 import Data.Coerce
@@ -32,12 +31,13 @@ import Data.Typeable
 import Foreign.Storable
 import qualified Graphics.Color.Model.CMYK as CM
 import Graphics.Color.Model.Internal
-import Graphics.Color.Space
-import Graphics.Color.Space.RGB.AdobeRGB as AdobeRGB
+import Graphics.Color.Space.Internal
+import Graphics.Color.Space.RGB.Internal
 import qualified Graphics.Color.Space.RGB.ITU.Rec470 as Rec470
+import Graphics.Color.Space.RGB.AdobeRGB
+import Graphics.Color.Space.RGB.SRGB
 import Graphics.Color.Space.RGB.ITU.Rec601
 import Graphics.Color.Space.RGB.ITU.Rec709
-import Graphics.Color.Space.RGB.SRGB
 
 
 -- | `CMYK` representation for some (@`RedGreenBlue` cs i@) color space

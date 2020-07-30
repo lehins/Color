@@ -28,7 +28,6 @@ module Graphics.Color.Space.RGB.Alternative.YCbCr
   , srgb2ycbcr
   , toColorY'CbCr
   , fromColorY'CbCr
-  , module Graphics.Color.Space
   , module Graphics.Color.Space.RGB.Luma
   ) where
 
@@ -39,7 +38,8 @@ import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.YCbCr as CM
-import Graphics.Color.Space
+import Graphics.Color.Space.Internal
+import Graphics.Color.Space.RGB.Internal
 import Graphics.Color.Space.RGB.ITU.Rec601
 import Graphics.Color.Space.RGB.ITU.Rec709
 import Graphics.Color.Space.RGB.Luma

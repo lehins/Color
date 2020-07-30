@@ -20,16 +20,16 @@
 module Graphics.Color.Space.CIE1931.RGB
   ( CIERGB
   , castLinearity
-  , module Graphics.Color.Space
   ) where
 
 import Data.Coerce
 import Data.Typeable
 import Foreign.Storable
+import Graphics.Color.Illuminant.CIE1931
 import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
-import Graphics.Color.Space
-import Graphics.Color.Illuminant.CIE1931
+import Graphics.Color.Space.Internal
+import Graphics.Color.Space.RGB.Internal
 
 
 -- | The original @CIE1931 RGB@ color space with an arbitrary illuminant

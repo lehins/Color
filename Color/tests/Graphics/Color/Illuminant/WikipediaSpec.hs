@@ -5,12 +5,13 @@
 {-# LANGUAGE TypeApplications #-}
 module Graphics.Color.Illuminant.WikipediaSpec (spec) where
 
-import Data.Proxy
-import Graphics.Color.Space.Common
-import Graphics.Color.Illuminant.Common
-import Graphics.Color.Illuminant.Wikipedia
 import qualified Data.Colour.CIE as Colour
 import qualified Data.Colour.CIE.Illuminant as Colour
+import Data.Proxy
+import Graphics.Color.Algebra (showsType)
+import Graphics.Color.Illuminant.Common
+import Graphics.Color.Illuminant.Wikipedia
+import Graphics.Color.Space.Common
 
 shouldMatch ::
      forall i. Illuminant i

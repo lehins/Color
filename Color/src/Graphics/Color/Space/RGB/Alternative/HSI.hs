@@ -25,7 +25,6 @@ module Graphics.Color.Space.RGB.Alternative.HSI
   , pattern ColorH360SI
   , HSI
   , Color(HSI)
-  , module Graphics.Color.Space
   ) where
 
 import Data.Coerce
@@ -33,7 +32,8 @@ import Data.Proxy
 import Foreign.Storable
 import qualified Graphics.Color.Model.HSI as CM
 import Graphics.Color.Model.Internal
-import Graphics.Color.Space
+import Graphics.Color.Space.Internal
+import Graphics.Color.Space.RGB.Internal
 
 
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space

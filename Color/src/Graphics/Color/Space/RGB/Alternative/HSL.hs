@@ -25,7 +25,6 @@ module Graphics.Color.Space.RGB.Alternative.HSL
   , pattern ColorH360SL
   , HSL
   , Color(HSL)
-  , module Graphics.Color.Space
   ) where
 
 import Data.Coerce
@@ -33,7 +32,8 @@ import Data.Proxy
 import Foreign.Storable
 import qualified Graphics.Color.Model.HSL as CM
 import Graphics.Color.Model.Internal
-import Graphics.Color.Space
+import Graphics.Color.Space.Internal
+import Graphics.Color.Space.RGB.Internal
 
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
 data HSL cs

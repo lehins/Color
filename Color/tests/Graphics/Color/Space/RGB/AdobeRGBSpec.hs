@@ -4,7 +4,6 @@
 module Graphics.Color.Space.RGB.AdobeRGBSpec (spec, arbitraryElevator) where
 
 import Graphics.Color.Space.Common
-import Graphics.Color.Space.RGB.AdobeRGB
 
 instance (Elevator e, Random e) => Arbitrary (Color (AdobeRGB l) e) where
   arbitrary = ColorRGB <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator

@@ -235,7 +235,7 @@ module Graphics.Color.Standard.RAL
 import Data.Typeable
 import Graphics.Color.Space
 import Graphics.Color.Adaptation.VonKries
-import Graphics.Color.Space.RGB.SRGB
+import Graphics.Color.Algebra (showsType)
 
 -- -- TODO: Find a home somewhere for this common illuminant
 -- data D50

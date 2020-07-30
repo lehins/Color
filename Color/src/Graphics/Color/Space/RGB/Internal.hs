@@ -48,7 +48,7 @@ module Graphics.Color.Space.RGB.Internal
   , rgbColorGamut
   , pixelWhitePoint
   , gamutWhitePoint
-  , module Graphics.Color.Algebra
+  , module Graphics.Color.Space.Internal
   ) where
 
 import Data.Coerce

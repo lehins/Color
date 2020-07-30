@@ -5,9 +5,7 @@
 module Graphics.Color.Space.RGB.Alternative.CMYKSpec (spec) where
 
 import Graphics.Color.Space.Common
-import Graphics.Color.Space.RGB.SRGB
 import qualified Graphics.Color.Space.RGB.Derived.SRGB as Derived
-import Graphics.Color.Space.RGB.Alternative.CMYK
 import Graphics.Color.Space.RGB.Derived.SRGBSpec ()
 
 
