@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -187,10 +186,8 @@ instance ColorModel cs e => VM.MVector VU.MVector (Color cs e) where
   {-# INLINE basicUnsafeMove #-}
   basicUnsafeGrow (MV_Color mvec) len = MV_Color <$> VM.basicUnsafeGrow mvec len
   {-# INLINE basicUnsafeGrow #-}
-#if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_Color mvec) = VM.basicInitialize mvec
   {-# INLINE basicInitialize #-}
-#endif
 
 
 newtype instance VU.Vector (Color cs e) = V_Color (VU.Vector (Components cs e))

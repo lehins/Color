@@ -68,6 +68,7 @@ library
                      -- , Graphics.Color.Space.LMS
                      , Graphics.Color.Standard.RAL
                      , Graphics.Pixel
+                     , Graphics.Pixel.Internal
                      , Graphics.Pixel.ColorSpace
 
   other-modules:       Graphics.Color.Adaptation.Internal
@@ -82,11 +83,10 @@ library
                      , Graphics.Color.Model.YCbCr
                      , Graphics.Color.Space.Internal
                      , Graphics.Color.Space.RGB.Internal
-                     , Graphics.Pixel.Internal
   build-depends:       base            >= 4.11 && < 5
                      , deepseq
                      , data-default-class
-                     , vector          >= 0.10
+                     , vector          >= 0.11
 
   default-language:    Haskell2010
   ghc-options:         -Wall

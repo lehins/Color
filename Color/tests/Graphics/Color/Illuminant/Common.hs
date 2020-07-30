@@ -10,6 +10,7 @@ module Graphics.Color.Illuminant.Common
 import Data.Proxy
 import Graphics.Color.Space
 import Graphics.Color.Model.Common
+import GHC.TypeLits
 
 
 colorTemperatureExpectation ::

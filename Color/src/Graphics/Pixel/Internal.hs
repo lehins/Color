@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -6,6 +5,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# OPTIONS_HADDOCK hide, not-home #-}
 -- |
 -- Module      : Graphics.Pixel.Internal
 -- Copyright   : (c) Alexey Kuleshevich 2019-2020
@@ -23,8 +23,9 @@ module Graphics.Pixel.Internal
   , toPixel64
   , toPixelF
   , toPixelD
-  , MVector(MV_Pixel)
-  , Vector(V_Pixel)
+  , VU.MVector(MV_Pixel)
+  , VU.Vector(V_Pixel)
+  , module Graphics.Color.Model.Internal
   ) where
 
 import Data.Coerce
@@ -94,10 +95,8 @@ instance ColorModel cs e => VM.MVector VU.MVector (Pixel cs e) where
   {-# INLINE basicUnsafeMove #-}
   basicUnsafeGrow (MV_Pixel mvec) len = MV_Pixel <$> VM.basicUnsafeGrow mvec len
   {-# INLINE basicUnsafeGrow #-}
-#if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_Pixel mvec) = VM.basicInitialize mvec
   {-# INLINE basicInitialize #-}
-#endif
 
 
 newtype instance VU.Vector (Pixel cs e) = V_Pixel (VU.Vector (Components cs e))

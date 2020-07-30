@@ -11,13 +11,16 @@
 module Graphics.Color.Space
   ( convertColor
   , convertColorFloat
-  , module X
+  , module Graphics.Color.Space.Internal
+  , module Graphics.Color.Space.RGB.Internal
+  -- , module Graphics.Color.Space.RGB.SRGB
+  , module Graphics.Color.Space.CIE1976.LAB
   ) where
 
-import Graphics.Color.Model.Internal as X hiding (MVector, Vector)
-import Graphics.Color.Space.Internal as X
-import Graphics.Color.Space.RGB.Internal as X
-import Graphics.Color.Space.CIE1976.LAB as X
+import Graphics.Color.Space.CIE1976.LAB
+import Graphics.Color.Space.Internal
+import Graphics.Color.Space.RGB.Internal
+-- import Graphics.Color.Space.RGB.SRGB
 
 
 -- | Convert a color space through `XYZ` intermediary with `Double` precision. Illuminant is

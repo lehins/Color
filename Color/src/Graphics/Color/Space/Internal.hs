@@ -22,7 +22,17 @@
 -- Portability : non-portable
 --
 module Graphics.Color.Space.Internal
-  ( Color(Luminance, XYZ, CIExyY)
+  (  ColorModel(..)
+  -- * Alpha
+  , Alpha
+  , Opaque
+  , addAlpha
+  , getAlpha
+  , setAlpha
+  , dropAlpha
+  , modifyAlpha
+  , modifyOpaque
+  , Color(Alpha, Luminance, XYZ, CIExyY)
   , ColorSpace(..)
   , Chromaticity(..)
   , Primary(.., Primary)
@@ -48,15 +58,12 @@ module Graphics.Color.Space.Internal
   , CIExyY
   , pattern ColorCIExy
   , pattern ColorCIExyY
-  , module GHC.TypeNats
-  , module Graphics.Color.Algebra
-  , module Graphics.Color.Model.Internal
+  , showsColorModel
   ) where
 
 import Foreign.Storable
-import Graphics.Color.Model.Internal hiding (MVector, Vector)
+import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.Y as CM
-import Graphics.Color.Algebra
 import Data.Typeable
 import Data.Coerce
 import GHC.TypeNats
