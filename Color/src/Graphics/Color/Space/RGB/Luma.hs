@@ -40,7 +40,7 @@ import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB as CM
-import Graphics.Color.Model.Y as CM
+import Graphics.Color.Model.X as CM
 import Graphics.Color.Space.Internal
 import Graphics.Color.Space.RGB.Internal
 
@@ -53,20 +53,20 @@ import Graphics.Color.Space.RGB.Internal
 data Y' (cs :: Linearity -> Type)
 
 -- | Constructor for Luma.
-newtype instance Color (Y' cs) e = Luma (CM.Color CM.Y e)
+newtype instance Color (Y' cs) e = Luma (CM.Color CM.X e)
 
 -- | Constructor for Luma `Y'`. (Not to be confused with luminance `Y`)
 --
 -- @since 0.1.0
 pattern Y' :: e -> Color (Y' cs) e
-pattern Y' y = Luma (CM.Y y)
+pattern Y' y = Luma (CM.X y)
 {-# COMPLETE Y' #-}
 
 -- | Constructor for `Y'` with alpha channel. (Not to be confused with luminance `Y`)
 --
 -- @since 0.1.4
 pattern Y'A :: e -> e -> Color (Alpha (Y' cs)) e
-pattern Y'A y a = Alpha (Luma (CM.Y y)) a
+pattern Y'A y a = Alpha (Luma (CM.X y)) a
 {-# COMPLETE Y'A #-}
 
 -- | `Y'` - luma of a color space
@@ -107,7 +107,7 @@ instance ( Typeable cs
          , RealFloat e
          ) =>
          ColorSpace (Y' cs) i e where
-  type BaseModel (Y' cs) = CM.Y
+  type BaseModel (Y' cs) = CM.X
   type BaseSpace (Y' cs) = cs 'NonLinear
   toBaseSpace y = pure (coerce y :: e)
   {-# INLINE toBaseSpace #-}

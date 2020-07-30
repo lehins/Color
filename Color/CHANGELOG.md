@@ -2,6 +2,7 @@
 
 ## 0.3.0
 
+* Rename `Y` color model into `X` to avoid the annoying name conflict.
 * Add `ColorSpace` instance for `Y'` and enrich it with base space info
 * Rename `YCbCr` -> `Y'CbCr` and remove explicit linearity from its base space
 * Fix BT470 transfer function. `ecctf` and `dcctf` were mixed up.

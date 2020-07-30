@@ -31,7 +31,7 @@ module Graphics.Color.Model.YCbCr
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
-import Graphics.Color.Model.Y
+import Graphics.Color.Model.X
 
 -- | `YCbCr` color model
 data YCbCr
@@ -83,7 +83,7 @@ rgb2ycbcr :: (Elevator e', Elevator e, RealFloat e) => Color RGB e' -> Weights e
 rgb2ycbcr rgb' weights@(Weights (V3 kr _ kb)) = ColorYCbCr y' cb cr
   where
     rgb@(ColorRGB r' _ b') = toRealFloat <$> rgb'
-    ColorY y' = rgb2y rgb weights
+    ColorX y' = rgb2y rgb weights
     !cb = 0.5 + 0.5 * (b' - y') / (1 - kb)
     !cr = 0.5 + 0.5 * (r' - y') / (1 - kr)
 {-# INLINE rgb2ycbcr #-}

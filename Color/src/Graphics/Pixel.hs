@@ -11,8 +11,8 @@
 -- Portability : non-portable
 --
 module Graphics.Pixel
-  ( Pixel(Pixel, PixelY, PixelRGB, PixelHSI, PixelHSL, PixelHSV,
-      PixelCMYK, PixelYCbCr, PixelYA, PixelRGBA, PixelHSIA, PixelHSLA,
+  ( Pixel(Pixel, PixelX, PixelRGB, PixelHSI, PixelHSL, PixelHSV,
+      PixelCMYK, PixelYCbCr, PixelXA, PixelRGBA, PixelHSIA, PixelHSLA,
       PixelHSVA, PixelCMYKA, PixelYCbCrA)
   , liftPixel
   , pixelColor
@@ -34,9 +34,9 @@ import Graphics.Pixel.Internal
 -- | Constructor for a grayscale pixel with single channel.
 --
 -- @since 0.1.0
-pattern PixelY :: e -> Pixel Y e
-pattern PixelY y = Pixel (ColorY y)
-{-# COMPLETE PixelY #-}
+pattern PixelX :: e -> Pixel X e
+pattern PixelX y = Pixel (ColorX y)
+{-# COMPLETE PixelX #-}
 
 -- | Constructor for a pixel with @RGB@ color model.
 --
@@ -84,9 +84,9 @@ pattern PixelYCbCr y cb cr = Pixel (ColorYCbCr y cb cr)
 -- | Constructor for a grayscale pixel with a transparency channel.
 --
 -- @since 0.1.0
-pattern PixelYA :: e -> e -> Pixel (Alpha Y) e
-pattern PixelYA y a = Pixel (Alpha (ColorY y) a)
-{-# COMPLETE PixelYA #-}
+pattern PixelXA :: e -> e -> Pixel (Alpha X) e
+pattern PixelXA y a = Pixel (Alpha (ColorX y) a)
+{-# COMPLETE PixelXA #-}
 
 -- | Constructor for a pixel with @RGB@ color model and Alpha channel.
 --

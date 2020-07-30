@@ -17,8 +17,8 @@ module Graphics.Color.Model
   , dropAlpha
   , modifyAlpha
   , modifyOpaque
-  -- * Y
-  , module Graphics.Color.Model.Y
+  -- * X
+  , module Graphics.Color.Model.X
   -- * RGB
   , module Graphics.Color.Model.RGB
   -- * HSI
@@ -37,13 +37,13 @@ module Graphics.Color.Model
   , module Graphics.Color.Algebra.Elevator
   ) where
 
+import Graphics.Color.Algebra.Binary
+import Graphics.Color.Algebra.Elevator
 import Graphics.Color.Model.CMYK
 import Graphics.Color.Model.HSI
 import Graphics.Color.Model.HSL
 import Graphics.Color.Model.HSV
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
-import Graphics.Color.Model.Y
+import Graphics.Color.Model.X
 import Graphics.Color.Model.YCbCr
-import Graphics.Color.Algebra.Binary
-import Graphics.Color.Algebra.Elevator

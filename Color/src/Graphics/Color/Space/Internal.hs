@@ -67,7 +67,7 @@ import Foreign.Storable
 import Graphics.Color.Algebra.Binary
 import Graphics.Color.Algebra.Elevator
 import Graphics.Color.Model.Internal
-import qualified Graphics.Color.Model.Y as CM
+import qualified Graphics.Color.Model.X as CM
 import Data.Typeable
 import Data.Coerce
 import GHC.TypeNats
@@ -432,16 +432,16 @@ instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
 data Y (i :: k)
 
 -- | Luminance `Y`
-newtype instance Color (Y i) e = Luminance (CM.Color CM.Y e)
+newtype instance Color (Y i) e = Luminance (CM.Color CM.X e)
 
 -- | Constructor for @Y@ with alpha channel.
 pattern Y :: e -> Color (Y i) e
-pattern Y y = Luminance (CM.Y y)
+pattern Y y = Luminance (CM.X y)
 {-# COMPLETE Y #-}
 
 -- | Constructor for @Y@ with alpha channel.
 pattern YA :: e -> e -> Color (Alpha (Y i)) e
-pattern YA y a = Alpha (Luminance (CM.Y y)) a
+pattern YA y a = Alpha (Luminance (CM.X y)) a
 {-# COMPLETE YA #-}
 
 -- | `Y` - relative luminance of a color space
@@ -475,7 +475,7 @@ instance (Illuminant i, Elevator e) => ColorModel (Y i) e where
 
 -- | CIE1931 `XYZ` color space
 instance (Illuminant i, Elevator e) => ColorSpace (Y i) i e where
-  type BaseModel (Y i) = CM.Y
+  type BaseModel (Y i) = CM.X
   toBaseSpace = id
   fromBaseSpace = id
   luminance = fmap toRealFloat

@@ -79,7 +79,7 @@ library
                      , Graphics.Color.Model.HSI
                      , Graphics.Color.Model.HSL
                      , Graphics.Color.Model.HSV
-                     , Graphics.Color.Model.Y
+                     , Graphics.Color.Model.X
                      , Graphics.Color.Model.YCbCr
                      , Graphics.Color.Space.Internal
                      , Graphics.Color.Space.RGB.Internal
