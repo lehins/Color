@@ -23,7 +23,7 @@ module Graphics.Color.Model.HSV
   , pattern ColorHSV
   , pattern ColorHSVA
   , pattern ColorH360SV
-  , Color
+  , Color(..)
   , ColorModel(..)
   , hc2rgb
   , hsv2rgb

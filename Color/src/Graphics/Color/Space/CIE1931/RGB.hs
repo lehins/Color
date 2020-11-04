@@ -74,6 +74,10 @@ instance (Typeable l, Elevator e) => ColorSpace (CIERGB l) 'E e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLinearLuminance . castLinearity . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = toBaseModel . fmap fromDouble . luminance
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = castLinearity (rgbLinearApplyGrayscale (castLinearity c) f)
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgbLinear2xyz . fmap toRealFloat . castLinearity
   {-# INLINE toColorXYZ #-}
   fromColorXYZ xyz = castLinearity (fromRealFloat <$> xyz2rgbLinear @CIERGB xyz)
@@ -94,4 +98,4 @@ instance RedGreenBlue CIERGB 'E where
 -- @since 0.2.0
 castLinearity :: Color (CIERGB l') e -> Color (CIERGB l) e
 castLinearity = coerce
-
+{-# INLINE castLinearity #-}

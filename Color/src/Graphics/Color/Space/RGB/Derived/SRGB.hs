@@ -21,6 +21,7 @@ module Graphics.Color.Space.RGB.Derived.SRGB
   ( SRGB
   ) where
 
+import Data.Coerce
 import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
@@ -29,7 +30,7 @@ import Graphics.Color.Space.Internal
 import Graphics.Color.Space.RGB.Internal
 import Graphics.Color.Space.RGB.Luma
 import qualified Graphics.Color.Space.RGB.SRGB as SRGB
-
+import Graphics.Color.Space.RGB.ITU.Rec601 (applyGrayscaleRec601)
 
 -- | The most common @sRGB@ color space with an arbitrary illuminant
 data SRGB (i :: k) (l :: Linearity)
@@ -73,6 +74,10 @@ instance (Illuminant i, Elevator e) => ColorSpace (SRGB i 'Linear) i e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLinearLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgbLinear2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
@@ -88,6 +93,10 @@ instance (Illuminant i, Elevator e) => ColorSpace (SRGB i 'NonLinear) i e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = fmap fromDouble . coerce . rgbLuma @_ @_ @_ @Double
+  {-# INLINE grayscale #-}
+  applyGrayscale = applyGrayscaleRec601
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb
