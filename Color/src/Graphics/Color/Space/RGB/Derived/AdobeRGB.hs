@@ -72,6 +72,10 @@ instance (Illuminant i, Elevator e) => ColorSpace (AdobeRGB i 'Linear) i e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLinearLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgbLinear2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
@@ -86,6 +90,10 @@ instance (Illuminant i, Elevator e) => ColorSpace (AdobeRGB i 'NonLinear) i e wh
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbNonLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbNonLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

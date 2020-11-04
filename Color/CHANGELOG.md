@@ -1,5 +1,9 @@
 # Changelog for Color
 
+## 0.3.4
+
+* Addition of: `toGrayscale`, `applyGrayscale` and `replaceGrayscale`.
+
 ## 0.3.3
 
 Addition of `SVG` colors
