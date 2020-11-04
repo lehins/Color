@@ -23,7 +23,7 @@ module Graphics.Color.Model.HSI
   , pattern ColorHSI
   , pattern ColorHSIA
   , pattern ColorH360SI
-  , Color
+  , Color(..)
   , ColorModel(..)
   , hsi2rgb
   , rgb2hsi

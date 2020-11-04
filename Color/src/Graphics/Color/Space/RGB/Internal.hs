@@ -39,6 +39,10 @@ module Graphics.Color.Space.RGB.Internal
   , xyz2rgbLinear
   , rgbLuminance
   , rgbLinearLuminance
+  , rgbLinearGrayscale
+  , rgbLinearApplyGrayscale
+  , rgbNonLinearGrayscale
+  , rgbNonLinearApplyGrayscale
   , NPM(..)
   , npmApply
   , npmDerive
@@ -219,6 +223,44 @@ rgbLinearLuminance px =
   Y (m3x3row1 (unNPM (npm :: NPM cs e)) `dotProduct` coerce (unColorRGB px))
 {-# INLINE rgbLinearLuminance #-}
 
+rgbLinearGrayscale ::
+     forall cs i e. (ColorSpace (cs 'Linear) i e)
+  => Color (cs 'Linear) e
+  -> Color X e
+rgbLinearGrayscale = ColorX . fromDouble . unY . luminance
+{-# INLINE rgbLinearGrayscale #-}
+
+
+rgbLinearApplyGrayscale ::
+     forall cs i e. (ColorSpace (cs 'Linear) i e)
+  => Color (cs 'Linear) e
+  -> (Color X e -> Color X e)
+  -> Color (cs 'Linear) e
+rgbLinearApplyGrayscale rgb f =
+  case toColorXYZ rgb of
+    ColorXYZ x y z ->
+      fromColorXYZ (ColorXYZ x (toDouble (coerce (f (X (fromDouble y))) :: e)) z)
+{-# INLINE rgbLinearApplyGrayscale #-}
+
+
+rgbNonLinearApplyGrayscale ::
+     forall cs i e. (RedGreenBlue cs i, ColorSpace (cs 'NonLinear) i e)
+  => Color (cs 'NonLinear) e
+  -> (Color X e -> Color X e)
+  -> Color (cs 'NonLinear) e
+rgbNonLinearApplyGrayscale rgb f =
+  case toColorXYZ rgb of
+    ColorXYZ x y z ->
+      let y' = itransfer @_ @cs (toDouble (coerce (f (X (fromDouble (transfer @_ @cs y)))) :: e))
+      in fromColorXYZ (ColorXYZ x y' z)
+{-# INLINE rgbNonLinearApplyGrayscale #-}
+
+rgbNonLinearGrayscale ::
+     forall cs i e. (RedGreenBlue cs i, ColorSpace (cs 'NonLinear) i e)
+  => Color (cs 'NonLinear) e
+  -> Color X e
+rgbNonLinearGrayscale = ColorX . fromDouble . (transfer @_ @cs) . unY . luminance
+{-# INLINE rgbNonLinearGrayscale #-}
 
 rgbLuminance ::
      (RedGreenBlue cs i, ColorSpace (cs 'Linear) i e, RealFloat e)

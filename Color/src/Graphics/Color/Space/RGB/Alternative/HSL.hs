@@ -82,9 +82,10 @@ pattern ColorH360SL h s i <- ColorHSL ((* 360) -> h) s i where
 -- | `HSL` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel cs e => ColorModel (HSL cs) e where
   type Components (HSL cs) e = (e, e, e)
-  toComponents = toComponents . coerce
+  toComponents =
+    toComponents . (coerce :: Color (HSL cs) e -> Color CM.HSL e)
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = (coerce :: Color CM.HSL e -> Color (HSL cs) e) . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName _ = ("HSL-" ++) . showsColorModelName (Proxy :: Proxy (Color cs e))
 
@@ -93,9 +94,13 @@ instance ColorModel cs e => ColorModel (HSL cs) e where
 instance (ColorSpace (cs l) i e, RedGreenBlue cs i) => ColorSpace (HSL (cs l)) i e where
   type BaseModel (HSL (cs l)) = CM.HSL
   type BaseSpace (HSL (cs l)) = cs l
-  toBaseSpace = mkColorRGB . fmap fromDouble . CM.hsl2rgb . fmap toDouble . coerce
+  toBaseSpace = mkColorRGB . fmap fromDouble . CM.hsl2rgb . fmap toDouble . toBaseModel
   {-# INLINE toBaseSpace #-}
-  fromBaseSpace = coerce . fmap fromDouble . CM.rgb2hsl . fmap toDouble . unColorRGB
+  fromBaseSpace = fromBaseModel . fmap fromDouble . CM.rgb2hsl . fmap toDouble . unColorRGB
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale (coerce -> V3 _ _ l) = X l
+  {-# INLINE grayscale #-}
+  replaceGrayscale (coerce -> V3 h s _) (X l) = coerce (V3 h s l)
+  {-# INLINE replaceGrayscale #-}

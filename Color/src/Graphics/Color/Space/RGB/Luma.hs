@@ -111,6 +111,13 @@ instance ( Typeable cs
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = fmap fromDouble . rgbLuma
   {-# INLINE fromBaseSpace #-}
+  grayscale = coerce
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = coerce (f (coerce c))
+  {-# INLINE applyGrayscale #-}
+  replaceGrayscale _ = coerce
+  {-# INLINE replaceGrayscale #-}
+  -- luminance = luminance . toBaseLinearSpace
   luminance = luminance . fmap (fromDouble :: Double -> e) . toBaseLinearSpace . fmap toDouble
   {-# INLINE luminance #-}
   toColorXYZ = toColorXYZ . fmap (fromDouble :: Double -> e) . toBaseLinearSpace . fmap toDouble

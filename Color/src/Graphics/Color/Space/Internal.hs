@@ -51,6 +51,7 @@ module Graphics.Color.Space.Internal
   , whitePointTristimulus
   , CCT(..)
   , Y
+  , unY
   , pattern Y
   , pattern YA
   , XYZ
@@ -62,13 +63,14 @@ module Graphics.Color.Space.Internal
   , showsColorModel
   , module Graphics.Color.Algebra.Binary
   , module Graphics.Color.Algebra.Elevator
+  , module Graphics.Color.Model.X
   ) where
 
 import Foreign.Storable
 import Graphics.Color.Algebra.Binary
 import Graphics.Color.Algebra.Elevator
 import Graphics.Color.Model.Internal
-import qualified Graphics.Color.Model.X as CM
+import Graphics.Color.Model.X
 import Data.Typeable
 import Data.Coerce
 import GHC.TypeLits
@@ -76,6 +78,7 @@ import Data.Kind
 
 class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
   ColorSpace cs (i :: k) e | cs -> i where
+  {-# MINIMAL toBaseSpace, fromBaseSpace, luminance, grayscale, (replaceGrayscale|applyGrayscale) #-}
 
   type BaseModel cs :: Type
 
@@ -97,10 +100,43 @@ class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
   toBaseSpace :: ColorSpace (BaseSpace cs) i e => Color cs e -> Color (BaseSpace cs) e
   fromBaseSpace :: ColorSpace (BaseSpace cs) i e => Color (BaseSpace cs) e -> Color cs e
 
-  -- | Get the relative luminance of a color
+  -- | Get the relative luminance of a color. This is different from `grayscale` in that
+  -- it will produce achromatic color that is no longer dependent on the source color
   --
   -- @since 0.1.0
   luminance :: (Elevator a, RealFloat a) => Color cs e -> Color (Y i) a
+
+  -- | Drop chromatic information and get only the grayscale information from the
+  -- color. Without knowledge of the source color the produced value is inconsequential.
+  --
+  -- @since 0.3.1
+  grayscale :: Color cs e -> Color X e
+
+  -- | Replace the grayscale information, leaving the chromatic portion of the coloer
+  -- intact.
+  --
+  -- Property that this function must obide:
+  --
+  -- > replaceGrayscale c y = applyGrayscale c (const y)
+  --
+  -- @since 0.3.1
+  replaceGrayscale :: Color cs e -> Color X e -> Color cs e
+  replaceGrayscale c y = applyGrayscale c (const y)
+  {-# INLINE replaceGrayscale #-}
+
+  -- | Apply a function to the grayscale portion of the color leaving chromaticity
+  -- intact. The meaning of "grayscale" is very much specific to the color space it is being
+  -- applied to.
+  --
+  -- Property that this function must obide:
+  --
+  -- > applyGrayscale c f = replaceGrayscale c (f (grayscale c))
+  --
+  -- @since 0.3.1
+  applyGrayscale :: Color cs e -> (Color X e -> Color X e) -> Color cs e
+  applyGrayscale c f = replaceGrayscale c (f (grayscale c))
+  {-# INLINE applyGrayscale #-}
+
 
   toColorXYZ :: (Elevator a, RealFloat a) => Color cs e -> Color (XYZ i) a
   default toColorXYZ ::
@@ -133,6 +169,10 @@ instance ( ColorSpace cs i e
   {-# INLINE fromColorXYZ #-}
   luminance = luminance . dropAlpha
   {-# INLINE luminance #-}
+  grayscale = grayscale . dropAlpha
+  {-# INLINE grayscale #-}
+  replaceGrayscale c x = modifyOpaque (`replaceGrayscale` x) c
+  {-# INLINE replaceGrayscale #-}
   toBaseSpace = modifyOpaque toBaseSpace
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = modifyOpaque fromBaseSpace
@@ -341,6 +381,10 @@ instance (Illuminant i, Elevator e) => ColorSpace (XYZ i) i e where
   fromBaseSpace = id
   luminance (ColorXYZ _ y _) = Y (toRealFloat y)
   {-# INLINE luminance #-}
+  grayscale (ColorXYZ _ y _) = X y
+  {-# INLINE grayscale #-}
+  replaceGrayscale (ColorXYZ x _ z) (X y) = ColorXYZ x y z
+  {-# INLINE replaceGrayscale #-}
   toColorXYZ (ColorXYZ x y z) = ColorXYZ (toRealFloat x) (toRealFloat y) (toRealFloat z)
   {-# INLINE toColorXYZ #-}
   fromColorXYZ (ColorXYZ x y z) = ColorXYZ (fromRealFloat x) (fromRealFloat y) (fromRealFloat z)
@@ -406,7 +450,7 @@ instance (Illuminant i, Elevator e) => ColorModel (CIExyY (i :: k)) e where
   showsColorModelName _ = showsType (Proxy :: Proxy (CIExyY i))
 
 -- | CIE xyY color space
-instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
+instance (Illuminant i, RealFloat e, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
   type BaseModel (CIExyY i) = CIExyY i
   toBaseModel = id
   fromBaseModel = id
@@ -414,6 +458,14 @@ instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
   fromBaseSpace = id
   luminance _ = Y 1
   {-# INLINE luminance #-}
+  grayscale _ = X 1
+  {-# INLINE grayscale #-}
+  replaceGrayscale xy y =
+    fromColorXYZ (replaceGrayscale (toColorXYZ xy) y :: Color (XYZ i) e)
+  {-# INLINE replaceGrayscale #-}
+  applyGrayscale xy f =
+    fromColorXYZ (applyGrayscale (toColorXYZ xy) f :: Color (XYZ i) e)
+  {-# INLINE applyGrayscale #-}
   toColorXYZ xy = ColorXYZ (x / y) 1 ((1 - x - y) / y)
     where ColorCIExy x y = toRealFloat <$> xy
   {-# INLINE toColorXYZ #-}
@@ -424,7 +476,6 @@ instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
   {-# INLINE fromColorXYZ #-}
 
 
-
 -------------
 --- Y ---
 -------------
@@ -433,16 +484,21 @@ instance (Illuminant i, Elevator e) => ColorSpace (CIExyY (i :: k)) i e where
 data Y (i :: k)
 
 -- | Luminance `Y`
-newtype instance Color (Y i) e = Luminance (CM.Color CM.X e)
+newtype instance Color (Y i) e = Luminance (Color X e)
+
+-- | Get the luminance value
+unY :: Color (Y i) e -> e
+unY = coerce
+{-# INLINE unY #-}
 
 -- | Constructor for @Y@ with alpha channel.
 pattern Y :: e -> Color (Y i) e
-pattern Y y = Luminance (CM.X y)
+pattern Y y = Luminance (X y)
 {-# COMPLETE Y #-}
 
 -- | Constructor for @Y@ with alpha channel.
 pattern YA :: e -> e -> Color (Alpha (Y i)) e
-pattern YA y a = Alpha (Luminance (CM.X y)) a
+pattern YA y a = Alpha (Luminance (X y)) a
 {-# COMPLETE YA #-}
 
 -- | `Y` - relative luminance of a color space
@@ -476,16 +532,22 @@ instance (Illuminant i, Elevator e) => ColorModel (Y i) e where
 
 -- | CIE1931 `XYZ` color space
 instance (Illuminant i, Elevator e) => ColorSpace (Y i) i e where
-  type BaseModel (Y i) = CM.X
+  type BaseModel (Y i) = X
   toBaseSpace = id
   fromBaseSpace = id
   luminance = fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = coerce
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = coerce (f (coerce c))
+  {-# INLINE applyGrayscale #-}
+  replaceGrayscale _ = coerce
+  {-# INLINE replaceGrayscale #-}
   toColorXYZ (Y y) = ColorXYZ 0 (toRealFloat y) 0
   {-# INLINE toColorXYZ #-}
   fromColorXYZ (ColorXYZ _ y _) = Y (fromRealFloat y)
   {-# INLINE fromColorXYZ #-}
 
 {-# RULES
-"luminance :: RealFloat a => Color Y a -> Color Y a" luminance = id
+"luminance :: RealFloat a => Color (Y i) a -> Color (Y i) a" luminance = id
  #-}

@@ -7,6 +7,7 @@
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -36,6 +37,7 @@ import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space.Internal
 import Graphics.Color.Space.RGB.Internal
+import Graphics.Color.Space.RGB.ITU.Rec601 (applyGrayscaleRec601)
 import Graphics.Color.Space.RGB.ITU.Rec709 (BT709, D65)
 import Graphics.Color.Space.RGB.Luma
 
@@ -136,6 +138,10 @@ instance Elevator e => ColorSpace (SRGB 'Linear) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLinearLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgbLinear2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
@@ -151,6 +157,10 @@ instance Elevator e => ColorSpace (SRGB 'NonLinear) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = fmap fromDouble . coerce . rgbLuma @_ @_ @_ @Double
+  {-# INLINE grayscale #-}
+  applyGrayscale = applyGrayscaleRec601
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

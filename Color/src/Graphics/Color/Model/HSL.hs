@@ -23,7 +23,7 @@ module Graphics.Color.Model.HSL
   , pattern ColorHSL
   , pattern ColorHSLA
   , pattern ColorH360SL
-  , Color
+  , Color(..)
   , ColorModel(..)
   , hc2rgb
   , hsl2rgb

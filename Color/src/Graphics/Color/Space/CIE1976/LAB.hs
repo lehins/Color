@@ -91,6 +91,10 @@ instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (LAB (i :: k)) i 
   {-# INLINE fromBaseSpace #-}
   luminance (ColorLAB l' _ _) = Y (ift (scaleLightness l'))
   {-# INLINE luminance #-}
+  grayscale (ColorLAB l' _ _) = X l'
+  {-# INLINE grayscale #-}
+  replaceGrayscale (ColorLAB _ a' b') (X l') = ColorLAB l' a' b'
+  {-# INLINE replaceGrayscale #-}
   toColorXYZ = lab2xyz
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = xyz2lab

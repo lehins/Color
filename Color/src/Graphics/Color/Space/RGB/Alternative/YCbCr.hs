@@ -11,6 +11,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Alternative.YCbCr
 -- Copyright   : (c) Alexey Kuleshevich 2019-2020
@@ -91,6 +92,10 @@ instance Elevator e => ColorSpace (Y'CbCr SRGB) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale (coerce -> V3 y' _ _) = X y'
+  {-# INLINE grayscale #-}
+  replaceGrayscale (coerce -> V3 _ cb cr) (X y') = coerce (V3 y' cb cr)
+  {-# INLINE replaceGrayscale #-}
 
 instance Elevator e => ColorSpace (Y'CbCr BT601_525) D65 e where
   type BaseModel (Y'CbCr BT601_525) = CM.YCbCr
@@ -101,6 +106,10 @@ instance Elevator e => ColorSpace (Y'CbCr BT601_525) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale (coerce -> V3 y' _ _) = X y'
+  {-# INLINE grayscale #-}
+  replaceGrayscale (coerce -> V3 _ cb cr) (X y') = coerce (V3 y' cb cr)
+  {-# INLINE replaceGrayscale #-}
 
 instance Elevator e => ColorSpace (Y'CbCr BT601_625) D65 e where
   type BaseModel (Y'CbCr BT601_625) = CM.YCbCr
@@ -111,6 +120,10 @@ instance Elevator e => ColorSpace (Y'CbCr BT601_625) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale (coerce -> V3 y' _ _) = X y'
+  {-# INLINE grayscale #-}
+  replaceGrayscale (coerce -> V3 _ cb cr) (X y') = coerce (V3 y' cb cr)
+  {-# INLINE replaceGrayscale #-}
 
 instance Elevator e => ColorSpace (Y'CbCr BT709) D65 e where
   type BaseModel (Y'CbCr BT709) = CM.YCbCr
@@ -121,6 +134,10 @@ instance Elevator e => ColorSpace (Y'CbCr BT709) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale (coerce -> V3 y' _ _) = X y'
+  {-# INLINE grayscale #-}
+  replaceGrayscale (coerce -> V3 _ cb cr) (X y') = coerce (V3 y' cb cr)
+  {-# INLINE replaceGrayscale #-}
 
 instance (Typeable cs, Luma (cs i), ColorSpace (cs i 'NonLinear) i e, RedGreenBlue (cs i) i) =>
          ColorSpace (Y'CbCr (cs i)) i e where
@@ -132,6 +149,10 @@ instance (Typeable cs, Luma (cs i), ColorSpace (cs i 'NonLinear) i e, RedGreenBl
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale (coerce -> V3 y' _ _) = X y'
+  {-# INLINE grayscale #-}
+  replaceGrayscale (coerce -> V3 _ cb cr) (X y') = coerce (V3 y' cb cr)
+  {-# INLINE replaceGrayscale #-}
 
 
 -- | This conversion is only correct for sRGB and Rec601. Source: ITU-T Rec. T.871
@@ -139,13 +160,7 @@ instance (Typeable cs, Luma (cs i), ColorSpace (cs i 'NonLinear) i e, RedGreenBl
 -- @since 0.1.3
 ycbcr2srgb ::
      (RedGreenBlue cs i, RealFloat e) => Color (Y'CbCr cs) e -> Color (cs 'NonLinear) e
-ycbcr2srgb (ColorY'CbCr y' cb cr) = ColorRGB r' g' b'
-  where
-    !cb05 = cb - 0.5
-    !cr05 = cr - 0.5
-    !r' = clamp01 (y'                   + 1.402    * cr05)
-    !g' = clamp01 (y' - 0.344136 * cb05 - 0.714136 * cr05)
-    !b' = clamp01 (y' + 1.772    * cb05)
+ycbcr2srgb = ycbcrToRec601 . coerce
 {-# INLINE ycbcr2srgb #-}
 
 -- | This conversion is only correct for sRGB and Rec601. Source: ITU-T Rec. T.871
@@ -153,11 +168,7 @@ ycbcr2srgb (ColorY'CbCr y' cb cr) = ColorRGB r' g' b'
 -- @since 0.1.3
 srgb2ycbcr ::
      (RedGreenBlue cs i, RealFloat e) => Color (cs 'NonLinear) e -> Color (Y'CbCr cs) e
-srgb2ycbcr (ColorRGB r' g' b') = ColorY'CbCr y' cb cr
-  where
-    !y' =          0.299 * r' +    0.587 * g' +    0.114 * b'
-    !cb = 0.5 - 0.168736 * r' - 0.331264 * g' +      0.5 * b'
-    !cr = 0.5 +      0.5 * r' - 0.418688 * g' - 0.081312 * b'
+srgb2ycbcr = coerce . rec601ToYcbcr
 {-# INLINE srgb2ycbcr #-}
 
 -- | Convert any RGB color space that has `Luma` specified to `Y'CbCr`
