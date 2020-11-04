@@ -36,17 +36,23 @@ import Graphics.Color.Space.RGB.ITU.Rec601 (D65)
 
 
 -- | A very common [AdobeRGB (1998)](https://en.wikipedia.org/wiki/Adobe_RGB_color_space)
--- color space with the default `D65` illuminant
+-- color space with:
+--
+-- * `D65` illuminant
+--
+-- * Transfer function:
 --
 -- \[
 -- \gamma(u) = u^{2.19921875} = u^\frac{563}{256}
 -- \]
 --
+-- * Inverse transfer function:
+--
 -- \[
 -- \gamma^{-1}(u) = u^\frac{1}{2.19921875} = u^\frac{256}{563}
 -- \]
 --
--- AdobeRGB normalized primary matrix. This is a helper definition, use `npm` instead.
+-- * Normalized primary matrix:
 --
 -- >>> :set -XDataKinds
 -- >>> import Graphics.Color.Space.RGB.AdobeRGB
@@ -55,7 +61,7 @@ import Graphics.Color.Space.RGB.ITU.Rec601 (D65)
 -- , [ 0.29734000, 0.62736000, 0.07529000 ]
 -- , [ 0.02703000, 0.07069000, 0.99134000 ] ]
 --
--- AdobeRGB inverse normalized primary matrix. This is a helper definition, use `inpm` instead.
+-- * Inverse normalized primary matrix:
 --
 -- >>> :set -XDataKinds
 -- >>> import Graphics.Color.Space.RGB.AdobeRGB

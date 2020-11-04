@@ -39,14 +39,12 @@ import Graphics.Color.Space.RGB.Internal
 import Graphics.Color.Space.RGB.ITU.Rec709 (BT709, D65)
 import Graphics.Color.Space.RGB.Luma
 
--- | The most common [sRGB](https://en.wikipedia.org/wiki/SRGB) color space with the
--- default `D65` illuminant.
+-- | The most common [sRGB](https://en.wikipedia.org/wiki/SRGB) color space, which is
+-- defined with:
 --
--- sRGB is defined with:
+-- * `D65` illuminant
 --
--- * `D50` illuminant
---
--- * transfer function
+-- * Transfer function:
 --
 -- \[
 -- \gamma(u) = \begin{cases}
