@@ -94,13 +94,15 @@ class Illuminant i => RedGreenBlue (cs :: Linearity -> Type) (i :: k) | cs -> i 
     Coercible (Color (cs l) e) (Color CM.RGB e) => Color (cs l) e -> Color CM.RGB e
   unColorRGB = coerce
 
--- | This functiona can allow for completely mismatched in color space spec. Make sure you
--- knwo what you are doing when using it.
+-- | This function allows for creating a completely mismatched color space spec. Make
+-- sure you know what you are doing, if you need to use it.
 --
 -- @since 0.3.0
 coerceGamut :: Gamut cs' i' e -> Gamut cs i e
 coerceGamut (Gamut r g b) = Gamut (coerce r) (coerce g) (coerce b)
 
+
+-- | RGB color space gamut specification.
 data Gamut (cs :: Linearity -> Type) i e = Gamut
   { gamutRedPrimary   :: !(Primary i e)
   , gamutGreenPrimary :: !(Primary i e)
