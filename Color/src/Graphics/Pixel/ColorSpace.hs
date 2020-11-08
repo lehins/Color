@@ -29,6 +29,10 @@ module Graphics.Pixel.ColorSpace
   , fromPixelXYZ
   , toPixelBaseSpace
   , fromPixelBaseSpace
+  -- * Grayscale
+  , grayscalePixel
+  , applyGrayscalePixel
+  , replaceGrayscalePixel
   -- ** Color model
   , toPixelBaseModel
   , fromPixelBaseModel
@@ -320,13 +324,37 @@ toPixelBaseSpace ::
 toPixelBaseSpace = liftPixel toBaseSpace
 {-# INLINE toPixelBaseSpace #-}
 
--- | Covert a color space of a pixel into it's alternative representation. Example AdobeRGB to HSI.
+-- | Covert a color space of a pixel into its alternative representation. Example AdobeRGB to HSI.
 --
 -- @since 0.1.0
 fromPixelBaseSpace ::
      (ColorSpace cs i e, bcs ~ BaseSpace cs, ColorSpace bcs i e) => Pixel bcs e -> Pixel cs e
 fromPixelBaseSpace = liftPixel fromBaseSpace
 {-# INLINE fromPixelBaseSpace #-}
+
+-- | Drop chroma information from a pixel. Same as `grayscale` for `Color`
+--
+-- @since 0.4.0
+grayscalePixel :: ColorSpace cs i e => Pixel cs e -> Pixel X e
+grayscalePixel = liftPixel grayscale
+{-# INLINE grayscalePixel #-}
+
+
+-- | Apply a function to grayscale information of a pixel leaving chroma untouched. Same
+-- as `applyGrayscale` for `Color`
+--
+-- @since 0.4.0
+applyGrayscalePixel :: ColorSpace cs i e => Pixel cs e -> (Pixel X e -> Pixel X e) -> Pixel cs e
+applyGrayscalePixel c f = coerce (applyGrayscale (coerce c) (coerce f))
+{-# INLINE applyGrayscalePixel #-}
+
+-- | Replace grayscale information in a pixel leaving chroma untouched. Same as
+-- `replaceGrayscale` for `Color`
+--
+-- @since 0.4.0
+replaceGrayscalePixel :: ColorSpace cs i e => Pixel cs e -> Pixel X e -> Pixel cs e
+replaceGrayscalePixel c e = coerce (replaceGrayscale (coerce c) (coerce e))
+{-# INLINE replaceGrayscalePixel #-}
 
 
 -- -- | Constructor for a pixel in @sRGB@ color space with 8-bits per channel
