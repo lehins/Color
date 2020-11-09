@@ -76,6 +76,11 @@ pattern ColorY'CbCrA y cb cr a = Alpha (Y'CbCr (CM.ColorYCbCr y cb cr)) a
 
 instance (Typeable cs, ColorModel (cs 'NonLinear) e, Elevator e) => ColorModel (Y'CbCr cs) e where
   type Components (Y'CbCr cs) e = (e, e, e)
+  type ChannelCount (Y'CbCr cs) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.YCbCr e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.YCbCr e))
   toComponents (ColorY'CbCr y cb cr) = (y, cb, cr)
   {-# INLINE toComponents #-}
   fromComponents (y, cb, cr) = ColorY'CbCr y cb cr

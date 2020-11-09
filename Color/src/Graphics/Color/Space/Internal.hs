@@ -66,15 +66,16 @@ module Graphics.Color.Space.Internal
   , module Graphics.Color.Model.X
   ) where
 
+import Data.Coerce
+import Data.Kind
+import Data.List.NonEmpty
+import Data.Typeable
 import Foreign.Storable
+import GHC.TypeNats
 import Graphics.Color.Algebra.Binary
 import Graphics.Color.Algebra.Elevator
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.X
-import Data.Typeable
-import Data.Coerce
-import GHC.TypeLits
-import Data.Kind
 
 class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
   ColorSpace cs (i :: k) e | cs -> i where
@@ -367,6 +368,11 @@ instance (Illuminant i, Elevator e) => Show (Color (XYZ (i :: k)) e) where
 -- | CIE1931 `XYZ` color space
 instance (Illuminant i, Elevator e) => ColorModel (XYZ (i :: k)) e where
   type Components (XYZ i) e = (e, e, e)
+  type ChannelCount (XYZ i) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "X" :| ["Y", "Z"]
+  channelColors _ = V3 0xff 0xff 0xff :| [V3 0x80 0x80 0x80, V3 0x2f 0x4f 0x4f]
   toComponents (ColorXYZ x y z) = (x, y, z)
   {-# INLINE toComponents #-}
   fromComponents (x, y, z) = ColorXYZ x y z
@@ -443,6 +449,11 @@ instance (Illuminant i, Elevator e) => Show (Color (CIExyY (i :: k)) e) where
 -- | CIE xyY color space
 instance (Illuminant i, Elevator e) => ColorModel (CIExyY (i :: k)) e where
   type Components (CIExyY i) e = (e, e)
+  type ChannelCount (CIExyY i) = 2
+  channelCount _ = 2
+  {-# INLINE channelCount #-}
+  channelNames _ = "x" :| ["y"]
+  channelColors _ = V3 0xbd 0xb7 0x6b :| [V3 0xf0 0xe6 0x8c]
   toComponents (CIExyY (V2 x y)) = (x, y)
   {-# INLINE toComponents #-}
   fromComponents (x, y) = CIExyY (V2 x y)
@@ -524,6 +535,11 @@ instance (Illuminant i, Elevator e) => Show (Color (Y i) e) where
 -- | `Y` - relative luminance of a color space
 instance (Illuminant i, Elevator e) => ColorModel (Y i) e where
   type Components (Y i) e = e
+  type ChannelCount (Y i) = 1
+  channelCount _ = 1
+  {-# INLINE channelCount #-}
+  channelNames _ = "Luminance" :| []
+  channelColors _ = V3 0x80 0x80 0x80 :| []
   toComponents = coerce
   {-# INLINE toComponents #-}
   fromComponents = coerce

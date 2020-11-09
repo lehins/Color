@@ -16,7 +16,7 @@
 -- Portability : non-portable
 --
 module Graphics.Pixel.ColorSpace
-  ( Pixel(Pixel, PixelY, PixelXYZ, PixelLAB, PixelRGB, PixelHSI, PixelHSL, PixelHSV,
+  ( Pixel(Pixel, PixelX, PixelY, PixelXYZ, PixelLAB, PixelRGB, PixelHSI, PixelHSL, PixelHSV,
       PixelCMYK, PixelY'CbCr, PixelY', PixelYA, PixelXYZA, PixelLABA, PixelRGBA, PixelHSIA, PixelHSLA,
       PixelHSVA, PixelCMYKA, PixelY'CbCrA, PixelY'A)
   , liftPixel
@@ -61,6 +61,7 @@ import Graphics.Color.Adaptation.VonKries
 import Graphics.Color.Algebra.Binary
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space
+import Graphics.Pixel (pattern PixelX)
 import Graphics.Pixel.Internal
 
 -- | Convert a pixel from one color space to any other.

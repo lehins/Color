@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -30,6 +31,7 @@ module Graphics.Color.Model.HSL
   , rgb2hsl
   ) where
 
+import Data.List.NonEmpty
 import Foreign.Storable
 import Graphics.Color.Model.HSV (hc2rgb)
 import Graphics.Color.Model.Internal
@@ -86,6 +88,11 @@ instance Elevator e => Show (Color HSL e) where
 -- | `HSL` color model
 instance Elevator e => ColorModel HSL e where
   type Components HSL e = (e, e, e)
+  type ChannelCount HSL = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "Hue" :| ["Saturation", "Lightness"]
+  channelColors _ = V3 0x94 0x00 0xd3 :| [V3 0xff 0x8c 0x00, V3 0xaf 0xee 0xee]
   toComponents (ColorHSL h s l) = (h, s, l)
   {-# INLINE toComponents #-}
   fromComponents (h, s, l) = ColorHSL h s l

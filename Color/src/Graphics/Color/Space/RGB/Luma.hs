@@ -36,6 +36,7 @@ module Graphics.Color.Space.RGB.Luma
 
 import Data.Coerce
 import Data.Kind
+import Data.List.NonEmpty
 import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
@@ -92,6 +93,11 @@ instance (Typeable cs, Elevator e) => Show (Color (Y' cs) e) where
 -- | `Y'` - as a color model
 instance (Typeable cs, Elevator e) => ColorModel (Y' cs) e where
   type Components (Y' cs) e = e
+  type ChannelCount (Y' cs) = 1
+  channelCount _ = 1
+  {-# INLINE channelCount #-}
+  channelNames _ = "Luma" :| []
+  channelColors _ = V3 0x80 0x80 0x80 :| []
   toComponents (Y' y) = y
   {-# INLINE toComponents #-}
   fromComponents = Y'

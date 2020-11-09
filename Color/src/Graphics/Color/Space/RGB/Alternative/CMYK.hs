@@ -78,6 +78,11 @@ pattern ColorCMYKA c m y k a = Alpha (CMYK (CM.ColorCMYK c m y k)) a
 -- | `CMYK` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel cs e => ColorModel (CMYK cs) e where
   type Components (CMYK cs) e = (e, e, e, e)
+  type ChannelCount (CMYK cs) = 4
+  channelCount _ = 4
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.CMYK e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.CMYK e))
   toComponents = toComponents . coerce
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents

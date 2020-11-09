@@ -46,6 +46,7 @@ import Test.Hspec.QuickCheck
 import Test.HUnit (assertBool)
 import Test.Massiv.Array.Mutable
 import Test.QuickCheck
+import GHC.TypeLits
 
 instance (Random e, ColorModel cs e, Arbitrary (Color cs e)) => Arbitrary (Color (Alpha cs) e) where
   arbitrary = addAlpha <$> arbitrary <*> arbitraryElevator
@@ -218,6 +219,7 @@ colorModelSpec ::
      , Function (Components cs e)
      , CoArbitrary (Components cs e)
      , Arbitrary (Color cs e)
+     , KnownNat (ChannelCount cs)
      )
   => String
   -> Spec
@@ -225,6 +227,12 @@ colorModelSpec name =
   describe "ColorModel" $ do
     toFromComponentsSpec @cs @e
     it "Model Name" $ showsColorModelName (Proxy :: Proxy (Color cs e)) "" `shouldStartWith` name
+    it "ChannelCount" $ do
+      let px = Proxy :: Proxy (Color cs e)
+          count = channelCount px
+      count `shouldBe` fromInteger (natVal (Proxy :: Proxy (ChannelCount cs)))
+      length (channelNames px)  `shouldBe` count
+      length (channelColors px)  `shouldBe` count
     modifyMaxSuccess (`div` 10) $ describe "Array" $ do
       describe "Storable" $
         mutableSpec @S @Ix1 @(Color cs e)

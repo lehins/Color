@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -25,6 +26,7 @@ module Graphics.Color.Space.CIE1976.LAB
   , LAB
   ) where
 
+import Data.List.NonEmpty
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import Graphics.Color.Space.Internal
@@ -77,6 +79,14 @@ instance (Illuminant i, Elevator e) => Show (Color (LAB i) e) where
 -- | CIE1976 `LAB` color space
 instance (Illuminant i, Elevator e) => ColorModel (LAB i) e where
   type Components (LAB i) e = (e, e, e)
+  type ChannelCount (LAB i) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "L*" :| ["a*", "b*"]
+  channelColors _ = V3 0x80 0x80 0x80 :| -- gray
+                  [ V3 0x00 0x64 0x00    -- dark green
+                  , V3 0x00 0x00 0x8b    -- dark blue
+                  ]
   toComponents (ColorLAB l' a' b') = (l', a', b')
   {-# INLINE toComponents #-}
   fromComponents (l', a', b') = ColorLAB l' a' b'
