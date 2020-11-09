@@ -3,6 +3,7 @@
 ## 0.3.4
 
 * Addition of: `toGrayscale`, `applyGrayscale` and `replaceGrayscale`.
+* Addition of: `ChannelCount`, `channelCount`, `channelNames` and `channelColors`
 
 ## 0.3.3
 

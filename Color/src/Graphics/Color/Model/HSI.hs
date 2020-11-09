@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -29,6 +30,7 @@ module Graphics.Color.Model.HSI
   , rgb2hsi
   ) where
 
+import Data.List.NonEmpty
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
@@ -85,6 +87,11 @@ instance Elevator e => Show (Color HSI e) where
 -- | `HSI` color model
 instance Elevator e => ColorModel HSI e where
   type Components HSI e = (e, e, e)
+  type ChannelCount HSI = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "Hue" :| ["Saturation", "Intensity"]
+  channelColors _ = V3 0x94 0x00 0xd3 :| [V3 0xff 0x8c 0x00, V3 0x00 0xce 0xd1]
   toComponents (ColorHSI h s i) = (h, s, i)
   {-# INLINE toComponents #-}
   fromComponents (h, s, i) = ColorHSI h s i

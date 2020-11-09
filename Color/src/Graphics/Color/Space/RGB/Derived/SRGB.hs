@@ -60,6 +60,11 @@ instance (Typeable l, Illuminant i, Elevator e) => Show (Color (SRGB (i :: k) l)
 -- | `SRGB` color space (derived)
 instance (Typeable l, Illuminant i, Elevator e) => ColorModel (SRGB (i :: k) l) e where
   type Components (SRGB i l) e = (e, e, e)
+  type ChannelCount (SRGB i l) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.RGB e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.RGB e))
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents

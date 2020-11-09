@@ -83,8 +83,12 @@ pattern ColorH360SI h s i <- ColorHSI ((* 360) -> h) s i where
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel cs e => ColorModel (HSI cs) e where
   type Components (HSI cs) e = (e, e, e)
-  toComponents =
-    toComponents . (coerce :: Color (HSI cs) e -> Color CM.HSI e)
+  type ChannelCount (HSI cs) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.HSI e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.HSI e))
+  toComponents = toComponents . (coerce :: Color (HSI cs) e -> Color CM.HSI e)
   {-# INLINE toComponents #-}
   fromComponents = (coerce :: Color CM.HSI e -> Color (HSI cs) e) . fromComponents
   {-# INLINE fromComponents #-}
