@@ -75,6 +75,11 @@ instance  (Typeable l, Elevator e) => Show (Color (BT601_525 l) e) where
 -- | ITU-R BT.601 (525) color space
 instance  (Typeable l, Elevator e) => ColorModel (BT601_525 l) e where
   type Components (BT601_525 l) e = (e, e, e)
+  type ChannelCount (BT601_525 l) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.RGB e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.RGB e))
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
@@ -158,6 +163,11 @@ instance (Typeable l, Elevator e) => Show (Color (BT601_625 l) e) where
 -- | ITU-R BT.601 (625) color space
 instance (Typeable l, Elevator e) => ColorModel (BT601_625 l) e where
   type Components (BT601_625 l) e = (e, e, e)
+  type ChannelCount (BT601_625 l) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.RGB e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.RGB e))
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents

@@ -58,6 +58,11 @@ instance (Typeable l, Illuminant i, Elevator e) => Show (Color (AdobeRGB (i :: k
 -- | `AdobeRGB` color space (derived)
 instance (Typeable l, Illuminant i, Elevator e) => ColorModel (AdobeRGB (i :: k) l) e where
   type Components (AdobeRGB i l) e = (e, e, e)
+  type ChannelCount (AdobeRGB i l) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.RGB e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.RGB e))
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents

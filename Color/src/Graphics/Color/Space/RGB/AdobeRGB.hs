@@ -7,6 +7,7 @@
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
@@ -112,6 +113,11 @@ instance (Typeable l, Elevator e) => Show (Color (AdobeRGB l) e) where
 -- | `AdobeRGB` color space
 instance (Typeable l, Elevator e) => ColorModel (AdobeRGB l) e where
   type Components (AdobeRGB l) e = (e, e, e)
+  type ChannelCount (AdobeRGB l) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.RGB e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.RGB e))
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents

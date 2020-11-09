@@ -28,6 +28,7 @@ module Graphics.Color.Model.YCbCr
   , ycbcr2rgb
   ) where
 
+import Data.List.NonEmpty
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
@@ -72,6 +73,11 @@ pattern ColorYCbCrA y cb cr a = Alpha (YCbCr (V3 y cb cr)) a
 -- | `YCbCr` color model
 instance Elevator e => ColorModel YCbCr e where
   type Components YCbCr e = (e, e, e)
+  type ChannelCount YCbCr = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "Luma" :| ["Blue Chroma Diff", "Red Chroma Diff"]
+  channelColors _ = V3 0x80 0x80 0x80 :| [V3 0x00 0x00 0x80, V3 0x8b 0x00 0x00]
   toComponents (ColorYCbCr y cb cr) = (y, cb, cr)
   {-# INLINE toComponents #-}
   fromComponents (y, cb, cr) = ColorYCbCr y cb cr

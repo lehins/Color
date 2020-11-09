@@ -82,8 +82,12 @@ pattern ColorH360SV h s i <- ColorHSV ((* 360) -> h) s i where
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel cs e => ColorModel (HSV cs) e where
   type Components (HSV cs) e = (e, e, e)
-  toComponents =
-    toComponents . (coerce :: Color (HSV cs) e -> Color CM.HSV e)
+  type ChannelCount (HSV cs) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.HSV e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.HSV e))
+  toComponents = toComponents . (coerce :: Color (HSV cs) e -> Color CM.HSV e)
   {-# INLINE toComponents #-}
   fromComponents = (coerce :: Color CM.HSV e -> Color (HSV cs) e) . fromComponents
   {-# INLINE fromComponents #-}

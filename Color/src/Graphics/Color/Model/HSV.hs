@@ -1,8 +1,9 @@
-{-# LANGUAGE DeriveTraversable #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -30,6 +31,7 @@ module Graphics.Color.Model.HSV
   , rgb2hsv
   ) where
 
+import Data.List.NonEmpty
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
@@ -85,6 +87,11 @@ instance Elevator e => Show (Color HSV e) where
 -- | `HSV` color model
 instance Elevator e => ColorModel HSV e where
   type Components HSV e = (e, e, e)
+  type ChannelCount HSV = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "Hue" :| ["Saturation", "Value"]
+  channelColors _ = V3 0x94 0x00 0xd3 :| [V3 0xff 0x8c 0x00, V3 0x5f 0x9e 0x90]
   toComponents (ColorHSV h s v) = (h, s, v)
   {-# INLINE toComponents #-}
   fromComponents (h, s, v) = ColorHSV h s v
