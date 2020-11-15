@@ -123,7 +123,6 @@ instance ( Typeable cs
   {-# INLINE applyGrayscale #-}
   replaceGrayscale _ = coerce
   {-# INLINE replaceGrayscale #-}
-  -- luminance = luminance . toBaseLinearSpace
   luminance = luminance . fmap (fromDouble :: Double -> e) . toBaseLinearSpace . fmap toDouble
   {-# INLINE luminance #-}
   toColorXYZ = toColorXYZ . fmap (fromDouble :: Double -> e) . toBaseLinearSpace . fmap toDouble

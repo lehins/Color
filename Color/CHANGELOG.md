@@ -4,6 +4,7 @@
 
 * Addition of: `toGrayscale`, `applyGrayscale` and `replaceGrayscale`.
 * Addition of: `ChannelCount`, `channelCount`, `channelNames` and `channelColors`
+* Remove `RealFloat` constraint from `ColorSpace` for `Y'`
 
 ## 0.3.3
 
