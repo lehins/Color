@@ -1,5 +1,9 @@
 # Changelog for Color
 
+## 0.3.1
+
+* Remove `RealFloat` constraint from `ColorSpace` for `Y'`
+
 ## 0.3.0
 
 * Rename `Y` color model into `X` to avoid the annoying name conflict.
