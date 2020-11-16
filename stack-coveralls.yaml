@@ -1,3 +1,5 @@
+# There is no way to pass `--resolver lts-14.27` to `shc` (stack-hpc-coveralls), so we
+# keep around a special stack-yaml file for it.
 resolver: lts-14.27
 packages:
 - Color
