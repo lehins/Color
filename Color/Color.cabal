@@ -19,7 +19,8 @@ tested-with:          GHC == 8.4.3
                     , GHC == 8.6.3
                     , GHC == 8.6.4
                     , GHC == 8.6.5
-                    , GHC == 8.8.3
+                    , GHC == 8.8.4
+                    , GHC == 8.10.4
 
 library
   hs-source-dirs:      src
