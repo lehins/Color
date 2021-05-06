@@ -102,7 +102,6 @@ jobs:
         [ -n "${{ matrix.ghc }}" ] && [ "${{ matrix.os }}" == "ubuntu-latest" ] && STACK_ARGS="$STACK_ARGS --system-ghc"
         [ -n "${{ matrix.stack-yaml }}" ] && STACK_YAML=${{ matrix.stack-yaml }}
         stack $STACK_ARGS runghc git-modtime.hs
-        stack $STACK_ARGS path --stack-root --programs
     - name: Tests
       env:
         COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
