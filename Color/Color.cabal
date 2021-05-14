@@ -42,9 +42,9 @@ library
                      , Graphics.Color.Space.CIE1931.RGB
                      , Graphics.Color.Space.CIE1931.XYZ
                      , Graphics.Color.Space.CIE1976.LAB
-                     -- , Graphics.Color.Space.CIE1976.LAB.LCH
-                     -- , Graphics.Color.Space.CIE1976.LAB.HLC
-                     -- , Graphics.Color.Space.CIE1976.LUV
+                     , Graphics.Color.Space.CIE1976.LAB.LCH
+                     , Graphics.Color.Space.CIE1976.LUV
+                     , Graphics.Color.Space.CIE1976.LUV.LCH
                      , Graphics.Color.Space.RGB
                      , Graphics.Color.Space.RGB.CIERGB
                      , Graphics.Color.Space.RGB.AdobeRGB
@@ -80,6 +80,7 @@ library
                      , Graphics.Color.Model.HSI
                      , Graphics.Color.Model.HSL
                      , Graphics.Color.Model.HSV
+                     , Graphics.Color.Model.LCH
                      , Graphics.Color.Model.X
                      , Graphics.Color.Model.YCbCr
                      , Graphics.Color.Space.Internal
@@ -109,11 +110,15 @@ test-suite tests
                     , Graphics.Color.Model.HSISpec
                     , Graphics.Color.Model.HSLSpec
                     , Graphics.Color.Model.HSVSpec
+                    , Graphics.Color.Model.LCHSpec
                     , Graphics.Color.Model.RGBSpec
                     , Graphics.Color.Model.YCbCrSpec
                     , Graphics.Color.Space.Common
                     , Graphics.Color.Space.CIE1931.RGBSpec
                     , Graphics.Color.Space.CIE1976.LABSpec
+                    , Graphics.Color.Space.CIE1976.LAB.LCHSpec
+                    , Graphics.Color.Space.CIE1976.LUVSpec
+                    , Graphics.Color.Space.CIE1976.LUV.LCHSpec
                     , Graphics.Color.Space.RGB.AdobeRGBSpec
                     , Graphics.Color.Space.RGB.SRGBSpec
                     , Graphics.Color.Space.RGB.Derived.AdobeRGBSpec

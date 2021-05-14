@@ -31,6 +31,8 @@ module Graphics.Color.Model
   , module Graphics.Color.Model.YCbCr
   -- * CMYK
   , module Graphics.Color.Model.CMYK
+  -- * LCH
+  , module Graphics.Color.Model.LCH
   -- * Color
   , Color(..)
   , module Graphics.Color.Algebra.Binary
@@ -43,6 +45,7 @@ import Graphics.Color.Model.CMYK
 import Graphics.Color.Model.HSI
 import Graphics.Color.Model.HSL
 import Graphics.Color.Model.HSV
+import Graphics.Color.Model.LCH
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
 import Graphics.Color.Model.X
