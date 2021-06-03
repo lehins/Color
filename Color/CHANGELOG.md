@@ -1,5 +1,9 @@
 # Changelog for Color
 
+## 0.3.2
+
+* Addition of `CIEL*u*v*` colorspace and `LCh` views of both `CIEL*a*b*` and `L*u*v*`.
+
 ## 0.3.1
 
 * Remove `RealFloat` constraint from `ColorSpace` for `Y'`
