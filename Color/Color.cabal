@@ -68,6 +68,7 @@ library
                      -- , Graphics.Color.Space.RGB.DCI_P3
                      -- , Graphics.Color.Space.LMS
                      , Graphics.Color.Standard.RAL
+                     , Graphics.Color.Standard.SVG
                      , Graphics.Pixel
                      , Graphics.Pixel.Internal
                      , Graphics.Pixel.ColorSpace

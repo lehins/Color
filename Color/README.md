@@ -70,6 +70,7 @@ Currently supported:
 * Color Standards:
 
   * RAL
+  * SVG
 
 
 ## External resources
