@@ -17,6 +17,7 @@ namedcolors = list(gen())
 
 with open("../src/Graphics/Color/Standard/SVG.hs","w") as f:
     f.write("""{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 -- |
