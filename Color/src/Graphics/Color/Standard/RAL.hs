@@ -236,6 +236,7 @@ import Data.Typeable
 import Graphics.Color.Space
 import Graphics.Color.Adaptation.VonKries
 import Graphics.Color.Algebra (showsType)
+import Graphics.Color.Standard.Internal
 
 -- -- TODO: Find a home somewhere for this common illuminant
 -- data D50
@@ -245,10 +246,6 @@ import Graphics.Color.Algebra (showsType)
 --   type Temperature D50 = 5003
 --   whitePoint = WhitePoint 0.3457 0.3585
 --                         -- 0.345704, y = 0.358540 -- << PhotoRGB
-
-class StandardColor std code where
-
-  color :: ColorSpace cs i e => std code -> Color cs e
 
 
 -- | Source: https://en.wikipedia.org/wiki/List_of_RAL_colors

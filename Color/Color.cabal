@@ -1,5 +1,5 @@
 name:                Color
-version:             0.3.2
+version:             0.3.3
 synopsis:            Color spaces and conversions between them
 description:         Please see the README on GitHub at <https://github.com/lehins/Color#readme>
 homepage:            https://github.com/lehins/Color
@@ -12,6 +12,7 @@ category:            Graphics
 extra-source-files:  README.md
                    , CHANGELOG.md
 extra-doc-files:     files/*.svg
+                   , files/svg/*.png
 cabal-version:       1.18
 build-type:          Simple
 tested-with:          GHC == 8.4.3
@@ -67,6 +68,7 @@ library
                      -- , Graphics.Color.Space.RGB.ProPhoto
                      -- , Graphics.Color.Space.RGB.DCI_P3
                      -- , Graphics.Color.Space.LMS
+                     , Graphics.Color.Standard
                      , Graphics.Color.Standard.RAL
                      , Graphics.Color.Standard.SVG
                      , Graphics.Pixel
@@ -86,6 +88,7 @@ library
                      , Graphics.Color.Model.YCbCr
                      , Graphics.Color.Space.Internal
                      , Graphics.Color.Space.RGB.Internal
+                     , Graphics.Color.Standard.Internal
   build-depends:       base            >= 4.11 && < 5
                      , deepseq
                      , data-default-class
@@ -165,6 +168,7 @@ test-suite doctests
                , doctest >=0.16
                , QuickCheck
                , Color
+               , JuicyPixels
   default-language:    Haskell2010
   ghc-options:        -Wall
                       -Wincomplete-record-updates

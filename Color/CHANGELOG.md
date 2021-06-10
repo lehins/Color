@@ -1,5 +1,9 @@
 # Changelog for Color
 
+## 0.3.3
+
+Addition of `SVG` colors
+
 ## 0.3.2
 
 * Addition of `CIEL*u*v*` colorspace and `LCh` views of both `CIEL*a*b*` and `L*u*v*`.

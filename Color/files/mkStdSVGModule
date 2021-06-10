@@ -1,0 +1,97 @@
+#!/usr/bin/python3
+import re
+
+with open("svg-colors.txt","r") as f:
+    lines = f.readlines()
+
+pat = re.compile(r"(\w+)\s+(\d+)\s+(\d+)\s+(\d+)")
+
+def gen():
+    for line in lines:
+        if not line.startswith("#"):
+            match = pat.fullmatch(line.strip())
+            if match:
+                yield match.group(1,2,3,4)
+
+namedcolors = list(gen())
+
+with open("../src/Graphics/Color/Standard/SVG.hs","w") as f:
+    f.write("""{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+-- |
+-- Module      : Graphics.Color.Standard.SVG
+-- Copyright   : (c) Alexey Kuleshevich 2021
+-- License     : BSD3
+-- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
+-- Stability   : experimental
+-- Portability : non-portable
+--
+-- Source: https://www.w3.org/TR/SVG11/types.html#ColorKeywords
+module Graphics.Color.Standard.SVG where
+-- This file is generated with files/mkStdSVGModule
+
+import Prelude hiding (tan)
+import Graphics.Color.Space.RGB
+import GHC.TypeLits
+import Graphics.Color.Adaptation.VonKries
+import Graphics.Color.Standard.Internal
+
+-- | Get a color value by specifying its SVG standard name at the type level:
+--
+-- >>> import Graphics.Color.Standard
+-- >>> import Graphics.Color.Space.CIE1976.LAB
+-- >>> import Graphics.Color.Illuminant.CIE1931
+-- >>> color (SVG :: SVG "aqua") :: Color (LAB 'D65) Float
+-- <LAB CIE1931 'D65:(91.11637000,-48.08154700,-14.12457300)>
+--
+data SVG (n :: Symbol) = SVG
+
+instance KnownSymbol n => Show (SVG (n :: Symbol)) where
+  showsPrec n c
+    | n == 0 = p . (symbolVal c ++)
+    | otherwise = ('(' :) . p . (symbolVal c ++) . (')' :)
+    where
+      p = ("SVG " ++)
+
+-- | Source: https://www.w3.org/TR/SVG11/types.html#ColorKeywords
+--
+-- @since 0.3.3
+allSVGColors :: [(String, Color (SRGB 'NonLinear) Word8)]
+allSVGColors =
+""")
+    first = True
+    for (n,r,g,b) in namedcolors:
+        f.write("  ")
+        f.write("[" if first else ",")
+        first = False
+        f.write(" (\"{}\", {})\n".format(n.lower(),n))
+    f.write("  ]\n")
+    for (n,r,g,b) in namedcolors:
+        f.write("""
+-- | <<files/svg/{name_capital}.png>>
+instance StandardColor SVG "{name_lower}" where color _ = convert {name}
+""".format(name=n, name_lower=n.lower(), name_capital=n[0].upper() + n[1:]))
+
+    for (n,r,g,b) in namedcolors:
+        f.write("""
+-- | Defined in SVG1.1 as
+--
+-- @
+-- {name_lower} = rgb({r}, {g}, {b})
+-- @
+--
+-- <<files/svg/{name_capital}.png>>
+--
+-- ===__Example__
+--
+-- >>> import Codec.Picture as JP
+-- >>> import Codec.Picture.Png (writePng)
+-- >>> let ColorSRGB r g b = {name}
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> writePng "files/svg/{name_capital}.png" img
+--
+-- @since 0.3.3
+{name} :: Color (SRGB 'NonLinear) Word8
+{name} = ColorSRGB {r} {g} {b}
+""".format(name=n, name_lower=n.lower(), name_capital=n[0].upper() + n[1:], r=r, g=g, b=b))
