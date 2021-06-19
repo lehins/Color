@@ -185,6 +185,7 @@ benchmark conversion
   ghc-options:         -Wall
                        -threaded
                        -O2
+  build-tool-depends:  hspec-discover:hspec-discover
   build-depends:       base
                      , criterion
                      , Color

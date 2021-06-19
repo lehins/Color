@@ -89,7 +89,7 @@ instance StandardColor SVG "{name_lower}" where color _ = convert {name}
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = {name}
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/{name_capital}.png" img
 --
 -- @since 0.3.3

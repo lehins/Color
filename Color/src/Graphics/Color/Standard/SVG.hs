@@ -645,7 +645,7 @@ instance StandardColor SVG "yellowgreen" where color _ = convert yellowGreen
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = aliceBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/AliceBlue.png" img
 --
 -- @since 0.3.3
@@ -665,7 +665,7 @@ aliceBlue = ColorSRGB 240 248 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = antiqueWhite
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/AntiqueWhite.png" img
 --
 -- @since 0.3.3
@@ -685,7 +685,7 @@ antiqueWhite = ColorSRGB 250 235 215
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = aqua
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Aqua.png" img
 --
 -- @since 0.3.3
@@ -705,7 +705,7 @@ aqua = ColorSRGB 0 255 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = aquaMarine
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/AquaMarine.png" img
 --
 -- @since 0.3.3
@@ -725,7 +725,7 @@ aquaMarine = ColorSRGB 127 255 212
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = azure
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Azure.png" img
 --
 -- @since 0.3.3
@@ -745,7 +745,7 @@ azure = ColorSRGB 240 255 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = beige
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Beige.png" img
 --
 -- @since 0.3.3
@@ -765,7 +765,7 @@ beige = ColorSRGB 245 245 220
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = bisque
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Bisque.png" img
 --
 -- @since 0.3.3
@@ -785,7 +785,7 @@ bisque = ColorSRGB 255 228 196
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = black
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Black.png" img
 --
 -- @since 0.3.3
@@ -805,7 +805,7 @@ black = ColorSRGB 0 0 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = blanchedAlmond
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/BlanchedAlmond.png" img
 --
 -- @since 0.3.3
@@ -825,7 +825,7 @@ blanchedAlmond = ColorSRGB 255 235 205
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = blue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Blue.png" img
 --
 -- @since 0.3.3
@@ -845,7 +845,7 @@ blue = ColorSRGB 0 0 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = blueViolet
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/BlueViolet.png" img
 --
 -- @since 0.3.3
@@ -865,7 +865,7 @@ blueViolet = ColorSRGB 138 43 226
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = brown
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Brown.png" img
 --
 -- @since 0.3.3
@@ -885,7 +885,7 @@ brown = ColorSRGB 165 42 42
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = burlyWood
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/BurlyWood.png" img
 --
 -- @since 0.3.3
@@ -905,7 +905,7 @@ burlyWood = ColorSRGB 222 184 135
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = cadetBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/CadetBlue.png" img
 --
 -- @since 0.3.3
@@ -925,7 +925,7 @@ cadetBlue = ColorSRGB 95 158 160
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = chartreuse
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Chartreuse.png" img
 --
 -- @since 0.3.3
@@ -945,7 +945,7 @@ chartreuse = ColorSRGB 127 255 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = chocolate
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Chocolate.png" img
 --
 -- @since 0.3.3
@@ -965,7 +965,7 @@ chocolate = ColorSRGB 210 105 30
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = coral
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Coral.png" img
 --
 -- @since 0.3.3
@@ -985,7 +985,7 @@ coral = ColorSRGB 255 127 80
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = cornFlowerBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/CornFlowerBlue.png" img
 --
 -- @since 0.3.3
@@ -1005,7 +1005,7 @@ cornFlowerBlue = ColorSRGB 100 149 237
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = cornSilk
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/CornSilk.png" img
 --
 -- @since 0.3.3
@@ -1025,7 +1025,7 @@ cornSilk = ColorSRGB 255 248 220
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = crimson
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Crimson.png" img
 --
 -- @since 0.3.3
@@ -1045,7 +1045,7 @@ crimson = ColorSRGB 220 20 60
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = cyan
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Cyan.png" img
 --
 -- @since 0.3.3
@@ -1065,7 +1065,7 @@ cyan = ColorSRGB 0 255 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkBlue.png" img
 --
 -- @since 0.3.3
@@ -1085,7 +1085,7 @@ darkBlue = ColorSRGB 0 0 139
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkCyan
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkCyan.png" img
 --
 -- @since 0.3.3
@@ -1105,7 +1105,7 @@ darkCyan = ColorSRGB 0 139 139
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkGoldenRod
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkGoldenRod.png" img
 --
 -- @since 0.3.3
@@ -1125,7 +1125,7 @@ darkGoldenRod = ColorSRGB 184 134 11
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkGray
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkGray.png" img
 --
 -- @since 0.3.3
@@ -1145,7 +1145,7 @@ darkGray = ColorSRGB 169 169 169
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkGreen.png" img
 --
 -- @since 0.3.3
@@ -1165,7 +1165,7 @@ darkGreen = ColorSRGB 0 100 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkGrey
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkGrey.png" img
 --
 -- @since 0.3.3
@@ -1185,7 +1185,7 @@ darkGrey = ColorSRGB 169 169 169
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkKhaki
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkKhaki.png" img
 --
 -- @since 0.3.3
@@ -1205,7 +1205,7 @@ darkKhaki = ColorSRGB 189 183 107
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkMagenta
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkMagenta.png" img
 --
 -- @since 0.3.3
@@ -1225,7 +1225,7 @@ darkMagenta = ColorSRGB 139 0 139
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkOliveGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkOliveGreen.png" img
 --
 -- @since 0.3.3
@@ -1245,7 +1245,7 @@ darkOliveGreen = ColorSRGB 85 107 47
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkOrange
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkOrange.png" img
 --
 -- @since 0.3.3
@@ -1265,7 +1265,7 @@ darkOrange = ColorSRGB 255 140 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkOrchid
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkOrchid.png" img
 --
 -- @since 0.3.3
@@ -1285,7 +1285,7 @@ darkOrchid = ColorSRGB 153 50 204
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkRed
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkRed.png" img
 --
 -- @since 0.3.3
@@ -1305,7 +1305,7 @@ darkRed = ColorSRGB 139 0 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkSalmon
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkSalmon.png" img
 --
 -- @since 0.3.3
@@ -1325,7 +1325,7 @@ darkSalmon = ColorSRGB 233 150 122
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkSeaGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkSeaGreen.png" img
 --
 -- @since 0.3.3
@@ -1345,7 +1345,7 @@ darkSeaGreen = ColorSRGB 143 188 143
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkSlateBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkSlateBlue.png" img
 --
 -- @since 0.3.3
@@ -1365,7 +1365,7 @@ darkSlateBlue = ColorSRGB 72 61 139
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkSlateGray
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkSlateGray.png" img
 --
 -- @since 0.3.3
@@ -1385,7 +1385,7 @@ darkSlateGray = ColorSRGB 47 79 79
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkSlateGrey
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkSlateGrey.png" img
 --
 -- @since 0.3.3
@@ -1405,7 +1405,7 @@ darkSlateGrey = ColorSRGB 47 79 79
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkTurquoise
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkTurquoise.png" img
 --
 -- @since 0.3.3
@@ -1425,7 +1425,7 @@ darkTurquoise = ColorSRGB 0 206 209
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = darkViolet
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DarkViolet.png" img
 --
 -- @since 0.3.3
@@ -1445,7 +1445,7 @@ darkViolet = ColorSRGB 148 0 211
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = deepPink
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DeepPink.png" img
 --
 -- @since 0.3.3
@@ -1465,7 +1465,7 @@ deepPink = ColorSRGB 255 20 147
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = deepSkyBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DeepSkyBlue.png" img
 --
 -- @since 0.3.3
@@ -1485,7 +1485,7 @@ deepSkyBlue = ColorSRGB 0 191 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = dimGray
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DimGray.png" img
 --
 -- @since 0.3.3
@@ -1505,7 +1505,7 @@ dimGray = ColorSRGB 105 105 105
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = dimGrey
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DimGrey.png" img
 --
 -- @since 0.3.3
@@ -1525,7 +1525,7 @@ dimGrey = ColorSRGB 105 105 105
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = dodgerBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/DodgerBlue.png" img
 --
 -- @since 0.3.3
@@ -1545,7 +1545,7 @@ dodgerBlue = ColorSRGB 30 144 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = fireBrick
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/FireBrick.png" img
 --
 -- @since 0.3.3
@@ -1565,7 +1565,7 @@ fireBrick = ColorSRGB 178 34 34
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = floralWhite
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/FloralWhite.png" img
 --
 -- @since 0.3.3
@@ -1585,7 +1585,7 @@ floralWhite = ColorSRGB 255 250 240
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = forestGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/ForestGreen.png" img
 --
 -- @since 0.3.3
@@ -1605,7 +1605,7 @@ forestGreen = ColorSRGB 34 139 34
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = fuchsia
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Fuchsia.png" img
 --
 -- @since 0.3.3
@@ -1625,7 +1625,7 @@ fuchsia = ColorSRGB 255 0 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = gainsboro
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Gainsboro.png" img
 --
 -- @since 0.3.3
@@ -1645,7 +1645,7 @@ gainsboro = ColorSRGB 220 220 220
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = ghostWhite
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/GhostWhite.png" img
 --
 -- @since 0.3.3
@@ -1665,7 +1665,7 @@ ghostWhite = ColorSRGB 248 248 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = gold
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Gold.png" img
 --
 -- @since 0.3.3
@@ -1685,7 +1685,7 @@ gold = ColorSRGB 255 215 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = goldenRod
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/GoldenRod.png" img
 --
 -- @since 0.3.3
@@ -1705,7 +1705,7 @@ goldenRod = ColorSRGB 218 165 32
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = gray
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Gray.png" img
 --
 -- @since 0.3.3
@@ -1725,7 +1725,7 @@ gray = ColorSRGB 128 128 128
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = grey
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Grey.png" img
 --
 -- @since 0.3.3
@@ -1745,7 +1745,7 @@ grey = ColorSRGB 128 128 128
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = green
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Green.png" img
 --
 -- @since 0.3.3
@@ -1765,7 +1765,7 @@ green = ColorSRGB 0 128 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = greenYellow
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/GreenYellow.png" img
 --
 -- @since 0.3.3
@@ -1785,7 +1785,7 @@ greenYellow = ColorSRGB 173 255 47
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = honeydew
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Honeydew.png" img
 --
 -- @since 0.3.3
@@ -1805,7 +1805,7 @@ honeydew = ColorSRGB 240 255 240
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = hotPink
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/HotPink.png" img
 --
 -- @since 0.3.3
@@ -1825,7 +1825,7 @@ hotPink = ColorSRGB 255 105 180
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = indianRed
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/IndianRed.png" img
 --
 -- @since 0.3.3
@@ -1845,7 +1845,7 @@ indianRed = ColorSRGB 205 92 92
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = indigo
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Indigo.png" img
 --
 -- @since 0.3.3
@@ -1865,7 +1865,7 @@ indigo = ColorSRGB 75 0 130
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = ivory
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Ivory.png" img
 --
 -- @since 0.3.3
@@ -1885,7 +1885,7 @@ ivory = ColorSRGB 255 255 240
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = khaki
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Khaki.png" img
 --
 -- @since 0.3.3
@@ -1905,7 +1905,7 @@ khaki = ColorSRGB 240 230 140
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lavender
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Lavender.png" img
 --
 -- @since 0.3.3
@@ -1925,7 +1925,7 @@ lavender = ColorSRGB 230 230 250
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lavenderBlush
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LavenderBlush.png" img
 --
 -- @since 0.3.3
@@ -1945,7 +1945,7 @@ lavenderBlush = ColorSRGB 255 240 245
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lawnGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LawnGreen.png" img
 --
 -- @since 0.3.3
@@ -1965,7 +1965,7 @@ lawnGreen = ColorSRGB 124 252 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lemonChiffon
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LemonChiffon.png" img
 --
 -- @since 0.3.3
@@ -1985,7 +1985,7 @@ lemonChiffon = ColorSRGB 255 250 205
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightBlue.png" img
 --
 -- @since 0.3.3
@@ -2005,7 +2005,7 @@ lightBlue = ColorSRGB 173 216 230
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightCoral
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightCoral.png" img
 --
 -- @since 0.3.3
@@ -2025,7 +2025,7 @@ lightCoral = ColorSRGB 240 128 128
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightCyan
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightCyan.png" img
 --
 -- @since 0.3.3
@@ -2045,7 +2045,7 @@ lightCyan = ColorSRGB 224 255 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightGoldenRodYellow
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightGoldenRodYellow.png" img
 --
 -- @since 0.3.3
@@ -2065,7 +2065,7 @@ lightGoldenRodYellow = ColorSRGB 250 250 210
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightGray
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightGray.png" img
 --
 -- @since 0.3.3
@@ -2085,7 +2085,7 @@ lightGray = ColorSRGB 211 211 211
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightGreen.png" img
 --
 -- @since 0.3.3
@@ -2105,7 +2105,7 @@ lightGreen = ColorSRGB 144 238 144
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightGrey
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightGrey.png" img
 --
 -- @since 0.3.3
@@ -2125,7 +2125,7 @@ lightGrey = ColorSRGB 211 211 211
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightPink
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightPink.png" img
 --
 -- @since 0.3.3
@@ -2145,7 +2145,7 @@ lightPink = ColorSRGB 255 182 193
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightSalmon
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightSalmon.png" img
 --
 -- @since 0.3.3
@@ -2165,7 +2165,7 @@ lightSalmon = ColorSRGB 255 160 122
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightSeaGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightSeaGreen.png" img
 --
 -- @since 0.3.3
@@ -2185,7 +2185,7 @@ lightSeaGreen = ColorSRGB 32 178 170
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightSkyBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightSkyBlue.png" img
 --
 -- @since 0.3.3
@@ -2205,7 +2205,7 @@ lightSkyBlue = ColorSRGB 135 206 250
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightSlateGray
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightSlateGray.png" img
 --
 -- @since 0.3.3
@@ -2225,7 +2225,7 @@ lightSlateGray = ColorSRGB 119 136 153
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightSlateGrey
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightSlateGrey.png" img
 --
 -- @since 0.3.3
@@ -2245,7 +2245,7 @@ lightSlateGrey = ColorSRGB 119 136 153
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightSteelBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightSteelBlue.png" img
 --
 -- @since 0.3.3
@@ -2265,7 +2265,7 @@ lightSteelBlue = ColorSRGB 176 196 222
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lightYellow
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LightYellow.png" img
 --
 -- @since 0.3.3
@@ -2285,7 +2285,7 @@ lightYellow = ColorSRGB 255 255 224
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = lime
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Lime.png" img
 --
 -- @since 0.3.3
@@ -2305,7 +2305,7 @@ lime = ColorSRGB 0 255 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = limeGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/LimeGreen.png" img
 --
 -- @since 0.3.3
@@ -2325,7 +2325,7 @@ limeGreen = ColorSRGB 50 205 50
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = linen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Linen.png" img
 --
 -- @since 0.3.3
@@ -2345,7 +2345,7 @@ linen = ColorSRGB 250 240 230
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = magenta
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Magenta.png" img
 --
 -- @since 0.3.3
@@ -2365,7 +2365,7 @@ magenta = ColorSRGB 255 0 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = maroon
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Maroon.png" img
 --
 -- @since 0.3.3
@@ -2385,7 +2385,7 @@ maroon = ColorSRGB 128 0 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = mediumAquaMarine
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MediumAquaMarine.png" img
 --
 -- @since 0.3.3
@@ -2405,7 +2405,7 @@ mediumAquaMarine = ColorSRGB 102 205 170
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = mediumBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MediumBlue.png" img
 --
 -- @since 0.3.3
@@ -2425,7 +2425,7 @@ mediumBlue = ColorSRGB 0 0 205
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = mediumOrchid
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MediumOrchid.png" img
 --
 -- @since 0.3.3
@@ -2445,7 +2445,7 @@ mediumOrchid = ColorSRGB 186 85 211
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = mediumPurple
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MediumPurple.png" img
 --
 -- @since 0.3.3
@@ -2465,7 +2465,7 @@ mediumPurple = ColorSRGB 147 112 219
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = mediumSeaGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MediumSeaGreen.png" img
 --
 -- @since 0.3.3
@@ -2485,7 +2485,7 @@ mediumSeaGreen = ColorSRGB 60 179 113
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = mediumSlateBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MediumSlateBlue.png" img
 --
 -- @since 0.3.3
@@ -2505,7 +2505,7 @@ mediumSlateBlue = ColorSRGB 123 104 238
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = mediumSpringGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MediumSpringGreen.png" img
 --
 -- @since 0.3.3
@@ -2525,7 +2525,7 @@ mediumSpringGreen = ColorSRGB 0 250 154
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = mediumTurquoise
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MediumTurquoise.png" img
 --
 -- @since 0.3.3
@@ -2545,7 +2545,7 @@ mediumTurquoise = ColorSRGB 72 209 204
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = mediumVioletRed
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MediumVioletRed.png" img
 --
 -- @since 0.3.3
@@ -2565,7 +2565,7 @@ mediumVioletRed = ColorSRGB 199 21 133
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = midnightBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MidnightBlue.png" img
 --
 -- @since 0.3.3
@@ -2585,7 +2585,7 @@ midnightBlue = ColorSRGB 25 25 112
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = mintCream
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MintCream.png" img
 --
 -- @since 0.3.3
@@ -2605,7 +2605,7 @@ mintCream = ColorSRGB 245 255 250
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = mistyRose
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/MistyRose.png" img
 --
 -- @since 0.3.3
@@ -2625,7 +2625,7 @@ mistyRose = ColorSRGB 255 228 225
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = moccasin
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Moccasin.png" img
 --
 -- @since 0.3.3
@@ -2645,7 +2645,7 @@ moccasin = ColorSRGB 255 228 181
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = navajoWhite
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/NavajoWhite.png" img
 --
 -- @since 0.3.3
@@ -2665,7 +2665,7 @@ navajoWhite = ColorSRGB 255 222 173
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = navy
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Navy.png" img
 --
 -- @since 0.3.3
@@ -2685,7 +2685,7 @@ navy = ColorSRGB 0 0 128
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = oldLace
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/OldLace.png" img
 --
 -- @since 0.3.3
@@ -2705,7 +2705,7 @@ oldLace = ColorSRGB 253 245 230
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = olive
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Olive.png" img
 --
 -- @since 0.3.3
@@ -2725,7 +2725,7 @@ olive = ColorSRGB 128 128 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = oliveDrab
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/OliveDrab.png" img
 --
 -- @since 0.3.3
@@ -2745,7 +2745,7 @@ oliveDrab = ColorSRGB 107 142 35
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = orange
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Orange.png" img
 --
 -- @since 0.3.3
@@ -2765,7 +2765,7 @@ orange = ColorSRGB 255 165 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = orangeRed
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/OrangeRed.png" img
 --
 -- @since 0.3.3
@@ -2785,7 +2785,7 @@ orangeRed = ColorSRGB 255 69 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = orchid
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Orchid.png" img
 --
 -- @since 0.3.3
@@ -2805,7 +2805,7 @@ orchid = ColorSRGB 218 112 214
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = paleGoldenRod
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/PaleGoldenRod.png" img
 --
 -- @since 0.3.3
@@ -2825,7 +2825,7 @@ paleGoldenRod = ColorSRGB 238 232 170
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = paleGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/PaleGreen.png" img
 --
 -- @since 0.3.3
@@ -2845,7 +2845,7 @@ paleGreen = ColorSRGB 152 251 152
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = paleTurquoise
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/PaleTurquoise.png" img
 --
 -- @since 0.3.3
@@ -2865,7 +2865,7 @@ paleTurquoise = ColorSRGB 175 238 238
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = paleVioletRed
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/PaleVioletRed.png" img
 --
 -- @since 0.3.3
@@ -2885,7 +2885,7 @@ paleVioletRed = ColorSRGB 219 112 147
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = papayaWhip
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/PapayaWhip.png" img
 --
 -- @since 0.3.3
@@ -2905,7 +2905,7 @@ papayaWhip = ColorSRGB 255 239 213
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = peachPuff
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/PeachPuff.png" img
 --
 -- @since 0.3.3
@@ -2925,7 +2925,7 @@ peachPuff = ColorSRGB 255 218 185
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = peru
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Peru.png" img
 --
 -- @since 0.3.3
@@ -2945,7 +2945,7 @@ peru = ColorSRGB 205 133 63
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = pink
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Pink.png" img
 --
 -- @since 0.3.3
@@ -2965,7 +2965,7 @@ pink = ColorSRGB 255 192 203
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = plum
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Plum.png" img
 --
 -- @since 0.3.3
@@ -2985,7 +2985,7 @@ plum = ColorSRGB 221 160 221
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = powderBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/PowderBlue.png" img
 --
 -- @since 0.3.3
@@ -3005,7 +3005,7 @@ powderBlue = ColorSRGB 176 224 230
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = purple
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Purple.png" img
 --
 -- @since 0.3.3
@@ -3025,7 +3025,7 @@ purple = ColorSRGB 128 0 128
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = red
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Red.png" img
 --
 -- @since 0.3.3
@@ -3045,7 +3045,7 @@ red = ColorSRGB 255 0 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = rosyBrown
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/RosyBrown.png" img
 --
 -- @since 0.3.3
@@ -3065,7 +3065,7 @@ rosyBrown = ColorSRGB 188 143 143
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = royalBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/RoyalBlue.png" img
 --
 -- @since 0.3.3
@@ -3085,7 +3085,7 @@ royalBlue = ColorSRGB 65 105 225
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = saddleBrown
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/SaddleBrown.png" img
 --
 -- @since 0.3.3
@@ -3105,7 +3105,7 @@ saddleBrown = ColorSRGB 139 69 19
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = salmon
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Salmon.png" img
 --
 -- @since 0.3.3
@@ -3125,7 +3125,7 @@ salmon = ColorSRGB 250 128 114
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = sandyBrown
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/SandyBrown.png" img
 --
 -- @since 0.3.3
@@ -3145,7 +3145,7 @@ sandyBrown = ColorSRGB 244 164 96
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = seaGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/SeaGreen.png" img
 --
 -- @since 0.3.3
@@ -3165,7 +3165,7 @@ seaGreen = ColorSRGB 46 139 87
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = seashell
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Seashell.png" img
 --
 -- @since 0.3.3
@@ -3185,7 +3185,7 @@ seashell = ColorSRGB 255 245 238
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = sienna
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Sienna.png" img
 --
 -- @since 0.3.3
@@ -3205,7 +3205,7 @@ sienna = ColorSRGB 160 82 45
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = silver
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Silver.png" img
 --
 -- @since 0.3.3
@@ -3225,7 +3225,7 @@ silver = ColorSRGB 192 192 192
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = skyBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/SkyBlue.png" img
 --
 -- @since 0.3.3
@@ -3245,7 +3245,7 @@ skyBlue = ColorSRGB 135 206 235
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = slateBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/SlateBlue.png" img
 --
 -- @since 0.3.3
@@ -3265,7 +3265,7 @@ slateBlue = ColorSRGB 106 90 205
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = slateGray
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/SlateGray.png" img
 --
 -- @since 0.3.3
@@ -3285,7 +3285,7 @@ slateGray = ColorSRGB 112 128 144
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = slateGrey
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/SlateGrey.png" img
 --
 -- @since 0.3.3
@@ -3305,7 +3305,7 @@ slateGrey = ColorSRGB 112 128 144
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = snow
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Snow.png" img
 --
 -- @since 0.3.3
@@ -3325,7 +3325,7 @@ snow = ColorSRGB 255 250 250
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = springGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/SpringGreen.png" img
 --
 -- @since 0.3.3
@@ -3345,7 +3345,7 @@ springGreen = ColorSRGB 0 255 127
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = steelBlue
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/SteelBlue.png" img
 --
 -- @since 0.3.3
@@ -3365,7 +3365,7 @@ steelBlue = ColorSRGB 70 130 180
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = tan
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Tan.png" img
 --
 -- @since 0.3.3
@@ -3385,7 +3385,7 @@ tan = ColorSRGB 210 180 140
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = teal
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Teal.png" img
 --
 -- @since 0.3.3
@@ -3405,7 +3405,7 @@ teal = ColorSRGB 0 128 128
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = thistle
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Thistle.png" img
 --
 -- @since 0.3.3
@@ -3425,7 +3425,7 @@ thistle = ColorSRGB 216 191 216
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = tomato
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Tomato.png" img
 --
 -- @since 0.3.3
@@ -3445,7 +3445,7 @@ tomato = ColorSRGB 255 99 71
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = turquoise
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Turquoise.png" img
 --
 -- @since 0.3.3
@@ -3465,7 +3465,7 @@ turquoise = ColorSRGB 64 224 208
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = violet
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Violet.png" img
 --
 -- @since 0.3.3
@@ -3485,7 +3485,7 @@ violet = ColorSRGB 238 130 238
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = wheat
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Wheat.png" img
 --
 -- @since 0.3.3
@@ -3505,7 +3505,7 @@ wheat = ColorSRGB 245 222 179
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = white
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/White.png" img
 --
 -- @since 0.3.3
@@ -3525,7 +3525,7 @@ white = ColorSRGB 255 255 255
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = whiteSmoke
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/WhiteSmoke.png" img
 --
 -- @since 0.3.3
@@ -3545,7 +3545,7 @@ whiteSmoke = ColorSRGB 245 245 245
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = yellow
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/Yellow.png" img
 --
 -- @since 0.3.3
@@ -3565,7 +3565,7 @@ yellow = ColorSRGB 255 255 0
 -- >>> import Codec.Picture as JP
 -- >>> import Codec.Picture.Png (writePng)
 -- >>> let ColorSRGB r g b = yellowGreen
--- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 29
+-- >>> let img = JP.generateImage (\_ _ -> JP.PixelRGB8 r g b) 200 34
 -- >>> writePng "files/svg/YellowGreen.png" img
 --
 -- @since 0.3.3
