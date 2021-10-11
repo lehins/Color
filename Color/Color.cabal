@@ -7,7 +7,7 @@ license:             BSD3
 license-file:        LICENSE
 author:              Alexey Kuleshevich
 maintainer:          alexey@kuleshevi.ch
-copyright:           2019-2020 Alexey Kuleshevich
+copyright:           2019-2021 Alexey Kuleshevich
 category:            Graphics
 extra-source-files:  README.md
                    , CHANGELOG.md
@@ -15,13 +15,11 @@ extra-doc-files:     files/*.svg
                    , files/svg/*.png
 cabal-version:       1.18
 build-type:          Simple
-tested-with:          GHC == 8.4.3
-                    , GHC == 8.4.4
-                    , GHC == 8.6.3
-                    , GHC == 8.6.4
+tested-with:          GHC == 8.4.4
                     , GHC == 8.6.5
-                    , GHC == 8.8.4
-                    , GHC == 8.10.4
+                    , GHC == 8.8.6
+                    , GHC == 8.10.7
+                    , GHC == 9.0.1
 
 library
   hs-source-dirs:      src
@@ -139,6 +137,7 @@ test-suite tests
                     , Graphics.Color.SpaceSpec
                     , Graphics.Color.Standard.RALSpec
                     , Spec
+  build-tool-depends: hspec-discover:hspec-discover
   build-depends:      JuicyPixels
                     , HUnit
                     , QuickCheck  > 2.13
@@ -165,10 +164,11 @@ test-suite doctests
   hs-source-dirs:   tests
   main-is:          doctests.hs
   build-depends: base
-               , doctest >=0.16
-               , QuickCheck
-               , Color
-               , JuicyPixels
+  if impl(ghc >= 8.2) && impl(ghc < 8.10)
+    build-depends: doctest >=0.16
+                 , QuickCheck
+                 , Color
+                 , JuicyPixels
   default-language:    Haskell2010
   ghc-options:        -Wall
                       -Wincomplete-record-updates
@@ -185,7 +185,6 @@ benchmark conversion
   ghc-options:         -Wall
                        -threaded
                        -O2
-  build-tool-depends:  hspec-discover:hspec-discover
   build-depends:       base
                      , criterion
                      , Color
@@ -197,3 +196,4 @@ benchmark conversion
 source-repository head
   type:     git
   location: https://github.com/lehins/Color
+  subdir:   Color
