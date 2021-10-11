@@ -26,7 +26,6 @@ jobs:
           - resolver: lts-16
             ghc: 8.8.4
           - resolver: lts-18
-            ghc: 8.10.7
 
           # Latest stable for MacOS: ghc-8.8.4
           - resolver: lts-16
