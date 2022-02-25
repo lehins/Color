@@ -120,15 +120,17 @@ rgb2hsv (ColorRGB r g b) = ColorHSV h s v
   where
     !max' = max r (max g b)
     !min' = min r (min g b)
-    !h' | max' == r = (    (g - b) / (max' - min')) / 6
-        | max' == g = (2 + (b - r) / (max' - min')) / 6
-        | max' == b = (4 + (r - g) / (max' - min')) / 6
+    !c' = max' - min'
+    !h' | c'   == 0 = 0
+        | max' == r = (    (g - b) / c') / 6
+        | max' == g = (2 + (b - r) / c') / 6
+        | max' == b = (4 + (r - g) / c') / 6
         | otherwise = 0
     !h
       | h' < 0 = h' + 1
       | otherwise = h'
     !s
       | max' == 0 = 0
-      | otherwise = (max' - min') / max'
+      | otherwise = c' / max'
     !v = max'
 {-# INLINE rgb2hsv #-}
