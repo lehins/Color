@@ -236,8 +236,8 @@ colorModelSpec name =
       let px = Proxy :: Proxy (Color cs e)
           count = channelCount px
       count `shouldBe` fromInteger (natVal (Proxy :: Proxy (ChannelCount cs)))
-      length (channelNames px)  `shouldBe` count
-      length (channelColors px)  `shouldBe` count
+      length (channelNames px)  `shouldBe` fromIntegral count
+      length (channelColors px)  `shouldBe` fromIntegral count
     modifyMaxSuccess (`div` 10) $ describe "Array" $ do
       describe "Storable" $
         mutableSpec @S @Ix1 @(Color cs e)

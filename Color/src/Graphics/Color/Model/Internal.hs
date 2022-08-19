@@ -84,21 +84,21 @@ class ( Functor (Color cs)
   -- | Convert from an elemnt representation back to a Color.
   fromComponents :: Components cs e -> Color cs e
 
-  -- | Number of channels in the color model (eg. RGB has three). Must be a positive number.
+  -- | Number of channels in the color model (eg. RGB has three).
   --
-  -- @since 0.3.1
-  channelCount :: Proxy (Color cs e) -> Int
+  -- @since 0.4.0
+  channelCount :: Proxy (Color cs e) -> Word8
 
   -- | Textual name for each of the channels
   --
-  -- @since 0.3.1
+  -- @since 0.4.0
   channelNames :: Proxy (Color cs e) -> NonEmpty String
 
-  -- | Some 8bit sRGB values for each of the channels that might or might not have some
-  -- meaningful relation to the actual colors in each channel. This is useful for plotting
-  -- values.
+  -- | Some non-white 8bit sRGB values for each of the channels that might or
+  -- might not have some meaningful visual relation to the actual channel
+  -- names. This is useful for plotting values.
   --
-  -- @since 0.3.1
+  -- @since 0.4.0
   channelColors :: Proxy (Color cs e) -> NonEmpty (V3 Word8)
 
   -- | Display the @cs@ portion of the pixel. Color itself will not be evaluated.

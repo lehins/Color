@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -5,10 +6,11 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE ViewPatterns #-}
 
 -- |
 -- Module: Graphics.Color.Space.CIE1976.LAB.LCH
@@ -20,6 +22,7 @@ module Graphics.Color.Space.CIE1976.LAB.LCH
   , Color(LCHab)
   ) where
 
+import Data.List.NonEmpty
 import Data.Coerce
 import Data.Proxy
 import Foreign.Storable
@@ -73,9 +76,17 @@ pattern ColorLCHabA l c h a = Alpha (LCHab (CM.ColorLCH l c h)) a
 -- | CIE1976 `LCHab` color space
 instance (Illuminant i, Elevator e, ColorModel (LAB i) e) => ColorModel (LCHab i) e where
   type Components (LCHab i) e = (e, e, e)
-  toComponents = toComponents . coerce
+  type ChannelCount (LCHab i) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "L" :| ["Cab", "Hab"]
+  channelColors _ = V3 0x80 0x80 0x80 :|
+                  [ V3 0x99 0xff 0x99
+                  , V3 0x66 0x66 0xff
+                  ]
+  toComponents (LCHab lch) = toComponents lch
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = LCHab . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName _ =
     ("LCH-"++) . showsColorModelName (Proxy :: Proxy (Color (LAB i) e))
@@ -83,9 +94,13 @@ instance (Illuminant i, Elevator e, ColorModel (LAB i) e) => ColorModel (LCHab i
 instance (Illuminant i, Elevator e, ColorSpace (LAB i) i e) => ColorSpace (LCHab i) i e where
   type BaseModel (LCHab i) = CM.LCH
   type BaseSpace (LCHab i) = LAB i
-  toBaseSpace = fmap fromDouble . fromComponents . CM.lch2lxy . fmap toDouble . coerce
+  toBaseSpace (LCHab lch) = fmap fromDouble . fromComponents . CM.lch2lxy . fmap toDouble $ lch
   {-# INLINE toBaseSpace #-}
-  fromBaseSpace = coerce . fmap fromDouble . CM.lxy2lch . toComponents . fmap toDouble
+  fromBaseSpace = LCHab . fmap fromDouble . CM.lxy2lch . toComponents . fmap toDouble
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale (coerce -> V3 l _ _) = X l
+  {-# INLINE grayscale #-}
+  replaceGrayscale (coerce -> V3 _ c h) (X l) = coerce (V3 l c h)
+  {-# INLINE replaceGrayscale #-}
