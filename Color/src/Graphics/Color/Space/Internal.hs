@@ -107,10 +107,12 @@ class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
   -- @since 0.1.0
   luminance :: (Elevator a, RealFloat a) => Color cs e -> Color (Y i) a
 
-  -- | Drop chromatic information and get only the grayscale information from the
-  -- color. Without knowledge of the source color the produced value is inconsequential.
+  -- | Drop chromatic information and get only the grayscale information from
+  -- the color. Without knowledge of the source color the produced value is
+  -- inconsequential, becaus each class of color spaces has its own notion of
+  -- grayscale (luma, luminocity, in linear or non-linear form, etc.)
   --
-  -- @since 0.3.1
+  -- @since 0.4.0
   grayscale :: Color cs e -> Color X e
 
   -- | Replace the grayscale information, leaving the chromatic portion of the coloer
@@ -120,7 +122,7 @@ class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
   --
   -- > replaceGrayscale c y = applyGrayscale c (const y)
   --
-  -- @since 0.3.1
+  -- @since 0.4.0
   replaceGrayscale :: Color cs e -> Color X e -> Color cs e
   replaceGrayscale c y = applyGrayscale c (const y)
   {-# INLINE replaceGrayscale #-}
@@ -133,7 +135,7 @@ class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
   --
   -- > applyGrayscale c f = replaceGrayscale c (f (grayscale c))
   --
-  -- @since 0.3.1
+  -- @since 0.4.0
   applyGrayscale :: Color cs e -> (Color X e -> Color X e) -> Color cs e
   applyGrayscale c f = replaceGrayscale c (f (grayscale c))
   {-# INLINE applyGrayscale #-}

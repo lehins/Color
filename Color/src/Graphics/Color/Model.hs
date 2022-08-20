@@ -8,6 +8,7 @@
 --
 module Graphics.Color.Model
   ( ColorModel(..)
+  , channelRgbColors
   -- * Alpha
   , Alpha
   , Opaque
@@ -50,3 +51,13 @@ import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
 import Graphics.Color.Model.X
 import Graphics.Color.Model.YCbCr
+import Data.Coerce
+import Data.Proxy
+import Data.List.NonEmpty
+
+-- | Uses `channelColors` to produce actual `RGB` colors for each
+-- channel. Useful for plotting.
+--
+-- @0.4.0
+channelRgbColors :: ColorModel cs e => Proxy (Color cs e) -> NonEmpty (Color RGB Word8)
+channelRgbColors = coerce . channelColors
