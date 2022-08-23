@@ -85,14 +85,14 @@ convertPixel = liftPixel convert
 -- | Constructor for a pixel in @sRGB@ color space
 --
 -- @since 0.1.0
-pattern PixelSRGB :: e -> e -> e -> Pixel (SRGB 'NonLinear) e
+pattern PixelSRGB :: e -> e -> e -> Pixel (SRGB l) e
 pattern PixelSRGB r g b = Pixel (SRGB (CM.ColorRGB r g b))
 {-# COMPLETE PixelSRGB #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with Alpha channel
 --
 -- @since 0.1.0
-pattern PixelSRGBA :: e -> e -> e -> e -> Pixel (Alpha (SRGB 'NonLinear)) e
+pattern PixelSRGBA :: e -> e -> e -> e -> Pixel (Alpha (SRGB l)) e
 pattern PixelSRGBA r g b a = Pixel (Alpha (SRGB (CM.ColorRGB r g b)) a)
 {-# COMPLETE PixelSRGBA #-}
 
