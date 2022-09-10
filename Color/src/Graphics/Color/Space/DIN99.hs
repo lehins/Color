@@ -15,7 +15,13 @@
 {-# LANGUAGE UnboxedSums #-}
 {-# LANGUAGE UnboxedTuples #-}
 
-module Graphics.Color.Space.DIN99 where
+module Graphics.Color.Space.DIN99
+  ( pattern DIN99,
+    pattern ColorDIN,
+    DIN99,
+    deltaE,
+  )
+where
 
 import Foreign.Storable
 import GHC.Generics (Generic)
@@ -132,9 +138,9 @@ deltaE a b = sqrt $ sum ((a - b) ** 2)
 -- | Bidirectional @DIN99@ @DIN99@ conversion as implemented in
 -- https://github.com/colour-science/colour/blob/c3735e5d0ad67443022ece0b42b575e040eb61d1/colour/models/din99.py#L79
 -- >>> labToDIN DIN99Method (ColorLAB 41.52787529 52.63858304 26.92317922 :: Color (LAB 'W.D65) Double)
--- ColorDIN 53.228219883288524 28.416346557306987 3.8983955176918417
+-- <DIN99 Degree2 'D65:(53.2282198832885240,28.4163465573069870, 3.8983955176918417)>
 -- >>> dinToLAB DIN99Method (ColorDIN 53.22821988 28.41634656 3.89839552 :: Color (DIN99 'W.D65) Double)
--- ColorLAB 41.52787528673297 52.63858304770069 26.923179230171797
+-- <LAB Degree2 'D65:(41.5278752867329700,52.6385830477006900,26.9231792301717970)>
 labToDIN ::
   (RealFloat e) =>
   DINMethod ->
