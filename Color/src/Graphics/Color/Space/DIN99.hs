@@ -163,9 +163,7 @@ labToDIN m (ColorLAB l a b) = ColorDIN l_99 a_99 b_99
 dinToLAB ::
   RealFloat e =>
   DINMethod ->
-  Color
-    (DIN99 i)
-    e ->
+  Color (DIN99 i) e ->
   Color (LAB i) e
 dinToLAB m (ColorDIN l_99 a_99 b_99) = ColorLAB l a b
   where
