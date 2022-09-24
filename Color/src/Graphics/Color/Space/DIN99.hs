@@ -40,7 +40,7 @@ pattern ColorDIN l' a' b' = DIN99 (V3 l' a' b')
 
 {-# COMPLETE ColorDIN #-}
 
--- | CIE1976 `DIN99` color space
+-- | `DIN99` color space
 deriving instance Eq e => Eq (Color (DIN99 i) e)
 
 -- | CIE1976 `DIN99` color space
