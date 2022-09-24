@@ -144,9 +144,7 @@ deltaE a b = sqrt $ sum ((a - b) ** 2)
 labToDIN ::
   (RealFloat e) =>
   DINMethod ->
-  Color
-    (LAB i)
-    e ->
+  Color (LAB i) e ->
   Color (DIN99 i) e
 labToDIN m (ColorLAB l a b) = ColorDIN l_99 a_99 b_99
   where
