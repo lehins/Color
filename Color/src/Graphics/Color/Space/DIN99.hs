@@ -24,8 +24,8 @@ import Foreign.Storable
 import GHC.Generics (Generic)
 import Graphics.Color.Illuminant.Wikipedia as W
 import Graphics.Color.Model.Internal
-import Graphics.Color.Space.CIE1976.LAB
 import Graphics.Color.Space.Internal
+import Graphics.Color.Space.LAB
 
 data DIN99 (i :: k)
 
@@ -40,25 +40,25 @@ pattern ColorDIN99 l' a' b' = DIN99 (V3 l' a' b')
 -- | `DIN99` color space
 deriving instance Eq e => Eq (Color (DIN99 i) e)
 
--- | CIE1976 `DIN99` color space
+-- | `DIN99` color space
 deriving instance Ord e => Ord (Color (DIN99 i) e)
 
--- | CIE1976 `DIN99` color space
+-- | `DIN99` color space
 deriving instance Functor (Color (DIN99 i))
 
--- | CIE1976 `DIN99` color space
+-- | `DIN99` color space
 deriving instance Applicative (Color (DIN99 i))
 
--- | CIE1976 `DIN99` color space
+-- | `DIN99` color space
 deriving instance Foldable (Color (DIN99 i))
 
--- | CIE1976 `DIN99` color space
+-- | `DIN99` color space
 deriving instance Traversable (Color (DIN99 i))
 
--- | CIE1976 `DIN99` color space
+-- | `DIN99` color space
 deriving instance Storable e => Storable (Color (DIN99 i) e)
 
--- | CIE1976 `DIN99` color space
+-- | `DIN99` color space
 instance (Illuminant i, Elevator e) => Show (Color (DIN99 i) e) where
   showsPrec _ = showsColorModel
 
