@@ -98,7 +98,7 @@ data DINMethod
   | DIN99bMethod
   | DIN99cMethod
   | DIN99dMethod
-  deriving stock (Eq, Show, Read, Ord, Bounded, Enum, Generic)
+  deriving (Eq, Show, Read, Ord, Bounded, Enum, Generic)
 
 fromDINMethod ::
   ( Fractional a,
