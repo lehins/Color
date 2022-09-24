@@ -14,7 +14,7 @@
 
 module Graphics.Color.Space.DIN99
   ( pattern DIN99,
-    pattern ColorDIN,
+    pattern ColorDIN99,
     DIN99,
     deltaE,
   )
@@ -32,10 +32,10 @@ data DIN99 (i :: k)
 -- | Color in DIN99 color space
 newtype instance Color (DIN99 i) e = DIN99 (V3 e)
 
-pattern ColorDIN :: e -> e -> e -> Color (DIN99 i) e
-pattern ColorDIN l' a' b' = DIN99 (V3 l' a' b')
+pattern ColorDIN99 :: e -> e -> e -> Color (DIN99 i) e
+pattern ColorDIN99 l' a' b' = DIN99 (V3 l' a' b')
 
-{-# COMPLETE ColorDIN #-}
+{-# COMPLETE ColorDIN99 #-}
 
 -- | `DIN99` color space
 deriving instance Eq e => Eq (Color (DIN99 i) e)
@@ -64,9 +64,9 @@ instance (Illuminant i, Elevator e) => Show (Color (DIN99 i) e) where
 
 instance (Illuminant i, Elevator e) => ColorModel (DIN99 i) e where
   type Components (DIN99 i) e = (e, e, e)
-  toComponents (ColorDIN l' a' b') = (l', a', b')
+  toComponents (ColorDIN99 l' a' b') = (l', a', b')
   {-# INLINE toComponents #-}
-  fromComponents (l', a', b') = ColorDIN l' a' b'
+  fromComponents (l', a', b') = ColorDIN99 l' a' b'
   {-# INLINE fromComponents #-}
 
 instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (DIN99 (i :: k)) i e where
@@ -132,14 +132,14 @@ deltaE a b = sqrt $ sum ((a - b) ** 2)
 -- https://github.com/colour-science/colour/blob/c3735e5d0ad67443022ece0b42b575e040eb61d1/colour/models/din99.py#L79
 -- >>> labToDIN DIN99Method (ColorLAB 41.52787529 52.63858304 26.92317922 :: Color (LAB 'W.D65) Double)
 -- <DIN99 Degree2 'D65:(53.2282198832885240,28.4163465573069870, 3.8983955176918417)>
--- >>> dinToLAB DIN99Method (ColorDIN 53.22821988 28.41634656 3.89839552 :: Color (DIN99 'W.D65) Double)
+-- >>> dinToLAB DIN99Method (ColorDIN99 53.22821988 28.41634656 3.89839552 :: Color (DIN99 'W.D65) Double)
 -- <LAB Degree2 'D65:(41.5278752867329700,52.6385830477006900,26.9231792301717970)>
 labToDIN ::
   (RealFloat e) =>
   DINMethod ->
   Color (LAB i) e ->
   Color (DIN99 i) e
-labToDIN m (ColorLAB l a b) = ColorDIN l_99 a_99 b_99
+labToDIN m (ColorLAB l a b) = ColorDIN99 l_99 a_99 b_99
   where
     cos_c = cos $ radians c_3
     sin_c = sin $ radians c_3
@@ -158,7 +158,7 @@ dinToLAB ::
   DINMethod ->
   Color (DIN99 i) e ->
   Color (LAB i) e
-dinToLAB m (ColorDIN l_99 a_99 b_99) = ColorLAB l a b
+dinToLAB m (ColorDIN99 l_99 a_99 b_99) = ColorLAB l a b
   where
     expm1 x = exp x - 1
     cos' = cos (radians c_3)
