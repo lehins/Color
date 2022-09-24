@@ -11,8 +11,6 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE Strict #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE UnboxedSums #-}
-{-# LANGUAGE UnboxedTuples #-}
 
 module Graphics.Color.Space.DIN99
   ( pattern DIN99,
