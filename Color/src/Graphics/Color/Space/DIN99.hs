@@ -126,12 +126,8 @@ radians x = pi / 180 * x
 -- two points in the space. Otherwise known as euclidean distance.
 deltaE ::
   (Floating e, Illuminant i, Elevator e) =>
-  Color
-    (LAB i)
-    e ->
-  Color
-    (LAB i)
-    e ->
+  Color (LAB i) e ->
+  Color (LAB i) e ->
   e
 deltaE a b = sqrt $ sum ((a - b) ** 2)
 
