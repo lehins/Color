@@ -44,6 +44,7 @@ library
                      , Graphics.Color.Space.CIE1976.LAB.LCH
                      , Graphics.Color.Space.CIE1976.LUV
                      , Graphics.Color.Space.CIE1976.LUV.LCH
+                     , Graphics.Color.Space.DIN99
                      , Graphics.Color.Space.RGB
                      , Graphics.Color.Space.RGB.CIERGB
                      , Graphics.Color.Space.RGB.AdobeRGB
