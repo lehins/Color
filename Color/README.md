@@ -72,6 +72,73 @@ Currently supported:
   * RAL
   * SVG
 
+## Example
+
+Here is a short example how this library can be used. Here we assume a GHCi session that
+can be started like so:
+
+```shell
+$ stack ghci --package Color
+```
+
+### Perceived lightness
+
+Let's say we need find the perceived lightness as described in [this StackOverflow
+answer](https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color/56678483#56678483)
+for an RGB triple `(128, 255, 65) :: (Word8, Word8, Word8)`.
+
+Before we can attempt getting the lightness we need to do these two things:
+
+1. Figure out what is the color space of the `RGB` triplet? In particular the `Illuminant`
+   and the `Linearity` of the `RGB` color space.
+2. Convert your `RGB` color to [`CIE
+   L*a*b*`](https://en.wikipedia.org/wiki/CIELAB_color_space) and then we can get the `L*`
+   out, which is the perceived lightness.
+
+More often than not an RGB image will be encoded in non-linear sRGB color space with 8 bits
+per channel, so we'll use that for this example:
+
+```haskell
+ghci> :set -XDataKinds
+ghci> import Graphics.Color.Space
+ghci> let rgb8 = ColorSRGB 128 255 65 :: Color (SRGB 'NonLinear) Word8
+ghci> print rgb8
+<SRGB 'NonLinear:(128,255, 65)>
+```
+
+Before we convert `sRGB` to `CIE L*a*b*` color space we need to increase the precision to
+`Double`, because for now `Word8` is not supported by the `LAB` color space implementation:
+
+```haskell
+ghci> let rgb = toDouble <$> rgb8
+ghci> print rgb
+<SRGB 'NonLinear:( 0.5019607843137255, 1.0000000000000000, 0.2549019607843137)>
+```
+
+In order to convert to another color space without changing the `Illuminant` we can use
+`convertColor` function. So here is how we convert to CIELAB and extract the perceived
+lightness `L*`:
+
+```haskell
+ghci> let lab@(ColorLAB l _ _) = convertColor rgb :: Color (LAB D65) Double
+ghci> lab
+<LAB * D65:(90.0867507593648500,-65.7999116680496000,74.4643898323530600)>
+ghci> l
+90.08675075936485
+```
+
+### Color adaptation
+
+When a change of `Illuminant` is also needed during color space conversion we can use
+`convert` function
+
+```haskell
+ghci> import Graphics.Color.Adaptation (convert)
+ghci> import qualified Graphics.Color.Illuminant.CIE1964 as CIE1964
+ghci> let lab@(ColorLAB l _ _) = convert rgb :: Color (LAB 'CIE1964.D50) Double
+ghci> lab
+<LAB CIE1964 'D50:(90.2287735564601500,-59.3846969983265500,72.9304679742930800)>
+```
 
 ## External resources
 
