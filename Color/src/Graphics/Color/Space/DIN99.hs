@@ -22,10 +22,10 @@ where
 
 import Foreign.Storable
 import GHC.Generics (Generic)
-import Graphics.Color.Illuminant.Wikipedia as W
 import Graphics.Color.Model.Internal
 import Graphics.Color.Space.Internal
 import Graphics.Color.Space.CIE1976.LAB
+import Graphics.Color.Illuminant.Wikipedia as W
 
 data DIN99 (i :: k)
 
@@ -128,12 +128,14 @@ deltaE ::
   e
 deltaE a b = sqrt $ sum ((a - b) ** 2)
 
--- | Bidirectional @DIN99@ @DIN99@ conversion as implemented in
--- https://github.com/colour-science/colour/blob/c3735e5d0ad67443022ece0b42b575e040eb61d1/colour/models/din99.py#L79
--- >>> labToDIN DIN99Method (ColorLAB 41.52787529 52.63858304 26.92317922 :: Color (LAB 'W.D65) Double)
--- <DIN99 Degree2 'D65:(53.2282198832885240,28.4163465573069870, 3.8983955176918417)>
--- >>> dinToLAB DIN99Method (ColorDIN99 53.22821988 28.41634656 3.89839552 :: Color (DIN99 'W.D65) Double)
--- <LAB Degree2 'D65:(41.5278752867329700,52.6385830477006900,26.9231792301717970)>
+-- | Bidirectional @DIN99@ @DIN99@ conversion as implemented in Python
+-- [colour](https://github.com/colour-science/colour/blob/c3735e5d0ad67443022ece0b42b575e040eb61d1/colour/models/din99.py#L79) package.
+--
+-- >>> import Graphics.Color.Illuminant.Wikipedia as W
+-- >>> labToDIN DIN99Method (ColorLAB 41.527874 52.638584 26.92318 :: Color (LAB 'W.D65) Float)
+-- <DIN99 Degree2 'D65:(53.22821400,28.41634600, 3.89839500)>
+-- >>> dinToLAB DIN99Method (ColorDIN99 53.228218 28.416348 3.8983955 :: Color (DIN99 'W.D65) Float)
+-- <LAB Degree2 'D65:(41.52787800,52.63859000,26.92318300)>
 labToDIN ::
   (RealFloat e) =>
   DINMethod ->
