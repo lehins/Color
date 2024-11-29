@@ -7,6 +7,7 @@
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
@@ -112,6 +113,11 @@ instance (Typeable l, Elevator e) => Show (Color (AdobeRGB l) e) where
 -- | `AdobeRGB` color space
 instance (Typeable l, Elevator e) => ColorModel (AdobeRGB l) e where
   type Components (AdobeRGB l) e = (e, e, e)
+  type ChannelCount (AdobeRGB l) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.RGB e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.RGB e))
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
@@ -126,6 +132,10 @@ instance Elevator e => ColorSpace (AdobeRGB 'Linear) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLinearLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgbLinear2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
@@ -140,6 +150,10 @@ instance Elevator e => ColorSpace (AdobeRGB 'NonLinear) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbNonLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbNonLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -9,6 +10,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.Color.Space.CIE1976.LUV
 --
@@ -20,6 +22,8 @@ module Graphics.Color.Space.CIE1976.LUV
   , LUV
   ) where
 
+import Data.Coerce
+import Data.List.NonEmpty
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import Graphics.Color.Space.Internal
@@ -72,6 +76,14 @@ instance (Illuminant i, Elevator e) => Show (Color (LUV i) e) where
 -- | CIE1976 `LUV` color space
 instance (Illuminant i, Elevator e) => ColorModel (LUV i) e where
   type Components (LUV i) e = (e, e, e)
+  type ChannelCount (LUV i) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "L" :| ["U", "V"]
+  channelColors _ = V3 0x80 0x80 0x80 :|
+                  [ V3 0x00 0xff 0xff
+                  , V3 0x00 0x00 0x00
+                  ]
   toComponents (ColorLUV l' u' v') = (l', u', v')
   {-# INLINE toComponents #-}
   fromComponents (l', u', v') = ColorLUV l' u' v'
@@ -86,6 +98,10 @@ instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (LUV (i :: k)) i 
   {-# INLINE fromBaseSpace #-}
   luminance (ColorLUV l' _ _) = Y (ift (scaleLightness l'))
   {-# INLINE luminance #-}
+  grayscale (coerce -> V3 l _ _) = X l
+  {-# INLINE grayscale #-}
+  replaceGrayscale (coerce -> V3 _ c h) (X l) = coerce (V3 l c h)
+  {-# INLINE replaceGrayscale #-}
   toColorXYZ = luv2xyz
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = xyz2luv

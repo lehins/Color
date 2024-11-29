@@ -60,6 +60,11 @@ instance (Typeable l, Illuminant i, Elevator e) => Show (Color (CIERGB (i :: k) 
 -- | `CIERGB` color space (derived)
 instance (Typeable l, Illuminant i, Elevator e) => ColorModel (CIERGB (i :: k) l) e where
   type Components (CIERGB i l) e = (e, e, e)
+  type ChannelCount (CIERGB i l) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.RGB e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.RGB e))
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
@@ -74,6 +79,10 @@ instance (Illuminant i, Typeable l, Elevator e) => ColorSpace (CIERGB i l) i e w
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLinearLuminance . castLinearity . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = toBaseModel . fmap fromDouble . luminance
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = castLinearity (rgbLinearApplyGrayscale (castLinearity c) f)
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgbLinear2xyz . fmap toRealFloat . castLinearity
   {-# INLINE toColorXYZ #-}
   fromColorXYZ xyz = castLinearity (fromRealFloat <$> xyz2rgbLinear @(CIERGB i) xyz)

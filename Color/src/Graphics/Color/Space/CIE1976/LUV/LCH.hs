@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -9,6 +10,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ViewPatterns #-}
 
 -- |
 -- Module: Graphics.Color.Space.CIE1976.LUV.LCH
@@ -20,6 +22,7 @@ module Graphics.Color.Space.CIE1976.LUV.LCH
   , Color(LCHuv)
   ) where
 
+import Data.List.NonEmpty
 import Data.Coerce
 import Data.Proxy
 import Foreign.Storable
@@ -73,9 +76,17 @@ pattern ColorLCHuvA l c h a = Alpha (LCHuv (CM.ColorLCH l c h)) a
 -- | CIE1976 `LCHuv` color space
 instance (Illuminant i, Elevator e, ColorModel (LUV i) e) => ColorModel (LCHuv i) e where
   type Components (LCHuv i) e = (e, e, e)
-  toComponents = toComponents . coerce
+  type ChannelCount (LCHuv i) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "L" :| ["Cuv", "Huv"]
+  channelColors _ = V3 0x80 0x80 0x80 :|
+                  [ V3 0x99 0x00 0x99
+                  , V3 0x99 0xcc 0x00
+                  ]
+  toComponents (LCHuv lch) =  toComponents lch
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = LCHuv . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName _ =
     ("LCH-"++) . showsColorModelName (Proxy :: Proxy (Color (LUV i) e))
@@ -83,9 +94,13 @@ instance (Illuminant i, Elevator e, ColorModel (LUV i) e) => ColorModel (LCHuv i
 instance (Illuminant i, Elevator e, ColorSpace (LUV i) i e) => ColorSpace (LCHuv i) i e where
   type BaseModel (LCHuv i) = CM.LCH
   type BaseSpace (LCHuv i) = LUV i
-  toBaseSpace = fmap fromDouble . fromComponents . CM.lch2lxy . fmap toDouble . coerce
+  toBaseSpace (LCHuv lch) = fmap fromDouble . fromComponents . CM.lch2lxy . fmap toDouble $ lch
   {-# INLINE toBaseSpace #-}
-  fromBaseSpace = coerce . fmap fromDouble . CM.lxy2lch . toComponents . fmap toDouble
+  fromBaseSpace = LCHuv . fmap fromDouble . CM.lxy2lch . toComponents . fmap toDouble
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale (coerce -> V3 l _ _) = X l
+  {-# INLINE grayscale #-}
+  replaceGrayscale (coerce -> V3 _ c h) (X l) = coerce (V3 l c h)
+  {-# INLINE replaceGrayscale #-}

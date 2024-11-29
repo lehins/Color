@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -13,14 +14,15 @@ module Graphics.Color.Model.LCH
   -- * Constructors for an LCH color model.
   , pattern ColorLCH
   , pattern ColorLCHA
-  , Color
+  , Color(..)
   , ColorModel(..)
   , lch2lxy
   , lxy2lch
   ) where
 
-import Data.Complex ( Complex(..), polar, mkPolar )
-import Data.Fixed ( mod' )
+import Data.Complex (Complex(..), polar, mkPolar)
+import Data.Fixed (mod')
+import Data.List.NonEmpty
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 
@@ -68,6 +70,14 @@ instance Elevator e => Show (Color LCH e) where
 -- | `LCH` color model
 instance Elevator e => ColorModel LCH e where
   type Components LCH e = (e, e, e)
+  type ChannelCount LCH = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "Luminance" :| ["Chroma", "Hue"]
+  channelColors _ = V3 0x80 0x80 0x80 :|
+                  [ V3 0xff 0x00 0xff
+                  , V3 0xcc 0xff 0x33
+                  ]
   toComponents (ColorLCH l c h) = (l, c, h)
   {-# INLINE toComponents #-}
   fromComponents (l, c, h) = ColorLCH l c h

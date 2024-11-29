@@ -16,11 +16,15 @@ module Graphics.Color.Space.Common
   , prop_toFromBaseSpace
   ) where
 
+import Data.Coerce
 import Graphics.Color.Space
 import Graphics.Color.Model.Common
 
+instance (Elevator e, Random e) => Arbitrary (Color X e) where
+  arbitrary = coerce $ arbitraryElevator @e
+
 instance (Elevator e, Random e) => Arbitrary (Color (Y i) e) where
-  arbitrary = Y <$> arbitraryElevator
+  arbitrary = coerce $ arbitraryElevator @e
 
 instance (Elevator e, Random e) => Arbitrary (Color (XYZ i) e) where
   arbitrary = ColorXYZ <$> arbitraryElevator <*> arbitraryElevator <*> arbitraryElevator
@@ -67,6 +71,44 @@ prop_toFromBaseModel ::
   -> Property
 prop_toFromBaseModel c = c === fromBaseModel (toBaseModel c)
 
+prop_toApplyGrayscale ::
+     forall cs e i. (ColorSpace cs i e, RealFloat e)
+  => e
+  -> Color cs e
+  -> Property
+prop_toApplyGrayscale epsilon c = epsilonEqColorTol epsilon c $ applyGrayscale c id
+
+prop_toReplaceGrayscale ::
+     forall cs e i. (ColorSpace cs i e, RealFloat e)
+  => e
+  -> Color cs e
+  -> Property
+prop_toReplaceGrayscale epsilon c =
+  epsilonEqColorTol epsilon c (replaceGrayscale c (grayscale c))
+
+prop_toApplyGrayscaleAsReplace ::
+     forall cs e i. (ColorSpace cs i e, RealFloat e)
+  => e
+  -> Color cs e
+  -> Fun (Color X e) (Color X e)
+  -> Property
+prop_toApplyGrayscaleAsReplace epsilon c f =
+  epsilonEqColorTol
+    epsilon
+    (applyGrayscale c (applyFun f))
+    (replaceGrayscale c (applyFun f (grayscale c)))
+
+
+prop_toReplaceGrayscaleAsApply ::
+     forall cs e i. (ColorSpace cs i e, RealFloat e)
+  => e
+  -> Color cs e
+  -> Color X e
+  -> Property
+prop_toReplaceGrayscaleAsApply epsilon c y =
+  epsilonEqColorTol epsilon (replaceGrayscale c y) (applyGrayscale c (const y))
+
+
 colorSpaceCommonSpec ::
      forall cs e i.
      (Arbitrary (Color cs e), ColorSpace cs i e)
@@ -88,7 +130,14 @@ colorSpaceSpec =
 
 colorSpaceLenientSpec ::
      forall cs e i.
-     (Arbitrary (Color cs e), ColorSpace (BaseSpace cs) i e, ColorSpace cs i e, RealFloat e)
+     ( Arbitrary (Color cs e)
+     , ColorSpace (BaseSpace cs) i e
+     , ColorSpace cs i e
+     , RealFloat e
+     , Function e
+     , Random e
+     , CoArbitrary e
+     )
   => e
   -> Spec
 colorSpaceLenientSpec tol =
@@ -96,3 +145,7 @@ colorSpaceLenientSpec tol =
   in colorSpaceCommonSpec @cs @e @i $ do
        prop ("toFromBaseSpace " ++ tolStr) $ prop_toFromBaseSpaceLenient @cs @e @i tol
        prop ("toFromColorXYZ " ++ tolStr) $ prop_toFromLenientColorXYZ @cs @e @i tol
+       prop ("toReplaceGrayscale " ++ tolStr) $ prop_toReplaceGrayscale @cs @e @i tol
+       prop ("toReplaceGrayscaleAsApply " ++ tolStr) $ prop_toReplaceGrayscaleAsApply @cs @e @i tol
+       prop ("toApplyGrayscale" ++ tolStr) $ prop_toApplyGrayscale @cs @e @i tol
+       prop ("toApplyGrayscaleAsReplace" ++ tolStr) $ prop_toApplyGrayscaleAsReplace @cs @e @i tol
