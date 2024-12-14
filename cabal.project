@@ -1,0 +1,9 @@
+packages:
+  Color
+tests: True
+benchmarks: True
+test-show-details: streaming
+write-ghc-environment-files: always
+program-options
+  ghc-options: -Werror
+

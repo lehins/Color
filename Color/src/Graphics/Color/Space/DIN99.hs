@@ -25,7 +25,6 @@ import GHC.Generics (Generic)
 import Graphics.Color.Model.Internal
 import Graphics.Color.Space.Internal
 import Graphics.Color.Space.CIE1976.LAB
-import Graphics.Color.Illuminant.Wikipedia as W
 
 data DIN99 (i :: k)
 

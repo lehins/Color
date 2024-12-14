@@ -99,7 +99,6 @@ instance (Typeable cs, Elevator e) => ColorModel (Y' cs) e where
 
 
 instance ( Typeable cs
-         , Illuminant i
          , ColorSpace (cs 'Linear) i e
          , ColorSpace (cs 'NonLinear) i e
          , Luma cs

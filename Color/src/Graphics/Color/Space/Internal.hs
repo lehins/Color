@@ -11,6 +11,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
 -- |
@@ -70,7 +71,7 @@ import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.X as CM
 import Data.Typeable
 import Data.Coerce
-import GHC.TypeNats
+import GHC.TypeLits
 import Data.Kind
 
 class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>

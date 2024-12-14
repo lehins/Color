@@ -135,7 +135,9 @@ double2Word64 d'
 
 -- | Differs from `fromIntegral` due to: [GHC #17782](https://gitlab.haskell.org/ghc/ghc/issues/17782)
 --
--- >>> fromIntegral (maxBound :: Word64) :: Double
+-- This is the value for ghc < 9.2
+--
+-- > fromIntegral (maxBound :: Word64) :: Double
 -- 1.844674407370955e19
 --
 maxWord64 :: Double

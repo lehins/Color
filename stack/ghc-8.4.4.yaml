@@ -1,6 +1,7 @@
-resolver: lts-13.30
+resolver: lts-12.26
+system-ghc: true
 packages:
-- Color
+- ../Color
 extra-deps:
 - JuicyPixels-3.3.5@sha256:5c67dc066d67f5045221a8202f701f4c77eab8220f44414c00fadcdc3e4f872b,3911
 - QuickCheck-2.13.2@sha256:ad4e5adbd1c9dc0221a44307b992cb040c515f31095182e47aa7e974bc461df1,6952

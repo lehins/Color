@@ -33,9 +33,11 @@ module Graphics.Color.Algebra
 
 import Data.Typeable
 import Foreign.Ptr
-import Control.Applicative
 import Foreign.Storable
 import Graphics.Color.Algebra.Elevator
+#if MIN_VERSION_base(4,10,0) && !MIN_VERSION_base(4,18,0)
+import Control.Applicative (liftA2)
+#endif
 
 
 --------

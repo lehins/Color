@@ -1,4 +1,5 @@
 resolver: lts-23.00
+system-ghc: true
 packages:
-- Color
+- ../Color
 extra-deps: []

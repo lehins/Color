@@ -1,10 +1,16 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
+#if __GLASGOW_HASKELL__ >= 906
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE PolyKinds #-}
+#else
 {-# LANGUAGE TypeInType #-}
+#endif
 -- |
 -- Module      : Graphics.Color.Standard.RAL
 -- Copyright   : (c) Alexey Kuleshevich 2019-2020

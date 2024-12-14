@@ -59,7 +59,7 @@ deriving instance Foldable (Color (Y'CbCr cs))
 deriving instance Traversable (Color (Y'CbCr cs))
 deriving instance Storable e => Storable (Color (Y'CbCr cs) e)
 
-instance (Typeable cs, ColorModel (cs 'NonLinear) e, Elevator e) => Show (Color (Y'CbCr cs) e) where
+instance (Typeable cs, ColorModel (cs 'NonLinear) e) => Show (Color (Y'CbCr cs) e) where
   showsPrec _ = showsColorModel
 
 -- | Constructor for an RGB color space in an alternative Y'CbCr color model
