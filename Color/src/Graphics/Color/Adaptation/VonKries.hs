@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -5,7 +6,12 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
+#if __GLASGOW_HASKELL__ >= 906
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE PolyKinds #-}
+#else
 {-# LANGUAGE TypeInType #-}
+#endif
 -- |
 -- Module      : Graphics.Color.Adaptation.VonKries
 -- Copyright   : (c) Alexey Kuleshevich 2018-2020

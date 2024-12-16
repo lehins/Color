@@ -4,6 +4,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 -- |
 -- Module      : Graphics.Color.Model.Internal
@@ -43,7 +44,7 @@ module Graphics.Color.Model.Internal
   , VU.Vector(V_Color)
   ) where
 
-import Control.Applicative
+import qualified Control.Applicative as A
 import Control.DeepSeq (NFData(rnf), deepseq)
 import Data.Default.Class (Default(..))
 import Data.Foldable
@@ -94,11 +95,11 @@ instance ColorModel cs e => Default (Color cs e) where
 
 
 instance ColorModel cs e => Num (Color cs e) where
-  (+)         = liftA2 (+)
+  (+)         = A.liftA2 (+)
   {-# INLINE (+) #-}
-  (-)         = liftA2 (-)
+  (-)         = A.liftA2 (-)
   {-# INLINE (-) #-}
-  (*)         = liftA2 (*)
+  (*)         = A.liftA2 (*)
   {-# INLINE (*) #-}
   abs         = fmap abs
   {-# INLINE abs #-}
@@ -109,7 +110,7 @@ instance ColorModel cs e => Num (Color cs e) where
 
 
 instance (ColorModel cs e, Fractional e) => Fractional (Color cs e) where
-  (/)          = liftA2 (/)
+  (/)          = A.liftA2 (/)
   {-# INLINE (/) #-}
   recip        = fmap recip
   {-# INLINE recip #-}

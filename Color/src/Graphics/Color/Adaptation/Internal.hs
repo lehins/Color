@@ -4,6 +4,7 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 -- |
 -- Module      : Graphics.Color.Adaptation.Internal
 -- Copyright   : (c) Alexey Kuleshevich 2019-2020
