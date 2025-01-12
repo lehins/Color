@@ -20,6 +20,7 @@ module Graphics.Color.Space.DIN99
   )
 where
 
+import Data.List.NonEmpty
 import Foreign.Storable
 import GHC.Generics (Generic)
 import Graphics.Color.Model.Internal
@@ -63,6 +64,14 @@ instance (Illuminant i, Elevator e) => Show (Color (DIN99 i) e) where
 
 instance (Illuminant i, Elevator e) => ColorModel (DIN99 i) e where
   type Components (DIN99 i) e = (e, e, e)
+  type ChannelCount (DIN99 i) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "L*" :| ["a*", "b*"] -- DIN99 is base on Lab color space
+  channelColors _ = V3 0x80 0x80 0x80 :| -- gray
+                  [ V3 0x00 0x64 0x00    -- dark green
+                  , V3 0x00 0x00 0x8b    -- dark blue
+                  ]
   toComponents (ColorDIN99 l' a' b') = (l', a', b')
   {-# INLINE toComponents #-}
   fromComponents (l', a', b') = ColorDIN99 l' a' b'
@@ -77,6 +86,10 @@ instance (Illuminant i, Elevator e, RealFloat e) => ColorSpace (DIN99 (i :: k)) 
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . dinToLAB DIN99Method
   {-# INLINE luminance #-}
+  grayscale (ColorDIN99 l' _ _) = X l'
+  {-# INLINE grayscale #-}
+  replaceGrayscale (ColorDIN99 _ a' b') (X l') = ColorDIN99 l' a' b'
+  {-# INLINE replaceGrayscale #-}
   toColorXYZ = toColorXYZ . dinToLAB DIN99Method
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = labToDIN DIN99Method . fromColorXYZ

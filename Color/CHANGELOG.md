@@ -2,6 +2,7 @@
 
 ## 0.4.0
 
+* Addition of `DIN99` color space.
 * Scale `L*a*b*` color space to `[0, 1]` range from the more common `[0, 100]` for
   consistency.
 * Addition of: `toGrayscale`, `applyGrayscale` and `replaceGrayscale`.
