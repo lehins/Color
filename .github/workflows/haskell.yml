@@ -198,11 +198,17 @@ jobs:
         set -ex
         cabal test all
 
-    - name: Doctest
+    - name: Install Doctest
+      id: install-doctest
       if: steps.build.outcome == 'success'
       run: |
         set -ex
         cabal install doctest --ignore-project --overwrite-policy=always
+
+    - name: Doctest
+      if: steps.install-doctest.outcome == 'success'
+      run: |
+        set -ex
         cabal repl Color --build-depends=QuickCheck --build-depends=JuicyPixels --build-depends=QuickCheck --with-compiler=doctest --repl-options='-w -Wdefault'
 
     - name: Check Cabal Files
