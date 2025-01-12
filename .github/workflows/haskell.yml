@@ -37,7 +37,7 @@ jobs:
           - { os: Ubuntu-latest,  resolver: lts-21,  ghc: "9.4.8"  }
           - { os: Ubuntu-latest,  resolver: lts-22,  ghc: "9.6.6"  }
           - { os: Ubuntu-latest,  resolver: lts-23,  ghc: "9.8.4"  }
-          - { os: Ubuntu-latest,  resolver: nightly }
+          - { os: Ubuntu-latest,  resolver: nightly                }
           - { os: Windows-latest, resolver: lts-12,  ghc: "8.4.4"  }
           - { os: Windows-latest, resolver: lts-14,  ghc: "8.6.5"  }
           - { os: Windows-latest, resolver: lts-16,  ghc: "8.8.4"  }
@@ -47,7 +47,7 @@ jobs:
           - { os: Windows-latest, resolver: lts-21,  ghc: "9.4.8"  }
           - { os: Windows-latest, resolver: lts-22,  ghc: "9.6.6"  }
           - { os: Windows-latest, resolver: lts-23,  ghc: "9.8.4"  }
-          - { os: Windows-latest, resolver: nightly }
+          - { os: Windows-latest, resolver: nightly                }
           - { os: MacOS-13,       resolver: lts-12,  ghc: "8.4.4"  }
           - { os: MacOS-13,       resolver: lts-14,  ghc: "8.6.5"  }
           - { os: MacOS-13,       resolver: lts-16,  ghc: "8.8.4"  }
@@ -57,7 +57,7 @@ jobs:
           - { os: MacOS-latest,   resolver: lts-21,  ghc: "9.4.8"  }
           - { os: MacOS-latest,   resolver: lts-22,  ghc: "9.6.6"  }
           - { os: MacOS-latest,   resolver: lts-23,  ghc: "9.8.4"  }
-          - { os: MacOS-latest,   resolver: nightly }
+          - { os: MacOS-latest,   resolver: nightly                }
 
     env:
       STACK_YAML: ${{ matrix.stack-yaml || matrix.ghc != '' && format('stack/ghc-{0}.yaml', matrix.ghc) || 'stack.yaml' }}
@@ -72,7 +72,7 @@ jobs:
       with:
         ghc-version: ${{ matrix.ghc }}
         enable-stack: true
-        stack-version: 'latest'
+        stack-version: ${{ matrix.stack || 'latest' }}
 
     - name: Cache
       id: cache
@@ -124,33 +124,37 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "8.4.4" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "8.6.5" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "8.8.4" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "8.10.7" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.0.2" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.2.8" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.4.8" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.6.6" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.8.2" }
-          - { cabal: "3.12", os: ubuntu-latest, ghc: "9.10.1" }
-          - { cabal: "3.12", os: windows-latest, ghc: "9.0.2" }
-          - { cabal: "3.12", os: windows-latest, ghc: "9.2.8" }
-          - { cabal: "3.12", os: windows-latest, ghc: "9.4.8" }
-          - { cabal: "3.12", os: windows-latest, ghc: "9.6.6" }
-          - { cabal: "3.12", os: windows-latest, ghc: "9.8.2" }
-          - { cabal: "3.12", os: windows-latest, ghc: "9.10.1" }
-          - { cabal: "3.12", os: macOS-13, ghc: "9.0.2" }
-          - { cabal: "3.12", os: macOS-latest, ghc: "9.2.8" }
-          - { cabal: "3.12", os: macOS-latest, ghc: "9.4.8" }
-          - { cabal: "3.12", os: macOS-latest, ghc: "9.6.6" }
-          - { cabal: "3.12", os: macOS-latest, ghc: "9.8.2" }
-          - { cabal: "3.12", os: macOS-latest, ghc: "9.10.1" }
+          - { cabal: "3.14", os: ubuntu-latest,  ghc: "8.4.4"  }
+          - { cabal: "3.14", os: ubuntu-latest,  ghc: "8.6.5"  }
+          - { cabal: "3.14", os: ubuntu-latest,  ghc: "8.8.4"  }
+          - { cabal: "3.14", os: ubuntu-latest,  ghc: "8.10.7" }
+          - { cabal: "3.14", os: ubuntu-latest,  ghc: "9.0.2"  }
+          - { cabal: "3.14", os: ubuntu-latest,  ghc: "9.2.8"  }
+          - { cabal: "3.14", os: ubuntu-latest,  ghc: "9.4.8"  }
+          - { cabal: "3.14", os: ubuntu-latest,  ghc: "9.6.6"  }
+          - { cabal: "3.14", os: ubuntu-latest,  ghc: "9.8.2"  }
+          - { cabal: "3.14", os: ubuntu-latest,  ghc: "9.10.1" }
+          - { cabal: "3.14", os: ubuntu-latest,  ghc: "9.12.1" }
+          - { cabal: "3.14", os: windows-latest, ghc: "9.0.2"  }
+          - { cabal: "3.14", os: windows-latest, ghc: "9.2.8"  }
+          - { cabal: "3.14", os: windows-latest, ghc: "9.4.8"  }
+          - { cabal: "3.14", os: windows-latest, ghc: "9.6.6"  }
+          - { cabal: "3.14", os: windows-latest, ghc: "9.8.2"  }
+          - { cabal: "3.14", os: windows-latest, ghc: "9.10.1" }
+          - { cabal: "3.14", os: windows-latest, ghc: "9.12.1" }
+          - { cabal: "3.14", os: macOS-13,       ghc: "9.0.2"  }
+          - { cabal: "3.14", os: macOS-latest,   ghc: "9.2.8"  }
+          - { cabal: "3.14", os: macOS-latest,   ghc: "9.4.8"  }
+          - { cabal: "3.14", os: macOS-latest,   ghc: "9.6.6"  }
+          - { cabal: "3.14", os: macOS-latest,   ghc: "9.8.2"  }
+          - { cabal: "3.14", os: macOS-latest,   ghc: "9.10.1" }
+          - { cabal: "3.14", os: macOS-latest,   ghc: "9.12.1" }
 
     env:
       cache-version: v0 # bump up this version to invalidate currently stored cache
     steps:
     - uses: actions/checkout@v4
+
     - uses: haskell-actions/setup@v2
       id: setup-haskell-cabal
       name: Setup Haskell
@@ -168,20 +172,45 @@ jobs:
         key: cabal-${{ runner.os }}-${{ matrix.ghc }}-${{ env.cache-version }}
         restore-keys: |
           cabal-${{ runner.os }}-${{ matrix.ghc }}-${{ env.cache-version }}
-    - name: Build
+
+    - name: Configure
       run: |
         set -ex
-        cabal configure --haddock-all --enable-tests --enable-benchmarks
-        cabal build all --write-ghc-environment-files=always
+        #  Remove this conditional when criterion and its deps are compatible with ghc-9.12
+        if [[ "${{ matrix.ghc }}" == "9.12.1" ]]; then
+          cabal configure --haddock-all --enable-tests
+        else
+          cabal configure --haddock-all --enable-tests --enable-benchmarks
+        fi
+
+    - name: Build dependencies
+      id: build-dependencies
+      run: cabal build all --only-dependencies
+
+    - name: Build
+      id: build
+      if: steps.build-dependencies.outcome == 'success'
+      run: cabal build all
+
     - name: Test
+      if: steps.build.outcome == 'success'
       run: |
         set -ex
         cabal test all
-    - name: Doctest
+
+    - name: Install Doctest
+      id: install-doctest
+      if: steps.build.outcome == 'success'
       run: |
         set -ex
         cabal install doctest --ignore-project --overwrite-policy=always
+
+    - name: Doctest
+      if: steps.install-doctest.outcome == 'success'
+      run: |
+        set -ex
         cabal repl Color --build-depends=QuickCheck --build-depends=JuicyPixels --build-depends=QuickCheck --with-compiler=doctest --repl-options='-w -Wdefault'
+
     - name: Check Cabal Files
       run: |
         set -ex
