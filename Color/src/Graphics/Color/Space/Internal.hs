@@ -112,6 +112,8 @@ class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
   -- inconsequential, becaus each class of color spaces has its own notion of
   -- grayscale (luma, luminocity, in linear or non-linear form, etc.)
   --
+  -- /Warning/ - This method is still experimental. Use at your own risk.
+  --
   -- @since 0.4.0
   grayscale :: Color cs e -> Color X e
 
@@ -121,6 +123,8 @@ class (Illuminant i, ColorModel (BaseModel cs) e, ColorModel cs e) =>
   -- Property that this function must obide:
   --
   -- > replaceGrayscale c y = applyGrayscale c (const y)
+  --
+  -- /Warning/ - This method is still experimental. Use at your own risk.
   --
   -- @since 0.4.0
   replaceGrayscale :: Color cs e -> Color X e -> Color cs e
