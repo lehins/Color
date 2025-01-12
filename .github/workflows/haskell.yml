@@ -154,6 +154,7 @@ jobs:
       cache-version: v0 # bump up this version to invalidate currently stored cache
     steps:
     - uses: actions/checkout@v4
+
     - uses: haskell-actions/setup@v2
       id: setup-haskell-cabal
       name: Setup Haskell
@@ -171,7 +172,8 @@ jobs:
         key: cabal-${{ runner.os }}-${{ matrix.ghc }}-${{ env.cache-version }}
         restore-keys: |
           cabal-${{ runner.os }}-${{ matrix.ghc }}-${{ env.cache-version }}
-    - name: Build
+
+    - name: Configure
       run: |
         set -ex
         #  Remove this conditional when criterion and its deps are compatible with ghc-9.12
@@ -180,16 +182,29 @@ jobs:
         else
           cabal configure --haddock-all --enable-tests --enable-benchmarks
         fi
-        cabal build all --write-ghc-environment-files=always
+
+    - name: Build dependencies
+      id: build-dependencies
+      run: cabal build all --only-dependencies
+
+    - name: Build
+      id: build
+      if: steps.build-dependencies.outcome == 'success'
+      run: cabal build all
+
     - name: Test
+      if: steps.build.outcome == 'success'
       run: |
         set -ex
         cabal test all
+
     - name: Doctest
+      if: steps.build.outcome == 'success'
       run: |
         set -ex
         cabal install doctest --ignore-project --overwrite-policy=always
         cabal repl Color --build-depends=QuickCheck --build-depends=JuicyPixels --build-depends=QuickCheck --with-compiler=doctest --repl-options='-w -Wdefault'
+
     - name: Check Cabal Files
       run: |
         set -ex
