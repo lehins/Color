@@ -68,7 +68,7 @@ import Graphics.Pixel.Internal
 --
 -- >>> :set -XDataKinds
 -- >>> :set -XTypeApplications
--- >>> px = PixelSRGB @Float 0.0 0.5 1.0
+-- >>> px = PixelSRGB @Float @'NonLinear 0.0 0.5 1.0
 -- >>> px
 -- <SRGB 'NonLinear:( 0.00000000, 0.50000000, 1.00000000)>
 -- >>> convertPixel @(AdobeRGB 'NonLinear) @_ @Word8 px
@@ -85,7 +85,7 @@ convertPixel = liftPixel convert
 -- | Constructor for a pixel in @sRGB@ color space
 --
 -- @since 0.1.0
-pattern PixelSRGB :: e -> e -> e -> Pixel (SRGB l) e
+pattern PixelSRGB :: forall e l. e -> e -> e -> Pixel (SRGB l) e
 pattern PixelSRGB r g b = Pixel (SRGB (CM.ColorRGB r g b))
 {-# COMPLETE PixelSRGB #-}
 

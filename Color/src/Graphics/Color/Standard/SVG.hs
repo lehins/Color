@@ -26,7 +26,7 @@ import Graphics.Color.Standard.Internal
 -- >>> import Graphics.Color.Space.CIE1976.LAB
 -- >>> import Graphics.Color.Illuminant.CIE1931
 -- >>> color (SVG :: SVG "aqua") :: Color (LAB 'D65) Float
--- <LAB CIE1931 'D65:(91.11637000,-48.08154700,-14.12457300)>
+-- <LAB CIE1931 'D65:( 0.91116370,-0.48081547,-0.14124572)>
 --
 data SVG (n :: Symbol) = SVG
 
