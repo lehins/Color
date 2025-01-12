@@ -4,7 +4,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 -- |
 -- Module      : Graphics.Color.Standard.SVG
--- Copyright   : (c) Alexey Kuleshevich 2021
+-- Copyright   : (c) Alexey Kuleshevich 2021-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental

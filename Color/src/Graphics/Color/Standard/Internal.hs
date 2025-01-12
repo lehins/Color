@@ -2,7 +2,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 -- |
 -- Module      : Graphics.Color.Standard.Internal
--- Copyright   : (c) Alexey Kuleshevich 2019-2021
+-- Copyright   : (c) Alexey Kuleshevich 2019-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
