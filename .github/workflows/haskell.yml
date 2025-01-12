@@ -174,7 +174,12 @@ jobs:
     - name: Build
       run: |
         set -ex
-        cabal configure --haddock-all --enable-tests --enable-benchmarks
+        #  Remove this conditional when criterion and its deps are compatible with ghc-9.12
+        if [[ "${{ matrix.ghc }}" == "9.12.1" ]]; then
+          cabal configure --haddock-all --enable-tests
+        else
+          cabal configure --haddock-all --enable-tests --enable-benchmarks
+        fi
         cabal build all --write-ghc-environment-files=always
     - name: Test
       run: |

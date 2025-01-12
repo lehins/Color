@@ -1,7 +1,7 @@
 packages:
   Color
 tests: True
-benchmarks: True
+benchmarks: False
 test-show-details: streaming
 write-ghc-environment-files: always
 program-options
