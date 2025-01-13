@@ -10,8 +10,8 @@ maintainer:          alexey@kuleshevi.ch
 copyright:           2019-2025 Alexey Kuleshevich
 category:            Graphics
 extra-source-files:  README.md
-                   , CHANGELOG.md
-extra-doc-files:     files/*.svg
+extra-doc-files:     CHANGELOG.md
+                   , files/*.svg
                    , files/svg/*.png
 cabal-version:       1.18
 build-type:          Simple
