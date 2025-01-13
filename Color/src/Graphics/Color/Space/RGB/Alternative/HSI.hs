@@ -13,7 +13,7 @@
 {-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Alternative.HSI
--- Copyright   : (c) Alexey Kuleshevich 2019-2020
+-- Copyright   : (c) Alexey Kuleshevich 2019-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -83,9 +83,14 @@ pattern ColorH360SI h s i <- ColorHSI ((* 360) -> h) s i where
 -- | `HSI` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel cs e => ColorModel (HSI cs) e where
   type Components (HSI cs) e = (e, e, e)
-  toComponents = toComponents . coerce
+  type ChannelCount (HSI cs) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.HSI e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.HSI e))
+  toComponents = toComponents . (coerce :: Color (HSI cs) e -> Color CM.HSI e)
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = (coerce :: Color CM.HSI e -> Color (HSI cs) e) . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName _ = ("HSI-" ++) . showsColorModelName (Proxy :: Proxy (Color cs e))
 
@@ -94,9 +99,13 @@ instance ColorModel cs e => ColorModel (HSI cs) e where
 instance (ColorSpace (cs l) i e, RedGreenBlue cs i) => ColorSpace (HSI (cs l)) i e where
   type BaseModel (HSI (cs l)) = CM.HSI
   type BaseSpace (HSI (cs l)) = cs l
-  toBaseSpace = mkColorRGB . fmap fromDouble . CM.hsi2rgb . fmap toDouble . coerce
+  toBaseSpace = mkColorRGB . fmap fromDouble . CM.hsi2rgb . fmap toDouble . toBaseModel
   {-# INLINE toBaseSpace #-}
-  fromBaseSpace = coerce . fmap fromDouble . CM.rgb2hsi . fmap toDouble . unColorRGB
+  fromBaseSpace = fromBaseModel . fmap fromDouble . CM.rgb2hsi . fmap toDouble . unColorRGB
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale (coerce -> V3 _ _ i) = X i
+  {-# INLINE grayscale #-}
+  replaceGrayscale (coerce -> V3 h s _) (X i) = coerce (V3 h s i)
+  {-# INLINE replaceGrayscale #-}

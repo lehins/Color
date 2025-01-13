@@ -7,7 +7,7 @@
 {-# LANGUAGE TypeOperators #-}
 -- |
 -- Module      : Graphics.Color.Adaptation.Internal
--- Copyright   : (c) Alexey Kuleshevich 2019-2020
+-- Copyright   : (c) Alexey Kuleshevich 2019-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental

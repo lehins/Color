@@ -1,4 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -9,7 +10,7 @@
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Model.X
--- Copyright   : (c) Alexey Kuleshevich 2018-2020
+-- Copyright   : (c) Alexey Kuleshevich 2018-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -25,6 +26,7 @@ module Graphics.Color.Model.X
   , rgb2y
   ) where
 
+import Data.List.NonEmpty
 import Data.Coerce
 import Foreign.Storable
 import Graphics.Color.Model.Internal
@@ -65,6 +67,11 @@ instance Elevator e => Show (Color X e) where
 -- | `X` color model
 instance Elevator e => ColorModel X e where
   type Components X e = e
+  type ChannelCount X = 1
+  channelCount _ = 1
+  {-# INLINE channelCount #-}
+  channelNames _ = "Gray" :| []
+  channelColors _ = V3 0x80 0x80 0x80 :| []
   toComponents (X y) = y
   {-# INLINE toComponents #-}
   fromComponents = X

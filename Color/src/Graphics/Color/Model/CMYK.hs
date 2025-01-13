@@ -1,14 +1,15 @@
-{-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Model.CMYK
--- Copyright   : (c) Alexey Kuleshevich 2018-2020
+-- Copyright   : (c) Alexey Kuleshevich 2018-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -25,6 +26,7 @@ module Graphics.Color.Model.CMYK
   , rgb2cmyk
   ) where
 
+import Data.List.NonEmpty
 import Foreign.Storable
 import Graphics.Color.Model.Internal
 import Graphics.Color.Model.RGB
@@ -55,6 +57,14 @@ instance Elevator e => Show (Color CMYK e) where
 -- | `CMYK` color model
 instance Elevator e => ColorModel CMYK e where
   type Components CMYK e = (e, e, e, e)
+  type ChannelCount CMYK = 4
+  channelCount _ = 4
+  {-# INLINE channelCount #-}
+  channelNames _ = "Cyan" :| ["Magenta", "Yellow", "Key"]
+  channelColors _ = V3 0x00 0xff 0xff :|
+                  [ V3 0xff 0x00 0xff
+                  , V3 0xff 0xff 0x00
+                  , V3 0xff 0xff 0xff ]
   toComponents (ColorCMYK c m y k) = (c, m, y, k)
   {-# INLINE toComponents #-}
   fromComponents (c, m, y, k) = ColorCMYK c m y k
@@ -69,7 +79,7 @@ instance Functor (Color CMYK) where
 instance Applicative (Color CMYK) where
   pure !e = ColorCMYK e e e e
   {-# INLINE pure #-}
-  (ColorCMYK fc fm fy fk) <*> (ColorCMYK c m y k) = ColorCMYK (fc c) (fm m) (fy y) (fk k)
+  ColorCMYK fc fm fy fk <*> ColorCMYK c m y k = ColorCMYK (fc c) (fm m) (fy y) (fk k)
   {-# INLINE (<*>) #-}
 
 -- | `CMYK` color model

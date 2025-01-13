@@ -8,7 +8,7 @@
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Algebra.Binary
--- Copyright   : (c) Alexey Kuleshevich 2018-2020
+-- Copyright   : (c) Alexey Kuleshevich 2018-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -31,7 +31,7 @@ import qualified Data.Vector.Unboxed as U
 import Foreign.Storable
 import Graphics.Color.Algebra.Elevator
 import Prelude hiding (map)
-
+import Data.Coerce
 
 -- | Under the hood, binary pixels are backed by `Word8`, but can only take
 -- values of @0@ or @1@. Use `zero`\/`one` to construct a bit and `on`\/`off` to
@@ -43,35 +43,32 @@ instance Show Bit where
   show (Bit 0) = "0"
   show _       = "1"
 
+cf :: (Word8 -> Word8) -> Bit -> Bit
+cf = coerce
+
+cf2 :: (Word8 -> Word8 -> Word8) -> Bit -> Bit -> Bit
+cf2 = coerce
 
 instance Bits Bit where
-  (Bit 0) .&. _       = Bit 0
-  (Bit 1) .&. (Bit 1) = Bit 1
-  _       .&. (Bit 0) = Bit 0
-  _       .&. _       = Bit 1
+  (.&.) = cf2 (.&.)
   {-# INLINE (.&.) #-}
-  (Bit 1) .|. _       = Bit 1
-  (Bit 0) .|. (Bit 0) = Bit 0
-  _       .|. _       = Bit 1
+  (.|.) = cf2 (.|.)
   {-# INLINE (.|.) #-}
-  (Bit 0) `xor` (Bit 0) = Bit 0
-  (Bit 1) `xor` (Bit 1) = Bit 0
-  _       `xor` _       = Bit 1
+  xor = cf2 xor
   {-# INLINE xor #-}
-  complement (Bit 0) = Bit 1
-  complement       _ = Bit 0
+  complement = cf complement
   {-# INLINE complement #-}
   shift !b 0 = b
   shift  _ _ = Bit 0
   {-# INLINE shift #-}
   rotate !b _ = b
   {-# INLINE rotate #-}
-  zeroBits = Bit 0
+  zeroBits = zero
   {-# INLINE zeroBits #-}
-  bit 0 = Bit 1
-  bit _ = Bit 0
+  bit 0 = one
+  bit _ = zero
   {-# INLINE bit #-}
-  testBit (Bit 1) 0 = True
+  testBit (Bit b) 0 = b /= 0
   testBit _       _ = False
   {-# INLINE testBit #-}
   bitSizeMaybe _ = Just 1
@@ -119,24 +116,23 @@ fromNum _ = one
 
 
 zero :: Bit
-zero = Bit 0
+zero = coerce (0x00 :: Word8)
 {-# INLINE zero #-}
 
 one :: Bit
-one = Bit 1
+one = coerce (0xff :: Word8)
 {-# INLINE one #-}
 
 
 -- | Values: @0@ and @1@
 instance Elevator Bit where
-  minValue = Bit 0
+  minValue = Bit 0x00
   {-# INLINE minValue #-}
-  maxValue = Bit 1
+  maxValue = Bit 0xff
   {-# INLINE maxValue #-}
   toShowS (Bit 0) = ('0':)
   toShowS _       = ('1':)
-  toWord8 (Bit 0) = 0
-  toWord8 _       = maxBound
+  toWord8 = coerce
   {-# INLINE toWord8 #-}
   toWord16 (Bit 0) = 0
   toWord16 _       = maxBound
@@ -153,10 +149,10 @@ instance Elevator Bit where
   toRealFloat (Bit 0) = 0
   toRealFloat _       = 1
   {-# INLINE toRealFloat #-}
-  fromRealFloat 0 = Bit 0
-  fromRealFloat _ = Bit 1
+  fromRealFloat 0 = zero
+  fromRealFloat _ = one
   {-# INLINE fromRealFloat #-}
-  (//) (Bit x) (Bit y) = Bit (x `div` y)
+  (//) = cf2 div
   {-# INLINE (//) #-}
 
 
@@ -167,9 +163,9 @@ instance Num Bit where
   -- 0 - 1 = 0
   -- 1 - 0 = 1
   -- 1 - 1 = 0
-  (Bit 0) - (Bit 0) = Bit 0
-  _       - (Bit 0) = Bit 1
-  _       - _       = Bit 0
+  (Bit 0) - (Bit 0) = zero
+  _       - (Bit 0) = one
+  _       - _       = zero
   {-# INLINE (-) #-}
   (*) = (.&.)
   {-# INLINE (*) #-}
@@ -177,8 +173,8 @@ instance Num Bit where
   {-# INLINE abs #-}
   signum      = id
   {-# INLINE signum #-}
-  fromInteger 0 = Bit 0
-  fromInteger _ = Bit 1
+  fromInteger 0 = zero
+  fromInteger _ = one
   {-# INLINE fromInteger #-}
 
 -- | Unboxing of a `Bit`.

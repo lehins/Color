@@ -13,7 +13,7 @@
 {-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Alternative.HSV
--- Copyright   : (c) Alexey Kuleshevich 2019-2020
+-- Copyright   : (c) Alexey Kuleshevich 2019-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -82,9 +82,14 @@ pattern ColorH360SV h s i <- ColorHSV ((* 360) -> h) s i where
 -- | `HSV` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel cs e => ColorModel (HSV cs) e where
   type Components (HSV cs) e = (e, e, e)
-  toComponents = toComponents . coerce
+  type ChannelCount (HSV cs) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.HSV e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.HSV e))
+  toComponents = toComponents . (coerce :: Color (HSV cs) e -> Color CM.HSV e)
   {-# INLINE toComponents #-}
-  fromComponents = coerce . fromComponents
+  fromComponents = (coerce :: Color CM.HSV e -> Color (HSV cs) e) . fromComponents
   {-# INLINE fromComponents #-}
   showsColorModelName _ = ("HSV-" ++) . showsColorModelName (Proxy :: Proxy (Color cs e))
 
@@ -93,9 +98,13 @@ instance ColorModel cs e => ColorModel (HSV cs) e where
 instance (ColorSpace (cs l) i e, RedGreenBlue cs i) => ColorSpace (HSV (cs l)) i e where
   type BaseModel (HSV (cs l)) = CM.HSV
   type BaseSpace (HSV (cs l)) = cs l
-  toBaseSpace = mkColorRGB . fmap fromDouble . CM.hsv2rgb . fmap toDouble . coerce
+  toBaseSpace = mkColorRGB . fmap fromDouble . CM.hsv2rgb . fmap toDouble . toBaseModel
   {-# INLINE toBaseSpace #-}
-  fromBaseSpace = coerce . fmap fromDouble . CM.rgb2hsv . fmap toDouble . unColorRGB
+  fromBaseSpace = fromBaseModel . fmap fromDouble . CM.rgb2hsv . fmap toDouble . unColorRGB
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale (coerce -> V3 _ _ v) = X v
+  {-# INLINE grayscale #-}
+  replaceGrayscale (coerce -> V3 h s _) (X v) = coerce (V3 h s v)
+  {-# INLINE replaceGrayscale #-}

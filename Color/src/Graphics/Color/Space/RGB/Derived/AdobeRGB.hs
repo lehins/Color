@@ -11,7 +11,7 @@
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Derived.AdobeRGB
--- Copyright   : (c) Alexey Kuleshevich 2019-2020
+-- Copyright   : (c) Alexey Kuleshevich 2019-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -58,6 +58,11 @@ instance (Typeable l, Illuminant i, Elevator e) => Show (Color (AdobeRGB (i :: k
 -- | `AdobeRGB` color space (derived)
 instance (Typeable l, Illuminant i, Elevator e) => ColorModel (AdobeRGB (i :: k) l) e where
   type Components (AdobeRGB i l) e = (e, e, e)
+  type ChannelCount (AdobeRGB i l) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.RGB e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.RGB e))
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
@@ -72,6 +77,10 @@ instance (Illuminant i, Elevator e) => ColorSpace (AdobeRGB i 'Linear) i e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLinearLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgbLinear2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
@@ -86,6 +95,10 @@ instance (Illuminant i, Elevator e) => ColorSpace (AdobeRGB i 'NonLinear) i e wh
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbNonLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbNonLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

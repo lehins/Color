@@ -6,11 +6,12 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.ITU.Rec470
--- Copyright   : (c) Alexey Kuleshevich 2019-2020
+-- Copyright   : (c) Alexey Kuleshevich 2019-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -63,6 +64,11 @@ instance (Typeable l, Elevator e) => Show (Color (BT470_525 l) e) where
 -- | ITU-R BT.470 (525) color space
 instance (Typeable l, Elevator e) => ColorModel (BT470_525 l) e where
   type Components (BT470_525 l) e = (e, e, e)
+  type ChannelCount (BT470_525 l) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.RGB e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.RGB e))
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
@@ -77,6 +83,10 @@ instance Elevator e => ColorSpace (BT470_525 'Linear) C e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLinearLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgbLinear2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
@@ -91,6 +101,10 @@ instance Elevator e => ColorSpace (BT470_525 'NonLinear) C e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbNonLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbNonLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb
@@ -137,6 +151,11 @@ instance (Typeable l, Elevator e) => Show (Color (BT470_625 l) e) where
 -- | ITU-R BT.470 (625) color space
 instance (Typeable l, Elevator e) => ColorModel (BT470_625 l) e where
   type Components (BT470_625 l) e = (e, e, e)
+  type ChannelCount (BT470_625 l) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.RGB e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.RGB e))
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
@@ -151,6 +170,10 @@ instance Elevator e => ColorSpace (BT470_625 'Linear) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLinearLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgbLinear2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
@@ -165,6 +188,10 @@ instance Elevator e => ColorSpace (BT470_625 'NonLinear) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbNonLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbNonLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

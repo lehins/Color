@@ -8,7 +8,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 -- |
 -- Module      : Graphics.Color.Model.Internal
--- Copyright   : (c) Alexey Kuleshevich 2018-2020
+-- Copyright   : (c) Alexey Kuleshevich 2018-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -45,9 +45,10 @@ module Graphics.Color.Model.Internal
   ) where
 
 import qualified Control.Applicative as A
+import Data.List.NonEmpty as NE
 import Control.DeepSeq (NFData(rnf), deepseq)
 import Data.Default.Class (Default(..))
-import Data.Foldable
+import Data.Foldable as F
 import Data.Kind
 import Data.Typeable
 import qualified Data.Vector.Generic as V
@@ -76,11 +77,29 @@ class ( Functor (Color cs)
       ) =>
       ColorModel cs e where
   type Components cs e :: Type
+  type ChannelCount cs :: Nat
   -- | Convert a Color to a representation suitable for storage as an unboxed
   -- element, usually a tuple of channels.
   toComponents :: Color cs e -> Components cs e
   -- | Convert from an elemnt representation back to a Color.
   fromComponents :: Components cs e -> Color cs e
+
+  -- | Number of channels in the color model (eg. RGB has three).
+  --
+  -- @since 0.4.0
+  channelCount :: Proxy (Color cs e) -> Word8
+
+  -- | Textual name for each of the channels
+  --
+  -- @since 0.4.0
+  channelNames :: Proxy (Color cs e) -> NonEmpty String
+
+  -- | Some non-white 8bit sRGB values for each of the channels that might or
+  -- might not have some meaningful visual relation to the actual channel
+  -- names. This is useful for plotting values.
+  --
+  -- @since 0.4.0
+  channelColors :: Proxy (Color cs e) -> NonEmpty (V3 Word8)
 
   -- | Display the @cs@ portion of the pixel. Color itself will not be evaluated.
   --
@@ -220,7 +239,7 @@ showsColorModelOpen px = t . (":(" ++) . channels . (')' :)
   where
     t = asProxy px showsColorModelName
     channels =
-      case toList px of
+      case F.toList px of
         [] -> id
         (x:xs) -> foldl' (\facc y -> facc . (channelSeparator :) . toShowS y) (toShowS x) xs
 
@@ -358,6 +377,12 @@ type family Opaque cs where
 instance (ColorModel cs e, cs ~ Opaque (Alpha cs)) =>
          ColorModel (Alpha cs) e where
   type Components (Alpha cs) e = (Components cs e, e)
+  type ChannelCount (Alpha cs) = 1 + ChannelCount cs
+  channelCount _ = 1 + channelCount (Proxy :: Proxy (Color cs e))
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color cs e)) <> ("Alpha" :| [])
+  channelColors _ =
+    channelColors (Proxy :: Proxy (Color cs e)) <> (V3 0xe6 0xe6 0xfa :| []) -- <- lavander
   toComponents (Alpha px a) = (toComponents px, a)
   {-# INLINE toComponents #-}
   fromComponents (pxc, a) = Alpha (fromComponents pxc) a

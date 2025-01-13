@@ -14,7 +14,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Luma
--- Copyright   : (c) Alexey Kuleshevich 2018-2020
+-- Copyright   : (c) Alexey Kuleshevich 2018-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -36,6 +36,7 @@ module Graphics.Color.Space.RGB.Luma
 
 import Data.Coerce
 import Data.Kind
+import Data.List.NonEmpty
 import Data.Typeable
 import Foreign.Storable
 import Graphics.Color.Model.Internal
@@ -92,6 +93,11 @@ instance (Typeable cs, Elevator e) => Show (Color (Y' cs) e) where
 -- | `Y'` - as a color model
 instance (Typeable cs, Elevator e) => ColorModel (Y' cs) e where
   type Components (Y' cs) e = e
+  type ChannelCount (Y' cs) = 1
+  channelCount _ = 1
+  {-# INLINE channelCount #-}
+  channelNames _ = "Luma" :| []
+  channelColors _ = V3 0x80 0x80 0x80 :| []
   toComponents (Y' y) = y
   {-# INLINE toComponents #-}
   fromComponents = Y'
@@ -111,6 +117,12 @@ instance ( Typeable cs
   {-# INLINE toBaseSpace #-}
   fromBaseSpace = fmap fromDouble . rgbLuma
   {-# INLINE fromBaseSpace #-}
+  grayscale = coerce
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = coerce (f (coerce c))
+  {-# INLINE applyGrayscale #-}
+  replaceGrayscale _ = coerce
+  {-# INLINE replaceGrayscale #-}
   luminance = luminance . fmap (fromDouble :: Double -> e) . toBaseLinearSpace . fmap toDouble
   {-# INLINE luminance #-}
   toColorXYZ = toColorXYZ . fmap (fromDouble :: Double -> e) . toBaseLinearSpace . fmap toDouble

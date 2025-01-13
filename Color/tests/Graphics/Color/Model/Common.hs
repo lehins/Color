@@ -46,6 +46,7 @@ import Test.Hspec.QuickCheck
 import Test.HUnit (assertBool)
 import Test.Massiv.Array.Mutable
 import Test.QuickCheck
+import GHC.TypeLits
 
 instance (Random e, ColorModel cs e, Arbitrary (Color cs e)) => Arbitrary (Color (Alpha cs) e) where
   arbitrary = addAlpha <$> arbitrary <*> arbitraryElevator
@@ -68,7 +69,7 @@ matchListsWith f xs ys = do
   expectSameLength xs ys
   zipWithM_ f xs ys
 
-expectSameLength :: Foldable t => t a1 -> t a2 -> IO ()
+expectSameLength :: (HasCallStack, Foldable t) => t a1 -> t a2 -> IO ()
 expectSameLength xs ys =
   unless (length xs == length ys) $
   expectationFailure $ "List lengths mismatch: " ++ show (length xs) ++ "/=" ++ show (length ys)
@@ -154,7 +155,7 @@ epsilonColorIxSpec epsilon ix x y =
 
 
 epsilonEq ::
-     (Show a, RealFloat a)
+     (HasCallStack, Show a, RealFloat a)
   => a -- ^ Epsilon, a maximum tolerated error. Sign is ignored.
   -> a -- ^ Expected result.
   -> a -- ^ Tested value.
@@ -162,7 +163,8 @@ epsilonEq ::
 epsilonEq epsilon x y = property $ epsilonExpect epsilon x y
 
 epsilonEqDouble ::
-     Double -- ^ Expected result.
+     HasCallStack
+  => Double -- ^ Expected result.
   -> Double -- ^ Tested value.
   -> Property
 epsilonEqDouble = epsilonEq epsilon
@@ -178,22 +180,26 @@ epsilonEqFloat = epsilonEq epsilon
     epsilon = 1e-6
 
 
-epsilonEqColor :: (ColorModel cs e, RealFloat e) => Color cs e -> Color cs e -> Property
+epsilonEqColor ::
+     (HasCallStack, ColorModel cs e, RealFloat e) => Color cs e -> Color cs e -> Property
 epsilonEqColor = epsilonEqColorTol epsilon
   where
     epsilon = 1e-11
 
-epsilonEqColorDouble :: ColorModel cs Double => Color cs Double -> Color cs Double -> Property
+epsilonEqColorDouble ::
+     (HasCallStack, ColorModel cs Double) => Color cs Double -> Color cs Double -> Property
 epsilonEqColorDouble = epsilonEqColorTol epsilon
   where
     epsilon = 1e-12
 
-epsilonEqColorFloat :: ColorModel cs Float => Color cs Float -> Color cs Float -> Property
+epsilonEqColorFloat ::
+     (HasCallStack, ColorModel cs Float) => Color cs Float -> Color cs Float -> Property
 epsilonEqColorFloat = epsilonEqColorTol epsilon
   where
     epsilon = 1e-6
 
-epsilonEqColorTol :: (ColorModel cs e, RealFloat e) => e -> Color cs e -> Color cs e -> Property
+epsilonEqColorTol ::
+     (HasCallStack, ColorModel cs e, RealFloat e) => e -> Color cs e -> Color cs e -> Property
 epsilonEqColorTol epsilon x y = property $ epsilonColorExpect epsilon x y
   --conjoin $ F.toList $ liftA2 (epsilonEq epsilon) x y
 
@@ -218,6 +224,7 @@ colorModelSpec ::
      , Function (Components cs e)
      , CoArbitrary (Components cs e)
      , Arbitrary (Color cs e)
+     , KnownNat (ChannelCount cs)
      )
   => String
   -> Spec
@@ -225,6 +232,12 @@ colorModelSpec name =
   describe "ColorModel" $ do
     toFromComponentsSpec @cs @e
     it "Model Name" $ showsColorModelName (Proxy :: Proxy (Color cs e)) "" `shouldStartWith` name
+    it "ChannelCount" $ do
+      let px = Proxy :: Proxy (Color cs e)
+          count = channelCount px
+      count `shouldBe` fromInteger (natVal (Proxy :: Proxy (ChannelCount cs)))
+      length (channelNames px)  `shouldBe` fromIntegral count
+      length (channelColors px)  `shouldBe` fromIntegral count
     modifyMaxSuccess (`div` 10) $ describe "Array" $ do
       describe "Storable" $
         mutableSpec @S @Ix1 @(Color cs e)

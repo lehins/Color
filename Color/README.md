@@ -38,6 +38,7 @@ Currently supported:
   * `Y'` - luma
   * `CIE XYZ`
   * `CIE L*a*b*`
+  * `DIN99`
   * `RGB`:
 
     * `sRGB` - both standardized and derived

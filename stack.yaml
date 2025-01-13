@@ -2,3 +2,5 @@ resolver: lts-23.00
 packages:
 - Color
 extra-deps: []
+nix:
+  packages: [zlib]

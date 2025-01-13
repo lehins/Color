@@ -12,7 +12,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.Alternative.CMYK
--- Copyright   : (c) Alexey Kuleshevich 2019-2020
+-- Copyright   : (c) Alexey Kuleshevich 2019-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -78,6 +78,11 @@ pattern ColorCMYKA c m y k a = Alpha (CMYK (CM.ColorCMYK c m y k)) a
 -- | `CMYK` representation for some (@`RedGreenBlue` cs i@) color space
 instance ColorModel cs e => ColorModel (CMYK cs) e where
   type Components (CMYK cs) e = (e, e, e, e)
+  type ChannelCount (CMYK cs) = 4
+  channelCount _ = 4
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.CMYK e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.CMYK e))
   toComponents = toComponents . coerce
   {-# INLINE toComponents #-}
   fromComponents = coerce . fromComponents
@@ -96,6 +101,10 @@ instance (Typeable cs, ColorSpace (cs i l) i e, RedGreenBlue (cs i) i) =>
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale = grayscale . toBaseSpace
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = fromBaseSpace (applyGrayscale (toBaseSpace c) f)
+  {-# INLINE applyGrayscale #-}
 
 
 
@@ -109,6 +118,10 @@ instance ColorSpace (SRGB l) D65 e => ColorSpace (CMYK (SRGB l)) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale = grayscale . toBaseSpace
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = fromBaseSpace (applyGrayscale (toBaseSpace c) f)
+  {-# INLINE applyGrayscale #-}
 
 -- | `CMYK` representation for `AdobeRGB` color space
 instance ColorSpace (AdobeRGB l) D65 e => ColorSpace (CMYK (AdobeRGB l)) D65 e where
@@ -120,6 +133,10 @@ instance ColorSpace (AdobeRGB l) D65 e => ColorSpace (CMYK (AdobeRGB l)) D65 e w
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale = grayscale . toBaseSpace
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = fromBaseSpace (applyGrayscale (toBaseSpace c) f)
+  {-# INLINE applyGrayscale #-}
 
 -- | `CMYK` representation for `Rec470.BT470_525` color space
 instance ColorSpace (Rec470.BT470_525 l) D65 e => ColorSpace (CMYK (Rec470.BT470_525 l)) D65 e where
@@ -131,6 +148,10 @@ instance ColorSpace (Rec470.BT470_525 l) D65 e => ColorSpace (CMYK (Rec470.BT470
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale = grayscale . toBaseSpace
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = fromBaseSpace (applyGrayscale (toBaseSpace c) f)
+  {-# INLINE applyGrayscale #-}
 
 -- | `CMYK` representation for `Rec470.BT470_625` color space
 instance ColorSpace (Rec470.BT470_625 l) D65 e => ColorSpace (CMYK (Rec470.BT470_625 l)) D65 e where
@@ -142,6 +163,10 @@ instance ColorSpace (Rec470.BT470_625 l) D65 e => ColorSpace (CMYK (Rec470.BT470
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale = grayscale . toBaseSpace
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = fromBaseSpace (applyGrayscale (toBaseSpace c) f)
+  {-# INLINE applyGrayscale #-}
 
 -- | `CMYK` representation for `BT601_525` color space
 instance ColorSpace (BT601_525 l) D65 e => ColorSpace (CMYK (BT601_525 l)) D65 e where
@@ -153,6 +178,10 @@ instance ColorSpace (BT601_525 l) D65 e => ColorSpace (CMYK (BT601_525 l)) D65 e
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale = grayscale . toBaseSpace
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = fromBaseSpace (applyGrayscale (toBaseSpace c) f)
+  {-# INLINE applyGrayscale #-}
 
 -- | `CMYK` representation for `BT601_625` color space
 instance ColorSpace (BT601_625 l) D65 e => ColorSpace (CMYK (BT601_625 l)) D65 e where
@@ -164,6 +193,10 @@ instance ColorSpace (BT601_625 l) D65 e => ColorSpace (CMYK (BT601_625 l)) D65 e
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale = grayscale . toBaseSpace
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = fromBaseSpace (applyGrayscale (toBaseSpace c) f)
+  {-# INLINE applyGrayscale #-}
 
 -- | `CMYK` representation for `BT709` color space
 instance ColorSpace (BT709 l) D65 e => ColorSpace (CMYK (BT709 l)) D65 e where
@@ -175,3 +208,7 @@ instance ColorSpace (BT709 l) D65 e => ColorSpace (CMYK (BT709 l)) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = luminance . toBaseSpace
   {-# INLINE luminance #-}
+  grayscale = grayscale . toBaseSpace
+  {-# INLINE grayscale #-}
+  applyGrayscale c f = fromBaseSpace (applyGrayscale (toBaseSpace c) f)
+  {-# INLINE applyGrayscale #-}

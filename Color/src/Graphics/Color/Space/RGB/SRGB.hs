@@ -7,12 +7,13 @@
 {-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Space.RGB.SRGB
--- Copyright   : (c) Alexey Kuleshevich 2019-2020
+-- Copyright   : (c) Alexey Kuleshevich 2019-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -36,6 +37,7 @@ import Graphics.Color.Model.Internal
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space.Internal
 import Graphics.Color.Space.RGB.Internal
+import Graphics.Color.Space.RGB.ITU.Rec601 (applyGrayscaleRec601)
 import Graphics.Color.Space.RGB.ITU.Rec709 (BT709, D65)
 import Graphics.Color.Space.RGB.Luma
 
@@ -122,6 +124,11 @@ instance (Typeable l, Elevator e) => Show (Color (SRGB l) e) where
 -- | `SRGB` color space
 instance (Typeable l, Elevator e) => ColorModel (SRGB l) e where
   type Components (SRGB l) e = (e, e, e)
+  type ChannelCount (SRGB l) = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = channelNames (Proxy :: Proxy (Color CM.RGB e))
+  channelColors _ = channelColors (Proxy :: Proxy (Color CM.RGB e))
   toComponents = toComponents . unColorRGB
   {-# INLINE toComponents #-}
   fromComponents = mkColorRGB . fromComponents
@@ -136,6 +143,10 @@ instance Elevator e => ColorSpace (SRGB 'Linear) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLinearLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = rgbLinearGrayscale
+  {-# INLINE grayscale #-}
+  applyGrayscale = rgbLinearApplyGrayscale
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgbLinear2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgbLinear
@@ -151,6 +162,10 @@ instance Elevator e => ColorSpace (SRGB 'NonLinear) D65 e where
   {-# INLINE fromBaseSpace #-}
   luminance = rgbLuminance . fmap toRealFloat
   {-# INLINE luminance #-}
+  grayscale = fmap fromDouble . coerce . rgbLuma @_ @_ @_ @Double
+  {-# INLINE grayscale #-}
+  applyGrayscale = applyGrayscaleRec601
+  {-# INLINE applyGrayscale #-}
   toColorXYZ = rgb2xyz . fmap toRealFloat
   {-# INLINE toColorXYZ #-}
   fromColorXYZ = fmap fromRealFloat . xyz2rgb

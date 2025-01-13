@@ -9,14 +9,14 @@
 {-# LANGUAGE ViewPatterns #-}
 -- |
 -- Module      : Graphics.Pixel.ColorSpace
--- Copyright   : (c) Alexey Kuleshevich 2019-2020
+-- Copyright   : (c) Alexey Kuleshevich 2019-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
 -- Portability : non-portable
 --
 module Graphics.Pixel.ColorSpace
-  ( Pixel(Pixel, PixelY, PixelXYZ, PixelLAB, PixelRGB, PixelHSI, PixelHSL, PixelHSV,
+  ( Pixel(Pixel, PixelX, PixelY, PixelXYZ, PixelLAB, PixelRGB, PixelHSI, PixelHSL, PixelHSV,
       PixelCMYK, PixelY'CbCr, PixelY', PixelYA, PixelXYZA, PixelLABA, PixelRGBA, PixelHSIA, PixelHSLA,
       PixelHSVA, PixelCMYKA, PixelY'CbCrA, PixelY'A)
   , liftPixel
@@ -29,6 +29,10 @@ module Graphics.Pixel.ColorSpace
   , fromPixelXYZ
   , toPixelBaseSpace
   , fromPixelBaseSpace
+  -- * Grayscale
+  , grayscalePixel
+  , applyGrayscalePixel
+  , replaceGrayscalePixel
   -- ** Color model
   , toPixelBaseModel
   , fromPixelBaseModel
@@ -57,13 +61,14 @@ import Graphics.Color.Adaptation.VonKries
 import Graphics.Color.Algebra.Binary
 import qualified Graphics.Color.Model.RGB as CM
 import Graphics.Color.Space
+import Graphics.Pixel (pattern PixelX)
 import Graphics.Pixel.Internal
 
 -- | Convert a pixel from one color space to any other.
 --
 -- >>> :set -XDataKinds
 -- >>> :set -XTypeApplications
--- >>> px = PixelSRGB @Float 0.0 0.5 1.0
+-- >>> px = PixelSRGB @Float @'NonLinear 0.0 0.5 1.0
 -- >>> px
 -- <SRGB 'NonLinear:( 0.00000000, 0.50000000, 1.00000000)>
 -- >>> convertPixel @(AdobeRGB 'NonLinear) @_ @Word8 px
@@ -80,14 +85,14 @@ convertPixel = liftPixel convert
 -- | Constructor for a pixel in @sRGB@ color space
 --
 -- @since 0.1.0
-pattern PixelSRGB :: e -> e -> e -> Pixel (SRGB 'NonLinear) e
+pattern PixelSRGB :: forall e l. e -> e -> e -> Pixel (SRGB l) e
 pattern PixelSRGB r g b = Pixel (SRGB (CM.ColorRGB r g b))
 {-# COMPLETE PixelSRGB #-}
 
 -- | Constructor for a pixel in @sRGB@ color space with Alpha channel
 --
 -- @since 0.1.0
-pattern PixelSRGBA :: e -> e -> e -> e -> Pixel (Alpha (SRGB 'NonLinear)) e
+pattern PixelSRGBA :: e -> e -> e -> e -> Pixel (Alpha (SRGB l)) e
 pattern PixelSRGBA r g b a = Pixel (Alpha (SRGB (CM.ColorRGB r g b)) a)
 {-# COMPLETE PixelSRGBA #-}
 
@@ -320,13 +325,37 @@ toPixelBaseSpace ::
 toPixelBaseSpace = liftPixel toBaseSpace
 {-# INLINE toPixelBaseSpace #-}
 
--- | Covert a color space of a pixel into it's alternative representation. Example AdobeRGB to HSI.
+-- | Covert a color space of a pixel into its alternative representation. Example AdobeRGB to HSI.
 --
 -- @since 0.1.0
 fromPixelBaseSpace ::
      (ColorSpace cs i e, bcs ~ BaseSpace cs, ColorSpace bcs i e) => Pixel bcs e -> Pixel cs e
 fromPixelBaseSpace = liftPixel fromBaseSpace
 {-# INLINE fromPixelBaseSpace #-}
+
+-- | Drop chroma information from a pixel. Same as `grayscale` for `Color`
+--
+-- @since 0.4.0
+grayscalePixel :: ColorSpace cs i e => Pixel cs e -> Pixel X e
+grayscalePixel = liftPixel grayscale
+{-# INLINE grayscalePixel #-}
+
+
+-- | Apply a function to grayscale information of a pixel leaving chroma untouched. Same
+-- as `applyGrayscale` for `Color`
+--
+-- @since 0.4.0
+applyGrayscalePixel :: ColorSpace cs i e => Pixel cs e -> (Pixel X e -> Pixel X e) -> Pixel cs e
+applyGrayscalePixel c f = coerce (applyGrayscale (coerce c) (coerce f))
+{-# INLINE applyGrayscalePixel #-}
+
+-- | Replace grayscale information in a pixel leaving chroma untouched. Same as
+-- `replaceGrayscale` for `Color`
+--
+-- @since 0.4.0
+replaceGrayscalePixel :: ColorSpace cs i e => Pixel cs e -> Pixel X e -> Pixel cs e
+replaceGrayscalePixel c e = coerce (replaceGrayscale (coerce c) (coerce e))
+{-# INLINE replaceGrayscalePixel #-}
 
 
 -- -- | Constructor for a pixel in @sRGB@ color space with 8-bits per channel

@@ -13,7 +13,7 @@
 #endif
 -- |
 -- Module      : Graphics.Color.Standard.RAL
--- Copyright   : (c) Alexey Kuleshevich 2019-2020
+-- Copyright   : (c) Alexey Kuleshevich 2019-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -481,7 +481,7 @@ greenBeige
     :: ColorSpace cs i e => Color cs e
 
 ral :: ColorSpace cs i e => Float -> Float -> Float -> Color cs e
-ral l' a' b' = convert (ColorLAB l' a' b' :: Color (LAB D50) Float)
+ral l' a' b' = convert (ColorLAB (l' / 100) (a' / 100) (b' / 100) :: Color (LAB D50) Float)
 
 greenBeige = ral 76.022 -0.366 27.636
 beige = ral 73.595 5.518 26.95

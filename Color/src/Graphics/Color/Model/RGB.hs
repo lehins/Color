@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -10,7 +11,7 @@
 {-# LANGUAGE TypeFamilies #-}
 -- |
 -- Module      : Graphics.Color.Model.RGB
--- Copyright   : (c) Alexey Kuleshevich 2018-2020
+-- Copyright   : (c) Alexey Kuleshevich 2018-2025
 -- License     : BSD3
 -- Maintainer  : Alexey Kuleshevich <lehins@yandex.ru>
 -- Stability   : experimental
@@ -26,6 +27,7 @@ module Graphics.Color.Model.RGB
   , ColorModel(..)
   ) where
 
+import Data.List.NonEmpty
 import Foreign.Storable
 import Graphics.Color.Algebra
 import Graphics.Color.Model.Internal
@@ -58,6 +60,14 @@ instance Elevator e => Show (Color RGB e) where
 -- | `RGB` color model
 instance Elevator e => ColorModel RGB e where
   type Components RGB e = (e, e, e)
+  type ChannelCount RGB = 3
+  channelCount _ = 3
+  {-# INLINE channelCount #-}
+  channelNames _ = "Red" :| ["Green", "Blue"]
+  channelColors _ = V3 0xff 0x00 0x00 :|
+                  [ V3 0x00 0xff 0x00
+                  , V3 0x00 0x00 0xff
+                  ]
   toComponents (ColorRGB r g b) = (r, g, b)
   {-# INLINE toComponents #-}
   fromComponents (r, g, b) = ColorRGB r g b
