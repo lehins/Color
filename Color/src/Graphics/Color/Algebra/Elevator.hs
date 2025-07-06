@@ -297,7 +297,7 @@ instance Elevator Int8 where
   maxValue = maxBound
   minValue = 0
   fieldFormat _ = defFieldFormat { fmtWidth = Just 3, fmtChar = 'd'}
-  toWord8 = fromIntegral . max 0
+  toWord8 = raiseUp . max 0
   {-# INLINE toWord8 #-}
   toWord16 = raiseUp . max 0
   {-# INLINE toWord16 #-}
@@ -322,7 +322,7 @@ instance Elevator Int16 where
   fieldFormat _ = defFieldFormat { fmtWidth = Just 5, fmtChar = 'd'}
   toWord8 = dropDown . max 0
   {-# INLINE toWord8 #-}
-  toWord16 = fromIntegral . max 0
+  toWord16 = raiseUp . max 0
   {-# INLINE toWord16 #-}
   toWord32 = raiseUp . max 0
   {-# INLINE toWord32 #-}
@@ -347,7 +347,7 @@ instance Elevator Int32 where
   {-# INLINE toWord8 #-}
   toWord16 = dropDown . max 0
   {-# INLINE toWord16 #-}
-  toWord32 = fromIntegral . max 0
+  toWord32 = raiseUp . max 0
   {-# INLINE toWord32 #-}
   toWord64 = raiseUp . max 0
   {-# INLINE toWord64 #-}
@@ -372,7 +372,7 @@ instance Elevator Int64 where
   {-# INLINE toWord16 #-}
   toWord32 = dropDown . max 0
   {-# INLINE toWord32 #-}
-  toWord64 = fromIntegral . max 0
+  toWord64 = raiseUp . max 0
   {-# INLINE toWord64 #-}
   toFloat = squashTo1 . max 0
   {-# INLINE toFloat #-}
@@ -394,7 +394,7 @@ instance Elevator Int where
   {-# INLINE toWord64 #-}
 #else
   fieldFormat _ = defFieldFormat { fmtWidth = Just 19, fmtChar = 'd'}
-  toWord64 = fromIntegral . max 0
+  toWord64 = raiseUp . max 0
   {-# INLINE toWord64 #-}
 #endif
   toWord8 = dropDown . max 0
