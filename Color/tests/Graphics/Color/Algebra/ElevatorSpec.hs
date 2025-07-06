@@ -37,6 +37,7 @@ spec =
     describe "Word8" $ do
       specNegativeBecomesZero (Proxy :: Proxy Word8)
       eprop "toWord8" $ \(e :: Word8) -> e === toWord8 e
+      eprop "toWord8 . fromWord8" $ \(e :: Word8) -> e === toWord8 (fromWord8 e :: Word8)
       eprop "toWord8 . toWord16" $ \(e :: Word8) -> e === toWord8 (toWord16 e)
       eprop "toWord8 . toWord32" $ \(e :: Word8) -> e === toWord8 (toWord32 e)
       eprop "toWord8 . toWord64" $ \(e :: Word8) -> e === toWord8 (toWord64 e)
@@ -57,6 +58,7 @@ spec =
       eprop "read . toShowS" $ \(e :: Word8) -> e === read (toShowS e "")
     describe "Word16" $ do
       specNegativeBecomesZero (Proxy :: Proxy Word16)
+      eprop "toWord8 . fromWord8" $ \(e :: Word8) -> e === toWord8 (fromWord8 e :: Word16)
       eprop "toWord16" $ \(e :: Word16) -> e === toWord16 e
       eprop "toWord16 . toWord32" $ \(e :: Word16) -> e === toWord16 (toWord32 e)
       eprop "toWord16 . toWord64" $ \(e :: Word16) -> e === toWord16 (toWord64 e)
@@ -76,6 +78,7 @@ spec =
       eprop "read . toShowS" $ \(e :: Word16) -> e === read (toShowS e "")
     describe "Word32" $ do
       specNegativeBecomesZero (Proxy :: Proxy Word32)
+      eprop "toWord8 . fromWord8" $ \(e :: Word8) -> e === toWord8 (fromWord8 e :: Word32)
       eprop "toWord32" $ \(e :: Word32) -> e === toWord32 e
       eprop "toWord32 . toWord64" $ \(e :: Word32) -> e === toWord32 (toWord64 e)
       prop "toWord32 . toFloat" $
@@ -97,6 +100,7 @@ spec =
       eprop "read . toShowS" $ \(e :: Word32) -> e === read (toShowS e "")
     describe "Word64" $ do
       specNegativeBecomesZero (Proxy :: Proxy Word64)
+      eprop "toWord8 . fromWord8" $ \(e :: Word8) -> e === toWord8 (fromWord8 e :: Word64)
       eprop "toWord64" $ \(e :: Word64) -> e === toWord64 e
       prop "toWord64 . toFloat" $
         forAll (choose (0, maxFloatI)) $ \(e :: Word64) -> e === toWord64 (toFloat e)
@@ -123,6 +127,7 @@ spec =
       eprop "read . toShowS" $ \(e :: Word64) -> e === read (toShowS e "")
     describe "Word" $ do
       specNegativeBecomesZero (Proxy :: Proxy Word)
+      eprop "toWord8 . fromWord8" $ \(e :: Word8) -> e === toWord8 (fromWord8 e :: Word)
       eprop "toWord64" $ \(e :: Word) -> fromIntegral e === toWord64 e
       prop "toWord64 . toFloat" $
         forAll (choose (0, maxFloatI)) $ \(e :: Word) -> fromIntegral e === toWord64 (toFloat e)
@@ -149,6 +154,7 @@ spec =
           shouldBeApproxIntegral 1 e (fromRealFloat (toDouble e))
       eprop "read . toShowS" $ \(e :: Word) -> e === read (toShowS e "")
     describe "Float" $ do
+      eprop "toWord8 . fromWord8" $ \(e :: Word8) -> e === toWord8 (fromWord8 e :: Float)
       eprop "fromRealFloat . toFloat" $ \(e :: Float) -> e === fromRealFloat (toFloat e)
       eprop "fromRealFloat . toDouble" $ \(e :: Float) -> e === fromRealFloat (toDouble e)
       eprop "fromRealFloat . toRealFloat :: Float" $ \(e :: Float) ->
@@ -160,6 +166,7 @@ spec =
       --eprop "read . toShowS" $ \(e :: Float) -> e === read (toShowS e "")
       it "toWord32 (maxBound edge case)" $ toWord32 (1 :: Float) `shouldBe` maxBound
     describe "Double" $ do
+      eprop "toWord8 . fromWord8" $ \(e :: Word8) -> e === toWord8 (fromWord8 e :: Double)
       eprop "fromRealFloat . toDouble" $ \(e :: Double) -> e === fromRealFloat (toDouble e)
       eprop "fromRealFloat . toRealFloat :: Double" $ \(e :: Double) ->
         e === fromRealFloat (toRealFloat e :: Double)
@@ -170,6 +177,7 @@ spec =
         pos = fromIntegral . max 0
     describe "Int8" $ do
       specNegativeBecomesPositive (Proxy :: Proxy Int8)
+      eprop "fromWord8 . toWord8" $ \(e :: Int8) -> e === fromWord8 (toWord8 e)
       eprop "fromRealFloat . toFloat :: Float" $ \(e :: Int8) ->
         (pos e :: Int8) === fromRealFloat (toFloat e :: Float)
       eprop "fromRealFloat . toRealFloat :: Float" $ \(e :: Int8) ->
@@ -182,6 +190,7 @@ spec =
       eprop "read . toShowS" $ \(e :: Int8) -> e === read (toShowS e "")
     describe "Int16" $ do
       specNegativeBecomesPositive (Proxy :: Proxy Int16)
+      eprop "toWord8 . fromWord8" $ \(e :: Word8) -> e === toWord8 (fromWord8 e :: Int16)
       eprop "fromRealFloat . toFloat :: Float" $ \(e :: Int16) ->
         (pos e :: Int16) === fromRealFloat (toFloat e :: Float)
       eprop "fromRealFloat . toRealFloat :: Float" $ \(e :: Int16) ->
@@ -194,6 +203,7 @@ spec =
       eprop "read . toShowS" $ \(e :: Int16) -> e === read (toShowS e "")
     describe "Int32" $ do
       specNegativeBecomesPositive (Proxy :: Proxy Int32)
+      eprop "toWord8 . fromWord8" $ \(e :: Word8) -> e === toWord8 (fromWord8 e :: Int32)
       prop "fromRealFloat . toFloat :: Float" $
         forAll (choose (0, maxFloatI)) $ \(e :: Int32) ->
           (pos e :: Int32) === fromRealFloat (toFloat e)
@@ -206,6 +216,7 @@ spec =
       eprop "read . toShowS" $ \(e :: Int32) -> e === read (toShowS e "")
     describe "Int64" $ do
       specNegativeBecomesPositive (Proxy :: Proxy Int64)
+      eprop "toWord8 . fromWord8" $ \(e :: Word8) -> e === toWord8 (fromWord8 e :: Int64)
       prop "fromRealFloat . toRealFloat :: Float" $
         forAll (choose (0, maxFloatI)) $ \(e :: Int64) ->
           (pos e :: Int64) === fromRealFloat (toRealFloat e :: Float)
@@ -218,6 +229,7 @@ spec =
       eprop "read . toShowS" $ \(e :: Int64) -> e === read (toShowS e "")
     describe "Int" $ do
       specNegativeBecomesPositive (Proxy :: Proxy Int)
+      eprop "toWord8 . fromWord8" $ \(e :: Word8) -> e === toWord8 (fromWord8 e :: Int)
       prop "fromRealFloat . toRealFloat :: Float" $
         forAll (choose (0, maxFloatI)) $ \(e :: Int) ->
           (pos e :: Int) === fromRealFloat (toRealFloat e :: Float)
