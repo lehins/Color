@@ -134,6 +134,9 @@ instance Elevator Bit where
   toShowS _       = ('1':)
   toWord8 = coerce
   {-# INLINE toWord8 #-}
+  fromWord8 0 = zero
+  fromWord8 _ = one
+  {-# INLINE fromWord8 #-}
   toWord16 (Bit 0) = 0
   toWord16 _       = maxBound
   {-# INLINE toWord16 #-}
