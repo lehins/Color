@@ -35,8 +35,9 @@ jobs:
           - { os: Ubuntu-latest,  resolver: lts-19,  ghc: "9.0.2"  }
           - { os: Ubuntu-latest,  resolver: lts-20,  ghc: "9.2.8"  }
           - { os: Ubuntu-latest,  resolver: lts-21,  ghc: "9.4.8"  }
-          - { os: Ubuntu-latest,  resolver: lts-22,  ghc: "9.6.6"  }
+          - { os: Ubuntu-latest,  resolver: lts-22,  ghc: "9.6.7"  }
           - { os: Ubuntu-latest,  resolver: lts-23,  ghc: "9.8.4"  }
+          - { os: Ubuntu-latest,  resolver: lts-24,  ghc: "9.10.3" }
           - { os: Ubuntu-latest,  resolver: nightly                }
           - { os: Windows-latest, resolver: lts-12,  ghc: "8.4.4"  }
           - { os: Windows-latest, resolver: lts-14,  ghc: "8.6.5"  }
@@ -45,8 +46,9 @@ jobs:
           - { os: Windows-latest, resolver: lts-19,  ghc: "9.0.2"  }
           - { os: Windows-latest, resolver: lts-20,  ghc: "9.2.8"  }
           - { os: Windows-latest, resolver: lts-21,  ghc: "9.4.8"  }
-          - { os: Windows-latest, resolver: lts-22,  ghc: "9.6.6"  }
+          - { os: Windows-latest, resolver: lts-22,  ghc: "9.6.7"  }
           - { os: Windows-latest, resolver: lts-23,  ghc: "9.8.4"  }
+          - { os: Windows-latest, resolver: lts-24,  ghc: "9.10.3" }
           - { os: Windows-latest, resolver: nightly                }
           - { os: MacOS-13,       resolver: lts-12,  ghc: "8.4.4"  }
           - { os: MacOS-13,       resolver: lts-14,  ghc: "8.6.5"  }
@@ -55,8 +57,9 @@ jobs:
           - { os: MacOS-13,       resolver: lts-19,  ghc: "9.0.2"  }
           - { os: MacOS-latest,   resolver: lts-20,  ghc: "9.2.8"  }
           - { os: MacOS-latest,   resolver: lts-21,  ghc: "9.4.8"  }
-          - { os: MacOS-latest,   resolver: lts-22,  ghc: "9.6.6"  }
+          - { os: MacOS-latest,   resolver: lts-22,  ghc: "9.6.7"  }
           - { os: MacOS-latest,   resolver: lts-23,  ghc: "9.8.4"  }
+          - { os: MacOS-latest,   resolver: lts-24,  ghc: "9.10.3" }
           - { os: MacOS-latest,   resolver: nightly                }
 
     env:
@@ -131,24 +134,24 @@ jobs:
           - { cabal: "3.14", os: Ubuntu-latest,  ghc: "9.0.2"  }
           - { cabal: "3.14", os: Ubuntu-latest,  ghc: "9.2.8"  }
           - { cabal: "3.14", os: Ubuntu-latest,  ghc: "9.4.8"  }
-          - { cabal: "3.14", os: Ubuntu-latest,  ghc: "9.6.6"  }
+          - { cabal: "3.14", os: Ubuntu-latest,  ghc: "9.6.7"  }
           - { cabal: "3.14", os: Ubuntu-latest,  ghc: "9.8.2"  }
-          - { cabal: "3.14", os: Ubuntu-latest,  ghc: "9.10.1" }
-          - { cabal: "3.14", os: Ubuntu-latest,  ghc: "9.12.1" }
+          - { cabal: "3.14", os: Ubuntu-latest,  ghc: "9.10.3" }
+          - { cabal: "3.14", os: Ubuntu-latest,  ghc: "9.12.2" }
           - { cabal: "3.14", os: Windows-latest, ghc: "9.0.2"  }
           - { cabal: "3.14", os: Windows-latest, ghc: "9.2.8"  }
           - { cabal: "3.14", os: Windows-latest, ghc: "9.4.8"  }
-          - { cabal: "3.14", os: Windows-latest, ghc: "9.6.6"  }
+          - { cabal: "3.14", os: Windows-latest, ghc: "9.6.7"  }
           - { cabal: "3.14", os: Windows-latest, ghc: "9.8.2"  }
-          - { cabal: "3.14", os: Windows-latest, ghc: "9.10.1" }
-          - { cabal: "3.14", os: Windows-latest, ghc: "9.12.1" }
+          - { cabal: "3.14", os: Windows-latest, ghc: "9.10.3" }
+          - { cabal: "3.14", os: Windows-latest, ghc: "9.12.2" }
           - { cabal: "3.14", os: MacOS-13,       ghc: "9.0.2"  }
           - { cabal: "3.14", os: MacOS-latest,   ghc: "9.2.8"  }
           - { cabal: "3.14", os: MacOS-latest,   ghc: "9.4.8"  }
-          - { cabal: "3.14", os: MacOS-latest,   ghc: "9.6.6"  }
+          - { cabal: "3.14", os: MacOS-latest,   ghc: "9.6.7"  }
           - { cabal: "3.14", os: MacOS-latest,   ghc: "9.8.2"  }
-          - { cabal: "3.14", os: MacOS-latest,   ghc: "9.10.1" }
-          - { cabal: "3.14", os: MacOS-latest,   ghc: "9.12.1" }
+          - { cabal: "3.14", os: MacOS-latest,   ghc: "9.10.3" }
+          - { cabal: "3.14", os: MacOS-latest,   ghc: "9.12.2" }
 
     env:
       cache-version: v0 # bump up this version to invalidate currently stored cache

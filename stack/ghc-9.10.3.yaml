@@ -1,4 +1,4 @@
-resolver: lts-23.28
+resolver: lts-24.16
 system-ghc: true
 packages:
 - ../Color
