@@ -1,5 +1,5 @@
 name:                Color
-version:             0.4.0
+version:             0.4.1
 synopsis:            Color spaces and conversions between them
 description:         Please see the README on GitHub at <https://github.com/lehins/Color#readme>
 homepage:            https://github.com/lehins/Color
@@ -47,6 +47,8 @@ library
                      , Graphics.Color.Space.CIE1931.RGB
                      , Graphics.Color.Space.CIE1931.XYZ
                      , Graphics.Color.Space.CIE1976.LAB
+                     , Graphics.Color.Space.OKLAB
+                     , Graphics.Color.Space.OKLAB.LCH
                      , Graphics.Color.Space.CIE1976.LAB.LCH
                      , Graphics.Color.Space.CIE1976.LUV
                      , Graphics.Color.Space.CIE1976.LUV.LCH
@@ -129,6 +131,8 @@ test-suite tests
                     , Graphics.Color.Space.CIE1976.LAB.LCHSpec
                     , Graphics.Color.Space.CIE1976.LUVSpec
                     , Graphics.Color.Space.CIE1976.LUV.LCHSpec
+                    , Graphics.Color.Space.OKLAB.LABSpec
+                    , Graphics.Color.Space.OKLAB.LAB.LCHSpec
                     , Graphics.Color.Space.RGB.AdobeRGBSpec
                     , Graphics.Color.Space.RGB.SRGBSpec
                     , Graphics.Color.Space.RGB.Derived.AdobeRGBSpec
