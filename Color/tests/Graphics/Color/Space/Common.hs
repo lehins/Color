@@ -31,7 +31,7 @@ instance (Elevator e, Random e) => Arbitrary (Color (XYZ i) e) where
 
 
 prop_toFromColorXYZ ::
-     forall cs e i. (ColorSpace cs i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, RealFloat e, HasCallStack)
   => Color cs e
   -> Property
 prop_toFromColorXYZ c = c `epsilonEqColor` fromColorXYZ (toColorXYZ c :: Color (XYZ i) Double)
@@ -39,26 +39,26 @@ prop_toFromColorXYZ c = c `epsilonEqColor` fromColorXYZ (toColorXYZ c :: Color (
 
 -- For RGB standards, that have matrices rounded to 4 digits after the decimal point
 prop_toFromLenientColorXYZ ::
-     forall cs e i. (ColorSpace cs i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, RealFloat e, HasCallStack)
   => e
   -> Color cs e
   -> Property
 prop_toFromLenientColorXYZ epsilon c =
   epsilonEqColorTol epsilon c (fromColorXYZ (toColorXYZ c :: Color (XYZ i) Double))
 
-prop_LuminanceColorXYZ :: forall cs e i . ColorSpace cs i e => Color cs e -> Property
+prop_LuminanceColorXYZ :: forall cs e i . (ColorSpace cs i e, HasCallStack) => Color cs e -> Property
 prop_LuminanceColorXYZ c =
   (luminance c :: Color (Y i) Float) `epsilonEqColor`
   luminance (toColorXYZ c :: Color (XYZ i) Float)
 
 prop_toFromBaseSpace ::
-     forall cs e i. (ColorSpace cs i e, ColorSpace (BaseSpace cs) i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, ColorSpace (BaseSpace cs) i e, RealFloat e, HasCallStack)
   => Color cs e
   -> Property
 prop_toFromBaseSpace c = c `epsilonEqColor` fromBaseSpace (toBaseSpace c)
 
 prop_toFromBaseSpaceLenient ::
-     forall cs e i. (ColorSpace cs i e, ColorSpace (BaseSpace cs) i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, ColorSpace (BaseSpace cs) i e, RealFloat e, HasCallStack)
   => e
   -> Color cs e
   -> Property
@@ -72,14 +72,14 @@ prop_toFromBaseModel ::
 prop_toFromBaseModel c = c === fromBaseModel (toBaseModel c)
 
 prop_toApplyGrayscale ::
-     forall cs e i. (ColorSpace cs i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, RealFloat e, HasCallStack)
   => e
   -> Color cs e
   -> Property
 prop_toApplyGrayscale epsilon c = epsilonEqColorTol epsilon c $ applyGrayscale c id
 
 prop_toReplaceGrayscale ::
-     forall cs e i. (ColorSpace cs i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, RealFloat e, HasCallStack)
   => e
   -> Color cs e
   -> Property
@@ -87,7 +87,7 @@ prop_toReplaceGrayscale epsilon c =
   epsilonEqColorTol epsilon c (replaceGrayscale c (grayscale c))
 
 prop_toApplyGrayscaleAsReplace ::
-     forall cs e i. (ColorSpace cs i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, RealFloat e, HasCallStack)
   => e
   -> Color cs e
   -> Fun (Color X e) (Color X e)
@@ -100,7 +100,7 @@ prop_toApplyGrayscaleAsReplace epsilon c f =
 
 
 prop_toReplaceGrayscaleAsApply ::
-     forall cs e i. (ColorSpace cs i e, RealFloat e)
+     forall cs e i. (ColorSpace cs i e, RealFloat e, HasCallStack)
   => e
   -> Color cs e
   -> Color X e

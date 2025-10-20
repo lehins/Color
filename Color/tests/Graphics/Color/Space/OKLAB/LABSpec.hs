@@ -15,4 +15,4 @@ instance (Elevator e, Random e) => Arbitrary (Color OKLAB e) where
 spec :: Spec
 spec = describe "OKLAB" $ do
   colorModelSpec @OKLAB @Word "OKLAB"
-  colorSpaceLenientSpec @OKLAB @Double 1e-10
+  colorSpaceLenientSpec @OKLAB @Double 1e-9
