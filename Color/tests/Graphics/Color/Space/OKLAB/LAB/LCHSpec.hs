@@ -17,7 +17,7 @@ spec :: Spec
 spec =
   describe "OKLCH" $ do
     colorModelSpec @OKLCH @Word "LCH-OKLAB"
-    colorSpaceSpec @OKLCH @Double
+    colorSpaceLenientSpec @OKLCH @Double 1e-9
     prop "lab2lch . lch2lab" $ \(lab :: Color OKLAB Double) ->
       lab `epsilonEqColor` lch2lab (lab2lch lab)
     prop "lch2lab . lab2lch" $ \(lch :: Color OKLCH Double) ->

@@ -205,7 +205,7 @@ epsilonEqColorTol epsilon x y = property $ epsilonColorExpect epsilon x y
 
 -- | Same as `epsilonEqColorTol` but with indexed counterexample.
 epsilonEqColorTolIx ::
-     (ColorModel cs e, RealFloat e) => e -> Int -> Color cs e -> Color cs e -> Property
+     (ColorModel cs e, RealFloat e, HasCallStack) => e -> Int -> Color cs e -> Color cs e -> Property
 epsilonEqColorTolIx tol ix expected actual =
   counterexample ("Index: " ++ show ix) $ epsilonEqColorTol tol expected actual
 
