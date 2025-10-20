@@ -1,5 +1,10 @@
 # Changelog for Color
 
+## 0.4.1
+
+* Addition of `OKLAB` and `OKLCH` color spaces. From the [CSS 4 Color
+  Specification](https://drafts.csswg.org/css-color-4/#:~:text=XYZ_to_OKLab)
+
 ## 0.4.0
 
 * Addition of `DIN99` color space.
